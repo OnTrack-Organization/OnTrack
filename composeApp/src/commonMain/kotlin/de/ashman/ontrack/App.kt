@@ -82,9 +82,9 @@ fun App() {
             // ************************** UiHelper Text Buttons *************
             Divider(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
             AuthUiHelperButtonsAndFirebaseAuth(
                 modifier = Modifier.width(IntrinsicSize.Max),
@@ -94,9 +94,9 @@ fun App() {
             // ************************** UiHelper IconOnly Buttons *************
             Divider(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
             IconOnlyButtonsAndFirebaseAuth(
                 modifier = Modifier.fillMaxWidth(),
@@ -119,9 +119,9 @@ fun AuthUiHelperButtonsAndFirebaseAuth(
         GoogleButtonUiContainerFirebase(onResult = onFirebaseResult) {
             GoogleSignInButton(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(44.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .height(44.dp),
                 fontSize = 19.sp,
             ) { this.onClick() }
         }
@@ -130,9 +130,9 @@ fun AuthUiHelperButtonsAndFirebaseAuth(
         AppleButtonUiContainer(onResult = onFirebaseResult) {
             AppleSignInButton(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(44.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .height(44.dp),
             ) { this.onClick() }
         }
     }

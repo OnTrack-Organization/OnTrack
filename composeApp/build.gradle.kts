@@ -17,8 +17,18 @@ kotlin {
         }
     }
 
-    sourceSets {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
 
+    sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -32,10 +42,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(projects.shared)
 
-           /* implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.firebase.authentication)*/
+            /* implementation(project.dependencies.platform(libs.firebase.bom))
+             implementation(libs.firebase.authentication)*/
             implementation(libs.firebase.gitlive.auth)
             implementation(libs.kmpauth.google)
             implementation(libs.kmpauth.firebase)

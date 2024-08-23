@@ -3,5 +3,7 @@ package de.ashman.ontrack
 class Greeting {
     private val platform = getPlatform()
 
-    fun greet(): String = "Hello, ${platform.name}!"
+    fun greet(): String {
+        return "Hello, ${platform.name}!"
+    }
 }
