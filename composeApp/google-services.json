@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "40626889661",
+    "project_id": "ontrack-fd495",
+    "storage_bucket": "ontrack-fd495.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40626889661:android:6221142306ff378a4268d4",
+        "android_client_info": {
+          "package_name": "de.ashman.ontrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40626889661-53rf2agst5tiele1pn35dveppndfo8j0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr8osTWvXLeDuWrYLyz1gSbcStviZl2_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40626889661-53rf2agst5tiele1pn35dveppndfo8j0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
