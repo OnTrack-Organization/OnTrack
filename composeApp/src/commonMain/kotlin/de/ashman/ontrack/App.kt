@@ -23,6 +23,7 @@ import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpauth.uihelper.google.GoogleSignInButton
+import de.ashman.ontrack.Test
 import de.ashman.ontrack.theme.OnTrackTheme
 import dev.gitlive.firebase.auth.FirebaseUser
 
@@ -30,6 +31,8 @@ import dev.gitlive.firebase.auth.FirebaseUser
 fun App() {
     AppInitializer.onApplicationStart()
     OnTrackTheme {
+        Test()
+
         Column(
             Modifier
                 .fillMaxSize()

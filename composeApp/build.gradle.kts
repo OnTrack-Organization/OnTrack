@@ -62,10 +62,7 @@ kotlin {
 
 android {
     namespace = "de.ashman.ontrack"
-    compileSdk =
-        libs.versions.android.compileSdk
-            .get()
-            .toInt()
+    compileSdk = 34
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -73,14 +70,8 @@ android {
 
     defaultConfig {
         applicationId = "de.ashman.ontrack"
-        minSdk =
-            libs.versions.android.minSdk
-                .get()
-                .toInt()
-        targetSdk =
-            libs.versions.android.targetSdk
-                .get()
-                .toInt()
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
