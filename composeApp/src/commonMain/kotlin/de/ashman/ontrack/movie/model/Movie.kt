@@ -16,7 +16,6 @@ data class Movie(
     val video: Boolean? = null,
     val voteAverage: Double? = null,
     val voteCount: Int? = null,
-    val mediaType: String? = null,
 
     val isFavorite: Boolean? = null,
     val cacheId: Int? = 0,
