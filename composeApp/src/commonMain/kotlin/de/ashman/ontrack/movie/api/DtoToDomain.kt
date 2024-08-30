@@ -2,8 +2,6 @@ package de.ashman.ontrack.movie.api
 
 import de.ashman.ontrack.movie.model.Movie
 import de.ashman.ontrack.movie.model.MovieDto
-import de.ashman.ontrack.show.model.Show
-import de.ashman.ontrack.show.model.ShowDto
 
 fun MovieDto.toDomain(): Movie {
     return Movie(

@@ -1,8 +1,10 @@
 package de.ashman.ontrack.di
 
 import de.ashman.ontrack.BuildKonfig
-import de.ashman.ontrack.movie.api.MovieRepository
+import de.ashman.ontrack.book.api.BookRepository
 import de.ashman.ontrack.show.api.ShowRepository
+import de.ashman.ontrack.book.ui.BookViewModel
+import de.ashman.ontrack.movie.api.MovieRepository
 import de.ashman.ontrack.movie.ui.MovieViewModel
 import de.ashman.ontrack.show.ui.ShowViewModel
 import io.ktor.client.HttpClient
@@ -17,8 +19,12 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-const val BASE_URL = "api.themoviedb.org"
-const val PATH_URL = "3/"
+// MOVIES AND TV SHOWS
+const val TMDB_URL = "api.themoviedb.org"
+const val TMDB_PATH_URL = "3/"
+
+// BOOKS
+const val OPEN_LIB_URL = "openlibrary.org"
 
 val appModule =
     module {
@@ -28,8 +34,8 @@ val appModule =
                 defaultRequest {
                     url {
                         protocol = URLProtocol.HTTPS
-                        host = BASE_URL
-                        path(PATH_URL)
+                        host = TMDB_URL
+                        path(TMDB_PATH_URL)
                         parameters.append("api_key", BuildKonfig.TMDB_API_KEY)
                     }
                 }
@@ -42,14 +48,36 @@ val appModule =
                         }
                     )
                 }
-// TODO api key einbauen
             }
         }
+        single(named("OpenLibraryClient")) {
+            HttpClient {
+                defaultRequest {
+                    url {
+                        protocol = URLProtocol.HTTPS
+                        host = OPEN_LIB_URL
+                    }
+                }
+
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                        }
+                    )
+                }
+            }
+        }
+
         single { MovieRepository(get(named("TMDBClient"))) }
         single { ShowRepository(get(named("TMDBClient"))) }
 
+        single { BookRepository(get(named("OpenLibraryClient"))) }
+
         viewModelDefinition { MovieViewModel(get()) }
         viewModelDefinition { ShowViewModel(get()) }
+        viewModelDefinition { BookViewModel(get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
