@@ -14,7 +14,7 @@ fun BookDto.toDomain(): Book {
         editionCount = editionCount,
         coverId = coverId,
         coverEditionKey = coverEditionKey,
-        subjects = subjects,
+        subject = subject,
         iaCollection = iaCollection,
         lendingLibrary = lendingLibrary,
         printDisabled = printDisabled,

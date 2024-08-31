@@ -45,6 +45,7 @@ kotlin {
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.kotlinx.datetime)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -120,6 +121,20 @@ buildkonfig {
             STRING,
             "TMDB_API_KEY",
             gradleLocalProperties(rootDir).getProperty("tmdb_api_key") ?: ""
+        )
+    }
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "TWITCH_CLIENT_ID",
+            gradleLocalProperties(rootDir).getProperty("twitch_client_id") ?: ""
+        )
+    }
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "TWITCH_CLIENT_SECRET",
+            gradleLocalProperties(rootDir).getProperty("twitch_client_secret") ?: ""
         )
     }
 }

@@ -6,7 +6,7 @@ data class Book(
     val editionCount: Int?,
     val coverId: Int?,
     val coverEditionKey: String?,
-    val subjects: List<String>?,
+    val subject: List<String>?,
     val iaCollection: List<String>?,
     val lendingLibrary: Boolean?,
     val printDisabled: Boolean?,
