@@ -2,6 +2,7 @@ package de.ashman.ontrack.di
 
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.boardgame.api.BoardGameRepository
+import de.ashman.ontrack.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.book.api.BookRepository
 import de.ashman.ontrack.show.api.ShowRepository
 import de.ashman.ontrack.book.ui.BookViewModel
@@ -176,6 +177,7 @@ val appModule =
         viewModelDefinition { ShowViewModel(get()) }
         viewModelDefinition { BookViewModel(get()) }
         viewModelDefinition { VideoGameViewModel(get()) }
+        viewModelDefinition { BoardGameViewModel(get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

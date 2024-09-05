@@ -6,13 +6,14 @@ import de.ashman.ontrack.boardgame.model.BoardGameDto
 fun BoardGameDto.toDomain(): BoardGame {
     return BoardGame(
         id = id,
-        name = name,
-        yearPublished = yearPublished,
-        minPlayers = minPlayers,
-        maxPlayers = maxPlayers,
-        playingTime = playingTime,
+        name = name.value,
+        minAge = minAge?.value,
+        yearPublished = yearPublished?.value,
+        minPlayers = minPlayers?.value,
+        maxPlayers = maxPlayers?.value,
+        playingTime = playingTime?.value,
         description = description,
-        age = age,
-        thumbnail = thumbnail
+        thumbnail = thumbnail,
+        image = image,
     )
 }

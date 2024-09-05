@@ -60,6 +60,9 @@ kotlin {
             implementation(libs.ktor.core)
             implementation(libs.ktor.contentNegotiation)
             implementation(libs.ktor.json)
+
+            implementation(libs.xmlutil.core)
+            implementation(libs.xmlutil.serialization)
         }
 
         androidMain.dependencies {

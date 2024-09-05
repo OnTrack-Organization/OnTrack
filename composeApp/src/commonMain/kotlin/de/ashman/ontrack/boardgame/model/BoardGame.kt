@@ -8,6 +8,7 @@ data class BoardGame(
     val maxPlayers: Int? = null,
     val playingTime: Int? = null,
     val description: String? = null,
-    val age: Int? = null,
-    val thumbnail: String? = null
+    val minAge: Int? = null,
+    val thumbnail: String? = null,
+    val image: String? = null
 )
