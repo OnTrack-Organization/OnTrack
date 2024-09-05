@@ -9,14 +9,18 @@ import de.ashman.ontrack.book.ui.BookViewModel
 import de.ashman.ontrack.movie.api.MovieRepository
 import de.ashman.ontrack.movie.ui.MovieViewModel
 import de.ashman.ontrack.show.ui.ShowViewModel
-import de.ashman.ontrack.videogame.TokenManager
-import de.ashman.ontrack.videogame.VideoGameRepository
-import de.ashman.ontrack.videogame.VideoGameViewModel
+import de.ashman.ontrack.auth.AccessTokenManager
+import de.ashman.ontrack.music.MusicRepository
+import de.ashman.ontrack.music.MusicViewModel
+import de.ashman.ontrack.videogame.api.VideoGameRepository
+import de.ashman.ontrack.videogame.ui.VideoGameViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.headers
+import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
+import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -49,6 +53,15 @@ const val IGDB_PATH = "v4/"
 const val TWITCH_TOKEN_CLIENT_NAME = "TwitchTokenClient"
 const val TWITCH_TOKEN_URL = "id.twitch.tv"
 const val TWITCH_TOKEN_PATH = "oauth2/token"
+
+// MUSIC
+const val SPOTIFY_CLIENT_NAME = "SpotifyClient"
+const val SPOTIFY_URL = "api.spotify.com"
+const val SPOTIFY_PATH = "v1/"
+
+const val SPOTIFY_TOKEN_CLIENT_NAME = "SpotifyTokenClient"
+const val SPOTIFY_TOKEN_URL = "accounts.spotify.com"
+const val SPOTIFY_TOKEN_PATH = "api/token"
 
 @OptIn(ExperimentalSerializationApi::class)
 val appModule =
@@ -165,19 +178,67 @@ val appModule =
             }
         }
 
+        single(named(SPOTIFY_CLIENT_NAME)) {
+            HttpClient {
+                defaultRequest {
+                    url {
+                        protocol = URLProtocol.HTTPS
+                        host = SPOTIFY_URL
+                        path(SPOTIFY_PATH)
+                        contentType(ContentType.Application.FormUrlEncoded)
+                    }
+                }
+
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            namingStrategy = JsonNamingStrategy.SnakeCase
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                        }
+                    )
+                }
+            }
+        }
+        single(named(SPOTIFY_TOKEN_CLIENT_NAME)) {
+            HttpClient {
+                defaultRequest {
+                    url {
+                        protocol = URLProtocol.HTTPS
+                        host = SPOTIFY_TOKEN_URL
+                        path(SPOTIFY_TOKEN_PATH)
+                        contentType(ContentType.Application.FormUrlEncoded)
+                    }
+                }
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            namingStrategy = JsonNamingStrategy.SnakeCase
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                        }
+                    )
+                }
+            }
+        }
+
         single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
         single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
         single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
         single { BoardGameRepository(get(named(BGG_CLIENT_NAME))) }
 
-        single { TokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
-        single { VideoGameRepository(get(named(IGDB_CLIENT_NAME)), get()) }
+        single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
+        single { VideoGameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
+
+        single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
+        single { MusicRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         viewModelDefinition { MovieViewModel(get()) }
         viewModelDefinition { ShowViewModel(get()) }
         viewModelDefinition { BookViewModel(get()) }
         viewModelDefinition { VideoGameViewModel(get()) }
         viewModelDefinition { BoardGameViewModel(get()) }
+        viewModelDefinition { MusicViewModel(get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

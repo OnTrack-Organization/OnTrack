@@ -1,7 +1,8 @@
-package de.ashman.ontrack.videogame
+package de.ashman.ontrack.videogame.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.videogame.api.VideoGameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

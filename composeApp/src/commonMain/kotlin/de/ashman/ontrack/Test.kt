@@ -9,8 +9,9 @@ import androidx.compose.runtime.getValue
 import de.ashman.ontrack.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.book.ui.BookViewModel
 import de.ashman.ontrack.movie.ui.MovieViewModel
+import de.ashman.ontrack.music.MusicViewModel
 import de.ashman.ontrack.show.ui.ShowViewModel
-import de.ashman.ontrack.videogame.VideoGameViewModel
+import de.ashman.ontrack.videogame.ui.VideoGameViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -20,14 +21,18 @@ fun Test(
     bookViewModel: BookViewModel = koinInject(),
     videoGameViewModel: VideoGameViewModel = koinInject(),
     boardGameViewModel: BoardGameViewModel = koinInject(),
+    musicViewModel: MusicViewModel = koinInject(),
 ) {
     val movieState by movieViewModel.uiState.collectAsState()
     val showState by showViewModel.uiState.collectAsState()
     val bookState by bookViewModel.uiState.collectAsState()
     val gameState by videoGameViewModel.uiState.collectAsState()
     val bgState by boardGameViewModel.uiState.collectAsState()
+    val musicState by musicViewModel.uiState.collectAsState()
 
     LazyColumn {
+        item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }
+        item { if (musicState.artists.isNotEmpty()) Text("${musicState.artists.first()}") }
         item { Text("BOARD GAMES", style = MaterialTheme.typography.titleLarge) }
         item { if (bgState.boardGames.isNotEmpty()) Text("${bgState.boardGames.first()}") }
         item { Text("GAMES", style = MaterialTheme.typography.titleLarge) }

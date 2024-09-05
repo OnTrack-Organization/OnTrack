@@ -1,4 +1,4 @@
-package de.ashman.ontrack.videogame
+package de.ashman.ontrack.videogame.model
 
 data class VideoGame(
     val id: String,

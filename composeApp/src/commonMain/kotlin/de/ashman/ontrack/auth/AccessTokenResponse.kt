@@ -1,4 +1,4 @@
-package de.ashman.ontrack.videogame
+package de.ashman.ontrack.auth
 
 import kotlinx.serialization.Serializable
 

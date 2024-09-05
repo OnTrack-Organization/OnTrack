@@ -1,4 +1,4 @@
-package de.ashman.ontrack.videogame
+package de.ashman.ontrack.auth
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -8,7 +8,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.time.Duration.Companion.seconds
 
-class TokenManager(
+class AccessTokenManager(
     private val httpClient: HttpClient,
     private val clientId: String,
     private val clientSecret: String
@@ -30,9 +30,13 @@ class TokenManager(
             parameter("grant_type", "client_credentials")
         }
 
+        println(response)
+
         val tokenResponse: AccessTokenResponse = response.body()
         accessToken = tokenResponse.accessToken
         tokenExpiration = Clock.System.now() + tokenResponse.expiresIn.seconds
+
+        println(tokenResponse)
     }
 
     private fun isTokenExpired(): Boolean {

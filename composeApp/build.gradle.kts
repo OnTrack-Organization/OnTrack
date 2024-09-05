@@ -140,4 +140,18 @@ buildkonfig {
             gradleLocalProperties(rootDir).getProperty("twitch_client_secret") ?: ""
         )
     }
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "SPOTIFY_CLIENT_ID",
+            gradleLocalProperties(rootDir).getProperty("spotify_client_id") ?: ""
+        )
+    }
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "SPOTIFY_CLIENT_SECRET",
+            gradleLocalProperties(rootDir).getProperty("spotify_client_secret") ?: ""
+        )
+    }
 }
