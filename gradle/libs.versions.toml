@@ -6,7 +6,7 @@ compose-plugin = "1.6.11"
 kotlin = "2.0.20"
 google-services = "4.4.2"
 firebase-bom = "33.2.0"
-firebaseGitLiveAuth = "1.13.0"
+firebaseSdk = "1.13.0"
 kmpauthGoogle = "2.1.0-alpha02"
 koin = "3.5.6"
 kotlinxDatetime = "0.6.1"
@@ -19,11 +19,14 @@ xmlutil = "0.90.1"
 kmpauth-firebase = { module = "io.github.mirzemehdi:kmpauth-firebase", version.ref = "kmpauthGoogle" }
 kmpauth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpauthGoogle" }
 kmpauth-uihelper = { module = "io.github.mirzemehdi:kmpauth-uihelper", version.ref = "kmpauthGoogle" }
-firebase-gitlive-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseGitLiveAuth" }
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-authentication = { module = "com.google.firebase:firebase-auth" }
+firebase-database = { module = "com.google.firebase:firebase-database" }
+
+firebase-gitlive-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseSdk" }
+firebase-gitlive-database = { module = "dev.gitlive:firebase-database", version.ref = "firebaseSdk" }
 
 # Koin
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }

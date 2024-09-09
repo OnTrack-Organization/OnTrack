@@ -10,6 +10,9 @@ import de.ashman.ontrack.movie.api.MovieRepository
 import de.ashman.ontrack.movie.ui.MovieViewModel
 import de.ashman.ontrack.show.ui.ShowViewModel
 import de.ashman.ontrack.auth.AccessTokenManager
+import de.ashman.ontrack.login.ui.UserViewModel
+import de.ashman.ontrack.database.DatabaseTest
+import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.music.MusicRepository
 import de.ashman.ontrack.music.MusicViewModel
 import de.ashman.ontrack.videogame.api.VideoGameRepository
@@ -66,7 +69,7 @@ const val SPOTIFY_TOKEN_PATH = "api/token"
 @OptIn(ExperimentalSerializationApi::class)
 val appModule =
     module {
-        // Define your shared dependencies here
+        // HTTP CLIENTS
         single(named(TMDB_CLIENT_NAME)) {
             HttpClient {
                 defaultRequest {
@@ -222,23 +225,29 @@ val appModule =
             }
         }
 
+        single { DatabaseTest() }
+
+        // SERVICES
+        single { UserService() }
+        single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
+        single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
+
+        // REPOSITORY
         single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
         single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
         single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
         single { BoardGameRepository(get(named(BGG_CLIENT_NAME))) }
-
-        single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
         single { VideoGameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
-
-        single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
         single { MusicRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
+        // VIEWMODEL
         viewModelDefinition { MovieViewModel(get()) }
         viewModelDefinition { ShowViewModel(get()) }
         viewModelDefinition { BookViewModel(get()) }
         viewModelDefinition { VideoGameViewModel(get()) }
         viewModelDefinition { BoardGameViewModel(get()) }
         viewModelDefinition { MusicViewModel(get()) }
+        viewModelDefinition { UserViewModel(get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

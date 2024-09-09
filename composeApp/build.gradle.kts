@@ -29,7 +29,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            //freeCompilerArgs += "-Xbinary=bundleId=de.ashman.ontrack.ComposeApp"
+            freeCompilerArgs += "-Xbinary=bundleId=de.ashman.ontrack.ComposeApp"
         }
     }
 
@@ -50,9 +50,12 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
-            /* implementation(project.dependencies.platform(libs.firebase.bom))
-             implementation(libs.firebase.authentication)*/
+            //implementation(project.dependencies.platform(libs.firebase.bom))
+            //implementation(libs.firebase.authentication)
+            //implementation(libs.firebase.database)
+
             implementation(libs.firebase.gitlive.auth)
+            implementation(libs.firebase.gitlive.database)
             implementation(libs.kmpauth.google)
             implementation(libs.kmpauth.firebase)
             implementation(libs.kmpauth.uihelper)
@@ -119,6 +122,13 @@ android {
 buildkonfig {
     packageName = "de.ashman.ontrack"
 
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "GOOGLE_AUTH_CLIENT_ID",
+            gradleLocalProperties(rootDir).getProperty("google_auth_client_id") ?: ""
+        )
+    }
     defaultConfigs {
         buildConfigField(
             STRING,

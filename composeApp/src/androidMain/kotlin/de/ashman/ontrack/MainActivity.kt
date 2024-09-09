@@ -1,9 +1,10 @@
 package de.ashman.ontrack
 
-import App
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.mmk.kmpauth.google.GoogleAuthCredentials
+import com.mmk.kmpauth.google.GoogleAuthProvider
 import de.ashman.ontrack.di.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.stopKoin

@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import de.ashman.ontrack.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.book.ui.BookViewModel
+import de.ashman.ontrack.database.DatabaseTest
 import de.ashman.ontrack.movie.ui.MovieViewModel
 import de.ashman.ontrack.music.MusicViewModel
 import de.ashman.ontrack.show.ui.ShowViewModel
@@ -15,13 +16,14 @@ import de.ashman.ontrack.videogame.ui.VideoGameViewModel
 import org.koin.compose.koinInject
 
 @Composable
-fun Test(
+fun ApiTest(
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),
     videoGameViewModel: VideoGameViewModel = koinInject(),
     boardGameViewModel: BoardGameViewModel = koinInject(),
     musicViewModel: MusicViewModel = koinInject(),
+    dbTest: DatabaseTest = koinInject()
 ) {
     val movieState by movieViewModel.uiState.collectAsState()
     val showState by showViewModel.uiState.collectAsState()

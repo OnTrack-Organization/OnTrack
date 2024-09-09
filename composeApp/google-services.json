@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "40626889661",
+    "firebase_url": "https://ontrack-fd495-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "ontrack-fd495",
     "storage_bucket": "ontrack-fd495.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "40626889661-9do5e4ges7g550m4l836dbhvi7fbvldl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.ashman.ontrack",
+            "certificate_hash": "fe3582b4aea11351233d01f7e84f5f37fb9ebdb8"
+          }
+        },
+        {
+          "client_id": "40626889661-onmk8lun9ro20pm4o1r5pbthhvk0uvc9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.ashman.ontrack",
+            "certificate_hash": "ae72e840a0f9f648658d145eec1094eb136faf56"
+          }
+        },
         {
           "client_id": "40626889661-53rf2agst5tiele1pn35dveppndfo8j0.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +46,13 @@
             {
               "client_id": "40626889661-53rf2agst5tiele1pn35dveppndfo8j0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "40626889661-ugitoa4tmn1ko9dpvi0qp2botmdhpc47.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "de.ashman.ontrack.OnTrack"
+              }
             }
           ]
         }
