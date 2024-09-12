@@ -47,6 +47,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
 
+           /* runtimeOnly(libs.androidx.datastore.preferences.core)
+            implementation("androidx.datastore:datastore:1.1.1")
+            runtimeOnly("androidx.datastore:datastore-preferences:1.1.1")
+            implementation("androidx.datastore:datastore-core:1.1.1")*/
+
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 

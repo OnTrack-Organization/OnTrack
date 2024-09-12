@@ -31,15 +31,5 @@ fun GoogleLoginButton(
                 fontSize = 19.sp,
             ) { onClick() }
         }
-
-        /*// Apple Sign-In Button and authentication with Firebase
-        AppleButtonUiContainer(onResult = onFirebaseResult) {
-            AppleSignInButton(
-                modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(44.dp),
-            ) { this.onClick() }
-        }*/
     }
 }

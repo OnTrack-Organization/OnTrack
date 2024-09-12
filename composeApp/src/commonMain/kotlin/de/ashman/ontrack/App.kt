@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import de.ashman.ontrack.theme.OnTrackTheme
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 
 @Composable
 fun App() {
@@ -24,8 +26,11 @@ fun App() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         ) {
-            LoginTest()
-            ApiTest()
+            if (Firebase.auth.currentUser != null) {
+                ApiTest()
+            } else {
+                LoginTest()
+            }
         }
     }
 }

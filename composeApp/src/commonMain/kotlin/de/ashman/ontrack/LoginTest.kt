@@ -25,25 +25,23 @@ fun LoginTest(
 ) {
     val userState by userViewModel.uiState.collectAsState()
 
-    Column {
-        val onFirebaseResult: (Result<FirebaseUser?>) -> Unit = { result ->
-            if (result.isSuccess) {
-                val firebaseUser = result.getOrNull()
-                if (firebaseUser != null) {
-                    userViewModel.saveUser(firebaseUser)
-                }
-            } else {
-                println("Error Result: ${result.exceptionOrNull()?.message}")
+    val onFirebaseResult: (Result<FirebaseUser?>) -> Unit = { result ->
+        if (result.isSuccess) {
+            val firebaseUser = result.getOrNull()
+            if (firebaseUser != null) {
+                userViewModel.registerUser(firebaseUser)
             }
+        } else {
+            println("Error Result: ${result.exceptionOrNull()?.message}")
         }
+    }
 
-        userState.user?.let {
-            Text(
-                text = it.name,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-            )
-        }
+    Column {
+        Text(
+            text = userState.user?.name ?: "No Name",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Start,
+        )
 
         HorizontalDivider(
             modifier =

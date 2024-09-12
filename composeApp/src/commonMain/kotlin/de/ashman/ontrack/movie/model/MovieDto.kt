@@ -8,7 +8,6 @@ data class MovieDto(
     val title: String? = null,
     val originalTitle: String? = null,
     val originalLanguage: String? = null,
-
     val adult: Boolean? = null,
     val backdropPath: String? = null,
     val genreIds: List<Int>? = null,
@@ -19,4 +18,14 @@ data class MovieDto(
     val video: Boolean? = null,
     val voteAverage: Double? = null,
     val voteCount: Int? = null,
+
+    val status: MovieStatus? = null,
 )
+
+@Serializable
+enum class MovieStatus {
+    WATCHING,
+    COMPLETED,
+    WANT_TO_WATCH,
+    DROPPED,
+}
