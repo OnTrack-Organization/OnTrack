@@ -42,6 +42,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.navigation)
+            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -54,10 +56,6 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-
-            //implementation(project.dependencies.platform(libs.firebase.bom))
-            //implementation(libs.firebase.authentication)
-            //implementation(libs.firebase.database)
 
             implementation(libs.firebase.gitlive.auth)
             implementation(libs.firebase.gitlive.database)

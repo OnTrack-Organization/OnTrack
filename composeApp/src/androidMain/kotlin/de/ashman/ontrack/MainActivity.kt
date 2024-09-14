@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import de.ashman.ontrack.di.initKoin
+import de.ashman.ontrack.navigation.NavigationGraph
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.stopKoin
 
@@ -18,7 +19,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            App()
+            NavigationGraph()
+            //App()
         }
     }
 
