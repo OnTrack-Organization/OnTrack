@@ -19,8 +19,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            NavigationGraph()
-            //App()
+            App()
         }
     }
 

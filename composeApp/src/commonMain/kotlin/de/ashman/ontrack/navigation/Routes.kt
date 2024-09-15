@@ -3,6 +3,9 @@ package de.ashman.ontrack.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
+object Login
+
+@Serializable
 object Home
 
 @Serializable

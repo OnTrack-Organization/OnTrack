@@ -7,6 +7,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.common.FeedScreen
 import de.ashman.ontrack.common.HomeScreen
+import de.ashman.ontrack.login.ui.LoginScreen
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 
 @Composable
 fun NavigationGraph() {
@@ -14,8 +17,16 @@ fun NavigationGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Home,
+        startDestination = if (Firebase.auth.currentUser != null) Home else Login,
     ) {
+        composable<Login> {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Home)
+                }
+            )
+        }
+
         composable<Home> {
             HomeScreen(
                 onClickNavItem = { route -> navController.navigate(route) },

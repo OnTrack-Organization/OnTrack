@@ -43,5 +43,5 @@ fun HomeContent(
     goToDetail: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ApiTest()
+    ApiTest(modifier = modifier)
 }

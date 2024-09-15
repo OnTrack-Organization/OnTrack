@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
 import de.ashman.ontrack.database.DatabaseTest
@@ -19,6 +20,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun ApiTest(
+    modifier: Modifier = Modifier,
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),
@@ -40,7 +42,9 @@ fun ApiTest(
     // TODO anders eventuell
     userViewModel.getUser()
 
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         item { Text(userState.user?.name ?: "Nobody logged in") }
 
         item {
