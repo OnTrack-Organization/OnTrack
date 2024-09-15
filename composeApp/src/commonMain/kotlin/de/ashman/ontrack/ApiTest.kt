@@ -7,14 +7,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import de.ashman.ontrack.boardgame.ui.BoardGameViewModel
-import de.ashman.ontrack.book.ui.BookViewModel
+import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
+import de.ashman.ontrack.media.book.ui.BookViewModel
 import de.ashman.ontrack.database.DatabaseTest
 import de.ashman.ontrack.login.ui.UserViewModel
-import de.ashman.ontrack.movie.ui.MovieViewModel
-import de.ashman.ontrack.music.MusicViewModel
-import de.ashman.ontrack.show.ui.ShowViewModel
-import de.ashman.ontrack.videogame.ui.VideoGameViewModel
+import de.ashman.ontrack.media.movie.ui.MovieViewModel
+import de.ashman.ontrack.media.music.MusicViewModel
+import de.ashman.ontrack.media.show.ui.ShowViewModel
+import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import org.koin.compose.koinInject
 
 @Composable

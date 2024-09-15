@@ -1,7 +1,7 @@
 package de.ashman.ontrack.login
 
 import de.ashman.ontrack.login.model.UserDto
-import de.ashman.ontrack.movie.model.MovieDto
+import de.ashman.ontrack.media.movie.model.MovieDto
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
 
