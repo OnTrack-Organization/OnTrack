@@ -241,7 +241,7 @@ val appModule =
         single { MusicRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         // VIEWMODEL
-        viewModelDefinition { MovieViewModel(get()) }
+        viewModelDefinition { MovieViewModel(get(), get()) }
         viewModelDefinition { ShowViewModel(get()) }
         viewModelDefinition { BookViewModel(get()) }
         viewModelDefinition { VideoGameViewModel(get()) }

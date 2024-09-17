@@ -1,6 +1,6 @@
 package de.ashman.ontrack.login.model
 
-import de.ashman.ontrack.media.movie.model.MovieDto
+import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import kotlinx.serialization.Serializable
 
 @Serializable

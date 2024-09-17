@@ -1,12 +1,18 @@
 package de.ashman.ontrack
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
@@ -41,6 +47,7 @@ fun ApiTest(
 
     // TODO anders eventuell
     userViewModel.getUser()
+    var text by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = modifier
@@ -53,6 +60,29 @@ fun ApiTest(
             ) {
                 Text("Logout")
             }
+        }
+        item {
+            TextField(
+                value = text,
+                onValueChange = { newText ->
+                    text = newText
+                },
+                label = { Text("Search for movies") },
+            )
+        }
+
+        item {
+            Button(
+                onClick = {
+                    movieViewModel.fetchMoviesByKeyword(text)
+                },
+            ) {
+                Text("Search")
+            }
+        }
+
+        items(movieState.movies) {
+            if (it.title != null) Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addMovieToList(it) })
         }
 
         item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }

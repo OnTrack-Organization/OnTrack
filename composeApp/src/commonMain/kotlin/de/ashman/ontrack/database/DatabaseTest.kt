@@ -1,6 +1,6 @@
 package de.ashman.ontrack.database
 
-import de.ashman.ontrack.media.movie.model.MovieDto
+import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.CoroutineScope
