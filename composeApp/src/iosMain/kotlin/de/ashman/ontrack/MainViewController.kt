@@ -5,6 +5,5 @@ import de.ashman.ontrack.di.initKoin
 
 fun MainViewController() =
     ComposeUIViewController {
-        initKoin { }
         App()
     }
