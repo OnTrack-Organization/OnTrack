@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
-import de.ashman.ontrack.database.DatabaseTest
 import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import de.ashman.ontrack.media.music.MusicViewModel
@@ -34,7 +33,6 @@ fun ApiTest(
     boardGameViewModel: BoardGameViewModel = koinInject(),
     musicViewModel: MusicViewModel = koinInject(),
     userViewModel: UserViewModel = koinInject(),
-    dbTest: DatabaseTest = koinInject()
 ) {
     val movieState by movieViewModel.uiState.collectAsState()
     val showState by showViewModel.uiState.collectAsState()
@@ -82,7 +80,10 @@ fun ApiTest(
         }
 
         items(movieState.movies) {
-            if (it.title != null) Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addMovieToList(it) })
+            if (it.title != null && it.id != null) {
+                Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
+                Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
+            }
         }
 
         item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }

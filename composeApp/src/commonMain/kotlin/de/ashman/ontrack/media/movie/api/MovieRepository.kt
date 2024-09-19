@@ -1,6 +1,7 @@
 package de.ashman.ontrack.media.movie.api
 
 import de.ashman.ontrack.media.movie.model.domain.Movie
+import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import de.ashman.ontrack.media.movie.model.dto.MovieResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -15,5 +16,10 @@ class MovieRepository(
             parameter("query", keyword)
         }.body()
         return response.movies.map { it.toDomain() }
+    }
+
+    suspend fun fetchMovieDetails(id: Int): Movie {
+        val response: MovieDto = httpClient.get("movie/$id").body()
+        return response.toDomain()
     }
 }

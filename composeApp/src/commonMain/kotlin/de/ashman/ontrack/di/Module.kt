@@ -11,7 +11,6 @@ import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import de.ashman.ontrack.media.show.ui.ShowViewModel
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.login.ui.UserViewModel
-import de.ashman.ontrack.database.DatabaseTest
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.music.MusicRepository
 import de.ashman.ontrack.media.music.MusicViewModel
@@ -224,8 +223,6 @@ val appModule =
                 }
             }
         }
-
-        single { DatabaseTest() }
 
         // SERVICES
         single { UserService() }

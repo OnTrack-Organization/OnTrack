@@ -12,13 +12,12 @@ fun MovieDto.toDomain(): Movie {
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
         overview = overview,
-        popularity = popularity,
         posterPath = posterPath,
         releaseDate = releaseDate,
+        runtime = runtime,
+        status = status,
         title = title,
-        video = video,
         voteAverage = voteAverage,
-        voteCount = voteCount,
     )
 }
 
@@ -30,12 +29,11 @@ fun Movie.toEntity(): MovieEntity {
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
         overview = overview,
-        popularity = popularity,
         posterPath = posterPath,
         releaseDate = releaseDate,
+        runtime = runtime,
+        status = status,
         title = title,
-        video = video,
         voteAverage = voteAverage,
-        voteCount = voteCount,
     )
 }

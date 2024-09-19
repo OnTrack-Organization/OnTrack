@@ -8,7 +8,7 @@ data class MovieResponseDto(
     @SerialName("results")
     val movies: List<MovieDto> = emptyList(),
 
-    val page: Int? = null,
-    val totalPages: Int? = null,
-    val totalResults: Int? = null,
+    val page: Int,
+    val totalPages: Int,
+    val totalResults: Int,
 )

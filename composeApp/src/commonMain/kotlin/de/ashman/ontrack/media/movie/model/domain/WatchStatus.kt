@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media.movie.model.domain
 
-enum class MovieStatus {
+enum class WatchStatus {
     WATCHING,
     COMPLETED,
     WANT_TO_WATCH,

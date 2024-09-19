@@ -1,11 +1,11 @@
 package de.ashman.ontrack.media.movie.model.entity
 
-import de.ashman.ontrack.media.movie.model.domain.MovieStatus
+import de.ashman.ontrack.media.movie.model.domain.WatchStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieEntity(
-    val id: Int? = null,
+    val id: Int,
     val title: String? = null,
     val originalTitle: String? = null,
     val originalLanguage: String? = null,
@@ -16,11 +16,9 @@ data class MovieEntity(
     val releaseDate: String? = null,
 
     val adult: Boolean? = null,
-    val popularity: Double? = null,
-    val video: Boolean? = null,
-
+    val runtime: Int? = null,
+    val status: String? = null,
     val voteAverage: Double? = null,
-    val voteCount: Int? = null,
 
-    val status: MovieStatus? = null,
+    val watchStatus: WatchStatus? = null,
 )
