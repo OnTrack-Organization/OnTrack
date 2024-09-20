@@ -45,6 +45,9 @@ kotlin {
             implementation(libs.compose.navigation)
             implementation(libs.kotlinx.serialization.json)
 
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network)
+
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)

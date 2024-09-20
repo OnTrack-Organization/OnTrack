@@ -2,6 +2,7 @@
 agp = "8.2.2"
 androidx-activityCompose = "1.9.2"
 androidx-lifecycle = "2.8.0"
+coil3 = "3.0.0-alpha08"
 compose-plugin = "1.6.11"
 datastore = "1.1.1"
 kotlin = "2.0.20"
@@ -54,6 +55,9 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
 
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
