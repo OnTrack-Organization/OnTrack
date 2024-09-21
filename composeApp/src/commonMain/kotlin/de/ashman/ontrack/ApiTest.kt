@@ -1,10 +1,7 @@
 package de.ashman.ontrack
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -18,15 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
+import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
-import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import de.ashman.ontrack.media.music.MusicViewModel
 import de.ashman.ontrack.media.show.ui.ShowViewModel
@@ -36,6 +28,7 @@ import org.koin.compose.koinInject
 @Composable
 fun ApiTest(
     modifier: Modifier = Modifier,
+    goToDetail: (Int) -> Unit,
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),
@@ -106,13 +99,14 @@ fun ApiTest(
             }
 
             items(movieState.movies) {
-                if (it.title != null) {
-                    Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
-                    Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
-                    AsyncImage(
-                        model = "https://image.tmdb.org/t/p/original${it.posterPath}",
-                        contentDescription = "Poster"
-                    )
+                Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
+                Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
+                AsyncImage(
+                    model = "https://image.tmdb.org/t/p/original${it.posterPath}",
+                    contentDescription = "Poster"
+                )
+                Button(onClick = { goToDetail(it.id) }) {
+                    Text("Go To Details")
                 }
             }
 

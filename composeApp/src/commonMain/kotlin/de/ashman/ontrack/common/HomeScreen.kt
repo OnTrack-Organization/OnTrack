@@ -10,29 +10,16 @@ import de.ashman.ontrack.OnTrackScreen
 @Composable
 fun HomeScreen(
     onClickNavItem: (Any) -> Unit = {},
-    goToDetail: (String) -> Unit,
+    goToDetail: (Int) -> Unit,
 ) {
     OnTrackScreen(
         onClickNavItem = onClickNavItem,
-        // TODO shared resources
-        topBarTitle = { },
-        topBarNavIcon = {
-            /*Icon(
-                painter = painterResource(R.drawable.img_takedown),
-                contentDescription = "Takedown Icon",
-                modifier =
-                    Modifier
-                        .size(64.dp)
-                        .padding(4.dp),
-                tint = Color.Unspecified,
-            )*/
-        },
     ) { innerPadding ->
         HomeContent(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             goToDetail = goToDetail,
         )
     }
@@ -40,8 +27,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    goToDetail: (String) -> Unit,
+    goToDetail: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ApiTest(modifier = modifier)
+    ApiTest(modifier = modifier, goToDetail)
 }

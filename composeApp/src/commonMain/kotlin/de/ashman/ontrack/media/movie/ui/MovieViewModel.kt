@@ -30,7 +30,7 @@ class MovieViewModel(
 
     fun fetchMovieDetails(id: Int) {
         viewModelScope.launch {
-            val movie = movieRepository.fetchMovieDetails(id)
+            val movie = movieRepository.fetchMediaDetails(id)
             _uiState.value = _uiState.value.copy(selectedMovie = movie)
         }
     }

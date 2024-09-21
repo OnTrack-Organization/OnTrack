@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import de.ashman.ontrack.common.FeedScreen
 import de.ashman.ontrack.common.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
+import de.ashman.ontrack.media.movie.ui.MovieScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 
@@ -30,13 +31,21 @@ fun NavigationGraph() {
         composable<Home> {
             HomeScreen(
                 onClickNavItem = { route -> navController.navigate(route) },
-                goToDetail = { /*id -> navController.navigate(Detail(id))*/ },
+                goToDetail = { id -> navController.navigate(Movie(id)) },
             )
         }
-        composable<Feed> { backStackEntry ->
-            //val feed: Feed = backStackEntry.toRoute()
 
+        composable<Feed> {
             FeedScreen()
+        }
+
+        composable<Movie> { backStackEntry ->
+            val movie: Movie = backStackEntry.toRoute()
+
+            MovieScreen(
+                id = movie.id,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
