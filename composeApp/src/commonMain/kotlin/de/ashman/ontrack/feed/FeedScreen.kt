@@ -1,4 +1,4 @@
-package de.ashman.ontrack.common
+package de.ashman.ontrack.feed
 
 import androidx.compose.runtime.Composable
 

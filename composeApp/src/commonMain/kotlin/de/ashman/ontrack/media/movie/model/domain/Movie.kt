@@ -2,7 +2,7 @@ package de.ashman.ontrack.media.movie.model.domain
 
 data class Movie(
     val id: Int,
-    val title: String? = null,
+    val title: String,
     val originalTitle: String? = null,
     val originalLanguage: String? = null,
     val overview: String? = null,

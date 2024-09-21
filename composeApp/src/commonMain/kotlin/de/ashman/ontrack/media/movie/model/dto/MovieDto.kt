@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MovieDto(
     val id: Int,
-    val title: String? = null,
+    val title: String,
     val originalTitle: String? = null,
     val originalLanguage: String? = null,
     val overview: String? = null,

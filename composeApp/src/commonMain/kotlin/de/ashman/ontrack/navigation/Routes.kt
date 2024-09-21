@@ -9,6 +9,15 @@ object Login
 object Home
 
 @Serializable
+data class Movie(
+    val id: Int,
+)
+
+/*data class MediaDetails(
+    val id: String,
+)*/
+
+@Serializable
 data object Feed
 
 /*@Serializable
