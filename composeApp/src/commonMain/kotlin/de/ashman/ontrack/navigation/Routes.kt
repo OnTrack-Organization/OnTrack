@@ -5,8 +5,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 object Login
 
+// BOTTOM NAVIGATION
 @Serializable
 object Home
+
+@Serializable
+data object Feed
+
+@Serializable
+data object Shelf
 
 @Serializable
 data class Movie(
@@ -16,9 +23,6 @@ data class Movie(
 /*data class MediaDetails(
     val id: String,
 )*/
-
-@Serializable
-data object Feed
 
 /*@Serializable
 data class Detail(

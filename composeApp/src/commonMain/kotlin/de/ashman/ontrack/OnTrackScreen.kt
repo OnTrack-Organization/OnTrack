@@ -53,12 +53,7 @@ fun OnTrackScreen(
 
                             selectedRoute.value = navItem
                         },
-                        icon = {
-                            Icon(
-                                imageVector = navItem.icon,
-                                contentDescription = navItem.title,
-                            )
-                        },
+                        icon = { navItem.icon() },
                         label = {
                             Text(
                                 text = navItem.title,

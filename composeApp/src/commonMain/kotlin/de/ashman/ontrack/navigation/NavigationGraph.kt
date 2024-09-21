@@ -39,6 +39,10 @@ fun NavigationGraph() {
             FeedScreen()
         }
 
+        composable<Shelf> {
+
+        }
+
         composable<Movie> { backStackEntry ->
             val movie: Movie = backStackEntry.toRoute()
 

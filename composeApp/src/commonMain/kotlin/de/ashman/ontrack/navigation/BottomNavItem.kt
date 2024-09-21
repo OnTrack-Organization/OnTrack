@@ -3,17 +3,22 @@ package de.ashman.ontrack.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelves
+import org.jetbrains.compose.resources.vectorResource
 
 sealed class BottomNavItem(
     val title: String,
     val route: Any,
-    val icon: ImageVector
+    val icon: @Composable () -> Unit,
 ) {
-    object HomeNav : BottomNavItem("Home", Home, Icons.Default.Home)
-    object FeedNav : BottomNavItem("Feed", Feed, Icons.Default.Forum)
+    data object HomeNav : BottomNavItem("Home", Home, { Icon(Icons.Default.Home, "Home Icon") })
+    data object FeedNav : BottomNavItem("Feed", Feed, { Icon(Icons.Default.Forum, "Feed Icon") })
+    data object ShelfNav : BottomNavItem("Shelf", Shelf, { Icon(vectorResource(Res.drawable.shelves), "Shelf Icon") })
 
     companion object {
-        val items: List<BottomNavItem> = listOf(HomeNav, FeedNav)
+        val items: List<BottomNavItem> = listOf(HomeNav, FeedNav, ShelfNav)
     }
 }
