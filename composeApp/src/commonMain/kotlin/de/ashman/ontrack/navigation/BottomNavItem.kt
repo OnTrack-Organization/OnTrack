@@ -11,12 +11,12 @@ import org.jetbrains.compose.resources.vectorResource
 
 sealed class BottomNavItem(
     val title: String,
-    val route: Any,
+    val route: Route,
     val icon: @Composable () -> Unit,
 ) {
-    data object HomeNav : BottomNavItem("Home", Home, { Icon(Icons.Default.Home, "Home Icon") })
-    data object FeedNav : BottomNavItem("Feed", Feed, { Icon(Icons.Default.Forum, "Feed Icon") })
-    data object ShelfNav : BottomNavItem("Shelf", Shelf, { Icon(vectorResource(Res.drawable.shelves), "Shelf Icon") })
+    data object HomeNav : BottomNavItem("Home", Route.Home, { Icon(Icons.Default.Home, "Home Icon") })
+    data object FeedNav : BottomNavItem("Feed", Route.Feed, { Icon(Icons.Default.Forum, "Feed Icon") })
+    data object ShelfNav : BottomNavItem("Shelf", Route.Shelf, { Icon(vectorResource(Res.drawable.shelves), "Shelf Icon") })
 
     companion object {
         val items: List<BottomNavItem> = listOf(HomeNav, FeedNav, ShelfNav)

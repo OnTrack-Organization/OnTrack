@@ -14,25 +14,28 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.toRoute
 import de.ashman.ontrack.navigation.BottomNavItem
+import de.ashman.ontrack.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnTrackScreen(
-    onClickNavItem: (Any) -> Unit = {},
+    navController: NavController,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val selectedRoute = remember { mutableStateOf(BottomNavItem.items.first()) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text(selectedRoute.value.title)
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(
                         // TODO open burger menu sidebar or similar
@@ -45,18 +48,16 @@ fun OnTrackScreen(
         },
         bottomBar = {
             NavigationBar {
-                BottomNavItem.items.forEach { navItem ->
+                BottomNavItem.items.forEach { route ->
                     NavigationBarItem(
-                        selected = selectedRoute.value == navItem,
+                        selected = currentRoute?.hierarchy?.any { it.route == route.route::class.qualifiedName } == true,
                         onClick = {
-                            onClickNavItem(navItem.route)
-
-                            selectedRoute.value = navItem
+                            navController.navigate(route.route)
                         },
-                        icon = { navItem.icon() },
+                        icon = { route.icon() },
                         label = {
                             Text(
-                                text = navItem.title,
+                                text = route.title,
                                 fontSize = 10.sp,
                                 softWrap = false,
                             )

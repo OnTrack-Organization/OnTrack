@@ -1,10 +1,11 @@
-package de.ashman.ontrack.feed
+package de.ashman.ontrack.shelf
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import de.ashman.ontrack.OnTrackScreen
 
 @Composable
-fun FeedScreen(
+fun ShelfScreen(
     modifier: Modifier = Modifier
 ) {
 }
