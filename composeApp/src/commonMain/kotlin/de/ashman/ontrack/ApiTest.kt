@@ -28,7 +28,7 @@ import org.koin.compose.koinInject
 @Composable
 fun ApiTest(
     modifier: Modifier = Modifier,
-    goToDetail: (Int) -> Unit,
+    goToDetail: (Int) -> Unit = {},
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),
@@ -49,79 +49,76 @@ fun ApiTest(
     // TODO anders eventuell
     userViewModel.getUser()
     var text by remember { mutableStateOf("") }
+    /*AsyncImage(
+       model = ImageRequest.Builder(LocalPlatformContext.current)
+            .data("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg")
+           .build(),
+        contentDescription = ""
+    )
+    Image(
+        rememberAsyncImagePainter("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg"), contentDescription = null
+    )
+    AsyncImage(
+        modifier = Modifier.size(200.dp),
+        model = "https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg",
+        contentDescription = ""
+    )*/
 
-    Column(modifier = modifier) {
-        /*AsyncImage(
-           model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg")
-               .build(),
-            contentDescription = ""
-        )
-        Image(
-            rememberAsyncImagePainter("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg"), contentDescription = null
-        )
-        AsyncImage(
-            modifier = Modifier.size(200.dp),
-            model = "https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg",
-            contentDescription = ""
-        )*/
+    LazyColumn(
+        modifier = modifier
+    ) {
+        item { Text(userState.user?.name ?: "Nobody logged in") }
 
-        LazyColumn(
-            modifier = modifier
-        ) {
-            item { Text(userState.user?.name ?: "Nobody logged in") }
-
-            item {
-                Button(
-                    onClick = { userViewModel.logoutUser() }
-                ) {
-                    Text("Logout")
-                }
+        item {
+            Button(
+                onClick = { userViewModel.logoutUser() }
+            ) {
+                Text("Logout")
             }
-            item {
-                TextField(
-                    value = text,
-                    onValueChange = { newText ->
-                        text = newText
-                    },
-                    label = { Text("Search for movies") },
-                )
-            }
-
-            item {
-                Button(
-                    onClick = {
-                        movieViewModel.fetchMoviesByKeyword(text)
-                    },
-                ) {
-                    Text("Search")
-                }
-            }
-
-            items(movieState.movies) {
-                Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
-                Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
-                AsyncImage(
-                    model = "https://image.tmdb.org/t/p/original${it.posterPath}",
-                    contentDescription = "Poster"
-                )
-                Button(onClick = { goToDetail(it.id) }) {
-                    Text("Go To Details")
-                }
-            }
-
-            item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }
-            item { if (musicState.artists.isNotEmpty()) Text("${musicState.artists.first()}") }
-            item { Text("BOARD GAMES", style = MaterialTheme.typography.titleLarge) }
-            item { if (bgState.boardGames.isNotEmpty()) Text("${bgState.boardGames.first()}") }
-            item { Text("GAMES", style = MaterialTheme.typography.titleLarge) }
-            item { if (gameState.games.isNotEmpty()) Text("${gameState.games.first()}") }
-            item { Text("MOVIES", style = MaterialTheme.typography.titleLarge) }
-            item { if (movieState.movies.isNotEmpty()) Text("${movieState.movies.first()}") }
-            item { Text("SHOWS", style = MaterialTheme.typography.titleLarge) }
-            item { if (showState.shows.isNotEmpty()) Text("${showState.shows.first()}") }
-            item { Text("BOOKS", style = MaterialTheme.typography.titleLarge) }
-            item { if (bookState.books.isNotEmpty()) Text("${bookState.books.first()}") }
         }
+        item {
+            TextField(
+                value = text,
+                onValueChange = { newText ->
+                    text = newText
+                },
+                label = { Text("Search for movies") },
+            )
+        }
+
+        item {
+            Button(
+                onClick = {
+                    movieViewModel.fetchMoviesByKeyword(text)
+                },
+            ) {
+                Text("Search")
+            }
+        }
+
+        items(movieState.movies) {
+            Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
+            Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
+            AsyncImage(
+                model = "https://image.tmdb.org/t/p/original${it.posterPath}",
+                contentDescription = "Poster"
+            )
+            Button(onClick = { goToDetail(it.id) }) {
+                Text("Go To Details")
+            }
+        }
+
+        item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }
+        item { if (musicState.artists.isNotEmpty()) Text("${musicState.artists.first()}") }
+        item { Text("BOARD GAMES", style = MaterialTheme.typography.titleLarge) }
+        item { if (bgState.boardGames.isNotEmpty()) Text("${bgState.boardGames.first()}") }
+        item { Text("GAMES", style = MaterialTheme.typography.titleLarge) }
+        item { if (gameState.games.isNotEmpty()) Text("${gameState.games.first()}") }
+        item { Text("MOVIES", style = MaterialTheme.typography.titleLarge) }
+        item { if (movieState.movies.isNotEmpty()) Text("${movieState.movies.first()}") }
+        item { Text("SHOWS", style = MaterialTheme.typography.titleLarge) }
+        item { if (showState.shows.isNotEmpty()) Text("${showState.shows.first()}") }
+        item { Text("BOOKS", style = MaterialTheme.typography.titleLarge) }
+        item { if (bookState.books.isNotEmpty()) Text("${bookState.books.first()}") }
     }
 }

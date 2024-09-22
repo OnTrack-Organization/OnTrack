@@ -23,62 +23,60 @@ import dev.gitlive.firebase.auth.auth
 fun NavigationGraph() {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = if (Firebase.auth.currentUser != null) Route.Home else Route.Login,
-    ) {
-        composable<Route.Login> {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Route.Home)
-                }
-            )
+    OnTrackScreen(navController) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Home else Route.Login,
+        ) {
+            composable<Route.Login> {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate(Route.Home)
+                    }
+                )
+            }
+
+            composable<Route.Movie> { backStackEntry ->
+                val movie: Route.Movie = backStackEntry.toRoute()
+
+                MovieScreen(
+                    id = movie.id,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            mainGraph(modifier = Modifier.fillMaxSize().padding(padding), navController)
         }
-
-        composable<Route.Movie> { backStackEntry ->
-            val movie: Route.Movie = backStackEntry.toRoute()
-
-            MovieScreen(
-                id = movie.id,
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        mainGraph(navController)
     }
 }
 
+fun NavGraphBuilder.mediaGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+) {
+
+}
+
 fun NavGraphBuilder.mainGraph(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
     composable<Route.Home> {
-        OnTrackScreen(
-            navController,
-        ) { innerPadding ->
-            HomeScreen(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                goToDetail = { id -> navController.navigate(Route.Movie(id)) }
-            )
-        }
+        HomeScreen(
+            modifier = modifier,
+            goToDetail = { id -> navController.navigate(Route.Movie(id)) }
+        )
     }
 
     composable<Route.Feed> {
-        OnTrackScreen(
-            navController
-        ) { innerPadding ->
-            FeedScreen(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-            )
-        }
+        FeedScreen(
+            modifier = modifier,
+        )
     }
 
     composable<Route.Shelf> {
-        OnTrackScreen(
-            navController
-        ) { innerPadding ->
-            ShelfScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
+        ShelfScreen(
+            modifier = modifier
+        )
     }
 }
