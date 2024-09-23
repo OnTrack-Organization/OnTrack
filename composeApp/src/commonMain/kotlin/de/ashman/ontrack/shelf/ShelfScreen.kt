@@ -96,19 +96,16 @@ fun MediaCard(
 }
 
 @Composable
-private fun MediaCountRow(statusTypes: List<StatusType?>) {
-    Row {
+private fun MediaCountRow(statusTypes: List<StatusType>) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         statusTypes.forEach {
-            Box(
-                modifier = Modifier.weight(1f)
-            ) {
-                if (it != null) {
-                    MediaCount(
-                        count = 0,
-                        statusType = it
-                    )
-                }
-            }
+
+                MediaCount(
+                    count = 0,
+                    statusType = it
+                )
         }
         Spacer(modifier = Modifier.weight(1f))
     }
@@ -199,37 +196,37 @@ enum class MediaType(
     val title: StringResource,
     val icon: @Composable () -> ImageVector,
     val iconDescription: String,
-    val statusTypes: List<StatusType?>? = null,
+    val statusTypes: List<StatusType>? = null,
 ) {
     MOVIES(
         title = Res.string.shelf_title_movies,
         icon = { Icons.Default.Movie },
         iconDescription = "Movie Icon",
-        statusTypes = listOf(null, StatusType.WATCHED, StatusType.DROPPED, StatusType.CATALOG)
+        statusTypes = listOf(StatusType.WATCHED, StatusType.CATALOG, StatusType.DROPPED)
     ),
     SHOWS(
         title = Res.string.shelf_title_shows,
         icon = { Icons.Default.Tv },
         iconDescription = "Show Icon",
-        statusTypes = listOf(StatusType.BINGING, StatusType.BINGED, StatusType.DROPPED, StatusType.CATALOG)
+        statusTypes = listOf(StatusType.BINGED, StatusType.CATALOG, StatusType.DROPPED, StatusType.BINGING)
     ),
     BOOKS(
         title = Res.string.shelf_title_books,
         icon = { Icons.Default.AutoStories },
         iconDescription = "Book Icon",
-        statusTypes = listOf(StatusType.READING, StatusType.READ, StatusType.DROPPED, StatusType.CATALOG)
+        statusTypes = listOf(StatusType.READ, StatusType.CATALOG, StatusType.DROPPED, StatusType.READING)
     ),
     VIDEOGAMES(
         title = Res.string.shelf_title_videogames,
         icon = { Icons.Default.SportsEsports },
         iconDescription = "Videogame Icon",
-        statusTypes = listOf(StatusType.PLAYING, StatusType.PLAYED, StatusType.DROPPED, StatusType.CATALOG)
+        statusTypes = listOf(StatusType.PLAYED, StatusType.CATALOG, StatusType.DROPPED, StatusType.PLAYING)
     ),
     BOARDGAMES(
         title = Res.string.shelf_title_boardgames,
         icon = { vectorResource(Res.drawable.playingcards) },
         iconDescription = "Boardgame Icon",
-        statusTypes = listOf(null, StatusType.PLAYED, null, StatusType.CATALOG)
+        statusTypes = listOf(StatusType.PLAYED, StatusType.CATALOG)
     ),
     MUSIC(
         title = Res.string.shelf_title_music,
