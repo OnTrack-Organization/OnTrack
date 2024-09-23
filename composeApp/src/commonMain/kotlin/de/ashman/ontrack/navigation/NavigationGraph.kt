@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,7 +27,8 @@ fun NavigationGraph() {
     OnTrackScreen(navController) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (Firebase.auth.currentUser != null) Route.Home else Route.Login,
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            startDestination = if (Firebase.auth.currentUser != null) Route.Shelf else Route.Login,
         ) {
             composable<Route.Login> {
                 LoginScreen(
@@ -45,38 +47,36 @@ fun NavigationGraph() {
                 )
             }
 
-            mainGraph(modifier = Modifier.fillMaxSize().padding(padding), navController)
+            mainGraph(navController)
+            shelfGraph(navController)
         }
     }
 }
 
-fun NavGraphBuilder.mediaGraph(
-    modifier: Modifier = Modifier,
+fun NavGraphBuilder.shelfGraph(
     navController: NavHostController,
 ) {
-
+    composable<Route.ShelfList> {
+        //TODO die liste implementieren
+    }
 }
 
 fun NavGraphBuilder.mainGraph(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
     composable<Route.Home> {
         HomeScreen(
-            modifier = modifier,
             goToDetail = { id -> navController.navigate(Route.Movie(id)) }
         )
     }
 
     composable<Route.Feed> {
-        FeedScreen(
-            modifier = modifier,
-        )
+        FeedScreen()
     }
 
     composable<Route.Shelf> {
         ShelfScreen(
-            modifier = modifier
+            goToShelf = { mediaType -> navController.navigate(Route.ShelfList(mediaType)) }
         )
     }
 }

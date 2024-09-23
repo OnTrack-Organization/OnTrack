@@ -1,0 +1,8 @@
+<resources>
+    <string name="shelf_title_movies">Movies</string>
+    <string name="shelf_title_shows">Shows</string>
+    <string name="shelf_title_videogames">Videogames</string>
+    <string name="shelf_title_boardgames">Boardgames</string>
+    <string name="shelf_title_books">Books</string>
+    <string name="shelf_title_music">Music</string>
+</resources>
