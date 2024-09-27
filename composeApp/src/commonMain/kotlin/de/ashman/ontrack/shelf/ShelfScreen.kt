@@ -24,11 +24,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.media.movie.ui.MovieViewModel
+import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
+import kotlinx.serialization.Serializable
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.playingcards
 import ontrack.composeapp.generated.resources.shelf_title_boardgames
@@ -40,21 +45,32 @@ import ontrack.composeapp.generated.resources.shelf_title_videogames
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import org.koin.compose.koinInject
 
 @Composable
 fun ShelfScreen(
     modifier: Modifier = Modifier,
     goToShelf: (MediaType) -> Unit = {},
+    movieViewModel: MovieViewModel = koinInject(),
 ) {
+    val uiState by movieViewModel.uiState.collectAsState()
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         MediaType.entries.forEach { mediaType ->
+            val counts = when (mediaType) {
+                MediaType.MOVIES -> uiState.statusCounts
+                // Add more cases for each media type
+                else -> emptyMap()
+            }
+
             MediaCard(
                 modifier = Modifier.weight(1f),
                 mediaType = mediaType,
+                counts = counts,
                 goToShelf = goToShelf,
             )
         }
@@ -65,6 +81,7 @@ fun ShelfScreen(
 fun MediaCard(
     modifier: Modifier = Modifier,
     mediaType: MediaType,
+    counts: Map<StatusType, Int>,
     goToShelf: (MediaType) -> Unit = {},
 ) {
     ElevatedCard(
@@ -83,7 +100,11 @@ fun MediaCard(
                 MediaTitle(mediaType.title)
 
                 if (mediaType.statusTypes != null) {
-                    MediaCountRow(mediaType.statusTypes)
+                    MediaCountRow(
+                        statusTypes = mediaType.statusTypes,
+                        mediaType = mediaType,
+                        counts = counts,
+                    )
                 }
             }
             Icon(
@@ -96,16 +117,20 @@ fun MediaCard(
 }
 
 @Composable
-private fun MediaCountRow(statusTypes: List<StatusType>) {
+private fun MediaCountRow(
+    mediaType: MediaType,
+    statusTypes: List<StatusType>,
+    counts: Map<StatusType, Int>
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         statusTypes.forEach {
-
-                MediaCount(
-                    count = 0,
-                    statusType = it
-                )
+            MediaCount(
+                count = counts[it] ?: 0,
+                statusType = it,
+                mediaType = mediaType,
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
     }
@@ -115,11 +140,12 @@ private fun MediaCountRow(statusTypes: List<StatusType>) {
 fun MediaCount(
     count: Int,
     statusType: StatusType,
+    mediaType: MediaType
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Icon(imageVector = statusType.icon(), contentDescription = statusType.iconDescription)
+        Icon(imageVector = mediaType.getStatusIcon(statusType), contentDescription = statusType.name)
         Text("$count")
     }
 }
@@ -133,70 +159,16 @@ private fun MediaTitle(mediaTitle: StringResource) {
     )
 }
 
-enum class StatusType(
-    val title: String,
-    val icon: @Composable () -> ImageVector,
-    val iconDescription: String,
-) {
-    // CURRENT
-    BINGING(
-        title = "Binging",
-        icon = { Icons.Outlined.Visibility },
-        iconDescription = "Binging Icon"
-    ),
-    PLAYING(
-        title = "Playing",
-        icon = { Icons.Outlined.Visibility },
-        iconDescription = "Watching Icon"
-    ),
-    READING(
-        title = "Reading",
-        icon = { Icons.Outlined.Visibility },
-        iconDescription = "Watching Icon"
-    ),
-
-    // DONE
-    WATCHED(
-        title = "Watched",
-        icon = { Icons.Outlined.Done },
-        iconDescription = "Watched Icon"
-    ),
-    BINGED(
-        title = "Binged",
-        icon = { Icons.Outlined.Done },
-        iconDescription = "Binged Icon"
-    ),
-    READ(
-        title = "Read",
-        icon = { Icons.Outlined.Done },
-        iconDescription = "Read Icon"
-    ),
-    PLAYED(
-        title = "Played",
-        icon = { Icons.Outlined.Done },
-        iconDescription = "Played Icon"
-    ),
-
-    // DROPPED
-    DROPPED(
-        title = "Dropped",
-        icon = { Icons.Outlined.VisibilityOff },
-        iconDescription = "Dropped Icon"
-    ),
-
-    // CATALOG
-    CATALOG(
-        title = "Catalog",
-        icon = { Icons.Outlined.BookmarkAdd },
-        iconDescription = "Catalog Icon"
-    ),
+@Serializable
+enum class StatusType {
+    BINGING, PLAYING, READING, WATCHED, BINGED, READ, PLAYED, DROPPED, CATALOG
 }
 
 enum class MediaType(
     val title: StringResource,
     val icon: @Composable () -> ImageVector,
     val iconDescription: String,
-    val statusTypes: List<StatusType>? = null,
+    val statusTypes: List<StatusType>? = null
 ) {
     MOVIES(
         title = Res.string.shelf_title_movies,
@@ -231,6 +203,17 @@ enum class MediaType(
     MUSIC(
         title = Res.string.shelf_title_music,
         icon = { Icons.Default.Album },
-        iconDescription = "Music Icon",
-    ),
+        iconDescription = "Music Icon"
+    );
+
+    // Extension function for getting the icon and description based on StatusType
+    @Composable
+    fun getStatusIcon(statusType: StatusType): ImageVector {
+        return when (statusType) {
+            StatusType.BINGING, StatusType.PLAYING, StatusType.READING -> Icons.Outlined.Visibility
+            StatusType.WATCHED, StatusType.BINGED, StatusType.READ, StatusType.PLAYED -> Icons.Outlined.Done
+            StatusType.DROPPED -> Icons.Outlined.VisibilityOff
+            StatusType.CATALOG -> Icons.Outlined.BookmarkAdd
+        }
+    }
 }

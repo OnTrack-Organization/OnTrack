@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media.movie.model.entity
 
-import de.ashman.ontrack.media.movie.model.domain.WatchStatus
+import de.ashman.ontrack.shelf.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,5 +20,5 @@ data class MovieEntity(
     val status: String? = null,
     val voteAverage: Double? = null,
 
-    val watchStatus: WatchStatus? = null,
+    val watchStatus: StatusType,
 )

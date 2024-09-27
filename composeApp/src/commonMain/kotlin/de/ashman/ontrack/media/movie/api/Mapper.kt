@@ -35,5 +35,6 @@ fun Movie.toEntity(): MovieEntity {
         status = status,
         title = title,
         voteAverage = voteAverage,
+        watchStatus = watchStatus
     )
 }

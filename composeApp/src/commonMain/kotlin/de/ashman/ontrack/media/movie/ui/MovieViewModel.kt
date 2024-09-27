@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.movie.api.MovieRepository
 import de.ashman.ontrack.media.movie.api.toEntity
+import de.ashman.ontrack.shelf.StatusType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,7 @@ class MovieViewModel(
 
     init {
         fetchMoviesByKeyword("attack on titan")
+        fetchStatusCounts()
     }
 
     fun fetchMoviesByKeyword(keyword: String) {
@@ -42,4 +44,15 @@ class MovieViewModel(
         }
     }
 
+    private fun fetchStatusCounts() {
+        viewModelScope.launch {
+            val savedMovies = userService.getSavedMovies()
+
+            val counts = savedMovies
+                .groupingBy { it.watchStatus }
+                .eachCount()
+
+            _uiState.value = _uiState.value.copy(statusCounts = counts)
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package de.ashman.ontrack.media.movie.model.domain
 
+import de.ashman.ontrack.shelf.StatusType
+
 data class Movie(
     val id: Int,
     val title: String,
@@ -17,5 +19,6 @@ data class Movie(
     val voteAverage: Double? = null,
 
     // OWN FIELDS
-    val watchStatus: WatchStatus? = null,
+    // Default to Watched
+    val watchStatus: StatusType = StatusType.WATCHED,
 )

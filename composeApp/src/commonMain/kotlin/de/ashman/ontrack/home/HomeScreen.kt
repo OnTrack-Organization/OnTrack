@@ -17,10 +17,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     goToDetail: (Int) -> Unit,
 ) {
-    /*ApiTest(
+    ApiTest(
         modifier = modifier,
         goToDetail = goToDetail,
-    )*/
+    )
     /*Column(modifier.clickable { goToDetail(1234) }) {
         Text("Home")
     }*/
