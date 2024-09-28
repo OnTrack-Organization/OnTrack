@@ -16,6 +16,7 @@ import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
 import de.ashman.ontrack.media.movie.ui.MovieScreen
+import de.ashman.ontrack.shelf.MediaType
 import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase
@@ -60,8 +61,9 @@ fun NavGraphBuilder.shelfGraph(
     composable<Route.ShelfList> { backStackEntry ->
         val shelfList: Route.ShelfList = backStackEntry.toRoute()
 
+        val mediaTypeEnum = MediaType.valueOf(shelfList.mediaType.uppercase())
         //TODO die liste implementieren
-        ShelfListScreen(shelfList.mediaType)
+        ShelfListScreen(mediaTypeEnum)
     }
 }
 
@@ -80,7 +82,7 @@ fun NavGraphBuilder.mainGraph(
 
     composable<Route.Shelf> {
         ShelfScreen(
-            goToShelf = { mediaType -> navController.navigate(Route.ShelfList(mediaType)) }
+            goToShelf = { mediaType -> navController.navigate(Route.ShelfList(mediaType.name)) }
         )
     }
 }

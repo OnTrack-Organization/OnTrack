@@ -20,7 +20,7 @@ sealed class Route {
 
     @Serializable
     data class ShelfList(
-        val mediaType: MediaType,
+        val mediaType: String,
     ) : Route()
 
     @Serializable

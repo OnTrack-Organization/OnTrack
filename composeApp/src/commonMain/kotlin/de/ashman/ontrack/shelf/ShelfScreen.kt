@@ -63,13 +63,13 @@ fun ShelfScreen(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
+        /*Text(
             modifier = Modifier.padding(vertical = 20.dp),
             // TODO aus user viewmodel lieber
             text = "${Firebase.auth.currentUser?.displayName}'s Shelf",
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold
-        )
+        )*/
 
         MediaType.entries.forEach { mediaType ->
             val counts = when (mediaType) {
