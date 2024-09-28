@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import de.ashman.ontrack.ApiTest
 import de.ashman.ontrack.OnTrackScreen
@@ -18,7 +19,7 @@ fun HomeScreen(
     goToDetail: (Int) -> Unit,
 ) {
     ApiTest(
-        modifier = modifier,
+        modifier = modifier.padding(16.dp),
         goToDetail = goToDetail,
     )
     /*Column(modifier.clickable { goToDetail(1234) }) {

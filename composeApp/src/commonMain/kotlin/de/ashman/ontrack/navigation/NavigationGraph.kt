@@ -16,6 +16,7 @@ import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
 import de.ashman.ontrack.media.movie.ui.MovieScreen
+import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -27,7 +28,7 @@ fun NavigationGraph() {
     OnTrackScreen(navController) { padding ->
         NavHost(
             navController = navController,
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding),
             startDestination = if (Firebase.auth.currentUser != null) Route.Shelf else Route.Login,
         ) {
             composable<Route.Login> {
@@ -56,8 +57,11 @@ fun NavigationGraph() {
 fun NavGraphBuilder.shelfGraph(
     navController: NavHostController,
 ) {
-    composable<Route.ShelfList> {
+    composable<Route.ShelfList> { backStackEntry ->
+        val shelfList: Route.ShelfList = backStackEntry.toRoute()
+
         //TODO die liste implementieren
+        ShelfListScreen(shelfList.mediaType)
     }
 }
 

@@ -36,7 +36,7 @@ fun OnTrackScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            /*CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(
@@ -46,7 +46,7 @@ fun OnTrackScreen(
                     )
                 },
                 actions = {}
-            )
+            )*/
         },
         bottomBar = {
             BottomAppBar(navController)
