@@ -1,24 +1,48 @@
 package de.ashman.ontrack.media.movie.model.entity
 
+import de.ashman.ontrack.media.common.model.GenreEntity
+import de.ashman.ontrack.media.common.model.ProductionCompanyEntity
+import de.ashman.ontrack.media.common.model.ProductionCountryEntity
+import de.ashman.ontrack.media.common.model.SpokenLanguageDto
 import de.ashman.ontrack.shelf.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieEntity(
+    val adult: Boolean?,
+    val backdropPath: String?,
+    val belongsToCollection: CollectionEntity?,
+    val budget: Long?,
+    val genres: List<GenreEntity>?,
+    val homepage: String?,
     val id: Int,
-    val title: String? = null,
-    val originalTitle: String? = null,
-    val originalLanguage: String? = null,
-    val overview: String? = null,
-
-    val backdropPath: String? = null,
-    val posterPath: String? = null,
-    val releaseDate: String? = null,
-
-    val adult: Boolean? = null,
-    val runtime: Int? = null,
-    val status: String? = null,
-    val voteAverage: Double? = null,
+    val imdbId: String?,
+    val originCountry: List<String>?,
+    val originalLanguage: String?,
+    val originalTitle: String?,
+    val overview: String?,
+    val popularity: Double?,
+    val posterPath: String?,
+    val productionCompanies: List<ProductionCompanyEntity>?,
+    val productionCountries: List<ProductionCountryEntity>?,
+    val releaseDate: String?,
+    val revenue: Long?,
+    val runtime: Int?,
+    val spokenLanguages: List<SpokenLanguageDto>?,
+    val status: String?,
+    val tagline: String?,
+    val title: String,
+    val video: Boolean?,
+    val voteAverage: Double?,
+    val voteCount: Int?,
 
     val watchStatus: StatusType,
+)
+
+@Serializable
+data class CollectionEntity(
+    val id: Int,
+    val name: String,
+    val posterPath: String,
+    val backdropPath: String
 )

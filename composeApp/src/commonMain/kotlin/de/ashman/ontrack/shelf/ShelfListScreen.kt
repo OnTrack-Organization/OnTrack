@@ -42,23 +42,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.media.movie.model.domain.Movie
+import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
-val shelfItems = listOf(
+/*val shelfItems = listOf(
     Movie(id = 1, title = "Attack on Titan", watchStatus = StatusType.WATCHED),
     Movie(id = 2, title = "Demon Slayer", watchStatus = StatusType.CATALOG),
     Movie(id = 3, title = "Breaking Bad", watchStatus = StatusType.CATALOG),
     Movie(id = 4, title = "Game of Thrones", watchStatus = StatusType.WATCHED),
     Movie(id = 5, title = "Naruto", watchStatus = StatusType.DROPPED),
-)
+)*/
+val shelfItems = emptyList<Movie>()
 
 // TODO screen hat eine column mit allen einträgen, pager, searchbar, fab und bottomsheet mit settings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShelfListScreen(
     mediaType: MediaType,
+    movieViewModel: MovieViewModel = koinInject(),
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberBottomSheetScaffoldState(rememberStandardBottomSheetState())

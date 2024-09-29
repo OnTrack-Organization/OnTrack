@@ -68,7 +68,6 @@ fun ApiTest(
         modifier = modifier
     ) {
         item { Text(userState.user?.name ?: "Nobody logged in") }
-
         item {
             Button(
                 onClick = { userViewModel.logoutUser() }
@@ -82,10 +81,9 @@ fun ApiTest(
                 onValueChange = { newText ->
                     text = newText
                 },
-                label = { Text("Search for movies") },
+                label = { Text("Search...") },
             )
         }
-
         item {
             Button(
                 onClick = {

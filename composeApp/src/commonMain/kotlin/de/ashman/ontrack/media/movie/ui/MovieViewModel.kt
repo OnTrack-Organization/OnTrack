@@ -5,14 +5,13 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.movie.api.MovieRepository
 import de.ashman.ontrack.media.movie.api.toEntity
-import de.ashman.ontrack.shelf.StatusType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MovieViewModel(
-    private val movieRepository: MovieRepository,
+    private val repository: MovieRepository,
     private val userService: UserService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MovieUiState())
@@ -25,14 +24,14 @@ class MovieViewModel(
 
     fun fetchMoviesByKeyword(keyword: String) {
         viewModelScope.launch {
-            val movies = movieRepository.fetchMoviesByKeyword(keyword)
+            val movies = repository.fetchMediaByKeyword(keyword)
             _uiState.value = _uiState.value.copy(movies = movies)
         }
     }
 
     fun fetchMovieDetails(id: Int) {
         viewModelScope.launch {
-            val movie = movieRepository.fetchMediaDetails(id)
+            val movie = repository.fetchMediaDetails(id)
             _uiState.value = _uiState.value.copy(selectedMovie = movie)
         }
     }

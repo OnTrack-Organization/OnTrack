@@ -1,34 +1,34 @@
 package de.ashman.ontrack.media.show.api
 
-import de.ashman.ontrack.media.common.mapper.toDomain
+import de.ashman.ontrack.media.common.mapper.toEntity
 import de.ashman.ontrack.media.show.model.domain.CreatedBy
 import de.ashman.ontrack.media.show.model.domain.LastEpisodeToAir
 import de.ashman.ontrack.media.show.model.domain.Network
 import de.ashman.ontrack.media.show.model.domain.Season
 import de.ashman.ontrack.media.show.model.domain.Show
-import de.ashman.ontrack.media.show.model.dto.CreatedByDto
-import de.ashman.ontrack.media.show.model.dto.LastEpisodeToAirDto
-import de.ashman.ontrack.media.show.model.dto.NetworkDto
-import de.ashman.ontrack.media.show.model.dto.SeasonDto
-import de.ashman.ontrack.media.show.model.dto.ShowDto
+import de.ashman.ontrack.media.show.model.entity.CreatedByEntity
+import de.ashman.ontrack.media.show.model.entity.LastEpisodeToAirEntity
+import de.ashman.ontrack.media.show.model.entity.NetworkEntity
+import de.ashman.ontrack.media.show.model.entity.SeasonEntity
+import de.ashman.ontrack.media.show.model.entity.ShowEntity
 
-fun ShowDto.toDomain(): Show {
-    return Show(
+fun Show.toEntity(): ShowEntity {
+    return ShowEntity(
         adult = adult,
         backdropPath = backdropPath,
-        createdBy = createdBy?.map { it.toDomain() },
+        createdBy = createdBy?.map { it.toEntity() },
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
-        genres = genres?.map { it.toDomain() },
+        genres = genres?.map { it.toEntity() },
         homepage = homepage,
         id = id,
         inProduction = inProduction,
         languages = languages,
         lastAirDate = lastAirDate,
-        lastEpisodeToAir = lastEpisodeToAir?.toDomain(),
+        lastEpisodeToAir = lastEpisodeToAir?.toEntity(),
         name = name,
         nextEpisodeToAir = nextEpisodeToAir,
-        networks = networks?.map { it.toDomain() },
+        networks = networks?.map { it.toEntity() },
         numberOfEpisodes = numberOfEpisodes,
         numberOfSeasons = numberOfSeasons,
         originCountry = originCountry,
@@ -37,10 +37,10 @@ fun ShowDto.toDomain(): Show {
         overview = overview,
         popularity = popularity,
         posterPath = posterPath,
-        productionCompanies = productionCompanies?.map { it.toDomain() },
-        productionCountries = productionCountries?.map { it.toDomain() },
-        seasons = seasons?.map { it.toDomain() },
-        spokenLanguages = spokenLanguages?.map { it.toDomain() },
+        productionCompanies = productionCompanies?.map { it.toEntity() },
+        productionCountries = productionCountries?.map { it.toEntity() },
+        seasons = seasons?.map { it.toEntity() },
+        spokenLanguages = spokenLanguages?.map { it.toEntity() },
         status = status,
         tagline = tagline,
         type = type,
@@ -49,8 +49,8 @@ fun ShowDto.toDomain(): Show {
     )
 }
 
-fun CreatedByDto.toDomain(): CreatedBy {
-    return CreatedBy(
+fun CreatedBy.toEntity(): CreatedByEntity {
+    return CreatedByEntity(
         id = id,
         creditId = creditId,
         name = name,
@@ -60,8 +60,8 @@ fun CreatedByDto.toDomain(): CreatedBy {
     )
 }
 
-fun LastEpisodeToAirDto.toDomain(): LastEpisodeToAir {
-    return LastEpisodeToAir(
+fun LastEpisodeToAir.toEntity(): LastEpisodeToAirEntity {
+    return LastEpisodeToAirEntity(
         id = id,
         name = name,
         overview = overview,
@@ -78,13 +78,12 @@ fun LastEpisodeToAirDto.toDomain(): LastEpisodeToAir {
     )
 }
 
-fun NetworkDto.toDomain(): Network {
-    return Network(id = id, logoPath = logoPath, name = name, originCountry = originCountry)
+fun Network.toEntity(): NetworkEntity {
+    return NetworkEntity(id = id, logoPath = logoPath, name = name, originCountry = originCountry)
 }
 
-
-fun SeasonDto.toDomain(): Season {
-    return Season(
+fun Season.toEntity(): SeasonEntity {
+    return SeasonEntity(
         airDate = airDate,
         episodeCount = episodeCount,
         id = id,

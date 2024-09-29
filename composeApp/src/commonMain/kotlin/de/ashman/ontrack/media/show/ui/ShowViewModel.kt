@@ -9,23 +9,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ShowViewModel(
-    private val showRepository: ShowRepository,
+    private val repository: ShowRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShowUiState())
     val uiState: StateFlow<ShowUiState> = _uiState.asStateFlow()
 
     init {
-        fetchPopular()
+        fetchShowsByKeyword("attack on titan")
     }
 
-    fun fetchPopular() {
+    fun fetchShowsByKeyword(keyword: String) {
         viewModelScope.launch {
-            showRepository.fetchPopular().collect { shows ->
-                if (shows != null) _uiState.value = _uiState.value.copy(shows = shows)
-                shows?.forEach {
-                    println(it.name)
-                }
-            }
+            val shows = repository.fetchMediaByKeyword(keyword)
+            _uiState.value = _uiState.value.copy(shows = shows)
         }
     }
 }
