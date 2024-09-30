@@ -3,7 +3,7 @@ package de.ashman.ontrack.media.movie.model.domain
 import de.ashman.ontrack.media.common.model.Genre
 import de.ashman.ontrack.media.common.model.ProductionCompany
 import de.ashman.ontrack.media.common.model.ProductionCountry
-import de.ashman.ontrack.media.common.model.SpokenLanguageDto
+import de.ashman.ontrack.media.common.model.SpokenLanguage
 import de.ashman.ontrack.shelf.StatusType
 
 data class Movie(
@@ -26,7 +26,7 @@ data class Movie(
     val releaseDate: String?,
     val revenue: Long?,
     val runtime: Int?,
-    val spokenLanguages: List<SpokenLanguageDto>?,
+    val spokenLanguages: List<SpokenLanguage>?,
     val status: String?,
     val tagline: String?,
     val title: String,

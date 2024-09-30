@@ -9,23 +9,26 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class VideoGameViewModel(
-    private val videoGameRepository: VideoGameRepository,
+    private val repository: VideoGameRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(VideoGameUiState())
     val uiState: StateFlow<VideoGameUiState> = _uiState.asStateFlow()
 
     init {
-        fetchGames()
+        fetchGamesByKeyword("attack on titan")
     }
 
-    fun fetchGames() {
+    fun fetchGamesByKeyword(keyword: String) {
         viewModelScope.launch {
-            videoGameRepository.fetchGames().collect { games ->
-                if (games != null) _uiState.value = _uiState.value.copy(games = games)
-                games?.forEach {
-                    println("GAME " + it.name)
-                }
-            }
+            val games = repository.fetchMediaByKeyword(keyword)
+            _uiState.value = _uiState.value.copy(games = games)
+        }
+    }
+
+    fun fetchGameDetails(id: Int) {
+        viewModelScope.launch {
+            val game = repository.fetchMediaDetails(id)
+            _uiState.value = _uiState.value.copy(selectedGame = game)
         }
     }
 }

@@ -30,7 +30,7 @@ fun Movie.toEntity(): MovieEntity {
         title = title,
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
-        spokenLanguages = spokenLanguages,
+        spokenLanguages = spokenLanguages?.map { it.toEntity() },
         video = video,
         voteAverage = voteAverage,
         voteCount = voteCount,

@@ -30,7 +30,7 @@ fun NavigationGraph() {
         NavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize().padding(padding),
-            startDestination = if (Firebase.auth.currentUser != null) Route.Shelf else Route.Login,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Home else Route.Login,
         ) {
             composable<Route.Login> {
                 LoginScreen(

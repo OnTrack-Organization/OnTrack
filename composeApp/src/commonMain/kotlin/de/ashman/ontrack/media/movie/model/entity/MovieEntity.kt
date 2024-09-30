@@ -4,6 +4,7 @@ import de.ashman.ontrack.media.common.model.GenreEntity
 import de.ashman.ontrack.media.common.model.ProductionCompanyEntity
 import de.ashman.ontrack.media.common.model.ProductionCountryEntity
 import de.ashman.ontrack.media.common.model.SpokenLanguageDto
+import de.ashman.ontrack.media.common.model.SpokenLanguageEntity
 import de.ashman.ontrack.shelf.StatusType
 import kotlinx.serialization.Serializable
 
@@ -28,7 +29,7 @@ data class MovieEntity(
     val releaseDate: String?,
     val revenue: Long?,
     val runtime: Int?,
-    val spokenLanguages: List<SpokenLanguageDto>?,
+    val spokenLanguages: List<SpokenLanguageEntity>?,
     val status: String?,
     val tagline: String?,
     val title: String,

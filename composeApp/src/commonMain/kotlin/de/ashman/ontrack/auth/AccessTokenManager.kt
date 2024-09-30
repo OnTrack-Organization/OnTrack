@@ -30,13 +30,11 @@ class AccessTokenManager(
             parameter("grant_type", "client_credentials")
         }
 
-        println(response)
-
         val tokenResponse: AccessTokenResponse = response.body()
         accessToken = tokenResponse.accessToken
         tokenExpiration = Clock.System.now() + tokenResponse.expiresIn.seconds
 
-        println(tokenResponse)
+        println("TOKEN RESPONSE " + tokenResponse)
     }
 
     private fun isTokenExpired(): Boolean {

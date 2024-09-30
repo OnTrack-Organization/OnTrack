@@ -30,7 +30,7 @@ fun MovieDto.toDomain(): Movie {
         title = title,
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
-        spokenLanguages = spokenLanguages,
+        spokenLanguages = spokenLanguages?.map { it.toDomain() },
         video = video,
         voteAverage = voteAverage,
         voteCount = voteCount,
