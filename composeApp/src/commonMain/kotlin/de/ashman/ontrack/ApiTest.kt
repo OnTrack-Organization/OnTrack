@@ -94,8 +94,9 @@ fun ApiTest(
             }
         }
 
-        items(movieState.movies) {
-            Text(text = it.title, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
+        items(showState.shows) {
+            if (it.name != null)
+            Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addSelectedMovieToList() })
             Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/original${it.posterPath}",

@@ -1,9 +1,10 @@
 package de.ashman.ontrack.media.movie.api
 
-import de.ashman.ontrack.media.common.mapper.toEntity
 import de.ashman.ontrack.media.movie.model.domain.Collection
+import de.ashman.ontrack.media.movie.model.domain.Genre
 import de.ashman.ontrack.media.movie.model.domain.Movie
 import de.ashman.ontrack.media.movie.model.entity.CollectionEntity
+import de.ashman.ontrack.media.movie.model.entity.GenreEntity
 import de.ashman.ontrack.media.movie.model.entity.MovieEntity
 
 fun Movie.toEntity(): MovieEntity {
@@ -26,6 +27,13 @@ fun Movie.toEntity(): MovieEntity {
         voteAverage = voteAverage,
         voteCount = voteCount,
         watchStatus = watchStatus,
+    )
+}
+
+fun Genre.toEntity(): GenreEntity {
+    return GenreEntity(
+        id = id,
+        name = name
     )
 }
 

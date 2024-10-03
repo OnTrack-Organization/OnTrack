@@ -1,9 +1,10 @@
 package de.ashman.ontrack.media.movie.api
 
-import de.ashman.ontrack.media.common.mapper.toDomain
 import de.ashman.ontrack.media.movie.model.domain.Collection
+import de.ashman.ontrack.media.movie.model.domain.Genre
 import de.ashman.ontrack.media.movie.model.domain.Movie
 import de.ashman.ontrack.media.movie.model.dto.CollectionDto
+import de.ashman.ontrack.media.movie.model.dto.GenreDto
 import de.ashman.ontrack.media.movie.model.dto.MovieDto
 
 fun MovieDto.toDomain(): Movie {
@@ -25,6 +26,13 @@ fun MovieDto.toDomain(): Movie {
         originalTitle = originalTitle,
         voteAverage = voteAverage,
         voteCount = voteCount,
+    )
+}
+
+fun GenreDto.toDomain(): Genre {
+    return Genre(
+        id = id,
+        name = name
     )
 }
 

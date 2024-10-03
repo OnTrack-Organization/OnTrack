@@ -1,6 +1,5 @@
 package de.ashman.ontrack.media.movie.model.domain
 
-import de.ashman.ontrack.media.common.model.Genre
 import de.ashman.ontrack.shelf.StatusType
 
 data class Movie(
@@ -18,16 +17,21 @@ data class Movie(
     val revenue: Long?,
     val runtime: Int?,
     val status: String?,
-    val title: String,
+    val title: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
 
     val watchStatus: StatusType = StatusType.WATCHED,
 )
 
+data class Genre(
+    val id: Int,
+    val name: String?
+)
+
 data class Collection(
     val id: Int,
-    val name: String,
-    val posterPath: String,
-    val backdropPath: String
+    val name: String?,
+    val posterPath: String?,
+    val backdropPath: String?
 )
