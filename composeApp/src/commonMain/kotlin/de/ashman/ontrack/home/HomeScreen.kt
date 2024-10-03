@@ -26,14 +26,14 @@ fun HomeScreen(
     goToDetail: (Int) -> Unit,
     videoGameViewModel: VideoGameViewModel = koinInject()
 ) {
-    /*ApiTest(
+    ApiTest(
         modifier = modifier.padding(16.dp),
         goToDetail = goToDetail,
-    )*/
-    /*Column(modifier.clickable { goToDetail(1234) }) {
+    )
+   /* Column(modifier.clickable { goToDetail(1234) }) {
         Text("Home")
     }*/
-    val gameState by videoGameViewModel.uiState.collectAsState()
+   /* val gameState by videoGameViewModel.uiState.collectAsState()
 
     LazyColumn {
         items(gameState.games) {
@@ -48,5 +48,5 @@ fun HomeScreen(
             )
             Text(it.firstReleaseDate ?: "")
         }
-    }
+    }*/
 }

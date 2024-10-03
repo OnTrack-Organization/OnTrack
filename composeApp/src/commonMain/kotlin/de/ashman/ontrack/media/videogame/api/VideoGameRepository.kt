@@ -1,25 +1,18 @@
 package de.ashman.ontrack.media.videogame.api
 
 import de.ashman.ontrack.auth.AccessTokenManager
-import de.ashman.ontrack.media.movie.api.toDomain
-import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import de.ashman.ontrack.media.videogame.model.domain.VideoGame
 import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
 import de.ashman.ontrack.xyz.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod.Companion.Post
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class VideoGameRepository(
     private val httpClient: HttpClient,
