@@ -17,6 +17,7 @@ import de.ashman.ontrack.media.music.MusicViewModel
 import de.ashman.ontrack.media.videogame.api.VideoGameRepository
 import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.headers
@@ -99,6 +100,10 @@ val appModule =
                         protocol = URLProtocol.HTTPS
                         host = OPEN_LIB_URL
                     }
+                }
+
+                install(UserAgent) {
+                    agent = "OnTrackApp/1.0 (ashkan.haghighifashi@gmail.com)"
                 }
 
                 install(ContentNegotiation) {

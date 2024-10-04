@@ -1,7 +1,7 @@
 package de.ashman.ontrack.media.show.model.domain
 
 data class Show(
-    val id: Int,
+    val id: String,
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,

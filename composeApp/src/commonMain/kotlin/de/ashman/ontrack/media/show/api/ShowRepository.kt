@@ -19,7 +19,7 @@ class ShowRepository(
         return response.shows.map { it.toDomain() }
     }
 
-    override suspend fun fetchMediaDetails(id: Int): Show {
+    override suspend fun fetchMediaDetails(id: String): Show {
         val response: ShowDto = httpClient.get("tv/$id").body()
         return response.toDomain()
     }

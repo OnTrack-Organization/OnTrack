@@ -3,7 +3,7 @@ package de.ashman.ontrack.media.movie.model.domain
 import de.ashman.ontrack.shelf.StatusType
 
 data class Movie(
-    val id: Int,
+    val id: String,
     val backdropPath: String?,
     val collection: Collection?,
     val genres: List<Genre>?,

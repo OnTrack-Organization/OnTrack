@@ -4,5 +4,5 @@ package de.ashman.ontrack.xyz
 interface MediaRepository<T> {
     suspend fun fetchMediaByKeyword(keyword: String): List<T>
 
-    suspend fun fetchMediaDetails(id: Int): T
+    suspend fun fetchMediaDetails(id: String): T
 }

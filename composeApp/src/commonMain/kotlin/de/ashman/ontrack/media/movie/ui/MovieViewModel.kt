@@ -29,7 +29,7 @@ class MovieViewModel(
         }
     }
 
-    fun fetchMovieDetails(id: Int) {
+    fun fetchMovieDetails(id: String) {
         viewModelScope.launch {
             val movie = repository.fetchMediaDetails(id)
             _uiState.value = _uiState.value.copy(selectedMovie = movie)

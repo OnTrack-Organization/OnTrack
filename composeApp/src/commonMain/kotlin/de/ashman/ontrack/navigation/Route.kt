@@ -25,6 +25,6 @@ sealed class Route {
 
     @Serializable
     data class Movie(
-        val id: Int,
+        val id: String,
     ) : Route()
 }

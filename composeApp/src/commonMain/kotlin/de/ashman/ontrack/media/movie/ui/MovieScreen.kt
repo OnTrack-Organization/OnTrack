@@ -20,7 +20,7 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieScreen(
-    id: Int,
+    id: String,
     onBack: () -> Unit,
     viewModel: MovieViewModel = koinInject(),
 ) {

@@ -9,7 +9,7 @@ import de.ashman.ontrack.media.movie.model.dto.MovieDto
 
 fun MovieDto.toDomain(): Movie {
     return Movie(
-        id = id,
+        id = id.toString(),
         backdropPath = backdropPath,
         collection = belongsToCollection?.toDomain(),
         genres = genres?.map { it.toDomain() },

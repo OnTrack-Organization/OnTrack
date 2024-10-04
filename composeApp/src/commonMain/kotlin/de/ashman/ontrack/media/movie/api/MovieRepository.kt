@@ -19,7 +19,7 @@ class MovieRepository(
         return response.movies.map { it.toDomain() }
     }
 
-    override suspend fun fetchMediaDetails(id: Int): Movie {
+    override suspend fun fetchMediaDetails(id: String): Movie {
         val response: MovieDto = httpClient.get("movie/$id").body()
         println("RESPONSE " + response)
         return response.toDomain()

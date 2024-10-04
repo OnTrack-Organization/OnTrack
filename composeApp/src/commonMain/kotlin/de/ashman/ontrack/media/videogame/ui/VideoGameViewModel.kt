@@ -25,7 +25,7 @@ class VideoGameViewModel(
         }
     }
 
-    fun fetchGameDetails(id: Int) {
+    fun fetchGameDetails(id: String) {
         viewModelScope.launch {
             val game = repository.fetchMediaDetails(id)
             _uiState.value = _uiState.value.copy(selectedGame = game)

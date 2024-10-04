@@ -28,7 +28,7 @@ import org.koin.compose.koinInject
 @Composable
 fun ApiTest(
     modifier: Modifier = Modifier,
-    goToDetail: (Int) -> Unit = {},
+    goToDetail: (String) -> Unit = {},
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),

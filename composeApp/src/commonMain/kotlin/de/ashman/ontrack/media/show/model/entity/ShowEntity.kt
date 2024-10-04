@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ShowEntity(
-    val id: Int,
+    val id: String,
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,

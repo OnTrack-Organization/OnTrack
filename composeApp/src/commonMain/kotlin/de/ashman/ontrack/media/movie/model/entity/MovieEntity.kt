@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieEntity(
-    val id: Int,
+    val id: String,
     val backdropPath: String?,
     val collection: CollectionEntity?,
     val genres: List<GenreEntity>?,

@@ -9,11 +9,11 @@ import de.ashman.ontrack.media.show.model.dto.ShowDto
 
 fun ShowDto.toDomain(): Show {
     return Show(
+        id = id.toString(),
         backdropPath = backdropPath,
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
         genres = genres?.map { it.toDomain() },
-        id = id,
         languages = languages,
         name = name,
         numberOfEpisodes = numberOfEpisodes,

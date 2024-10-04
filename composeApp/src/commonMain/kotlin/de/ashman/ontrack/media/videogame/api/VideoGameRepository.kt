@@ -63,7 +63,7 @@ class VideoGameRepository(
         return response.map { it.toDomain() }
     }
 
-    override suspend fun fetchMediaDetails(id: Int): VideoGame {
+    override suspend fun fetchMediaDetails(id: String): VideoGame {
         val requestBuilder = buildRequestWithToken {
             url("games")
             setBody(
