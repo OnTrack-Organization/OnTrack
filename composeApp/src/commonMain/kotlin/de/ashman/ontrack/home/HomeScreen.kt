@@ -21,22 +21,27 @@ fun HomeScreen(
     goToDetail: (String) -> Unit,
     bookViewModel: BookViewModel = koinInject(),
 ) {
-    ApiTest(
+    /*ApiTest(
         modifier = modifier.padding(16.dp),
         goToDetail = goToDetail,
-    )
+    )*/
     /* Column(modifier.clickable { goToDetail(1234) }) {
          Text("Home")
      }*/
-    /*val state by bookViewModel.uiState.collectAsState()
+    val state by bookViewModel.uiState.collectAsState()
 
     LazyColumn {
+        item {
+            state.selectedBook?.description?.let { Text(it) }
+        }
+
         items(state.books) {
             if (it.title != null) Text(it.title)
+            Text(text = it.key ?: "Get Description", modifier.clickable { bookViewModel.fetchBookDetails(it) })
             AsyncImage(
                 model = it.coverUrl,
                 contentDescription = "Poster"
             )
         }
-    }*/
+    }
 }

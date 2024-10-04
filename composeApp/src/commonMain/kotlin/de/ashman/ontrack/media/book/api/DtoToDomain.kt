@@ -2,6 +2,7 @@ package de.ashman.ontrack.media.book.api
 
 import de.ashman.ontrack.media.book.model.domain.Book
 import de.ashman.ontrack.media.book.model.dto.BookDto
+import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
 import de.ashman.ontrack.media.book.model.dto.getImageUrl
 
 fun BookDto.toDomain(): Book {
@@ -22,5 +23,11 @@ fun BookDto.toDomain(): Book {
         ratingsCount = ratingsCount,
         subject = subject,
         title = title
+    )
+}
+
+fun BookWorksResponseDto.toDomain() : Book {
+    return Book(
+        description = description?.value,
     )
 }

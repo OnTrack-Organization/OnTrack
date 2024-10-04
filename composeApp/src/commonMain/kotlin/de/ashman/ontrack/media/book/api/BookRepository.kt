@@ -17,16 +17,15 @@ class BookRepository(
     override suspend fun fetchMediaByKeyword(keyword: String): List<Book> {
         // TODO CHANGE SO THAT WE ONLY GET TITLE AND COVER URL HERE!!! REST COMES FROM MEDIA DETAILS AFTERWARDS
         val response: BookSearchResponseDto = httpClient.get("search.json") {
-            //parameter("fields", "title, cover_i")
+            //parameter("fields", "title, cover_i, key")
             parameter("title", keyword)
         }.body()
+        println(response)
         return response.books.map { it.toDomain() }
     }
 
     override suspend fun fetchMediaDetails(id: String): Book {
-        // TODO kein plan wie am besten
-        val response: BookDto = httpClient.get("${id}.json") {
-            parameter("fields", "title, description")
+        val response: BookWorksResponseDto = httpClient.get("$id.json") {
         }.body()
 
         return response.toDomain()

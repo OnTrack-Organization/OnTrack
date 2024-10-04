@@ -27,6 +27,12 @@ class BookViewModel(
     }
 
     fun fetchBookDetails(book: Book) {
-        // TODO
+        viewModelScope.launch {
+            val bookDetails = repository.fetchMediaDetails(book.key)
+
+            _uiState.value = uiState.value.copy(
+                selectedBook = book.copy(description = bookDetails.description)
+            )
+        }
     }
 }
