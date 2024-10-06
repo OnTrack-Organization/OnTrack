@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import de.ashman.ontrack.ApiTest
+import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
 import org.koin.compose.koinInject
 
@@ -19,7 +20,7 @@ import org.koin.compose.koinInject
 fun HomeScreen(
     modifier: Modifier = Modifier,
     goToDetail: (String) -> Unit,
-    bookViewModel: BookViewModel = koinInject(),
+    boardGameViewModel: BoardGameViewModel = koinInject(),
 ) {
     /*ApiTest(
         modifier = modifier.padding(16.dp),
@@ -28,20 +29,20 @@ fun HomeScreen(
     /* Column(modifier.clickable { goToDetail(1234) }) {
          Text("Home")
      }*/
-    val state by bookViewModel.uiState.collectAsState()
+    val state by boardGameViewModel.uiState.collectAsState()
 
     LazyColumn {
-        item {
-            state.selectedBook?.description?.let { Text(it) }
-        }
-
-        items(state.books) {
-            if (it.title != null) Text(it.title)
-            Text(text = it.key ?: "Get Description", modifier.clickable { bookViewModel.fetchBookDetails(it) })
+        items(state.boardGames) {
+            AsyncImage(
+                modifier = modifier.clickable { boardGameViewModel.fetchBoardgameDetails(it.id) },
+                model = it.image,
+                contentDescription = "Poster"
+            )
+            /*Text(text = it.key ?: "Get Description", modifier.clickable { bookViewModel.fetchBookDetails(it) })
             AsyncImage(
                 model = it.coverUrl,
                 contentDescription = "Poster"
-            )
+            )*/
         }
     }
 }

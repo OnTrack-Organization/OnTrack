@@ -9,23 +9,26 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class BoardGameViewModel(
-    private val boardGameRepository: BoardGameRepository,
+    private val repository: BoardGameRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BoardGameUiState())
     val uiState: StateFlow<BoardGameUiState> = _uiState.asStateFlow()
 
     init {
-        fetchBoardGames()
+        fetchBoardgamesByKeyword("catan")
     }
 
-    fun fetchBoardGames() {
+    fun fetchBoardgamesByKeyword(keyword: String) {
         viewModelScope.launch {
-            boardGameRepository.fetchBoardGame().collect { bg ->
-                if (bg != null) _uiState.value = _uiState.value.copy(boardGames = bg)
-                bg?.forEach {
-                    println(it.name)
-                }
-            }
+            val boardGames = repository.fetchMediaByQuery(keyword)
+            _uiState.value = _uiState.value.copy(boardGames = boardGames)
+        }
+    }
+
+    fun fetchBoardgameDetails(id: String) {
+        viewModelScope.launch {
+            val boardgame = repository.fetchMediaDetails(id)
+            _uiState.value = _uiState.value.copy(selectedBoardgame = boardgame)
         }
     }
 }

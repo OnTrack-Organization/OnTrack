@@ -24,7 +24,7 @@ class MovieViewModel(
 
     fun fetchMoviesByKeyword(keyword: String) {
         viewModelScope.launch {
-            val movies = repository.fetchMediaByKeyword(keyword)
+            val movies = repository.fetchMediaByQuery(keyword)
             _uiState.value = _uiState.value.copy(movies = movies)
         }
     }

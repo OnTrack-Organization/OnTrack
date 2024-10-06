@@ -1,31 +1,46 @@
 package de.ashman.ontrack.media.boardgame.api
 
-import de.ashman.ontrack.media.boardgame.model.BoardGame
-import de.ashman.ontrack.media.boardgame.model.BoardGamesResponse
+import de.ashman.ontrack.media.boardgame.model.domain.BoardGame
+import de.ashman.ontrack.media.boardgame.model.dto.BoardGameResponseDto
+import de.ashman.ontrack.xyz.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import io.ktor.client.request.parameter
 import nl.adaptivity.xmlutil.serialization.XML
 
 class BoardGameRepository(
     private val httpClient: HttpClient,
-) {
-    suspend fun fetchBoardGame(): Flow<List<BoardGame>?> {
-        return flow {
-            val response = httpClient.get("thing?id=358661").body<String>()
+) : MediaRepository<BoardGame> {
 
-            val bg = convertBoardGameXmlToJson(response).boardGames?.map { it.toDomain() }
-            emit(bg)
-        }
+    override suspend fun fetchMediaByQuery(query: String): List<BoardGame> {
+        val simpleResponse: String = httpClient.get("search") {
+            parameter("type", "boardgame")
+            parameter("query", query)
+        }.body()
+
+        val boardgameIds = convertXmlToResponse(simpleResponse).boardGames.map { it.id }
+
+        val detailedResponse: String = httpClient.get("thing") {
+            // TODO only the first 20 are possible all at once. maybe get 5 or 10 and show more on scroll... or do more fetches immediately
+            parameter("id", boardgameIds.take(3).joinToString(","))
+        }.body()
+
+        val boardgames = convertXmlToResponse(detailedResponse).boardGames.map { it.toDomain() }
+        return boardgames
     }
 
-    private fun convertBoardGameXmlToJson(xmlString: String): BoardGamesResponse {
+    override suspend fun fetchMediaDetails(id: String): BoardGame {
+        val response: String = httpClient.get("thing") {
+            parameter("id", id)
+            parameter("stats", 1)
+        }.body()
+
+        return convertXmlToResponse(response).boardGames.first().toDomain()
+    }
+
+    private fun convertXmlToResponse(xmlString: String) : BoardGameResponseDto {
         val xml = XML { indentString = "  " }
-
-        val boardGame: BoardGamesResponse = xml.decodeFromString(BoardGamesResponse.serializer(), xmlString)
-
-        return boardGame
+        return xml.decodeFromString(BoardGameResponseDto.serializer(), xmlString)
     }
 }

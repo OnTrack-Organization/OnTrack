@@ -21,7 +21,7 @@ class BookViewModel(
 
     fun fetchBooksByKeyword(keyword: String) {
         viewModelScope.launch {
-            val books = repository.fetchMediaByKeyword(keyword)
+            val books = repository.fetchMediaByQuery(keyword)
             _uiState.value = _uiState.value.copy(books = books)
         }
     }

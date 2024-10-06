@@ -1,7 +1,6 @@
 package de.ashman.ontrack.media.book.api
 
 import de.ashman.ontrack.media.book.model.domain.Book
-import de.ashman.ontrack.media.book.model.dto.BookDto
 import de.ashman.ontrack.media.book.model.dto.BookSearchResponseDto
 import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
 import de.ashman.ontrack.xyz.MediaRepository
@@ -14,11 +13,11 @@ class BookRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository<Book> {
 
-    override suspend fun fetchMediaByKeyword(keyword: String): List<Book> {
+    override suspend fun fetchMediaByQuery(query: String): List<Book> {
         // TODO CHANGE SO THAT WE ONLY GET TITLE AND COVER URL HERE!!! REST COMES FROM MEDIA DETAILS AFTERWARDS
         val response: BookSearchResponseDto = httpClient.get("search.json") {
             //parameter("fields", "title, cover_i, key")
-            parameter("title", keyword)
+            parameter("title", query)
         }.body()
         println(response)
         return response.books.map { it.toDomain() }

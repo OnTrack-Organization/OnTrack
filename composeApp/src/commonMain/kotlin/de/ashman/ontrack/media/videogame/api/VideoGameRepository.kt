@@ -52,11 +52,11 @@ class VideoGameRepository(
         }
     }
 
-    override suspend fun fetchMediaByKeyword(keyword: String): List<VideoGame> {
+    override suspend fun fetchMediaByQuery(query: String): List<VideoGame> {
         val requestBuilder = buildRequestWithToken {
             url("games")
             parameter("fields", fields)
-            parameter("search", keyword)
+            parameter("search", query)
         }
 
         val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()

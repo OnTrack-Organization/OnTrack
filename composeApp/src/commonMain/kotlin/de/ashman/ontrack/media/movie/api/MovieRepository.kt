@@ -12,9 +12,9 @@ import io.ktor.client.request.parameter
 class MovieRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository<Movie> {
-    override suspend fun fetchMediaByKeyword(keyword: String): List<Movie> {
+    override suspend fun fetchMediaByQuery(query: String): List<Movie> {
         val response: MovieResponseDto = httpClient.get("search/movie") {
-            parameter("query", keyword)
+            parameter("query", query)
         }.body()
         return response.movies.map { it.toDomain() }
     }

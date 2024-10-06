@@ -12,9 +12,9 @@ import io.ktor.client.request.parameter
 class ShowRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository<Show> {
-    override suspend fun fetchMediaByKeyword(keyword: String): List<Show> {
+    override suspend fun fetchMediaByQuery(query: String): List<Show> {
         val response: ShowResponseDto = httpClient.get("search/tv") {
-            parameter("query", keyword)
+            parameter("query", query)
         }.body()
         return response.shows.map { it.toDomain() }
     }

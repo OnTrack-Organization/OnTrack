@@ -20,7 +20,7 @@ class ShowViewModel(
 
     fun fetchShowsByKeyword(keyword: String) {
         viewModelScope.launch {
-            val shows = repository.fetchMediaByKeyword(keyword)
+            val shows = repository.fetchMediaByQuery(keyword)
             _uiState.value = _uiState.value.copy(shows = shows)
         }
     }

@@ -20,7 +20,7 @@ class VideoGameViewModel(
 
     fun fetchGamesByKeyword(keyword: String) {
         viewModelScope.launch {
-            val games = repository.fetchMediaByKeyword(keyword)
+            val games = repository.fetchMediaByQuery(keyword)
             _uiState.value = _uiState.value.copy(games = games)
         }
     }
