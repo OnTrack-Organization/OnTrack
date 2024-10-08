@@ -1,18 +1,13 @@
 package de.ashman.ontrack.media.movie.api
 
-import de.ashman.ontrack.media.movie.model.domain.Collection
-import de.ashman.ontrack.media.movie.model.domain.Genre
 import de.ashman.ontrack.media.movie.model.domain.Movie
-import de.ashman.ontrack.media.movie.model.entity.CollectionEntity
-import de.ashman.ontrack.media.movie.model.entity.GenreEntity
 import de.ashman.ontrack.media.movie.model.entity.MovieEntity
 
 fun Movie.toEntity(): MovieEntity {
     return MovieEntity(
         id = id,
         backdropPath = backdropPath,
-        collection = collection?.toEntity(),
-        genres = genres?.map { it.toEntity() },
+        genres = genres?.map { it },
         originCountry = originCountry,
         overview = overview,
         popularity = popularity,
@@ -27,21 +22,5 @@ fun Movie.toEntity(): MovieEntity {
         voteAverage = voteAverage,
         voteCount = voteCount,
         watchStatus = watchStatus,
-    )
-}
-
-fun Genre.toEntity(): GenreEntity {
-    return GenreEntity(
-        id = id,
-        name = name
-    )
-}
-
-fun Collection.toEntity(): CollectionEntity {
-    return CollectionEntity(
-        id = id,
-        name = name,
-        backdropPath = backdropPath,
-        posterPath = posterPath
     )
 }

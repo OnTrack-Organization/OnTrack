@@ -1,7 +1,7 @@
 package de.ashman.ontrack.media.book.model.domain
 
 data class Book(
-    val key: String = "",
+    val id: String,
     val authorKey: List<String>? = null,
     val authorName: List<String>? = null,
     val coverUrl: String? = null,

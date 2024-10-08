@@ -10,7 +10,7 @@ data class ShowEntity(
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,
-    val genres: List<GenreEntity>?,
+    val genres: List<String>?,
     val languages: List<String>?,
     val name: String?,
     val numberOfEpisodes: Int?,
@@ -26,12 +26,6 @@ data class ShowEntity(
     val voteAverage: Double?,
     val voteCount: Int?
 ) : MediaEntity
-
-@Serializable
-data class GenreEntity(
-    val id: Int,
-    val name: String?
-)
 
 @Serializable
 data class SeasonEntity(

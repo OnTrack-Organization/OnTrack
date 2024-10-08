@@ -15,7 +15,7 @@ import kotlinx.datetime.toLocalDateTime
 
 fun VideoGameDto.toDomain(): VideoGame {
     return VideoGame(
-        id = id,
+        id = id.toString(),
         coverUrl = cover?.url?.getLargeUrl(),
         firstReleaseDate = firstReleaseDate?.let {
             Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString()

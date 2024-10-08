@@ -28,7 +28,7 @@ data class ShowDto(
 @Serializable
 data class GenreDto(
     val id: Int,
-    val name: String?
+    val name: String
 )
 
 @Serializable

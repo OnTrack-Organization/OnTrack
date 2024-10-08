@@ -1,6 +1,5 @@
 package de.ashman.ontrack.media.show.api
 
-import de.ashman.ontrack.media.show.model.domain.Genre
 import de.ashman.ontrack.media.show.model.domain.Season
 import de.ashman.ontrack.media.show.model.domain.Show
 import de.ashman.ontrack.media.show.model.dto.GenreDto
@@ -13,7 +12,7 @@ fun ShowDto.toDomain(): Show {
         backdropPath = backdropPath,
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
-        genres = genres?.map { it.toDomain() },
+        genres = genres?.map { it.name },
         languages = languages,
         name = name,
         numberOfEpisodes = numberOfEpisodes,
@@ -28,13 +27,6 @@ fun ShowDto.toDomain(): Show {
         status = status,
         voteAverage = voteAverage,
         voteCount = voteCount
-    )
-}
-
-fun GenreDto.toDomain(): Genre {
-    return Genre(
-        id = id,
-        name = name
     )
 }
 

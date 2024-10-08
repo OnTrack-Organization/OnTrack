@@ -7,7 +7,7 @@ import de.ashman.ontrack.media.book.model.dto.getImageUrl
 
 fun BookDto.toDomain(): Book {
     return Book(
-        key = key,
+        id = key,
         authorKey = authorKey,
         authorName = authorName,
         coverUrl = coverI?.getImageUrl(),
@@ -28,6 +28,7 @@ fun BookDto.toDomain(): Book {
 
 fun BookWorksResponseDto.toDomain() : Book {
     return Book(
+        id = "",
         description = description?.value,
     )
 }

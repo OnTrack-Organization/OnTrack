@@ -9,7 +9,6 @@ data class MovieEntity(
     override val id: String,
     override val type: String = "movie",
     val backdropPath: String?,
-    val collection: CollectionEntity?,
     val genres: List<String>?,
     val originCountry: List<String>?,
     val originalLanguage: String?,
@@ -27,11 +26,3 @@ data class MovieEntity(
 
     val watchStatus: StatusType,
 ) : MediaEntity
-
-@Serializable
-data class CollectionEntity(
-    val id: Int,
-    val name: String?,
-    val posterPath: String?,
-    val backdropPath: String?
-)

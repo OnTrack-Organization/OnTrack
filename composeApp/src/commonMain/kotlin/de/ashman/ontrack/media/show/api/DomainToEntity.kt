@@ -1,9 +1,7 @@
 package de.ashman.ontrack.media.show.api
 
-import de.ashman.ontrack.media.show.model.domain.Genre
 import de.ashman.ontrack.media.show.model.domain.Season
 import de.ashman.ontrack.media.show.model.domain.Show
-import de.ashman.ontrack.media.show.model.entity.GenreEntity
 import de.ashman.ontrack.media.show.model.entity.SeasonEntity
 import de.ashman.ontrack.media.show.model.entity.ShowEntity
 
@@ -12,7 +10,7 @@ fun Show.toEntity(): ShowEntity {
         backdropPath = backdropPath,
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
-        genres = genres?.map { it.toEntity() },
+        genres = genres?.map { it },
         id = id,
         languages = languages,
         name = name,
@@ -28,13 +26,6 @@ fun Show.toEntity(): ShowEntity {
         status = status,
         voteAverage = voteAverage,
         voteCount = voteCount
-    )
-}
-
-fun Genre.toEntity(): GenreEntity {
-    return GenreEntity(
-        id = id,
-        name = name
     )
 }
 

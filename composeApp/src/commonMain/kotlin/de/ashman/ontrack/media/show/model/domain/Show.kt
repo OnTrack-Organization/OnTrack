@@ -5,7 +5,7 @@ data class Show(
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,
-    val genres: List<Genre>?,
+    val genres: List<String>?,
     val languages: List<String>?,
     val name: String?,
     val numberOfEpisodes: Int?,
@@ -20,11 +20,6 @@ data class Show(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?
-)
-
-data class Genre(
-    val id: Int,
-    val name: String?
 )
 
 data class Season(

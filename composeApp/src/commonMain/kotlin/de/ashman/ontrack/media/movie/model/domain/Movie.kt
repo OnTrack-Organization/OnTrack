@@ -5,7 +5,6 @@ import de.ashman.ontrack.shelf.StatusType
 data class Movie(
     val id: String,
     val backdropPath: String?,
-    val collection: Collection?,
     val genres: List<String>?,
     val originCountry: List<String>?,
     val originalLanguage: String?,
@@ -22,11 +21,4 @@ data class Movie(
     val voteCount: Int?,
 
     val watchStatus: StatusType = StatusType.WATCHED,
-)
-
-data class Collection(
-    val id: Int,
-    val name: String?,
-    val posterPath: String?,
-    val backdropPath: String?
 )
