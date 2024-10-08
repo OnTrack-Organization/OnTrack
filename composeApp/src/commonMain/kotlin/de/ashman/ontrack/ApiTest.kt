@@ -1,7 +1,6 @@
 package de.ashman.ontrack
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -20,7 +19,7 @@ import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
-import de.ashman.ontrack.media.music.MusicViewModel
+import de.ashman.ontrack.media.album.ui.AlbumViewModel
 import de.ashman.ontrack.media.show.ui.ShowViewModel
 import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import org.koin.compose.koinInject
@@ -34,7 +33,7 @@ fun ApiTest(
     bookViewModel: BookViewModel = koinInject(),
     videoGameViewModel: VideoGameViewModel = koinInject(),
     boardGameViewModel: BoardGameViewModel = koinInject(),
-    musicViewModel: MusicViewModel = koinInject(),
+    albumViewModel: AlbumViewModel = koinInject(),
     userViewModel: UserViewModel = koinInject(),
 ) {
     val movieState by movieViewModel.uiState.collectAsState()
@@ -42,7 +41,7 @@ fun ApiTest(
     val bookState by bookViewModel.uiState.collectAsState()
     val gameState by videoGameViewModel.uiState.collectAsState()
     val bgState by boardGameViewModel.uiState.collectAsState()
-    val musicState by musicViewModel.uiState.collectAsState()
+    val musicState by albumViewModel.uiState.collectAsState()
 
     val userState by userViewModel.uiState.collectAsState()
 
@@ -108,7 +107,7 @@ fun ApiTest(
         }
 
         item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }
-        item { if (musicState.artists.isNotEmpty()) Text("${musicState.artists.first()}") }
+        item { if (musicState.albums.isNotEmpty()) Text("${musicState.albums.first()}") }
         item { Text("BOARD GAMES", style = MaterialTheme.typography.titleLarge) }
         item { if (bgState.boardGames.isNotEmpty()) Text("${bgState.boardGames.first()}") }
         item { Text("GAMES", style = MaterialTheme.typography.titleLarge) }

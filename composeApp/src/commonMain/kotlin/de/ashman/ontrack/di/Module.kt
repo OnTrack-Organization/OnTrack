@@ -12,8 +12,8 @@ import de.ashman.ontrack.media.show.ui.ShowViewModel
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.login.UserService
-import de.ashman.ontrack.media.music.MusicRepository
-import de.ashman.ontrack.media.music.MusicViewModel
+import de.ashman.ontrack.media.album.api.AlbumRepository
+import de.ashman.ontrack.media.album.ui.AlbumViewModel
 import de.ashman.ontrack.media.videogame.api.VideoGameRepository
 import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import io.ktor.client.HttpClient
@@ -240,7 +240,7 @@ val appModule =
         single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
         single { BoardGameRepository(get(named(BGG_CLIENT_NAME))) }
         single { VideoGameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
-        single { MusicRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
+        single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         // VIEWMODEL
         viewModelDefinition { MovieViewModel(get(), get()) }
@@ -248,7 +248,7 @@ val appModule =
         viewModelDefinition { BookViewModel(get()) }
         viewModelDefinition { VideoGameViewModel(get()) }
         viewModelDefinition { BoardGameViewModel(get()) }
-        viewModelDefinition { MusicViewModel(get()) }
+        viewModelDefinition { AlbumViewModel(get()) }
         viewModelDefinition { UserViewModel(get()) }
     }
 

@@ -10,8 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import chaintech.videoplayer.model.AudioFile
+import chaintech.videoplayer.model.AudioPlayerConfig
+import chaintech.videoplayer.ui.audio.AudioPlayerView
 import coil3.compose.AsyncImage
 import de.ashman.ontrack.ApiTest
+import de.ashman.ontrack.media.album.ui.AlbumViewModel
 import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
 import de.ashman.ontrack.media.book.ui.BookViewModel
 import org.koin.compose.koinInject
@@ -20,7 +24,7 @@ import org.koin.compose.koinInject
 fun HomeScreen(
     modifier: Modifier = Modifier,
     goToDetail: (String) -> Unit,
-    boardGameViewModel: BoardGameViewModel = koinInject(),
+    albumViewModel: AlbumViewModel = koinInject(),
 ) {
     /*ApiTest(
         modifier = modifier.padding(16.dp),
@@ -29,13 +33,32 @@ fun HomeScreen(
     /* Column(modifier.clickable { goToDetail(1234) }) {
          Text("Home")
      }*/
-    val state by boardGameViewModel.uiState.collectAsState()
+    val state by albumViewModel.uiState.collectAsState()
 
     LazyColumn {
-        items(state.boardGames) {
+        item {
+            Text("SELECTED")
+            Text(state.selectedAlbum.toString())
+
+            if (state.selectedAlbum != null) {
+                AudioPlayerView(
+                    audios = state.selectedAlbum!!.tracks.map { AudioFile(it.previewUrl, it.name) },
+                    audioPlayerConfig = AudioPlayerConfig(
+                        isControlsVisible = false,
+                    )
+                )
+            }
+        }
+
+        items(state.albums) {
+
+            Text(it.name)
+            it.artists.forEach {
+                Text(it)
+            }
             AsyncImage(
-                modifier = modifier.clickable { boardGameViewModel.fetchBoardgameDetails(it.id) },
-                model = it.image,
+                modifier = modifier.clickable { albumViewModel.fetchAlbumDetails(it.id) },
+                model = it.imageUrl,
                 contentDescription = "Poster"
             )
             /*Text(text = it.key ?: "Get Description", modifier.clickable { bookViewModel.fetchBookDetails(it) })

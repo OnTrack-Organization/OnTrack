@@ -72,6 +72,8 @@ kotlin {
 
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
+
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.22")
         }
 
         androidMain.dependencies {
