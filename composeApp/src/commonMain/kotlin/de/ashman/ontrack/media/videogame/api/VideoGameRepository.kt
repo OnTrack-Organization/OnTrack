@@ -3,7 +3,7 @@ package de.ashman.ontrack.media.videogame.api
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.media.videogame.model.domain.VideoGame
 import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
-import de.ashman.ontrack.xyz.MediaRepository
+import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

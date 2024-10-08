@@ -1,10 +1,12 @@
 package de.ashman.ontrack.media.show.model.entity
 
+import de.ashman.ontrack.media.MediaEntity
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ShowEntity(
-    val id: String,
+    override val id: String,
+    override val type: String = "show",
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,
@@ -23,7 +25,7 @@ data class ShowEntity(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?
-)
+) : MediaEntity
 
 @Serializable
 data class GenreEntity(

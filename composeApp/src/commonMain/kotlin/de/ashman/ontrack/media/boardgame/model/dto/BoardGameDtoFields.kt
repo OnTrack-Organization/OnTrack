@@ -32,6 +32,21 @@ data class MaxPlayers(
 )
 
 @Serializable
+@SerialName("poll-summary")
+data class PollSummary(
+    val name: String?,
+    val title: String?,
+    val suggestedNumPlayers: SuggestedNumPlayersDto
+)
+
+@Serializable
+@SerialName("result")
+data class SuggestedNumPlayersDto(
+    val name: String?,
+    val value: String?
+)
+
+@Serializable
 @SerialName("playingtime")
 data class PlayingTime(
     val value: String

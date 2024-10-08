@@ -6,7 +6,7 @@ data class Movie(
     val id: String,
     val backdropPath: String?,
     val collection: Collection?,
-    val genres: List<Genre>?,
+    val genres: List<String>?,
     val originCountry: List<String>?,
     val originalLanguage: String?,
     val originalTitle: String?,
@@ -22,11 +22,6 @@ data class Movie(
     val voteCount: Int?,
 
     val watchStatus: StatusType = StatusType.WATCHED,
-)
-
-data class Genre(
-    val id: Int,
-    val name: String?
 )
 
 data class Collection(

@@ -1,6 +1,5 @@
-package de.ashman.ontrack.xyz
+package de.ashman.ontrack.media
 
-// TODO shared methods interface
 interface MediaRepository<T> {
     suspend fun fetchMediaByQuery(query: String): List<T>
 

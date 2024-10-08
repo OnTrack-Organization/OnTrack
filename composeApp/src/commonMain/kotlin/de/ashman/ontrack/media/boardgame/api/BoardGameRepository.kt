@@ -2,7 +2,7 @@ package de.ashman.ontrack.media.boardgame.api
 
 import de.ashman.ontrack.media.boardgame.model.domain.BoardGame
 import de.ashman.ontrack.media.boardgame.model.dto.BoardGameResponseDto
-import de.ashman.ontrack.xyz.MediaRepository
+import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

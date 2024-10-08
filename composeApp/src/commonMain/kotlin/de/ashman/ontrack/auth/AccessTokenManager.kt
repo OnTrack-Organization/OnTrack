@@ -24,17 +24,14 @@ class AccessTokenManager(
     }
 
     private suspend fun fetchAccessToken() {
-        val response = httpClient.post {
+        val response : AccessTokenResponse = httpClient.post {
             parameter("client_id", clientId)
             parameter("client_secret", clientSecret)
             parameter("grant_type", "client_credentials")
-        }
+        }.body()
 
-        val tokenResponse: AccessTokenResponse = response.body()
-        accessToken = tokenResponse.accessToken
-        tokenExpiration = Clock.System.now() + tokenResponse.expiresIn.seconds
-
-        println("TOKEN RESPONSE " + tokenResponse)
+        accessToken = response.accessToken
+        tokenExpiration = Clock.System.now() + response.expiresIn.seconds
     }
 
     private fun isTokenExpired(): Boolean {

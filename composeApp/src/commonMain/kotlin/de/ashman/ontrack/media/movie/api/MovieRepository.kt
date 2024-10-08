@@ -3,7 +3,7 @@ package de.ashman.ontrack.media.movie.api
 import de.ashman.ontrack.media.movie.model.domain.Movie
 import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import de.ashman.ontrack.media.movie.model.dto.MovieResponseDto
-import de.ashman.ontrack.xyz.MediaRepository
+import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

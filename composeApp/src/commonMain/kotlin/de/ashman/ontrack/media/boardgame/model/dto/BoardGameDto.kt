@@ -32,6 +32,8 @@ data class BoardGameDto(
     @XmlElement
     val minage: MinAge? = null,
     @XmlElement
+    val pollSummary: PollSummary? = null,
+    @XmlElement
     val polls: List<Poll>? = null,
     @XmlElement
     val links: List<Link>? = null,

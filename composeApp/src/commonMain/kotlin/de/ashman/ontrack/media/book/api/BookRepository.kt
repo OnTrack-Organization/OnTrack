@@ -3,7 +3,7 @@ package de.ashman.ontrack.media.book.api
 import de.ashman.ontrack.media.book.model.domain.Book
 import de.ashman.ontrack.media.book.model.dto.BookSearchResponseDto
 import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
-import de.ashman.ontrack.xyz.MediaRepository
+import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

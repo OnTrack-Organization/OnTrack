@@ -4,7 +4,7 @@ import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.media.album.model.domain.Album
 import de.ashman.ontrack.media.album.model.dto.AlbumDto
 import de.ashman.ontrack.media.album.model.dto.AlbumSearchResult
-import de.ashman.ontrack.xyz.MediaRepository
+import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
