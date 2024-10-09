@@ -1,17 +1,18 @@
 package de.ashman.ontrack.media.videogame.model.entity
 
 import de.ashman.ontrack.media.MediaEntity
+import de.ashman.ontrack.media.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VideoGameEntity(
     override val id: String,
-    override val type: String = "videogame",
-    val coverUrl: String?,
-    val firstReleaseDate: Long?,
+    override val type: MediaType = MediaType.VIDEOGAME,
+    override val name: String,
+    override val coverUrl: String,
+    val firstReleaseDate: String?,
     val franchises: List<FranchiseEntity>?,
     val genres: List<String>?,
-    val name: String,
     val platforms: List<PlatformEntity>?,
     val totalRating: Double?,
     val totalRatingCount: Int?,

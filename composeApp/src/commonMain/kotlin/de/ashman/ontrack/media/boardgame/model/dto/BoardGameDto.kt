@@ -10,9 +10,9 @@ data class BoardGameDto(
     val id: String,
     val type: String,
     @XmlElement
-    val thumbnail: String? = null,
-    @XmlElement
     val image: String? = null,
+    @XmlElement
+    val thumbnail: String? = null,
     @XmlElement
     val name: Name,
     @XmlElement

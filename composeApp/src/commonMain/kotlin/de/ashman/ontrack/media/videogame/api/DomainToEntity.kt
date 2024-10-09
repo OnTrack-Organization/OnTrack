@@ -9,46 +9,48 @@ import de.ashman.ontrack.media.videogame.model.dto.PlatformDto
 import de.ashman.ontrack.media.videogame.model.dto.SimilarGameDto
 import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
 import de.ashman.ontrack.media.videogame.model.dto.getLargeUrl
+import de.ashman.ontrack.media.videogame.model.entity.FranchiseEntity
+import de.ashman.ontrack.media.videogame.model.entity.PlatformEntity
+import de.ashman.ontrack.media.videogame.model.entity.SimilarGameEntity
+import de.ashman.ontrack.media.videogame.model.entity.VideoGameEntity
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun VideoGameDto.toDomain(): VideoGame {
-    return VideoGame(
-        id = id.toString(),
-        coverUrl = cover?.url?.getLargeUrl().orEmpty(),
-        firstReleaseDate = firstReleaseDate?.let {
-            Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString()
-        },
-        franchises = franchises?.map { it.toDomain() },
-        genres = genres?.map { it.name },
+fun VideoGame.toEntity(): VideoGameEntity {
+    return VideoGameEntity(
+        id = id,
+        coverUrl = coverUrl,
+        firstReleaseDate = firstReleaseDate,
+        franchises = franchises?.map { it.toEntity() },
+        genres = genres,
         name = name,
-        platforms = platforms?.map { it.toDomain() },
-        similarGames = similarGames?.map { it.toDomain() },
+        platforms = platforms?.map { it.toEntity() },
+        similarGames = similarGames?.map { it.toEntity() },
         totalRating = totalRating,
         totalRatingCount = totalRatingCount,
         summary = summary
     )
 }
 
-fun FranchiseDto.toDomain(): Franchise {
-    return Franchise(
+fun Franchise.toEntity(): FranchiseEntity {
+    return FranchiseEntity(
         name = name,
-        games = games.map { it.toDomain() }
+        games = games.map { it.toEntity() }
     )
 }
 
-fun PlatformDto.toDomain(): Platform {
-    return Platform(
+fun Platform.toEntity(): PlatformEntity {
+    return PlatformEntity(
         abbreviation = abbreviation,
         name = name,
-        platformLogo = platformLogo?.url?.getLargeUrl(),
+        platformLogo = platformLogo
     )
 }
 
-fun SimilarGameDto.toDomain(): SimilarGame {
-    return SimilarGame(
+fun SimilarGame.toEntity(): SimilarGameEntity {
+    return SimilarGameEntity(
         name = name,
-        cover = cover?.url?.getLargeUrl()
+        cover = cover
     )
 }

@@ -2,11 +2,11 @@ package de.ashman.ontrack.media.videogame.model.domain
 
 data class VideoGame(
     val id: String,
-    val coverUrl: String?,
+    val name: String,
+    val coverUrl: String,
     val firstReleaseDate: String?,
     val franchises: List<Franchise>?,
     val genres: List<String>?,
-    val name: String,
     val platforms: List<Platform>?,
     val totalRating: Double?,
     val totalRatingCount: Int?,

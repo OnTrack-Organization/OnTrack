@@ -1,6 +1,7 @@
 package de.ashman.ontrack.media.album.api
 
 import de.ashman.ontrack.auth.AccessTokenManager
+import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.album.model.domain.Album
 import de.ashman.ontrack.media.album.model.dto.AlbumDto
 import de.ashman.ontrack.media.album.model.dto.AlbumSearchResult

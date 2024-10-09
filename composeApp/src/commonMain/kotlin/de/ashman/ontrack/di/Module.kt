@@ -212,10 +212,10 @@ val appModule =
         // VIEWMODEL
         viewModelDefinition { MovieViewModel(get(), get()) }
         viewModelDefinition { ShowViewModel(get(), get()) }
-        viewModelDefinition { BookViewModel(get()) }
-        viewModelDefinition { VideoGameViewModel(get()) }
-        viewModelDefinition { BoardGameViewModel(get()) }
-        viewModelDefinition { AlbumViewModel(get()) }
+        viewModelDefinition { BookViewModel(get(), get()) }
+        viewModelDefinition { VideoGameViewModel(get(), get()) }
+        viewModelDefinition { BoardGameViewModel(get(), get()) }
+        viewModelDefinition { AlbumViewModel(get(), get()) }
         viewModelDefinition { UserViewModel(get()) }
     }
 

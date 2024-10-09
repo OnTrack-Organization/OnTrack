@@ -3,6 +3,7 @@ package de.ashman.ontrack.media.boardgame.model.domain
 data class BoardGame(
     val id: String,
     val name: String,
+    val coverUrl: String,
     val yearPublished: String?,
     val minPlayers: String?,
     val maxPlayers: String?,
@@ -10,7 +11,6 @@ data class BoardGame(
     val description: String?,
     val minAge: String?,
     val thumbnail: String?,
-    val image: String?,
     val ratings: Ratings?,
 )
 

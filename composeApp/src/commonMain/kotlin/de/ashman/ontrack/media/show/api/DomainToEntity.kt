@@ -7,13 +7,14 @@ import de.ashman.ontrack.media.show.model.entity.ShowEntity
 
 fun Show.toEntity(): ShowEntity {
     return ShowEntity(
+        id = id,
+        name = name,
+        coverUrl = coverUrl,
         backdropPath = backdropPath,
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
         genres = genres?.map { it },
-        id = id,
         languages = languages,
-        name = name,
         numberOfEpisodes = numberOfEpisodes,
         numberOfSeasons = numberOfSeasons,
         originCountry = originCountry,
@@ -21,7 +22,6 @@ fun Show.toEntity(): ShowEntity {
         originalName = originalName,
         overview = overview,
         popularity = popularity,
-        posterPath = posterPath,
         seasons = seasons?.map { it.toEntity() },
         status = status,
         voteAverage = voteAverage,

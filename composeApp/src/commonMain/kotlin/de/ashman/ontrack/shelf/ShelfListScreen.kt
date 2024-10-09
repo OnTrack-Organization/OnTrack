@@ -72,7 +72,7 @@ fun ShelfListScreen(
     // Filter shelf items based on the search query
     // TODO change to domain model
     val filteredShelfItems = shelfItems
-        .filter { it.title?.contains(searchQuery, ignoreCase = true) ?: false }
+        .filter { it.name?.contains(searchQuery, ignoreCase = true) ?: false }
         .ifEmpty { shelfItems }
 
     Scaffold(
@@ -179,7 +179,7 @@ fun ShelfCard(movie: Movie) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (movie.title != null) Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
+            if (movie.name != null) Text(text = movie.name, style = MaterialTheme.typography.titleMedium)
             movie.overview?.let {
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }

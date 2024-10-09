@@ -3,9 +3,9 @@ package de.ashman.ontrack.media.album.model.domain
 data class Album(
     val id: String,
     val name: String,
+    val coverUrl: String,
     val artists: List<String>,
     val genres: List<String>?,
-    val imageUrl: String?,
     val label: String?,
     val popularity: Int?,
     val releaseDate: String,

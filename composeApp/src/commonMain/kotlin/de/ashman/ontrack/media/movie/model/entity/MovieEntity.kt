@@ -1,13 +1,16 @@
 package de.ashman.ontrack.media.movie.model.entity
 
 import de.ashman.ontrack.media.MediaEntity
+import de.ashman.ontrack.media.MediaType
 import de.ashman.ontrack.shelf.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MovieEntity(
     override val id: String,
-    override val type: String = "movie",
+    override val type: MediaType = MediaType.MOVIE,
+    override val name: String,
+    override val coverUrl: String,
     val backdropPath: String?,
     val genres: List<String>?,
     val originCountry: List<String>?,
@@ -15,12 +18,10 @@ data class MovieEntity(
     val originalTitle: String?,
     val overview: String?,
     val popularity: Double?,
-    val posterPath: String?,
     val releaseDate: String?,
     val revenue: Long?,
     val runtime: Int?,
     val status: String?,
-    val title: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
 

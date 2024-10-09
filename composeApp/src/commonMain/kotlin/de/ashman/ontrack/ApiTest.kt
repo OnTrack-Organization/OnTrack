@@ -94,11 +94,10 @@ fun ApiTest(
         }
 
         items(showState.shows) {
-            if (it.name != null)
             Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })
             Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/original${it.posterPath}",
+                model = "https://image.tmdb.org/t/p/original${it.coverUrl}",
                 contentDescription = "Poster"
             )
             Button(onClick = { goToDetail(it.id) }) {

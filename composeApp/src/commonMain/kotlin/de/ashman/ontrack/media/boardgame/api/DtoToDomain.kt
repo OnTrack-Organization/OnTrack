@@ -9,6 +9,7 @@ fun BoardGameDto.toDomain(): BoardGame {
     return BoardGame(
         id = id,
         name = name.value,
+        coverUrl = image.orEmpty(),
         minAge = minage?.value,
         yearPublished = yearpublished?.value,
         minPlayers = minplayers?.value,
@@ -16,7 +17,6 @@ fun BoardGameDto.toDomain(): BoardGame {
         playingTime = playingtime?.value,
         description = description,
         thumbnail = thumbnail,
-        image = image,
         ratings = statistics?.ratings?.toDomain()
     )
 }

@@ -5,12 +5,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShowDto(
     val id: Int,
+    val name: String,
+    val posterPath: String,
     val backdropPath: String? = null,
     val episodeRunTime: List<Int>? = null,
     val firstAirDate: String? = null,
     val genres: List<GenreDto>? = null,
     val languages: List<String>? = null,
-    val name: String? = null,
     val numberOfEpisodes: Int? = null,
     val numberOfSeasons: Int? = null,
     val originCountry: List<String>? = null,
@@ -18,7 +19,6 @@ data class ShowDto(
     val originalName: String? = null,
     val overview: String? = null,
     val popularity: Double? = null,
-    val posterPath: String? = null,
     val seasons: List<SeasonDto>? = null,
     val status: String? = null,
     val voteAverage: Double? = null,

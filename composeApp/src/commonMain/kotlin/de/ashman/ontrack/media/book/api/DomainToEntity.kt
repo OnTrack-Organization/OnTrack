@@ -1,15 +1,13 @@
 package de.ashman.ontrack.media.book.api
 
 import de.ashman.ontrack.media.book.model.domain.Book
-import de.ashman.ontrack.media.book.model.dto.BookDto
-import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
-import de.ashman.ontrack.media.book.model.dto.getImageUrl
+import de.ashman.ontrack.media.book.model.entity.BookEntity
 
-fun BookDto.toDomain(): Book {
-    return Book(
-        id = key,
-        name = title,
-        coverUrl = coverI?.getImageUrl().orEmpty(),
+fun Book.toEntity(): BookEntity {
+    return BookEntity(
+        id = id,
+        name = name,
+        coverUrl = coverUrl,
         authorKey = authorKey,
         authorName = authorName,
         description = description,
@@ -23,15 +21,5 @@ fun BookDto.toDomain(): Book {
         ratingsAverage = ratingsAverage,
         ratingsCount = ratingsCount,
         subject = subject,
-    )
-}
-
-// TODO change
-fun BookWorksResponseDto.toDomain(): Book {
-    return Book(
-        id = "",
-        name = "",
-        coverUrl = "",
-        description = description?.value,
     )
 }

@@ -20,7 +20,7 @@ data class VideoGameDto(
 
 @Serializable
 data class CoverDto(
-    val url: String? = null,
+    val url: String,
 )
 
 @Serializable

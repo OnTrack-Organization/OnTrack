@@ -10,9 +10,9 @@ fun AlbumDto.toDomain(): Album {
     return Album(
         id = id,
         name = name,
+        coverUrl = images.first().url,
         artists = artists.map { it.name },
         genres = genres,
-        imageUrl = images.firstOrNull()?.url,
         label = label,
         popularity = popularity,
         releaseDate = releaseDate,
