@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.album.api.AlbumRepository
-import de.ashman.ontrack.media.album.api.toEntity
 import de.ashman.ontrack.media.album.model.domain.Album
-import de.ashman.ontrack.media.movie.api.toEntity
-import de.ashman.ontrack.media.movie.model.domain.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +38,7 @@ class AlbumViewModel(
 
     fun addToList(album: Album) {
         viewModelScope.launch {
-            userService.updateUserMedia(album.toEntity())
+            userService.updateUserMedia(album)
         }
     }
 }

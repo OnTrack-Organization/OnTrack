@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.book.api.BookRepository
-import de.ashman.ontrack.media.book.api.toEntity
 import de.ashman.ontrack.media.book.model.domain.Book
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +40,7 @@ class BookViewModel(
 
     fun addToList(book: Book) {
         viewModelScope.launch {
-            userService.updateUserMedia(book.toEntity())
+            userService.updateUserMedia(book)
         }
     }
 }

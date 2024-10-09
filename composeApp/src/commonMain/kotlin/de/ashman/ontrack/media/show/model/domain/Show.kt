@@ -1,9 +1,17 @@
 package de.ashman.ontrack.media.show.model.domain
 
+import de.ashman.ontrack.media.Media
+import de.ashman.ontrack.media.MediaType
+import de.ashman.ontrack.media.StatusType
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Show(
-    val id: String,
-    val name: String,
-    val coverUrl: String,
+    override val id: String,
+    override val type: MediaType = MediaType.SHOW,
+    override val name: String,
+    override val consumeStatus: StatusType? = null,
+    override val coverUrl: String,
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
     val firstAirDate: String?,
@@ -20,8 +28,9 @@ data class Show(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?
-)
+) : Media
 
+@Serializable
 data class Season(
     val id: Int,
     val airDate: String?,

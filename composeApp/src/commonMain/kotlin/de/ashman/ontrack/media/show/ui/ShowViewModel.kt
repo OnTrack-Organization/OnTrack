@@ -3,9 +3,7 @@ package de.ashman.ontrack.media.show.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
-import de.ashman.ontrack.media.movie.api.toEntity
 import de.ashman.ontrack.media.show.api.ShowRepository
-import de.ashman.ontrack.media.show.api.toEntity
 import de.ashman.ontrack.media.show.model.domain.Show
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +30,7 @@ class ShowViewModel(
 
     fun addToList(show: Show) {
         viewModelScope.launch {
-            userService.updateUserMedia(show.toEntity())
+            userService.updateUserMedia(show)
         }
     }
 }

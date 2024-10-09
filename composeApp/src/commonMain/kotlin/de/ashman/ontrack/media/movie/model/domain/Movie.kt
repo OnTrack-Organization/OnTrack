@@ -1,11 +1,18 @@
 package de.ashman.ontrack.media.movie.model.domain
 
+import de.ashman.ontrack.media.Media
+import de.ashman.ontrack.media.MediaType
 import de.ashman.ontrack.media.StatusType
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Movie(
-    val id: String,
-    val name: String,
-    val coverUrl: String,
+    override val id: String,
+    override val type: MediaType = MediaType.MOVIE,
+    override val name: String,
+    override val consumeStatus: StatusType? = null,
+    override val coverUrl: String,
+
     val backdropPath: String?,
     val genres: List<String>?,
     val originCountry: List<String>?,
@@ -19,6 +26,4 @@ data class Movie(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
-
-    val watchStatus: StatusType = StatusType.WATCHED,
-)
+) : Media

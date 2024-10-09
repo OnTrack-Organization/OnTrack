@@ -3,10 +3,9 @@ package de.ashman.ontrack.media.movie.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
+import de.ashman.ontrack.media.MediaType
 import de.ashman.ontrack.media.movie.api.MovieRepository
-import de.ashman.ontrack.media.movie.api.toEntity
 import de.ashman.ontrack.media.movie.model.domain.Movie
-import de.ashman.ontrack.media.movie.model.entity.MovieEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,16 +39,17 @@ class MovieViewModel(
 
     fun addToList(movie: Movie) {
         viewModelScope.launch {
-            userService.updateUserMedia(movie.toEntity())
+            userService.updateUserMedia(movie)
         }
     }
 
     private fun fetchStatusCounts() {
         viewModelScope.launch {
-            val savedMovies = userService.getSavedMedia<MovieEntity>("movie")
+            val savedMovies = userService.getSavedMedia<Movie>(MediaType.MOVIE.name)
 
             val counts = savedMovies
-                .groupingBy { it.watchStatus }
+                .mapNotNull { it.consumeStatus }
+                .groupingBy { it }
                 .eachCount()
 
             _uiState.value = _uiState.value.copy(statusCounts = counts)

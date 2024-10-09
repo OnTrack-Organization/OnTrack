@@ -151,7 +151,7 @@ fun ShelfListContent(
             val filteredMoviesByStatus = if (statusType == StatusType.ALL) {
                 shelfItems
             } else {
-                shelfItems.filter { it.watchStatus == statusType }
+                shelfItems.filter { it.consumeStatus == statusType }
             }
 
             LazyColumn(

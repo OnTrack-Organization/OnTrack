@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.boardgame.api.BoardGameRepository
-import de.ashman.ontrack.media.boardgame.api.toEntity
 import de.ashman.ontrack.media.boardgame.model.domain.BoardGame
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +37,7 @@ class BoardGameViewModel(
 
     fun addToList(boardGame: BoardGame) {
         viewModelScope.launch {
-            userService.updateUserMedia(boardGame.toEntity())
+            userService.updateUserMedia(boardGame)
         }
     }
 }

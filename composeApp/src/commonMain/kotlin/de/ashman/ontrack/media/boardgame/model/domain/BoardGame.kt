@@ -1,9 +1,17 @@
 package de.ashman.ontrack.media.boardgame.model.domain
 
+import de.ashman.ontrack.media.Media
+import de.ashman.ontrack.media.MediaType
+import de.ashman.ontrack.media.StatusType
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class BoardGame(
-    val id: String,
-    val name: String,
-    val coverUrl: String,
+    override val id: String,
+    override val type: MediaType = MediaType.BOARDGAME,
+    override val name: String,
+    override val consumeStatus: StatusType? = null,
+    override val coverUrl: String,
     val yearPublished: String?,
     val minPlayers: String?,
     val maxPlayers: String?,
@@ -12,8 +20,9 @@ data class BoardGame(
     val minAge: String?,
     val thumbnail: String?,
     val ratings: Ratings?,
-)
+) : Media
 
+@Serializable
 data class Ratings(
     val usersRated: Int?,
     val average: Double?,

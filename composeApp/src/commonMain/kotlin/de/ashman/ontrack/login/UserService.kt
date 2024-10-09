@@ -1,7 +1,7 @@
 package de.ashman.ontrack.login
 
 import de.ashman.ontrack.login.model.UserDto
-import de.ashman.ontrack.media.MediaEntity
+import de.ashman.ontrack.media.Media
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database
@@ -15,12 +15,12 @@ class UserService {
         database.reference(userRef).setValue(user)
     }
 
-    suspend inline fun <reified T : MediaEntity> updateUserMedia(media: T) {
+    suspend inline fun <reified T : Media> updateUserMedia(media: T) {
         val mediaRef = database.reference("$userRef/${media.type}/${media.id}")
         mediaRef.setValue(media)
     }
 
-    suspend inline fun <reified T : MediaEntity> getSavedMedia(mediaType: String): List<T> {
+    suspend inline fun <reified T : Media> getSavedMedia(mediaType: String): List<T> {
         val mediaRef = database.reference("$userRef/$mediaType").valueEvents.first()
         return mediaRef.children.map { it.value<T>() }
     }
