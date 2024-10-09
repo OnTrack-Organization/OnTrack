@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media.movie.model.domain
 
-import de.ashman.ontrack.shelf.StatusType
+import de.ashman.ontrack.media.StatusType
 
 data class Movie(
     val id: String,

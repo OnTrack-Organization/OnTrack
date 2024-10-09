@@ -2,7 +2,7 @@ package de.ashman.ontrack.media.movie.model.entity
 
 import de.ashman.ontrack.media.MediaEntity
 import de.ashman.ontrack.media.MediaType
-import de.ashman.ontrack.shelf.StatusType
+import de.ashman.ontrack.media.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
