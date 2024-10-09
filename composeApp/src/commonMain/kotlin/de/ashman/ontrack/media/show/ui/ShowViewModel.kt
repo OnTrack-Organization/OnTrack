@@ -3,6 +3,8 @@ package de.ashman.ontrack.media.show.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
+import de.ashman.ontrack.media.MediaUiState
+import de.ashman.ontrack.media.album.model.domain.Album
 import de.ashman.ontrack.media.show.api.ShowRepository
 import de.ashman.ontrack.media.show.model.domain.Show
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,17 +16,56 @@ class ShowViewModel(
     private val repository: ShowRepository,
     private val userService: UserService
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ShowUiState())
-    val uiState: StateFlow<ShowUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MediaUiState<Show>())
+    val uiState: StateFlow<MediaUiState<Show>> = _uiState.asStateFlow()
 
     init {
-        fetchShowsByKeyword("attack on titan")
+        fetchShowsByQuery("attack on titan")
     }
 
-    fun fetchShowsByKeyword(keyword: String) {
+    fun fetchShowsByQuery(query: String) {
         viewModelScope.launch {
-            val shows = repository.fetchMediaByQuery(keyword)
-            _uiState.value = _uiState.value.copy(shows = shows)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaByQuery(query)
+
+            _uiState.value = result.fold(
+                onSuccess = { shows ->
+                    _uiState.value.copy(
+                        mediaList = shows,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
+        }
+    }
+
+    fun fetchShowDetails(id: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaDetails(id)
+
+            _uiState.value = result.fold(
+                onSuccess = { show ->
+                    _uiState.value.copy(
+                        selectedMedia = show,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
         }
     }
 

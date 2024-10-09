@@ -46,7 +46,7 @@ fun MovieScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            uiState.selectedMovie?.let { if (it.name != null) Text(it.name) }
+            uiState.selectedMedia?.let { Text(it.name) }
         }
     }
 }

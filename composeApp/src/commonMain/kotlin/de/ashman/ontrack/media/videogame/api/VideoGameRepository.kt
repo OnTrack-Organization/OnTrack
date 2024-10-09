@@ -4,6 +4,7 @@ import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.media.videogame.model.domain.VideoGame
 import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
 import de.ashman.ontrack.media.MediaRepository
+import de.ashman.ontrack.media.album.api.safeApiCall
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -22,7 +23,7 @@ class VideoGameRepository(
     // Some APIS need field selection to reduce traffic
     // fields * um alle zu holen
     private val fields =
-    """
+        """
     id,
     cover.url,
     first_release_date,
@@ -52,29 +53,33 @@ class VideoGameRepository(
         }
     }
 
-    override suspend fun fetchMediaByQuery(query: String): List<VideoGame> {
-        val requestBuilder = buildRequestWithToken {
-            url("games")
-            parameter("fields", fields)
-            parameter("search", query)
-        }
+    override suspend fun fetchMediaByQuery(query: String): Result<List<VideoGame>> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("games")
+                parameter("fields", fields)
+                parameter("search", query)
+            }
 
-        val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
-        return response.map { it.toDomain() }
+            val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
+            response.map { it.toDomain() }
+        }
     }
 
-    override suspend fun fetchMediaDetails(id: String): VideoGame {
-        val requestBuilder = buildRequestWithToken {
-            url("games")
-            setBody(
-                """
+    override suspend fun fetchMediaDetails(id: String): Result<VideoGame> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("games")
+                setBody(
+                    """
             fields $fields;
             where id = $id;
             """.trimIndent()
-            )
-        }
+                )
+            }
 
-        val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
-        return response.first().toDomain()
+            val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
+            response.first().toDomain()
+        }
     }
 }

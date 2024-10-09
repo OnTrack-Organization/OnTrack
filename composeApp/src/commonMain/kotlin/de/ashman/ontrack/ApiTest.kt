@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -73,7 +74,7 @@ fun ApiTest(
             item {
                 Button(
                     onClick = {
-                        movieViewModel.fetchMoviesByKeyword(text)
+                        movieViewModel.fetchMoviesByQuery(text)
                     },
                 ) {
                     Text("Search")
@@ -92,7 +93,22 @@ fun ApiTest(
             )
         }
 
-        items(showState.shows) {
+        if (bookState.isLoading) {
+            item { CircularProgressIndicator() }
+        } else if (bookState.errorMessage != null) {
+            item { Text(text = "Error: ${bookState.errorMessage}") }
+        } else {
+            items(bookState.mediaList) {
+                Row {
+                    Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addToList(it) })
+                    AsyncImage(
+                        model = it.coverUrl,
+                        contentDescription = "Book Cover"
+                    )
+                }
+            }
+        }
+        items(showState.mediaList) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })
                 AsyncImage(
@@ -101,7 +117,7 @@ fun ApiTest(
                 )
             }
         }
-        items(albumState.albums) {
+        items(albumState.mediaList) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { albumViewModel.addToList(it) })
                 AsyncImage(
@@ -110,7 +126,7 @@ fun ApiTest(
                 )
             }
         }
-        items(movieState.movies) {
+        items(movieState.mediaList) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addToList(it) })
                 AsyncImage(
@@ -119,7 +135,7 @@ fun ApiTest(
                 )
             }
         }
-        items(videogameState.videogames) {
+        items(videogameState.mediaList) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { videoGameViewModel.addToList(it) })
                 AsyncImage(
@@ -128,18 +144,9 @@ fun ApiTest(
                 )
             }
         }
-        items(boardgameState.boardGames) {
+        items(boardgameState.mediaList) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { boardGameViewModel.addToList(it) })
-                AsyncImage(
-                    model = it.coverUrl,
-                    contentDescription = "Poster"
-                )
-            }
-        }
-        items(bookState.books) {
-            Row {
-                Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"

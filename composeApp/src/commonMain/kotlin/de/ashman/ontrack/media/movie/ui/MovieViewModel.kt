@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.MediaType
+import de.ashman.ontrack.media.MediaUiState
 import de.ashman.ontrack.media.movie.api.MovieRepository
 import de.ashman.ontrack.media.movie.model.domain.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,25 +16,57 @@ class MovieViewModel(
     private val repository: MovieRepository,
     private val userService: UserService,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(MovieUiState())
-    val uiState: StateFlow<MovieUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MediaUiState<Movie>())
+    val uiState: StateFlow<MediaUiState<Movie>> = _uiState.asStateFlow()
 
     init {
-        fetchMoviesByKeyword("inception")
+        fetchMoviesByQuery("inception")
         fetchStatusCounts()
     }
 
-    fun fetchMoviesByKeyword(keyword: String) {
+    fun fetchMoviesByQuery(query: String) {
         viewModelScope.launch {
-            val movies = repository.fetchMediaByQuery(keyword)
-            _uiState.value = _uiState.value.copy(movies = movies)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaByQuery(query)
+
+            _uiState.value = result.fold(
+                onSuccess = { albums ->
+                    _uiState.value.copy(
+                        mediaList = albums,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
         }
     }
 
     fun fetchMovieDetails(id: String) {
         viewModelScope.launch {
-            val movie = repository.fetchMediaDetails(id)
-            _uiState.value = _uiState.value.copy(selectedMovie = movie)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaDetails(id)
+
+            _uiState.value = result.fold(
+                onSuccess = { movie ->
+                    _uiState.value.copy(
+                        selectedMedia = movie,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
         }
     }
 

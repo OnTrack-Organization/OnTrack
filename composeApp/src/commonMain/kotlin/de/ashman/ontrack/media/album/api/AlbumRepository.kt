@@ -1,7 +1,6 @@
 package de.ashman.ontrack.media.album.api
 
 import de.ashman.ontrack.auth.AccessTokenManager
-import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.album.model.domain.Album
 import de.ashman.ontrack.media.album.model.dto.AlbumDto
 import de.ashman.ontrack.media.album.model.dto.AlbumSearchResult
@@ -29,28 +28,28 @@ class AlbumRepository(
         }
     }
 
-    override suspend fun fetchMediaByQuery(query: String): List<Album> {
-        val requestBuilder = buildRequestWithToken {
-            url("search")
-            parameter("q", query)
-            parameter("type", "album")
-            parameter("limit", "10")
+    override suspend fun fetchMediaByQuery(query: String): Result<List<Album>> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("search")
+                parameter("q", query)
+                parameter("type", "album")
+                parameter("limit", "10")
+            }
+            val response: AlbumSearchResult = httpClient.request(requestBuilder).body()
+
+            response.albums.toDomain()
         }
-        val response: AlbumSearchResult = httpClient.request(requestBuilder).body()
-
-        val albums = response.albums.toDomain()
-
-        return albums
     }
 
-    override suspend fun fetchMediaDetails(id: String): Album {
-        val requestBuilder = buildRequestWithToken {
-            url("albums/$id")
+    override suspend fun fetchMediaDetails(id: String): Result<Album> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("albums/$id")
+            }
+            val response: AlbumDto = httpClient.request(requestBuilder).body()
+
+            response.toDomain()
         }
-        val response: AlbumDto = httpClient.request(requestBuilder).body()
-
-        val album = response.toDomain()
-
-        return album
     }
 }

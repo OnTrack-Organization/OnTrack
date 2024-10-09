@@ -3,6 +3,7 @@ package de.ashman.ontrack.media.album.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
+import de.ashman.ontrack.media.MediaUiState
 import de.ashman.ontrack.media.album.api.AlbumRepository
 import de.ashman.ontrack.media.album.model.domain.Album
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,25 +15,56 @@ class AlbumViewModel(
     private val repository: AlbumRepository,
     private val userService: UserService,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(AlbumUiState())
-    val uiState: StateFlow<AlbumUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MediaUiState<Album>())
+    val uiState: StateFlow<MediaUiState<Album>> = _uiState.asStateFlow()
 
     init {
-        fetchAlbumsByKeyword("american teen")
+        fetchAlbumsByQuery("american teen")
     }
 
-    fun fetchAlbumsByKeyword(keyword: String) {
+    fun fetchAlbumsByQuery(query: String) {
         viewModelScope.launch {
-            val albums = repository.fetchMediaByQuery(keyword)
-            _uiState.value = _uiState.value.copy(albums = albums)
-            println(albums)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaByQuery(query)
+
+            _uiState.value = result.fold(
+                onSuccess = { albums ->
+                    _uiState.value.copy(
+                        mediaList = albums,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
         }
     }
 
     fun fetchAlbumDetails(id: String) {
         viewModelScope.launch {
-            val album = repository.fetchMediaDetails(id)
-            _uiState.value = _uiState.value.copy(selectedAlbum = album)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result = repository.fetchMediaDetails(id)
+
+            _uiState.value = result.fold(
+                onSuccess = { album ->
+                    _uiState.value.copy(
+                        selectedMedia = album,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                    )
+                }
+            )
         }
     }
 
