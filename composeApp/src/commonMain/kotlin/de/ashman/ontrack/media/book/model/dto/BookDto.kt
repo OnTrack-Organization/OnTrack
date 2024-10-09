@@ -21,5 +21,3 @@ data class BookDto(
     val ratingsCount: Int? = null,
     val subject: List<String>? = null,
 )
-
-fun Int.getImageUrl() : String = "https://covers.openlibrary.org/b/id/${this}-L.jpg"

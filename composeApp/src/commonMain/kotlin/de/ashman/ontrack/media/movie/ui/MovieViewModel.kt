@@ -20,7 +20,7 @@ class MovieViewModel(
     val uiState: StateFlow<MovieUiState> = _uiState.asStateFlow()
 
     init {
-        fetchMoviesByKeyword("attack on titan")
+        fetchMoviesByKeyword("inception")
         fetchStatusCounts()
     }
 

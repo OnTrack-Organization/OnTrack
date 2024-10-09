@@ -19,13 +19,13 @@ class VideoGameViewModel(
     val uiState: StateFlow<VideoGameUiState> = _uiState.asStateFlow()
 
     init {
-        fetchGamesByKeyword("attack on titan")
+        fetchGamesByKeyword("smash bros")
     }
 
     fun fetchGamesByKeyword(keyword: String) {
         viewModelScope.launch {
             val games = repository.fetchMediaByQuery(keyword)
-            _uiState.value = _uiState.value.copy(games = games)
+            _uiState.value = _uiState.value.copy(videogames = games)
         }
     }
 

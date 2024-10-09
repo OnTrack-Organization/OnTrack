@@ -1,10 +1,10 @@
 package de.ashman.ontrack
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,83 +39,101 @@ fun ApiTest(
     val movieState by movieViewModel.uiState.collectAsState()
     val showState by showViewModel.uiState.collectAsState()
     val bookState by bookViewModel.uiState.collectAsState()
-    val gameState by videoGameViewModel.uiState.collectAsState()
-    val bgState by boardGameViewModel.uiState.collectAsState()
-    val musicState by albumViewModel.uiState.collectAsState()
+    val videogameState by videoGameViewModel.uiState.collectAsState()
+    val boardgameState by boardGameViewModel.uiState.collectAsState()
+    val albumState by albumViewModel.uiState.collectAsState()
 
     val userState by userViewModel.uiState.collectAsState()
 
     // TODO anders eventuell
     userViewModel.getUser()
     var text by remember { mutableStateOf("") }
-    /*AsyncImage(
-       model = ImageRequest.Builder(LocalPlatformContext.current)
-            .data("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg")
-           .build(),
-        contentDescription = ""
-    )
-    Image(
-        rememberAsyncImagePainter("https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg"), contentDescription = null
-    )
-    AsyncImage(
-        modifier = Modifier.size(200.dp),
-        model = "https://1.bp.blogspot.com/-m4g5Q9WZuLw/YO7FxYJsnsI/AAAAAAAA6fs/nyDiNA_6EHMrPw3qRLJ7FcR1-MoC4rkZwCLcBGAsYHQ/s0/javabeer.jpg",
-        contentDescription = ""
-    )*/
 
     LazyColumn(
         modifier = modifier
     ) {
-        item { Text(userState.user?.name ?: "Nobody logged in") }
-        item {
-            Button(
-                onClick = { userViewModel.logoutUser() }
-            ) {
-                Text("Logout")
+        if (false) {
+            item { Text(userState.user?.name ?: "Nobody logged in") }
+            item {
+                Button(
+                    onClick = { userViewModel.logoutUser() }
+                ) {
+                    Text("Logout")
+                }
             }
-        }
-        item {
-            TextField(
-                value = text,
-                onValueChange = { newText ->
-                    text = newText
-                },
-                label = { Text("Search...") },
-            )
-        }
-        item {
-            Button(
-                onClick = {
-                    movieViewModel.fetchMoviesByKeyword(text)
-                },
-            ) {
-                Text("Search")
+            item {
+                TextField(
+                    value = text,
+                    onValueChange = { newText ->
+                        text = newText
+                    },
+                    label = { Text("Search...") },
+                )
+            }
+            item {
+                Button(
+                    onClick = {
+                        movieViewModel.fetchMoviesByKeyword(text)
+                    },
+                ) {
+                    Text("Search")
+                }
             }
         }
 
         items(showState.shows) {
-            Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })
-            Text(text = movieState.selectedMovie?.overview ?: "Get Details", modifier.clickable { movieViewModel.fetchMovieDetails(it.id) })
-            AsyncImage(
-                model = "https://image.tmdb.org/t/p/original${it.coverUrl}",
-                contentDescription = "Poster"
-            )
-            Button(onClick = { goToDetail(it.id) }) {
-                Text("Go To Details")
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
             }
         }
-
-        item { Text("MUSIC", style = MaterialTheme.typography.titleLarge) }
-        item { if (musicState.albums.isNotEmpty()) Text("${musicState.albums.first()}") }
-        item { Text("BOARD GAMES", style = MaterialTheme.typography.titleLarge) }
-        item { if (bgState.boardGames.isNotEmpty()) Text("${bgState.boardGames.first()}") }
-        item { Text("GAMES", style = MaterialTheme.typography.titleLarge) }
-        item { if (gameState.games.isNotEmpty()) Text("${gameState.games.first()}") }
-        item { Text("MOVIES", style = MaterialTheme.typography.titleLarge) }
-        item { if (movieState.movies.isNotEmpty()) Text("${movieState.movies.first()}") }
-        item { Text("SHOWS", style = MaterialTheme.typography.titleLarge) }
-        item { if (showState.shows.isNotEmpty()) Text("${showState.shows.first()}") }
-        item { Text("BOOKS", style = MaterialTheme.typography.titleLarge) }
-        item { if (bookState.books.isNotEmpty()) Text("${bookState.books.first()}") }
+        items(albumState.albums) {
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { albumViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
+            }
+        }
+        items(movieState.movies) {
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
+            }
+        }
+        items(videogameState.videogames) {
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { videoGameViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
+            }
+        }
+        items(boardgameState.boardGames) {
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { boardGameViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
+            }
+        }
+        items(bookState.books) {
+            Row {
+                Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addToList(it) })
+                AsyncImage(
+                    model = it.coverUrl,
+                    contentDescription = "Poster"
+                )
+            }
+        }
     }
 }

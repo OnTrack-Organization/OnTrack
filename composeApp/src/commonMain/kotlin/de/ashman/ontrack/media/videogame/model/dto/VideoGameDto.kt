@@ -20,7 +20,7 @@ data class VideoGameDto(
 
 @Serializable
 data class CoverDto(
-    val url: String,
+    val url: String?,
 )
 
 @Serializable
@@ -51,6 +51,3 @@ data class SimilarGameDto(
     val name: String,
     val cover: CoverDto? = null,
 )
-
-// TODO put somewhere else
-fun String.getLargeUrl(): String = "https://$this".replace("t_thumb", "t_1080p")

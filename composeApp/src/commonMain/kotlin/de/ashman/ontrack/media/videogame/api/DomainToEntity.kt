@@ -4,18 +4,10 @@ import de.ashman.ontrack.media.videogame.model.domain.Franchise
 import de.ashman.ontrack.media.videogame.model.domain.Platform
 import de.ashman.ontrack.media.videogame.model.domain.SimilarGame
 import de.ashman.ontrack.media.videogame.model.domain.VideoGame
-import de.ashman.ontrack.media.videogame.model.dto.FranchiseDto
-import de.ashman.ontrack.media.videogame.model.dto.PlatformDto
-import de.ashman.ontrack.media.videogame.model.dto.SimilarGameDto
-import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
-import de.ashman.ontrack.media.videogame.model.dto.getLargeUrl
 import de.ashman.ontrack.media.videogame.model.entity.FranchiseEntity
 import de.ashman.ontrack.media.videogame.model.entity.PlatformEntity
 import de.ashman.ontrack.media.videogame.model.entity.SimilarGameEntity
 import de.ashman.ontrack.media.videogame.model.entity.VideoGameEntity
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 fun VideoGame.toEntity(): VideoGameEntity {
     return VideoGameEntity(

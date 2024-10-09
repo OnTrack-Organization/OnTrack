@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ShowDto(
     val id: Int,
     val name: String,
-    val posterPath: String,
+    val posterPath: String? = null,
     val backdropPath: String? = null,
     val episodeRunTime: List<Int>? = null,
     val firstAirDate: String? = null,

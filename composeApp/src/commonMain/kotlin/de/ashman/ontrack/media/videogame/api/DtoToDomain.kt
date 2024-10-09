@@ -1,5 +1,6 @@
 package de.ashman.ontrack.media.videogame.api
 
+import de.ashman.ontrack.media.getIGDBCoverUrl
 import de.ashman.ontrack.media.videogame.model.domain.Franchise
 import de.ashman.ontrack.media.videogame.model.domain.Platform
 import de.ashman.ontrack.media.videogame.model.domain.SimilarGame
@@ -8,7 +9,6 @@ import de.ashman.ontrack.media.videogame.model.dto.FranchiseDto
 import de.ashman.ontrack.media.videogame.model.dto.PlatformDto
 import de.ashman.ontrack.media.videogame.model.dto.SimilarGameDto
 import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
-import de.ashman.ontrack.media.videogame.model.dto.getLargeUrl
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -16,7 +16,7 @@ import kotlinx.datetime.toLocalDateTime
 fun VideoGameDto.toDomain(): VideoGame {
     return VideoGame(
         id = id.toString(),
-        coverUrl = cover?.url?.getLargeUrl().orEmpty(),
+        coverUrl = cover?.url.getIGDBCoverUrl(),
         firstReleaseDate = firstReleaseDate?.let {
             Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString()
         },
@@ -42,13 +42,13 @@ fun PlatformDto.toDomain(): Platform {
     return Platform(
         abbreviation = abbreviation,
         name = name,
-        platformLogo = platformLogo?.url?.getLargeUrl(),
+        platformLogo = platformLogo?.url?.getIGDBCoverUrl(),
     )
 }
 
 fun SimilarGameDto.toDomain(): SimilarGame {
     return SimilarGame(
         name = name,
-        cover = cover?.url?.getLargeUrl()
+        cover = cover?.url?.getIGDBCoverUrl()
     )
 }

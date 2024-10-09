@@ -3,13 +3,13 @@ package de.ashman.ontrack.media.book.api
 import de.ashman.ontrack.media.book.model.domain.Book
 import de.ashman.ontrack.media.book.model.dto.BookDto
 import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
-import de.ashman.ontrack.media.book.model.dto.getImageUrl
+import de.ashman.ontrack.media.getOpenLibraryCoverUrl
 
 fun BookDto.toDomain(): Book {
     return Book(
         id = key,
         name = title,
-        coverUrl = coverI?.getImageUrl().orEmpty(),
+        coverUrl = coverI.getOpenLibraryCoverUrl(),
         authorKey = authorKey,
         authorName = authorName,
         description = description,

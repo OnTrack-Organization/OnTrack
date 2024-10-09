@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class MovieDto(
     val id: Int,
     val title: String,
-    val posterPath: String,
+    val posterPath: String? = null,
     val backdropPath: String? = null,
     val belongsToCollection: CollectionDto? = null,
     val genres: List<GenreDto>? = null,

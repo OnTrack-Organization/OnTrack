@@ -18,8 +18,8 @@ class BookRepository(
         val response: BookSearchResponseDto = httpClient.get("search.json") {
             //parameter("fields", "title, cover_i, key")
             parameter("title", query)
+            parameter("limit", "3")
         }.body()
-        println(response)
         return response.books.map { it.toDomain() }
     }
 

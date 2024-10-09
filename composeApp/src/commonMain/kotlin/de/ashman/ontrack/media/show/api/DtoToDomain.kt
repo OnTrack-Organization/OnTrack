@@ -1,5 +1,6 @@
 package de.ashman.ontrack.media.show.api
 
+import de.ashman.ontrack.media.getTMDBCoverUrl
 import de.ashman.ontrack.media.show.model.domain.Season
 import de.ashman.ontrack.media.show.model.domain.Show
 import de.ashman.ontrack.media.show.model.dto.SeasonDto
@@ -9,7 +10,7 @@ fun ShowDto.toDomain(): Show {
     return Show(
         id = id.toString(),
         name = name,
-        coverUrl = posterPath,
+        coverUrl = posterPath.getTMDBCoverUrl(),
         backdropPath = backdropPath,
         episodeRunTime = episodeRunTime,
         firstAirDate = firstAirDate,
