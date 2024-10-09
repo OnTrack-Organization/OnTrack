@@ -11,6 +11,7 @@ data class BoardGame(
     override val type: MediaType = MediaType.BOARDGAME,
     override val name: String,
     override val consumeStatus: StatusType? = null,
+    override val userRating: Float? = null,
     override val coverUrl: String,
     val yearPublished: String?,
     val minPlayers: String?,

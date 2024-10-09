@@ -81,6 +81,17 @@ fun ApiTest(
             }
         }
 
+        item {
+            var rating by remember { mutableStateOf(0f) }
+
+            StarRating(
+                rating = rating,
+                onRatingChanged = {
+                    rating = it
+                }
+            )
+        }
+
         items(showState.shows) {
             Row {
                 Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })

@@ -11,8 +11,8 @@ data class Movie(
     override val type: MediaType = MediaType.MOVIE,
     override val name: String,
     override val consumeStatus: StatusType? = null,
+    override val userRating: Float? = null,
     override val coverUrl: String,
-
     val backdropPath: String?,
     val genres: List<String>?,
     val originCountry: List<String>?,

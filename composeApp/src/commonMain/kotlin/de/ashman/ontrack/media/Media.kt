@@ -10,6 +10,7 @@ interface Media {
     val name: String
     val coverUrl: String
     val consumeStatus: StatusType?
+    val userRating: Float?
 }
 
 @Serializable

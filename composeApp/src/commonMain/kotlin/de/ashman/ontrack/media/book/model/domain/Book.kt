@@ -11,6 +11,7 @@ data class Book(
     override val type: MediaType = MediaType.BOOK,
     override val name: String,
     override val consumeStatus: StatusType? = null,
+    override val userRating: Float? = null,
     override val coverUrl: String,
     val authorKey: List<String>? = null,
     val authorName: List<String>? = null,
