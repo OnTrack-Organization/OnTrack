@@ -1,7 +1,7 @@
 package de.ashman.ontrack.media.album.api
 
-import de.ashman.ontrack.media.album.model.domain.Album
-import de.ashman.ontrack.media.album.model.domain.Track
+import de.ashman.ontrack.media.model.Album
+import de.ashman.ontrack.media.model.Track
 import de.ashman.ontrack.media.album.model.dto.AlbumDto
 import de.ashman.ontrack.media.album.model.dto.AlbumResponseDto
 import de.ashman.ontrack.media.album.model.dto.TrackDto

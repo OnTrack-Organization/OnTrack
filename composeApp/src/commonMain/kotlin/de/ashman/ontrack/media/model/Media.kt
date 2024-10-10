@@ -1,16 +1,17 @@
-package de.ashman.ontrack.media
+package de.ashman.ontrack.media.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // TODO add more fields: user rating
-interface Media {
-    val id: String
-    val type: MediaType
-    val name: String
-    val coverUrl: String
-    val consumeStatus: StatusType?
-    val userRating: Float?
+@Serializable
+sealed class Media {
+    abstract val id: String
+    abstract val type: MediaType
+    abstract val name: String
+    abstract val coverUrl: String
+    abstract val consumeStatus: StatusType?
+    abstract val userRating: Float?
 }
 
 @Serializable

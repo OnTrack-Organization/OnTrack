@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media.movie.api
 
-import de.ashman.ontrack.media.movie.model.domain.Movie
+import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.movie.model.dto.MovieDto
 import de.ashman.ontrack.media.movie.model.dto.MovieResponseDto
 import de.ashman.ontrack.media.MediaRepository

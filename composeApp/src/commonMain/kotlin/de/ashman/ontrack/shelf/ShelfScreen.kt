@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.media.StatusType
+import de.ashman.ontrack.media.model.StatusType
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.playingcards

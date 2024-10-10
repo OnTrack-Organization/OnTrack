@@ -74,7 +74,7 @@ fun ApiTest(
             item {
                 Button(
                     onClick = {
-                        movieViewModel.fetchMoviesByQuery(text)
+                        movieViewModel.fetchMediaByQuery(text)
                     },
                 ) {
                     Text("Search")
@@ -100,7 +100,7 @@ fun ApiTest(
         } else {
             items(bookState.mediaList) {
                 Row {
-                    Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addToList(it) })
+                    Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addMediaToList(it) })
                     AsyncImage(
                         model = it.coverUrl,
                         contentDescription = "Book Cover"
@@ -110,7 +110,7 @@ fun ApiTest(
         }
         items(showState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { showViewModel.addToList(it) })
+                Text(text = it.name, modifier = Modifier.clickable { showViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -119,7 +119,7 @@ fun ApiTest(
         }
         items(albumState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { albumViewModel.addToList(it) })
+                Text(text = it.name, modifier = Modifier.clickable { albumViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -128,7 +128,7 @@ fun ApiTest(
         }
         items(movieState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addToList(it) })
+                Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -137,7 +137,7 @@ fun ApiTest(
         }
         items(videogameState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { videoGameViewModel.addToList(it) })
+                Text(text = it.name, modifier = Modifier.clickable { videoGameViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -146,7 +146,7 @@ fun ApiTest(
         }
         items(boardgameState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { boardGameViewModel.addToList(it) })
+                Text(text = it.name, modifier = Modifier.clickable { boardGameViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"

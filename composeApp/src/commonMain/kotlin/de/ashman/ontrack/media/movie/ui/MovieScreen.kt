@@ -27,7 +27,7 @@ fun MovieScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(id) {
-        viewModel.fetchMovieDetails(id)
+        viewModel.fetchMediaDetails(id)
     }
 
     Scaffold(

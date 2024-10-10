@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media.book.api
 
-import de.ashman.ontrack.media.book.model.domain.Book
+import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.media.book.model.dto.BookDto
 import de.ashman.ontrack.media.book.model.dto.BookWorksResponseDto
 import de.ashman.ontrack.media.getOpenLibraryCoverUrl

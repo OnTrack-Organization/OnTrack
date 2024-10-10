@@ -1,8 +1,5 @@
-package de.ashman.ontrack.media.album.model.domain
+package de.ashman.ontrack.media.model
 
-import de.ashman.ontrack.media.Media
-import de.ashman.ontrack.media.MediaType
-import de.ashman.ontrack.media.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +18,7 @@ data class Album(
     val spotifyUrl: String,
     val totalTracks: Int,
     val tracks: List<Track>,
-) : Media
+) : Media()
 
 @Serializable
 data class Track(

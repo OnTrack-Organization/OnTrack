@@ -1,8 +1,5 @@
-package de.ashman.ontrack.media.book.model.domain
+package de.ashman.ontrack.media.model
 
-import de.ashman.ontrack.media.Media
-import de.ashman.ontrack.media.MediaType
-import de.ashman.ontrack.media.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,4 +23,4 @@ data class Book(
     val ratingsAverage: Double? = null,
     val ratingsCount: Int? = null,
     val subject: List<String>? = null,
-) : Media
+) : Media()

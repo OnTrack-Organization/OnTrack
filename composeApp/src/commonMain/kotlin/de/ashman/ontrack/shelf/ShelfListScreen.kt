@@ -41,8 +41,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.media.StatusType
-import de.ashman.ontrack.media.movie.model.domain.Movie
+import de.ashman.ontrack.media.model.StatusType
+import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

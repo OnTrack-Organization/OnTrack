@@ -1,8 +1,5 @@
-package de.ashman.ontrack.media.boardgame.model.domain
+package de.ashman.ontrack.media.model
 
-import de.ashman.ontrack.media.Media
-import de.ashman.ontrack.media.MediaType
-import de.ashman.ontrack.media.StatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +18,7 @@ data class BoardGame(
     val minAge: String?,
     val thumbnail: String?,
     val ratings: Ratings?,
-) : Media
+) : Media()
 
 @Serializable
 data class Ratings(
