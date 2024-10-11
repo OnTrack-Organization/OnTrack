@@ -1,8 +1,8 @@
 package de.ashman.ontrack.media.show.api
 
 import de.ashman.ontrack.media.model.Show
-import de.ashman.ontrack.media.show.model.dto.ShowDto
-import de.ashman.ontrack.media.show.model.dto.ShowResponseDto
+import de.ashman.ontrack.media.show.api.dto.ShowDto
+import de.ashman.ontrack.media.show.api.dto.ShowResponseDto
 import de.ashman.ontrack.media.MediaRepository
 import de.ashman.ontrack.media.album.api.safeApiCall
 import io.ktor.client.HttpClient

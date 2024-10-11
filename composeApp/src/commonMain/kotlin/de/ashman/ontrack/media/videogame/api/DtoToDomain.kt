@@ -5,10 +5,10 @@ import de.ashman.ontrack.media.model.Franchise
 import de.ashman.ontrack.media.model.Platform
 import de.ashman.ontrack.media.model.SimilarGame
 import de.ashman.ontrack.media.model.VideoGame
-import de.ashman.ontrack.media.videogame.model.dto.FranchiseDto
-import de.ashman.ontrack.media.videogame.model.dto.PlatformDto
-import de.ashman.ontrack.media.videogame.model.dto.SimilarGameDto
-import de.ashman.ontrack.media.videogame.model.dto.VideoGameDto
+import de.ashman.ontrack.media.videogame.api.dto.FranchiseDto
+import de.ashman.ontrack.media.videogame.api.dto.PlatformDto
+import de.ashman.ontrack.media.videogame.api.dto.SimilarGameDto
+import de.ashman.ontrack.media.videogame.api.dto.VideoGameDto
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

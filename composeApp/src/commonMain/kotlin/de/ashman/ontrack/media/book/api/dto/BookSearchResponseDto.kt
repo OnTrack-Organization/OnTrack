@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.book.model.dto
+package de.ashman.ontrack.media.book.api.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

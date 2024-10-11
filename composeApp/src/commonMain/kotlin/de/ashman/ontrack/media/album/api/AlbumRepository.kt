@@ -2,8 +2,8 @@ package de.ashman.ontrack.media.album.api
 
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.media.model.Album
-import de.ashman.ontrack.media.album.model.dto.AlbumDto
-import de.ashman.ontrack.media.album.model.dto.AlbumSearchResult
+import de.ashman.ontrack.media.album.api.dto.AlbumDto
+import de.ashman.ontrack.media.album.api.dto.AlbumSearchResult
 import de.ashman.ontrack.media.MediaRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

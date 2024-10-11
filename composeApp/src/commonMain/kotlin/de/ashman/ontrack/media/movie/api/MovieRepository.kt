@@ -1,8 +1,8 @@
 package de.ashman.ontrack.media.movie.api
 
 import de.ashman.ontrack.media.model.Movie
-import de.ashman.ontrack.media.movie.model.dto.MovieDto
-import de.ashman.ontrack.media.movie.model.dto.MovieResponseDto
+import de.ashman.ontrack.media.movie.api.dto.MovieDto
+import de.ashman.ontrack.media.movie.api.dto.MovieResponseDto
 import de.ashman.ontrack.media.MediaRepository
 import de.ashman.ontrack.media.album.api.safeApiCall
 import io.ktor.client.HttpClient

@@ -1,28 +1,28 @@
-package de.ashman.ontrack.media.movie.model.dto
+package de.ashman.ontrack.media.show.api.dto
 
 import kotlinx.serialization.Serializable
 
-// https://developer.themoviedb.org/reference/intro/getting-started
-// TODO get similar movies
 @Serializable
-data class MovieDto(
+data class ShowDto(
     val id: Int,
-    val title: String,
+    val name: String,
     val posterPath: String? = null,
     val backdropPath: String? = null,
-    val belongsToCollection: CollectionDto? = null,
+    val episodeRunTime: List<Int>? = null,
+    val firstAirDate: String? = null,
     val genres: List<GenreDto>? = null,
+    val languages: List<String>? = null,
+    val numberOfEpisodes: Int? = null,
+    val numberOfSeasons: Int? = null,
     val originCountry: List<String>? = null,
     val originalLanguage: String? = null,
-    val originalTitle: String? = null,
+    val originalName: String? = null,
     val overview: String? = null,
     val popularity: Double? = null,
-    val releaseDate: String? = null,
-    val revenue: Long? = null,
-    val runtime: Int? = null,
+    val seasons: List<SeasonDto>? = null,
     val status: String? = null,
     val voteAverage: Double? = null,
-    val voteCount: Int? = null,
+    val voteCount: Int? = null
 )
 
 @Serializable
@@ -32,9 +32,13 @@ data class GenreDto(
 )
 
 @Serializable
-data class CollectionDto(
+data class SeasonDto(
     val id: Int,
+    val airDate: String?,
+    val episodeCount: Int?,
     val name: String?,
+    val overview: String?,
     val posterPath: String?,
-    val backdropPath: String?
+    val seasonNumber: Int?,
+    val voteAverage: Double?
 )

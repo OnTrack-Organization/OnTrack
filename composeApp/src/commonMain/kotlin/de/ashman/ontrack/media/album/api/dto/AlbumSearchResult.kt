@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.album.model.dto
+package de.ashman.ontrack.media.album.api.dto
 
 import kotlinx.serialization.Serializable
 

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.videogame.model.dto
+package de.ashman.ontrack.media.videogame.api.dto
 
 import kotlinx.serialization.Serializable
 

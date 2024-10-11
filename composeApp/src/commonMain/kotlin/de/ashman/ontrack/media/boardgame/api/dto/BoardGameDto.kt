@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.boardgame.model.dto
+package de.ashman.ontrack.media.boardgame.api.dto
 
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement

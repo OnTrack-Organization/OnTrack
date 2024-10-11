@@ -2,7 +2,7 @@ package de.ashman.ontrack.media.movie.api
 
 import de.ashman.ontrack.media.getTMDBCoverUrl
 import de.ashman.ontrack.media.model.Movie
-import de.ashman.ontrack.media.movie.model.dto.MovieDto
+import de.ashman.ontrack.media.movie.api.dto.MovieDto
 
 fun MovieDto.toDomain(): Movie {
     return Movie(

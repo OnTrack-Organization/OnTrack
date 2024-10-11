@@ -2,9 +2,9 @@ package de.ashman.ontrack.media.album.api
 
 import de.ashman.ontrack.media.model.Album
 import de.ashman.ontrack.media.model.Track
-import de.ashman.ontrack.media.album.model.dto.AlbumDto
-import de.ashman.ontrack.media.album.model.dto.AlbumResponseDto
-import de.ashman.ontrack.media.album.model.dto.TrackDto
+import de.ashman.ontrack.media.album.api.dto.AlbumDto
+import de.ashman.ontrack.media.album.api.dto.AlbumResponseDto
+import de.ashman.ontrack.media.album.api.dto.TrackDto
 
 fun AlbumDto.toDomain(): Album {
     return Album(

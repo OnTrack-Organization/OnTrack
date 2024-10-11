@@ -1,12 +1,12 @@
-package de.ashman.ontrack.media.movie.model.dto
+package de.ashman.ontrack.media.show.api.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MovieResponseDto(
+data class ShowResponseDto(
     @SerialName("results")
-    val movies: List<MovieDto> = emptyList(),
+    val shows: List<ShowDto> = emptyList(),
 
     val page: Int,
     val totalPages: Int,
