@@ -2,10 +2,11 @@ package de.ashman.ontrack.media
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.login.UserService
-import de.ashman.ontrack.media.model.Media
-import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.media.model.StatusType
+import de.ashman.ontrack.media.domain.Media
+import de.ashman.ontrack.media.domain.MediaType
+import de.ashman.ontrack.media.domain.StatusType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,7 +14,7 @@ import de.ashman.ontrack.OnTrackScreen
 import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
-import de.ashman.ontrack.media.movie.ui.MovieScreen
+import de.ashman.ontrack.shelf.MovieScreen
 import de.ashman.ontrack.shelf.MediaType
 import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen

@@ -1,23 +1,11 @@
 package de.ashman.ontrack.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import chaintech.videoplayer.model.AudioFile
-import chaintech.videoplayer.model.AudioPlayerConfig
-import chaintech.videoplayer.ui.audio.AudioPlayerView
-import coil3.compose.AsyncImage
 import de.ashman.ontrack.ApiTest
-import de.ashman.ontrack.media.album.ui.AlbumViewModel
-import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
-import de.ashman.ontrack.media.book.ui.BookViewModel
+import de.ashman.ontrack.shelf.ui.AlbumViewModel
 import org.koin.compose.koinInject
 
 @Composable

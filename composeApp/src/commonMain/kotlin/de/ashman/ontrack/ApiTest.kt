@@ -17,12 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
 import de.ashman.ontrack.login.ui.UserViewModel
-import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
-import de.ashman.ontrack.media.book.ui.BookViewModel
-import de.ashman.ontrack.media.movie.ui.MovieViewModel
-import de.ashman.ontrack.media.album.ui.AlbumViewModel
-import de.ashman.ontrack.media.show.ui.ShowViewModel
-import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
+import de.ashman.ontrack.shelf.ui.BoardGameViewModel
+import de.ashman.ontrack.shelf.ui.BookViewModel
+import de.ashman.ontrack.shelf.ui.MovieViewModel
+import de.ashman.ontrack.shelf.ui.AlbumViewModel
+import de.ashman.ontrack.shelf.ui.ShowViewModel
+import de.ashman.ontrack.shelf.ui.VideoGameViewModel
 import org.koin.compose.koinInject
 
 @Composable

@@ -1,14 +1,14 @@
 package de.ashman.ontrack.login
 
 import de.ashman.ontrack.login.model.UserDto
-import de.ashman.ontrack.media.model.Album
-import de.ashman.ontrack.media.model.BoardGame
-import de.ashman.ontrack.media.model.Book
-import de.ashman.ontrack.media.model.Media
-import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.media.model.Movie
-import de.ashman.ontrack.media.model.Show
-import de.ashman.ontrack.media.model.VideoGame
+import de.ashman.ontrack.media.domain.Album
+import de.ashman.ontrack.media.domain.BoardGame
+import de.ashman.ontrack.media.domain.Book
+import de.ashman.ontrack.media.domain.Media
+import de.ashman.ontrack.media.domain.MediaType
+import de.ashman.ontrack.media.domain.Movie
+import de.ashman.ontrack.media.domain.Show
+import de.ashman.ontrack.media.domain.VideoGame
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database

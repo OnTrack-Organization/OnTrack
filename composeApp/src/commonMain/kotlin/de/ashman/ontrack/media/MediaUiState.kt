@@ -1,6 +1,6 @@
 package de.ashman.ontrack.media
 
-import de.ashman.ontrack.media.model.StatusType
+import de.ashman.ontrack.media.domain.StatusType
 
 data class MediaUiState<T>(
     val mediaList: List<T> = emptyList(),
