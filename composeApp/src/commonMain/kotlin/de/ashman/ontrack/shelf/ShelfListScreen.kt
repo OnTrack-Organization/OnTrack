@@ -1,6 +1,5 @@
 package de.ashman.ontrack.shelf
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,22 +41,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.media.album.ui.AlbumViewModel
+import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
+import de.ashman.ontrack.media.book.ui.BookViewModel
+import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.StatusType
-import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
+import de.ashman.ontrack.media.show.ui.ShowViewModel
+import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
-/*val shelfItems = listOf(
-    Movie(id = 1, title = "Attack on Titan", watchStatus = StatusType.WATCHED),
-    Movie(id = 2, title = "Demon Slayer", watchStatus = StatusType.CATALOG),
-    Movie(id = 3, title = "Breaking Bad", watchStatus = StatusType.CATALOG),
-    Movie(id = 4, title = "Game of Thrones", watchStatus = StatusType.WATCHED),
-    Movie(id = 5, title = "Naruto", watchStatus = StatusType.DROPPED),
-)*/
-val shelfItems = emptyList<Movie>()
 
 // TODO screen hat eine column mit allen einträgen, pager, searchbar, fab und bottomsheet mit settings
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,17 +60,30 @@ val shelfItems = emptyList<Movie>()
 fun ShelfListScreen(
     mediaType: MediaType,
     movieViewModel: MovieViewModel = koinInject(),
+    showViewModel: ShowViewModel = koinInject(),
+    bookViewModel: BookViewModel = koinInject(),
+    videoGameViewModel: VideoGameViewModel = koinInject(),
+    boardGameViewModel: BoardGameViewModel = koinInject(),
+    albumViewModel: AlbumViewModel = koinInject(),
 ) {
+    // TODO change so that we actually get saved items
+    val shelfState = when (mediaType) {
+        MediaType.MOVIES -> movieViewModel.uiState.collectAsState()
+        MediaType.SHOWS -> showViewModel.uiState.collectAsState()
+        MediaType.BOOKS -> bookViewModel.uiState.collectAsState()
+        MediaType.VIDEOGAMES -> videoGameViewModel.uiState.collectAsState()
+        MediaType.BOARDGAMES -> boardGameViewModel.uiState.collectAsState()
+        MediaType.ALBUMS -> albumViewModel.uiState.collectAsState()
+    }
+
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberBottomSheetScaffoldState(rememberStandardBottomSheetState())
 
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    // Filter shelf items based on the search query
-    // TODO change to domain model
-    val filteredShelfItems = shelfItems
-        .filter { it.name?.contains(searchQuery, ignoreCase = true) ?: false }
-        .ifEmpty { shelfItems }
+    val filteredShelfItems = shelfState.value.mediaList
+        .filter { it.name.contains(searchQuery, ignoreCase = true) }
+        .ifEmpty { shelfState.value.mediaList }
 
     Scaffold(
         topBar = {
@@ -113,12 +122,11 @@ fun ShelfListScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShelfListContent(
     modifier: Modifier,
     mediaType: MediaType,
-    shelfItems: List<Movie>,
+    shelfItems: List<Media>,
 ) {
     val tabTitles = mediaType.statusTypes
     val pagerState = rememberPagerState { tabTitles.size }
@@ -133,7 +141,12 @@ fun ShelfListContent(
             tabTitles.forEachIndexed { index, title ->
                 Tab(
                     selected = pagerState.currentPage == index,
-                    icon = { Icon(imageVector = mediaType.getStatusIcon(title), contentDescription = title.name) },
+                    icon = {
+                        Icon(
+                            imageVector = mediaType.getStatusIcon(title),
+                            contentDescription = title.name
+                        )
+                    },
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
@@ -148,7 +161,7 @@ fun ShelfListContent(
             modifier = Modifier.weight(1f)
         ) { page ->
             val statusType = tabTitles[page]
-            val filteredMoviesByStatus = if (statusType == StatusType.ALL) {
+            val filteredMediaByStatus = if (statusType == StatusType.ALL) {
                 shelfItems
             } else {
                 shelfItems.filter { it.consumeStatus == statusType }
@@ -160,8 +173,8 @@ fun ShelfListContent(
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(filteredMoviesByStatus) { movie ->
-                    ShelfCard(movie = movie)
+                items(filteredMediaByStatus) {
+                    ShelfCard(it)
                 }
             }
         }
@@ -169,7 +182,7 @@ fun ShelfListContent(
 }
 
 @Composable
-fun ShelfCard(movie: Movie) {
+fun ShelfCard(media: Media) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth(),
@@ -180,10 +193,8 @@ fun ShelfCard(movie: Movie) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (movie.name != null) Text(text = movie.name, style = MaterialTheme.typography.titleMedium)
-            movie.overview?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium)
-            }
+            Text(text = media.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = media.coverUrl, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
