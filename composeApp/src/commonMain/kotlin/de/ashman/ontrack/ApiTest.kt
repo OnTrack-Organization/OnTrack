@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
 import de.ashman.ontrack.login.ui.UserViewModel
+import de.ashman.ontrack.media.ui.StarRating
 import de.ashman.ontrack.shelf.ui.BoardGameViewModel
 import de.ashman.ontrack.shelf.ui.BookViewModel
 import de.ashman.ontrack.shelf.ui.MovieViewModel
@@ -28,7 +29,7 @@ import org.koin.compose.koinInject
 @Composable
 fun ApiTest(
     modifier: Modifier = Modifier,
-    goToDetail: (String) -> Unit = {},
+    goToMovieDetail: (String) -> Unit = {},
     movieViewModel: MovieViewModel = koinInject(),
     showViewModel: ShowViewModel = koinInject(),
     bookViewModel: BookViewModel = koinInject(),
@@ -82,17 +83,6 @@ fun ApiTest(
             }
         }
 
-        item {
-            var rating by remember { mutableStateOf(0f) }
-
-            StarRating(
-                rating = rating,
-                onRatingChanged = {
-                    rating = it
-                }
-            )
-        }
-
         if (bookState.isLoading) {
             item { CircularProgressIndicator() }
         } else if (bookState.errorMessage != null) {
@@ -100,7 +90,9 @@ fun ApiTest(
         } else {
             items(bookState.mediaList) {
                 Row {
-                    Text(text = it.name, modifier = Modifier.clickable { bookViewModel.addMediaToList(it) })
+                    Text(
+                        text = it.name,
+                        modifier = Modifier.clickable { bookViewModel.addMediaToList(it) })
                     AsyncImage(
                         model = it.coverUrl,
                         contentDescription = "Book Cover"
@@ -108,9 +100,23 @@ fun ApiTest(
                 }
             }
         }
+        items(movieState.mediaList) {
+            Row {
+                Text(
+                    text = it.name,
+                    modifier = Modifier.clickable { movieViewModel.addMediaToList(it) })
+                AsyncImage(
+                    modifier = modifier.clickable { goToMovieDetail(it.id) },
+                    model = it.coverUrl,
+                    contentDescription = "Poster",
+                )
+            }
+        }
         items(showState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { showViewModel.addMediaToList(it) })
+                Text(
+                    text = it.name,
+                    modifier = Modifier.clickable { showViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -119,16 +125,9 @@ fun ApiTest(
         }
         items(albumState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { albumViewModel.addMediaToList(it) })
-                AsyncImage(
-                    model = it.coverUrl,
-                    contentDescription = "Poster"
-                )
-            }
-        }
-        items(movieState.mediaList) {
-            Row {
-                Text(text = it.name, modifier = Modifier.clickable { movieViewModel.addMediaToList(it) })
+                Text(
+                    text = it.name,
+                    modifier = Modifier.clickable { albumViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -137,7 +136,9 @@ fun ApiTest(
         }
         items(videogameState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { videoGameViewModel.addMediaToList(it) })
+                Text(
+                    text = it.name,
+                    modifier = Modifier.clickable { videoGameViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -146,7 +147,9 @@ fun ApiTest(
         }
         items(boardgameState.mediaList) {
             Row {
-                Text(text = it.name, modifier = Modifier.clickable { boardGameViewModel.addMediaToList(it) })
+                Text(
+                    text = it.name,
+                    modifier = Modifier.clickable { boardGameViewModel.addMediaToList(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"

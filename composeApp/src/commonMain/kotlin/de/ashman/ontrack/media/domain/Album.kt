@@ -8,7 +8,7 @@ data class Album(
     override val type: MediaType = MediaType.ALBUM,
     override val name: String,
     override val consumeStatus: StatusType? = StatusType.CATALOG,
-    override val userRating: Float? = null,
+    override val userRating: Float = 0F,
     override val coverUrl: String,
     val artists: List<String>,
     val genres: List<String>?,

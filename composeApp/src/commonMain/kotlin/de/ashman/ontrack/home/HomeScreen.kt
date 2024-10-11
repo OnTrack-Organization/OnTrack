@@ -11,12 +11,12 @@ import org.koin.compose.koinInject
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    goToDetail: (String) -> Unit,
+    goToMovieDetail: (String) -> Unit,
     albumViewModel: AlbumViewModel = koinInject(),
 ) {
     ApiTest(
         modifier = modifier.padding(16.dp),
-        goToDetail = goToDetail,
+        goToMovieDetail = goToMovieDetail,
     )
     /* Column(modifier.clickable { goToDetail(1234) }) {
          Text("Home")

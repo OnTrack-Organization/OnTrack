@@ -1,8 +1,10 @@
-package de.ashman.ontrack
+package de.ashman.ontrack.media.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -39,6 +41,7 @@ fun StarRating(
 
     Row(
         modifier = modifier
+            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { change, dragAmount ->
                     val starWidth = 40.dp.toPx()
@@ -46,7 +49,8 @@ fun StarRating(
                     selectedRating = (selectedRating + draggedStars).coerceIn(0f, 5f)
                     onRatingChanged(selectedRating)
                 }
-            }
+            },
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         repeat(5) { index ->
             val starRating = (index + 1).toFloat()
@@ -74,11 +78,26 @@ fun StarRating(
                     }
                 ) {
                     if (selectedRating >= starRating) {
-                        Icon(Icons.Filled.Star, contentDescription = null, modifier = Modifier.size(40.dp), tint = Color(0xFFFFC700))
+                        Icon(
+                            Icons.Filled.Star,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = Color(0xFFFFC700)
+                        )
                     } else if (isHalfStar) {
-                        Icon(Icons.AutoMirrored.Filled.StarHalf, contentDescription = null, modifier = Modifier.size(40.dp), tint = Color(0xFFFFC700))
+                        Icon(
+                            Icons.AutoMirrored.Filled.StarHalf,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = Color(0xFFFFC700)
+                        )
                     } else {
-                        Icon(Icons.Filled.StarBorder, contentDescription = null, modifier = Modifier.size(40.dp), tint = Color(0xFFFFC700))
+                        Icon(
+                            Icons.Filled.StarBorder,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = Color(0xFFFFC700)
+                        )
                     }
                 }
             }

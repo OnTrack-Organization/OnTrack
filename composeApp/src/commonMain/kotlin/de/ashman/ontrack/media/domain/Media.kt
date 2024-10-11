@@ -11,7 +11,7 @@ sealed class Media {
     abstract val name: String
     abstract val coverUrl: String
     abstract val consumeStatus: StatusType?
-    abstract val userRating: Float?
+    abstract val userRating: Float
 }
 
 @Serializable

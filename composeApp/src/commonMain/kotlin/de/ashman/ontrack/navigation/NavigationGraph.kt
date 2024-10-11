@@ -14,7 +14,7 @@ import de.ashman.ontrack.OnTrackScreen
 import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
-import de.ashman.ontrack.shelf.MovieScreen
+import de.ashman.ontrack.media.ui.detail.MovieDetailScreen
 import de.ashman.ontrack.shelf.MediaType
 import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen
@@ -42,7 +42,7 @@ fun NavigationGraph() {
             composable<Route.Movie> { backStackEntry ->
                 val movie: Route.Movie = backStackEntry.toRoute()
 
-                MovieScreen(
+                MovieDetailScreen(
                     id = movie.id,
                     onBack = { navController.popBackStack() }
                 )
@@ -71,7 +71,7 @@ fun NavGraphBuilder.mainGraph(
 ) {
     composable<Route.Home> {
         HomeScreen(
-            goToDetail = { id -> navController.navigate(Route.Movie(id)) }
+            goToMovieDetail = { id -> navController.navigate(Route.Movie(id)) }
         )
     }
 
