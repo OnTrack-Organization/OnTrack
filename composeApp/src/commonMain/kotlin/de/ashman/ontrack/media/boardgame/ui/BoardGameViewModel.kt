@@ -4,6 +4,7 @@ import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.MediaViewModel
 import de.ashman.ontrack.media.boardgame.api.BoardGameRepository
 import de.ashman.ontrack.media.model.BoardGame
+import de.ashman.ontrack.media.model.MediaType
 
 class BoardGameViewModel(
     private val repository: BoardGameRepository,
@@ -12,6 +13,7 @@ class BoardGameViewModel(
 
     init {
         fetchMediaByQuery("catan")
+        fetchStatusCounts(MediaType.BOARDGAME)
     }
 
 }

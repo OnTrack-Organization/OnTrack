@@ -7,7 +7,7 @@ data class Show(
     override val id: String,
     override val type: MediaType = MediaType.SHOW,
     override val name: String,
-    override val consumeStatus: StatusType? = null,
+    override val consumeStatus: StatusType? = StatusType.CATALOG,
     override val userRating: Float? = null,
     override val coverUrl: String,
     val backdropPath: String?,

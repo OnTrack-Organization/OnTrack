@@ -12,8 +12,10 @@ import de.ashman.ontrack.media.show.ui.ShowViewModel
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.login.UserService
+import de.ashman.ontrack.media.MediaViewModel
 import de.ashman.ontrack.media.album.api.AlbumRepository
 import de.ashman.ontrack.media.album.ui.AlbumViewModel
+import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.videogame.api.VideoGameRepository
 import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import io.ktor.client.HttpClient

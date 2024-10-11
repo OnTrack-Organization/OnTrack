@@ -30,14 +30,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.media.MediaViewModel
+import de.ashman.ontrack.media.album.ui.AlbumViewModel
+import de.ashman.ontrack.media.boardgame.ui.BoardGameViewModel
+import de.ashman.ontrack.media.book.ui.BookViewModel
+import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.StatusType
 import de.ashman.ontrack.media.movie.ui.MovieViewModel
+import de.ashman.ontrack.media.show.ui.ShowViewModel
+import de.ashman.ontrack.media.videogame.ui.VideoGameViewModel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.playingcards
+import ontrack.composeapp.generated.resources.shelf_title_album
 import ontrack.composeapp.generated.resources.shelf_title_boardgames
 import ontrack.composeapp.generated.resources.shelf_title_books
 import ontrack.composeapp.generated.resources.shelf_title_movies
-import ontrack.composeapp.generated.resources.shelf_title_music
 import ontrack.composeapp.generated.resources.shelf_title_shows
 import ontrack.composeapp.generated.resources.shelf_title_videogames
 import ontrack.composeapp.generated.resources.shelves
@@ -51,26 +58,31 @@ fun ShelfScreen(
     modifier: Modifier = Modifier,
     goToShelf: (MediaType) -> Unit = {},
     movieViewModel: MovieViewModel = koinInject(),
+    showViewModel: ShowViewModel = koinInject(),
+    bookViewModel: BookViewModel = koinInject(),
+    videoGameViewModel: VideoGameViewModel = koinInject(),
+    boardGameViewModel: BoardGameViewModel = koinInject(),
+    albumViewModel: AlbumViewModel = koinInject(),
 ) {
-    val uiState by movieViewModel.uiState.collectAsState()
+    val movieState by movieViewModel.uiState.collectAsState()
+    val showState by showViewModel.uiState.collectAsState()
+    val bookState by bookViewModel.uiState.collectAsState()
+    val videogameState by videoGameViewModel.uiState.collectAsState()
+    val boardgameState by boardGameViewModel.uiState.collectAsState()
+    val albumState by albumViewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        /*Text(
-            modifier = Modifier.padding(vertical = 20.dp),
-            // TODO aus user viewmodel lieber
-            text = "${Firebase.auth.currentUser?.displayName}'s Shelf",
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.Bold
-        )*/
-
         MediaType.entries.forEach { mediaType ->
             val counts = when (mediaType) {
-                MediaType.MOVIES -> uiState.statusCounts
-                // Add more cases for each media type
-                else -> emptyMap()
+                MediaType.MOVIES -> movieState.statusCounts
+                MediaType.SHOWS -> showState.statusCounts
+                MediaType.BOOKS -> bookState.statusCounts
+                MediaType.VIDEOGAMES -> videogameState.statusCounts
+                MediaType.BOARDGAMES -> boardgameState.statusCounts
+                MediaType.ALBUMS -> albumState.statusCounts
             }
 
             MediaCard(
@@ -151,7 +163,10 @@ fun MediaCount(
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Icon(imageVector = mediaType.getStatusIcon(statusType), contentDescription = statusType.name)
+        Icon(
+            imageVector = mediaType.getStatusIcon(statusType),
+            contentDescription = statusType.name
+        )
         Text("$count")
     }
 }
@@ -175,25 +190,48 @@ enum class MediaType(
         title = Res.string.shelf_title_movies,
         icon = { Icons.Default.Movie },
         iconDescription = "Movie Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.WATCHED, StatusType.CATALOG, StatusType.DROPPED)
+        statusTypes = listOf(
+            StatusType.ALL,
+            StatusType.WATCHED,
+            StatusType.CATALOG,
+            StatusType.DROPPED
+        )
     ),
     SHOWS(
         title = Res.string.shelf_title_shows,
         icon = { Icons.Default.Tv },
         iconDescription = "Show Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.BINGED, StatusType.CATALOG, StatusType.DROPPED, StatusType.BINGING)
+        statusTypes = listOf(
+            StatusType.ALL,
+            StatusType.BINGED,
+            StatusType.CATALOG,
+            StatusType.DROPPED,
+            StatusType.BINGING
+        )
     ),
     BOOKS(
         title = Res.string.shelf_title_books,
         icon = { Icons.Default.AutoStories },
         iconDescription = "Book Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.READ, StatusType.CATALOG, StatusType.DROPPED, StatusType.READING)
+        statusTypes = listOf(
+            StatusType.ALL,
+            StatusType.READ,
+            StatusType.CATALOG,
+            StatusType.DROPPED,
+            StatusType.READING
+        )
     ),
     VIDEOGAMES(
         title = Res.string.shelf_title_videogames,
         icon = { Icons.Default.SportsEsports },
         iconDescription = "Videogame Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.PLAYED, StatusType.CATALOG, StatusType.DROPPED, StatusType.PLAYING)
+        statusTypes = listOf(
+            StatusType.ALL,
+            StatusType.PLAYED,
+            StatusType.CATALOG,
+            StatusType.DROPPED,
+            StatusType.PLAYING
+        )
     ),
     BOARDGAMES(
         title = Res.string.shelf_title_boardgames,
@@ -201,10 +239,10 @@ enum class MediaType(
         iconDescription = "Boardgame Icon",
         statusTypes = listOf(StatusType.ALL, StatusType.PLAYED, StatusType.CATALOG)
     ),
-    MUSIC(
-        title = Res.string.shelf_title_music,
+    ALBUMS(
+        title = Res.string.shelf_title_album,
         icon = { Icons.Default.Album },
-        iconDescription = "Music Icon",
+        iconDescription = "Album Icon",
         statusTypes = listOf(StatusType.ALL)
     );
 

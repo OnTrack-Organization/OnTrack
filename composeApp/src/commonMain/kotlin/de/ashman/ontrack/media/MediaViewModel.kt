@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.model.Media
+import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.media.model.StatusType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +18,9 @@ abstract class MediaViewModel<T>(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MediaUiState<T>())
     val uiState: StateFlow<MediaUiState<T>> = _uiState.asStateFlow()
+
+    // TODO remove from list
+    // TODO update consume status
 
     fun updateUiState(newState: MediaUiState<T>) {
         _uiState.value = newState
@@ -70,6 +75,23 @@ abstract class MediaViewModel<T>(
     fun addMediaToList(media: Media) {
         viewModelScope.launch {
             userService.updateUserMedia(media)
+        }
+    }
+
+    fun fetchStatusCounts(mediaType: MediaType) {
+        viewModelScope.launch {
+            val savedMedia = userService.getSavedMedia<Media>(mediaType.name)
+
+            val counts = savedMedia
+                .mapNotNull { it.consumeStatus }
+                .groupingBy { it }
+                .eachCount()
+                .toMutableMap()
+                .apply {
+                    this[StatusType.ALL] = savedMedia.size
+                }
+
+            updateUiState(uiState.value.copy(statusCounts = counts))
         }
     }
 }

@@ -4,5 +4,5 @@
     <string name="shelf_title_videogames">Videogames</string>
     <string name="shelf_title_boardgames">Boardgames</string>
     <string name="shelf_title_books">Books</string>
-    <string name="shelf_title_music">Music</string>
+    <string name="shelf_title_album">Albums</string>
 </resources>

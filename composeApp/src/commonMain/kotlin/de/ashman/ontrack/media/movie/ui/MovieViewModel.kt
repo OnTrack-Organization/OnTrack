@@ -15,19 +15,6 @@ class MovieViewModel(
 
     init {
         fetchMediaByQuery("inception")
-        fetchStatusCounts()
-    }
-
-    private fun fetchStatusCounts() {
-        viewModelScope.launch {
-            val savedMovies = userService.getSavedMedia<Movie>(MediaType.MOVIE.name)
-
-            val counts = savedMovies
-                .mapNotNull { it.consumeStatus }
-                .groupingBy { it }
-                .eachCount()
-
-            updateUiState(uiState.value.copy(statusCounts = counts))
-        }
+        fetchStatusCounts(MediaType.MOVIE)
     }
 }
