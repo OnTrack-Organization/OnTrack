@@ -12,7 +12,7 @@ class MovieViewModel(
 ) : MediaViewModel<Movie>(repository, userService) {
 
     init {
-        fetchMediaByQuery("inception")
+        fetchMediaByQuery("lion")
         fetchStatusCounts(MediaType.MOVIE)
     }
 }

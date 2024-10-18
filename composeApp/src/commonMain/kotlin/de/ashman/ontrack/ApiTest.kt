@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
 import de.ashman.ontrack.login.ui.UserViewModel
-import de.ashman.ontrack.media.ui.StarRating
 import de.ashman.ontrack.shelf.ui.BoardGameViewModel
 import de.ashman.ontrack.shelf.ui.BookViewModel
 import de.ashman.ontrack.shelf.ui.MovieViewModel
@@ -92,7 +91,7 @@ fun ApiTest(
                 Row {
                     Text(
                         text = it.name,
-                        modifier = Modifier.clickable { bookViewModel.addMediaToList(it) })
+                        modifier = Modifier.clickable { bookViewModel.updateSelectedDb(it) })
                     AsyncImage(
                         model = it.coverUrl,
                         contentDescription = "Book Cover"
@@ -104,7 +103,7 @@ fun ApiTest(
             Row {
                 Text(
                     text = it.name,
-                    modifier = Modifier.clickable { movieViewModel.addMediaToList(it) })
+                    modifier = Modifier.clickable { movieViewModel.updateSelectedDb(it) })
                 AsyncImage(
                     modifier = modifier.clickable { goToMovieDetail(it.id) },
                     model = it.coverUrl,
@@ -116,7 +115,7 @@ fun ApiTest(
             Row {
                 Text(
                     text = it.name,
-                    modifier = Modifier.clickable { showViewModel.addMediaToList(it) })
+                    modifier = Modifier.clickable { showViewModel.updateSelectedDb(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -127,7 +126,7 @@ fun ApiTest(
             Row {
                 Text(
                     text = it.name,
-                    modifier = Modifier.clickable { albumViewModel.addMediaToList(it) })
+                    modifier = Modifier.clickable { albumViewModel.updateSelectedDb(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -138,7 +137,7 @@ fun ApiTest(
             Row {
                 Text(
                     text = it.name,
-                    modifier = Modifier.clickable { videoGameViewModel.addMediaToList(it) })
+                    modifier = Modifier.clickable { videoGameViewModel.updateSelectedDb(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"
@@ -149,7 +148,7 @@ fun ApiTest(
             Row {
                 Text(
                     text = it.name,
-                    modifier = Modifier.clickable { boardGameViewModel.addMediaToList(it) })
+                    modifier = Modifier.clickable { boardGameViewModel.updateSelectedDb(it) })
                 AsyncImage(
                     model = it.coverUrl,
                     contentDescription = "Poster"

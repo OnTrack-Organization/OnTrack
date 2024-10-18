@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 // TODO probably use this instead of thousand viewmodels
-abstract class MediaViewModel<T>(
+abstract class MediaViewModel<T : Media>(
     private val repository: MediaRepository<T>,
     private val userService: UserService
 ) : ViewModel() {
@@ -73,9 +73,13 @@ abstract class MediaViewModel<T>(
         }
     }
 
-    fun addMediaToList(media: Media) {
+    fun updateSelectedUi(media: T?) {
+        _uiState.value = _uiState.value.copy(selectedMedia = media)
+    }
+
+    fun updateSelectedDb(media: Media?) {
         viewModelScope.launch {
-            userService.updateUserMedia(media)
+            if (media != null) userService.updateUserMedia(media)
         }
     }
 
