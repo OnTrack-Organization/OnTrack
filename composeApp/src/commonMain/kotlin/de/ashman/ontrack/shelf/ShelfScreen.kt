@@ -11,10 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.BookmarkAdd
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -45,7 +51,8 @@ import ontrack.composeapp.generated.resources.shelf_title_books
 import ontrack.composeapp.generated.resources.shelf_title_movies
 import ontrack.composeapp.generated.resources.shelf_title_shows
 import ontrack.composeapp.generated.resources.shelf_title_videogames
-import ontrack.composeapp.generated.resources.shelves
+import ontrack.composeapp.generated.resources.shelves_filled
+import ontrack.composeapp.generated.resources.shelves_outlined
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -245,13 +252,18 @@ enum class MediaType(
     );
 
     @Composable
-    fun getStatusIcon(statusType: StatusType): ImageVector {
+    fun getStatusIcon(statusType: StatusType, isFilled: Boolean = false): ImageVector {
         return when (statusType) {
-            StatusType.BINGING, StatusType.PLAYING, StatusType.READING -> Icons.Outlined.Visibility
-            StatusType.WATCHED, StatusType.BINGED, StatusType.READ, StatusType.PLAYED -> Icons.Outlined.Done
-            StatusType.DROPPED -> Icons.Outlined.VisibilityOff
-            StatusType.CATALOG -> Icons.Outlined.BookmarkAdd
-            StatusType.ALL -> vectorResource(Res.drawable.shelves)
+            StatusType.BINGING, StatusType.PLAYING, StatusType.READING ->
+                if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
+            StatusType.WATCHED, StatusType.BINGED, StatusType.READ, StatusType.PLAYED ->
+                if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
+            StatusType.DROPPED ->
+                if (isFilled) Icons.Filled.VisibilityOff else Icons.Outlined.VisibilityOff
+            StatusType.CATALOG ->
+                if (isFilled) Icons.Filled.BookmarkAdd else Icons.Outlined.BookmarkAdd
+            StatusType.ALL ->
+                if (isFilled) vectorResource(Res.drawable.shelves_filled) else vectorResource(Res.drawable.shelves_outlined)
         }
     }
 }

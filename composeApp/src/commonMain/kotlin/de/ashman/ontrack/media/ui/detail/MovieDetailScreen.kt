@@ -126,17 +126,11 @@ fun ConsumeStatusRow(
         modifier = Modifier.fillMaxWidth()
     ) {
         mediaType.statusTypes.forEach { statusType ->
-            val icon = MediaType.MOVIES.getStatusIcon(statusType)
+            val isSelected = currentStatus == statusType
+            val icon = MediaType.MOVIES.getStatusIcon(statusType, isSelected)
 
             IconButton(
                 onClick = { onChangeStatus(statusType) },
-                // TODO change
-                modifier = Modifier.border(
-                    BorderStroke(
-                        2.dp,
-                        if (currentStatus == statusType) Color.Blue else Color.Transparent
-                    )
-                )
             ) {
                 Icon(
                     imageVector = icon,
