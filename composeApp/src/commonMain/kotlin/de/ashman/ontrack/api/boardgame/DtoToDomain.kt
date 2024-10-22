@@ -15,7 +15,7 @@ fun BoardGameDto.toDomain(): BoardGame {
         minPlayers = minplayers?.value,
         maxPlayers = maxplayers?.value,
         playingTime = playingtime?.value,
-        description = description,
+        description = description?.decodeHtmlManually(),
         thumbnail = thumbnail,
         ratings = statistics?.ratings?.toDomain()
     )
@@ -28,4 +28,11 @@ fun StatisticsDto.RatingsDto.toDomain(): Ratings {
         numWeights = numWeights.value,
         averageWeight = averageWeight.value
     )
+}
+
+fun String.decodeHtmlManually(): String {
+    return this
+        .replace("&amp;#10;", "\n")
+        .replace("&amp;ndash;", "–")
+        .replace("&amp;", "&")
 }

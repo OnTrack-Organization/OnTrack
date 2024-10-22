@@ -32,6 +32,8 @@ class AccessTokenManager(
 
         accessToken = response.accessToken
         tokenExpiration = Clock.System.now() + response.expiresIn.seconds
+
+        println("ACCESS TOKEN:" + accessToken)
     }
 
     private fun isTokenExpired(): Boolean {

@@ -248,7 +248,7 @@ enum class MediaType(
         title = Res.string.shelf_title_album,
         icon = { Icons.Default.Album },
         iconDescription = "Album Icon",
-        statusTypes = listOf(StatusType.ALL)
+        statusTypes = listOf(StatusType.ALL, StatusType.CATALOG)
     );
 
     @Composable
