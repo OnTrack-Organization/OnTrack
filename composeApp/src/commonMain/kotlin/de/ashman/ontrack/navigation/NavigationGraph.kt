@@ -15,7 +15,7 @@ import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
 import de.ashman.ontrack.media.ui.detail.MovieDetailScreen
-import de.ashman.ontrack.shelf.MediaType
+import de.ashman.ontrack.media.domain.MediaType
 import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase

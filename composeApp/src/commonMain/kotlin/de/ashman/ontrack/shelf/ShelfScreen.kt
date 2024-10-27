@@ -8,22 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.AutoStories
-import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.Tv
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.BookmarkAdd
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,29 +17,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.media.domain.MediaType
 import de.ashman.ontrack.shelf.ui.AlbumViewModel
 import de.ashman.ontrack.shelf.ui.BoardGameViewModel
 import de.ashman.ontrack.shelf.ui.BookViewModel
-import de.ashman.ontrack.media.domain.StatusType
+import de.ashman.ontrack.media.domain.ConsumeStatus
 import de.ashman.ontrack.shelf.ui.MovieViewModel
 import de.ashman.ontrack.shelf.ui.ShowViewModel
 import de.ashman.ontrack.shelf.ui.VideoGameViewModel
-import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.playingcards
-import ontrack.composeapp.generated.resources.shelf_title_album
-import ontrack.composeapp.generated.resources.shelf_title_boardgames
-import ontrack.composeapp.generated.resources.shelf_title_books
-import ontrack.composeapp.generated.resources.shelf_title_movies
-import ontrack.composeapp.generated.resources.shelf_title_shows
-import ontrack.composeapp.generated.resources.shelf_title_videogames
-import ontrack.composeapp.generated.resources.shelves_filled
-import ontrack.composeapp.generated.resources.shelves_outlined
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -82,12 +55,12 @@ fun ShelfScreen(
     ) {
         MediaType.entries.forEach { mediaType ->
             val counts = when (mediaType) {
-                MediaType.MOVIES -> movieState.statusCounts
-                MediaType.SHOWS -> showState.statusCounts
-                MediaType.BOOKS -> bookState.statusCounts
-                MediaType.VIDEOGAMES -> videogameState.statusCounts
-                MediaType.BOARDGAMES -> boardgameState.statusCounts
-                MediaType.ALBUMS -> albumState.statusCounts
+                MediaType.MOVIE -> movieState.statusCounts
+                MediaType.SHOW -> showState.statusCounts
+                MediaType.BOOK -> bookState.statusCounts
+                MediaType.VIDEOGAME -> videogameState.statusCounts
+                MediaType.BOARDGAME -> boardgameState.statusCounts
+                MediaType.ALBUM -> albumState.statusCounts
             }
 
             MediaCard(
@@ -104,7 +77,7 @@ fun ShelfScreen(
 fun MediaCard(
     modifier: Modifier = Modifier,
     mediaType: MediaType,
-    counts: Map<StatusType, Int>,
+    counts: Map<ConsumeStatus, Int>,
     goToShelf: (MediaType) -> Unit,
 ) {
     ElevatedCard(
@@ -122,9 +95,9 @@ fun MediaCard(
             ) {
                 MediaTitle(mediaType.title)
 
-                if (mediaType.statusTypes.isNotEmpty()) {
+                if (mediaType.consumeStatuses.isNotEmpty()) {
                     MediaCountRow(
-                        statusTypes = mediaType.statusTypes,
+                        consumeStatuses = mediaType.consumeStatuses,
                         mediaType = mediaType,
                         counts = counts,
                     )
@@ -133,7 +106,7 @@ fun MediaCard(
             Icon(
                 modifier = Modifier.size(50.dp),
                 imageVector = mediaType.icon(),
-                contentDescription = mediaType.iconDescription
+                contentDescription = stringResource(mediaType.iconDescription)
             )
         }
     }
@@ -142,16 +115,16 @@ fun MediaCard(
 @Composable
 private fun MediaCountRow(
     mediaType: MediaType,
-    statusTypes: List<StatusType>,
-    counts: Map<StatusType, Int>
+    consumeStatuses: List<ConsumeStatus>,
+    counts: Map<ConsumeStatus, Int>
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        statusTypes.forEach {
+        consumeStatuses.forEach {
             MediaCount(
                 count = counts[it] ?: 0,
-                statusType = it,
+                consumeStatus = it,
                 mediaType = mediaType,
             )
         }
@@ -162,15 +135,15 @@ private fun MediaCountRow(
 @Composable
 fun MediaCount(
     count: Int,
-    statusType: StatusType,
+    consumeStatus: ConsumeStatus,
     mediaType: MediaType
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Icon(
-            imageVector = mediaType.getStatusIcon(statusType),
-            contentDescription = statusType.name
+            imageVector = consumeStatus.getConsumeStatusIcon(),
+            contentDescription = consumeStatus.name
         )
         Text("$count")
     }
@@ -183,92 +156,4 @@ private fun MediaTitle(mediaTitle: StringResource) {
         style = MaterialTheme.typography.displaySmall,
         fontWeight = FontWeight.Bold,
     )
-}
-
-enum class MediaType(
-    val title: StringResource,
-    val icon: @Composable () -> ImageVector,
-    val iconDescription: String,
-    val statusTypes: List<StatusType> = emptyList()
-) {
-    MOVIES(
-        title = Res.string.shelf_title_movies,
-        icon = { Icons.Default.Movie },
-        iconDescription = "Movie Icon",
-        statusTypes = listOf(
-            StatusType.WATCHED,
-            StatusType.CATALOG,
-            StatusType.DROPPED
-        )
-    ),
-    SHOWS(
-        title = Res.string.shelf_title_shows,
-        icon = { Icons.Default.Tv },
-        iconDescription = "Show Icon",
-        statusTypes = listOf(
-            StatusType.BINGED,
-            StatusType.CATALOG,
-            StatusType.DROPPED,
-            StatusType.BINGING
-        )
-    ),
-    BOOKS(
-        title = Res.string.shelf_title_books,
-        icon = { Icons.Default.AutoStories },
-        iconDescription = "Book Icon",
-        statusTypes = listOf(
-            StatusType.READ,
-            StatusType.CATALOG,
-            StatusType.DROPPED,
-            StatusType.READING
-        )
-    ),
-    VIDEOGAMES(
-        title = Res.string.shelf_title_videogames,
-        icon = { Icons.Default.SportsEsports },
-        iconDescription = "Videogame Icon",
-        statusTypes = listOf(
-            StatusType.PLAYED,
-            StatusType.CATALOG,
-            StatusType.DROPPED,
-            StatusType.PLAYING
-        )
-    ),
-    BOARDGAMES(
-        title = Res.string.shelf_title_boardgames,
-        icon = { vectorResource(Res.drawable.playingcards) },
-        iconDescription = "Boardgame Icon",
-        statusTypes = listOf(
-            StatusType.PLAYED,
-            StatusType.CATALOG
-        )
-    ),
-    ALBUMS(
-        title = Res.string.shelf_title_album,
-        icon = { Icons.Default.Album },
-        iconDescription = "Album Icon",
-        statusTypes = listOf(
-            StatusType.CATALOG
-        )
-    );
-
-    @Composable
-    fun getStatusIcon(statusType: StatusType, isFilled: Boolean = false): ImageVector {
-        return when (statusType) {
-            StatusType.BINGING, StatusType.PLAYING, StatusType.READING ->
-                if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
-
-            StatusType.WATCHED, StatusType.BINGED, StatusType.READ, StatusType.PLAYED ->
-                if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
-
-            StatusType.DROPPED ->
-                if (isFilled) Icons.Filled.VisibilityOff else Icons.Outlined.VisibilityOff
-
-            StatusType.CATALOG ->
-                if (isFilled) Icons.Filled.BookmarkAdd else Icons.Outlined.BookmarkAdd
-
-            StatusType.ALL ->
-                if (isFilled) vectorResource(Res.drawable.shelves_filled) else vectorResource(Res.drawable.shelves_outlined)
-        }
-    }
 }

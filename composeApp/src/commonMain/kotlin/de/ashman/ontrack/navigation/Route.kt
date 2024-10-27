@@ -1,6 +1,5 @@
 package de.ashman.ontrack.navigation
 
-import de.ashman.ontrack.shelf.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable

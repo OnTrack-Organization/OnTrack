@@ -7,7 +7,7 @@ data class VideoGame(
     override val id: String,
     override val type: MediaType = MediaType.VIDEOGAME,
     override val name: String,
-    override val consumeStatus: StatusType? = StatusType.CATALOG,
+    override val consumeStatus: ConsumeStatus? = ConsumeStatus.CATALOG,
     override val userRating: Float = 0F,
     override val coverUrl: String,
     val firstReleaseDate: String?,

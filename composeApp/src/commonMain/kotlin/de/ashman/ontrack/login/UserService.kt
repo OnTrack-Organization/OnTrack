@@ -5,10 +5,10 @@ import de.ashman.ontrack.media.domain.Album
 import de.ashman.ontrack.media.domain.BoardGame
 import de.ashman.ontrack.media.domain.Book
 import de.ashman.ontrack.media.domain.Media
-import de.ashman.ontrack.media.domain.MediaType
 import de.ashman.ontrack.media.domain.Movie
 import de.ashman.ontrack.media.domain.Show
 import de.ashman.ontrack.media.domain.VideoGame
+import de.ashman.ontrack.media.domain.MediaType
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database

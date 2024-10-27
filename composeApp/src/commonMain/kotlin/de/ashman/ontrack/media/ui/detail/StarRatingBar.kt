@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.ui
+package de.ashman.ontrack.media.ui.detail
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures

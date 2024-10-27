@@ -14,6 +14,7 @@
     <string name="status_binged">Binged</string>
     <string name="status_read">Read</string>
     <string name="status_played">Played</string>
+    <string name="status_listened">Listened</string>
     <string name="status_dropped">Dropped</string>
     <string name="status_catalog">Catalog</string>
 

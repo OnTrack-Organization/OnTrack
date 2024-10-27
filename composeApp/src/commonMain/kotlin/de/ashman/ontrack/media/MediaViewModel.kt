@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.domain.Media
+import de.ashman.ontrack.media.domain.ConsumeStatus
 import de.ashman.ontrack.media.domain.MediaType
-import de.ashman.ontrack.media.domain.StatusType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -93,7 +93,7 @@ abstract class MediaViewModel<T : Media>(
                 .eachCount()
                 .toMutableMap()
                 .apply {
-                    this[StatusType.ALL] = savedMedia.size
+                    this[ConsumeStatus.ALL] = savedMedia.size
                 }
 
             updateUiState(uiState.value.copy(statusCounts = counts))

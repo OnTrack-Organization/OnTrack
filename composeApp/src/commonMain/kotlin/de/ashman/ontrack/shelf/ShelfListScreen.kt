@@ -45,7 +45,8 @@ import de.ashman.ontrack.shelf.ui.AlbumViewModel
 import de.ashman.ontrack.shelf.ui.BoardGameViewModel
 import de.ashman.ontrack.shelf.ui.BookViewModel
 import de.ashman.ontrack.media.domain.Media
-import de.ashman.ontrack.media.domain.StatusType
+import de.ashman.ontrack.media.domain.MediaType
+import de.ashman.ontrack.media.domain.ConsumeStatus
 import de.ashman.ontrack.shelf.ui.MovieViewModel
 import de.ashman.ontrack.shelf.ui.ShowViewModel
 import de.ashman.ontrack.shelf.ui.VideoGameViewModel
@@ -68,12 +69,12 @@ fun ShelfListScreen(
 ) {
     // TODO change so that we actually get saved items
     val shelfState = when (mediaType) {
-        MediaType.MOVIES -> movieViewModel.uiState.collectAsState()
-        MediaType.SHOWS -> showViewModel.uiState.collectAsState()
-        MediaType.BOOKS -> bookViewModel.uiState.collectAsState()
-        MediaType.VIDEOGAMES -> videoGameViewModel.uiState.collectAsState()
-        MediaType.BOARDGAMES -> boardGameViewModel.uiState.collectAsState()
-        MediaType.ALBUMS -> albumViewModel.uiState.collectAsState()
+        MediaType.MOVIE -> movieViewModel.uiState.collectAsState()
+        MediaType.SHOW -> showViewModel.uiState.collectAsState()
+        MediaType.BOOK -> bookViewModel.uiState.collectAsState()
+        MediaType.VIDEOGAME -> videoGameViewModel.uiState.collectAsState()
+        MediaType.BOARDGAME -> boardGameViewModel.uiState.collectAsState()
+        MediaType.ALBUM -> albumViewModel.uiState.collectAsState()
     }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -128,7 +129,7 @@ fun ShelfListContent(
     mediaType: MediaType,
     shelfItems: List<Media>,
 ) {
-    val tabTitles = mediaType.statusTypes
+    val tabTitles = mediaType.consumeStatuses
     val pagerState = rememberPagerState { tabTitles.size }
     val coroutineScope = rememberCoroutineScope()
 
@@ -139,11 +140,13 @@ fun ShelfListContent(
             selectedTabIndex = pagerState.currentPage
         ) {
             tabTitles.forEachIndexed { index, title ->
+                val isSelected = pagerState.currentPage == index
+
                 Tab(
-                    selected = pagerState.currentPage == index,
+                    selected = isSelected,
                     icon = {
                         Icon(
-                            imageVector = mediaType.getStatusIcon(title),
+                            imageVector = title.getConsumeStatusIcon(isSelected),
                             contentDescription = title.name
                         )
                     },
@@ -161,7 +164,7 @@ fun ShelfListContent(
             modifier = Modifier.weight(1f)
         ) { page ->
             val statusType = tabTitles[page]
-            val filteredMediaByStatus = if (statusType == StatusType.ALL) {
+            val filteredMediaByStatus = if (statusType == ConsumeStatus.ALL) {
                 shelfItems
             } else {
                 shelfItems.filter { it.consumeStatus == statusType }

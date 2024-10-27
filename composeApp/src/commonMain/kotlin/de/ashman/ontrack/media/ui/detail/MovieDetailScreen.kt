@@ -44,14 +44,10 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import de.ashman.ontrack.media.domain.Movie
-import de.ashman.ontrack.media.domain.StatusType
-import de.ashman.ontrack.media.ui.StarRating
-import de.ashman.ontrack.shelf.MediaType
+import de.ashman.ontrack.media.domain.ConsumeStatus
+import de.ashman.ontrack.media.domain.MediaType
 import de.ashman.ontrack.shelf.ui.MovieViewModel
 import kotlinx.coroutines.launch
-import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.*
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -91,7 +87,7 @@ fun MovieDetailScreen(
 @Composable
 fun MovieDetailContent(
     onBack: () -> Unit = {},
-    onChangeStatus: (StatusType) -> Unit = {},
+    onChangeStatus: (ConsumeStatus) -> Unit = {},
     onChangeRating: (Float) -> Unit = {},
     movie: Movie?,
 ) {
@@ -133,7 +129,7 @@ fun MovieDetailContent(
                 )
 
                 ConsumeStatusRow(
-                    mediaType = MediaType.MOVIES,
+                    mediaType = MediaType.MOVIE,
                     currentStatus = movie.consumeStatus,
                     onChangeStatus = onChangeStatus,
                 )
@@ -245,17 +241,17 @@ fun PosterTitleAndInfo(
 @Composable
 fun ConsumeStatusRow(
     mediaType: MediaType,
-    currentStatus: StatusType?,
-    onChangeStatus: (StatusType) -> Unit,
+    currentStatus: ConsumeStatus?,
+    onChangeStatus: (ConsumeStatus) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        mediaType.statusTypes.forEachIndexed { index, statusType ->
+        mediaType.consumeStatuses.forEachIndexed { index, statusType ->
             val isSelected = currentStatus == statusType
-            val icon = MediaType.MOVIES.getStatusIcon(statusType, isSelected)
-            val label = stringResource(resource = statusTypeToStringRes(statusType))
+            val icon = statusType.getConsumeStatusIcon(isSelected)
+            val label = stringResource(statusType.getConsumeStatusLabel())
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -272,24 +268,9 @@ fun ConsumeStatusRow(
                 Text(text = label, style = MaterialTheme.typography.bodySmall)
             }
 
-            if (index < mediaType.statusTypes.size - 1) {
+            if (index < mediaType.consumeStatuses.size - 1) {
                 Spacer(modifier = Modifier.width(64.dp))
             }
         }
-    }
-}
-
-fun statusTypeToStringRes(statusType: StatusType): StringResource {
-    return when (statusType) {
-        StatusType.ALL -> Res.string.status_all
-        StatusType.BINGING -> Res.string.status_binging
-        StatusType.PLAYING -> Res.string.status_playing
-        StatusType.READING -> Res.string.status_reading
-        StatusType.WATCHED -> Res.string.status_watched
-        StatusType.BINGED -> Res.string.status_binged
-        StatusType.READ -> Res.string.status_read
-        StatusType.PLAYED -> Res.string.status_played
-        StatusType.DROPPED -> Res.string.status_dropped
-        StatusType.CATALOG -> Res.string.status_catalog
     }
 }
