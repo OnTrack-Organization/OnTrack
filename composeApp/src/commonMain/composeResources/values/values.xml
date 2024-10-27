@@ -5,4 +5,16 @@
     <string name="shelf_title_boardgames">Boardgames</string>
     <string name="shelf_title_books">Books</string>
     <string name="shelf_title_album">Albums</string>
+
+    <string name="status_all">All</string>
+    <string name="status_binging">Binging</string>
+    <string name="status_playing">Playing</string>
+    <string name="status_reading">Reading</string>
+    <string name="status_watched">Watched</string>
+    <string name="status_binged">Binged</string>
+    <string name="status_read">Read</string>
+    <string name="status_played">Played</string>
+    <string name="status_dropped">Dropped</string>
+    <string name="status_catalog">Catalog</string>
+
 </resources>

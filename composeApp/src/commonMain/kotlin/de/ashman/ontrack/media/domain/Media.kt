@@ -41,5 +41,5 @@ enum class StatusType {
     READ,
     PLAYED,
     DROPPED,
-    CATALOG,
+    CATALOG;
 }

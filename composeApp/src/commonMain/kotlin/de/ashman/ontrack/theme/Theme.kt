@@ -1,4 +1,5 @@
 package de.ashman.ontrack.theme
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -87,7 +88,7 @@ private val darkScheme =
 fun OnTrackTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content:
-        @Composable()
+    @Composable()
         () -> Unit,
 ) {
     val colorScheme =

@@ -196,7 +196,6 @@ enum class MediaType(
         icon = { Icons.Default.Movie },
         iconDescription = "Movie Icon",
         statusTypes = listOf(
-            StatusType.ALL,
             StatusType.WATCHED,
             StatusType.CATALOG,
             StatusType.DROPPED
@@ -207,7 +206,6 @@ enum class MediaType(
         icon = { Icons.Default.Tv },
         iconDescription = "Show Icon",
         statusTypes = listOf(
-            StatusType.ALL,
             StatusType.BINGED,
             StatusType.CATALOG,
             StatusType.DROPPED,
@@ -219,7 +217,6 @@ enum class MediaType(
         icon = { Icons.Default.AutoStories },
         iconDescription = "Book Icon",
         statusTypes = listOf(
-            StatusType.ALL,
             StatusType.READ,
             StatusType.CATALOG,
             StatusType.DROPPED,
@@ -231,7 +228,6 @@ enum class MediaType(
         icon = { Icons.Default.SportsEsports },
         iconDescription = "Videogame Icon",
         statusTypes = listOf(
-            StatusType.ALL,
             StatusType.PLAYED,
             StatusType.CATALOG,
             StatusType.DROPPED,
@@ -242,13 +238,18 @@ enum class MediaType(
         title = Res.string.shelf_title_boardgames,
         icon = { vectorResource(Res.drawable.playingcards) },
         iconDescription = "Boardgame Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.PLAYED, StatusType.CATALOG)
+        statusTypes = listOf(
+            StatusType.PLAYED,
+            StatusType.CATALOG
+        )
     ),
     ALBUMS(
         title = Res.string.shelf_title_album,
         icon = { Icons.Default.Album },
         iconDescription = "Album Icon",
-        statusTypes = listOf(StatusType.ALL, StatusType.CATALOG)
+        statusTypes = listOf(
+            StatusType.CATALOG
+        )
     );
 
     @Composable
@@ -256,12 +257,16 @@ enum class MediaType(
         return when (statusType) {
             StatusType.BINGING, StatusType.PLAYING, StatusType.READING ->
                 if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
+
             StatusType.WATCHED, StatusType.BINGED, StatusType.READ, StatusType.PLAYED ->
                 if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
+
             StatusType.DROPPED ->
                 if (isFilled) Icons.Filled.VisibilityOff else Icons.Outlined.VisibilityOff
+
             StatusType.CATALOG ->
                 if (isFilled) Icons.Filled.BookmarkAdd else Icons.Outlined.BookmarkAdd
+
             StatusType.ALL ->
                 if (isFilled) vectorResource(Res.drawable.shelves_filled) else vectorResource(Res.drawable.shelves_outlined)
         }
