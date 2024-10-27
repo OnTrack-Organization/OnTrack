@@ -9,5 +9,5 @@ sealed class Media {
     abstract val name: String
     abstract val coverUrl: String
     abstract val consumeStatus: ConsumeStatus?
-    abstract val userRating: Float
+    abstract val userRating: Float?
 }

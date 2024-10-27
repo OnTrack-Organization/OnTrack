@@ -27,7 +27,7 @@ class UserService {
         mediaRef.setValue(media)
     }
 
-    suspend inline fun <reified T : Media> getSavedMedia(mediaType: String): List<T> {
+    suspend inline fun <reified T : Media> getAllSavedMedia(mediaType: String): List<T> {
         val mediaRef = database.reference("$userRef/$mediaType").valueEvents.first()
         return mediaRef.children.map { child ->
             // TODO this is ASS, change

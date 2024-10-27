@@ -85,7 +85,7 @@ abstract class MediaViewModel<T : Media>(
 
     fun fetchStatusCounts(mediaType: MediaType) {
         viewModelScope.launch {
-            val savedMedia = userService.getSavedMedia<Media>(mediaType.name)
+            val savedMedia = userService.getAllSavedMedia<Media>(mediaType.name)
 
             val counts = savedMedia
                 .mapNotNull { it.consumeStatus }

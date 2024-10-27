@@ -33,10 +33,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun StarRating(
     modifier: Modifier = Modifier,
-    rating: Float = 0f,
+    rating: Float?,
     onRatingChanged: (Float) -> Unit
 ) {
-    var selectedRating by remember { mutableStateOf(rating) }
+    var selectedRating by remember { mutableStateOf(rating ?: 0F) }
     val coroutineScope = rememberCoroutineScope()
 
     Row(
