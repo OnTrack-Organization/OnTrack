@@ -17,6 +17,7 @@ buildKonfig = "0.13.3"
 composeNavigation = "2.8.0-alpha10"
 serialization = "1.7.2"
 xmlutil = "0.90.1"
+paging = "3.3.5"
 
 [libraries]
 # KMP Auth
@@ -54,12 +55,14 @@ androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
 
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+
+androidx-paging = { module = "androidx.paging:paging-common", version.ref = "paging" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
