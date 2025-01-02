@@ -96,9 +96,8 @@ fun MediaCard(
                 MediaTitle(mediaType.title)
 
                 if (mediaType.consumeStatuses.isNotEmpty()) {
-                    MediaCountRow(
+                    MediaCounts(
                         consumeStatuses = mediaType.consumeStatuses,
-                        mediaType = mediaType,
                         counts = counts,
                     )
                 }
@@ -113,8 +112,7 @@ fun MediaCard(
 }
 
 @Composable
-private fun MediaCountRow(
-    mediaType: MediaType,
+private fun MediaCounts(
     consumeStatuses: List<ConsumeStatus>,
     counts: Map<ConsumeStatus, Int>
 ) {
@@ -125,7 +123,6 @@ private fun MediaCountRow(
             MediaCount(
                 count = counts[it] ?: 0,
                 consumeStatus = it,
-                mediaType = mediaType,
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -136,7 +133,6 @@ private fun MediaCountRow(
 fun MediaCount(
     count: Int,
     consumeStatus: ConsumeStatus,
-    mediaType: MediaType
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp)

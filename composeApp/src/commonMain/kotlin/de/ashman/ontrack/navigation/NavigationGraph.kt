@@ -16,6 +16,12 @@ import de.ashman.ontrack.home.HomeScreen
 import de.ashman.ontrack.login.ui.LoginScreen
 import de.ashman.ontrack.media.ui.detail.MovieDetailScreen
 import de.ashman.ontrack.media.domain.MediaType
+import de.ashman.ontrack.media.ui.detail.AlbumDetailScreen
+import de.ashman.ontrack.media.ui.detail.BoardgameDetailScreen
+import de.ashman.ontrack.media.ui.detail.BookDetailScreen
+import de.ashman.ontrack.media.ui.detail.ShowDetailScreen
+import de.ashman.ontrack.media.ui.detail.VideogameDetailScreen
+import de.ashman.ontrack.search.SearchScreen
 import de.ashman.ontrack.shelf.ShelfListScreen
 import de.ashman.ontrack.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase
@@ -38,22 +44,66 @@ fun NavigationGraph() {
                     }
                 )
             }
-
-            composable<Route.Movie> { backStackEntry ->
-                val movie: Route.Movie = backStackEntry.toRoute()
-
-                MovieDetailScreen(
-                    id = movie.id,
-                    onBack = { navController.popBackStack() }
-                )
-            }
-
             mainGraph(navController)
+
+            mediaGraph(navController)
+
             shelfGraph(navController)
         }
     }
 }
 
+fun NavGraphBuilder.mediaGraph(
+    navController: NavHostController,
+) {
+    composable<Route.Movie> { backStackEntry ->
+        val movie: Route.Movie = backStackEntry.toRoute()
+        MovieDetailScreen(
+            id = movie.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Show> { backStackEntry ->
+        val show: Route.Show = backStackEntry.toRoute()
+        ShowDetailScreen(
+            id = show.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Videogame> { backStackEntry ->
+        val videogame: Route.Videogame = backStackEntry.toRoute()
+        VideogameDetailScreen(
+            id = videogame.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Boardgame> { backStackEntry ->
+        val boardgame: Route.Boardgame = backStackEntry.toRoute()
+        BoardgameDetailScreen(
+            id = boardgame.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Book> { backStackEntry ->
+        val book: Route.Book = backStackEntry.toRoute()
+        BookDetailScreen(
+            id = book.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Album> { backStackEntry ->
+        val album: Route.Album = backStackEntry.toRoute()
+        AlbumDetailScreen(
+            id = album.id,
+            onBack = { navController.popBackStack() }
+        )
+    }
+}
 fun NavGraphBuilder.shelfGraph(
     navController: NavHostController,
 ) {
@@ -75,8 +125,19 @@ fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable<Route.Feed> {
-        FeedScreen()
+    composable<Route.Search> {
+        SearchScreen(
+            onClickItem = { id, mediaType ->
+                when (mediaType) {
+                    MediaType.MOVIE -> navController.navigate(Route.Movie(id))
+                    MediaType.SHOW -> navController.navigate(Route.Show(id))
+                    MediaType.BOOK -> navController.navigate(Route.Book(id))
+                    MediaType.VIDEOGAME -> navController.navigate(Route.Videogame(id))
+                    MediaType.BOARDGAME -> navController.navigate(Route.Boardgame(id))
+                    MediaType.ALBUM -> navController.navigate(Route.Album(id))
+                }
+            }
+        )
     }
 
     composable<Route.Shelf> {
@@ -84,4 +145,8 @@ fun NavGraphBuilder.mainGraph(
             goToShelf = { mediaType -> navController.navigate(Route.ShelfList(mediaType.name)) }
         )
     }
+
+    /*composable<Route.Feed> {
+        FeedScreen()
+    }*/
 }
