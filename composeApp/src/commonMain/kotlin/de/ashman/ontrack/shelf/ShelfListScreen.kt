@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,7 @@ import de.ashman.ontrack.shelf.ui.VideoGameViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 // TODO screen hat eine column mit allen einträgen, pager, searchbar, fab und bottomsheet mit settings
@@ -129,7 +131,9 @@ fun ShelfListContent(
     mediaType: MediaType,
     shelfItems: List<Media>,
 ) {
-    val tabTitles = mediaType.consumeStatuses
+    val tabTitles = mediaType.consumeStatuses.toMutableList()
+    tabTitles.add(0, ConsumeStatus.ALL)
+
     val pagerState = rememberPagerState { tabTitles.size }
     val coroutineScope = rememberCoroutineScope()
 
@@ -150,6 +154,7 @@ fun ShelfListContent(
                             contentDescription = title.name
                         )
                     },
+                    text = { Text(stringResource(title.getConsumeStatusLabel())) },
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)

@@ -2,10 +2,12 @@ package de.ashman.ontrack.media.domain
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.BookmarkAdd
+import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -69,7 +71,7 @@ enum class ConsumeStatus {
                 if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
 
             DROPPED ->
-                if (isFilled) Icons.Filled.VisibilityOff else Icons.Outlined.VisibilityOff
+                if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel
 
             CATALOG ->
                 if (isFilled) Icons.Filled.BookmarkAdd else Icons.Outlined.BookmarkAdd

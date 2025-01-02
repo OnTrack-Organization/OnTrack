@@ -5,10 +5,10 @@ import de.ashman.ontrack.media.domain.Album
 import de.ashman.ontrack.media.domain.BoardGame
 import de.ashman.ontrack.media.domain.Book
 import de.ashman.ontrack.media.domain.Media
+import de.ashman.ontrack.media.domain.MediaType
 import de.ashman.ontrack.media.domain.Movie
 import de.ashman.ontrack.media.domain.Show
 import de.ashman.ontrack.media.domain.VideoGame
-import de.ashman.ontrack.media.domain.MediaType
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database
@@ -27,7 +27,7 @@ class UserService {
         mediaRef.setValue(media)
     }
 
-    suspend inline fun <reified T : Media> getAllSavedMedia(mediaType: String): List<T> {
+    suspend inline fun <reified T : Media> getAllSavedMediaForType(mediaType: String): List<T> {
         val mediaRef = database.reference("$userRef/$mediaType").valueEvents.first()
         return mediaRef.children.map { child ->
             // TODO this is ASS, change

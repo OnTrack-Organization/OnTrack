@@ -20,13 +20,6 @@ abstract class MediaViewModel<T : Media>(
     private val _uiState = MutableStateFlow(MediaUiState<T>())
     val uiState: StateFlow<MediaUiState<T>> = _uiState.asStateFlow()
 
-    // TODO remove from list
-    // TODO update consume status
-
-    fun updateUiState(newState: MediaUiState<T>) {
-        _uiState.value = newState
-    }
-
     fun fetchMediaByQuery(query: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
@@ -50,6 +43,23 @@ abstract class MediaViewModel<T : Media>(
         }
     }
 
+    fun getMediaList(mediaType: MediaType) {
+        viewModelScope.launch {
+            try {
+                val mediaList = userService.getAllSavedMediaForType<Media>(mediaType.name)
+                _uiState.value = uiState.value.copy(
+                    mediaList = mediaList,
+                    isLoading = false
+                )
+            } catch (e: Exception) {
+                _uiState.value = uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = e.message
+                )
+            }
+        }
+    }
+
     fun fetchMediaDetails(id: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
@@ -57,14 +67,14 @@ abstract class MediaViewModel<T : Media>(
 
             _uiState.value = result.fold(
                 onSuccess = { media ->
-                    _uiState.value.copy(
+                    uiState.value.copy(
                         selectedMedia = media,
                         isLoading = false,
                         errorMessage = null
                     )
                 },
                 onFailure = { throwable ->
-                    _uiState.value.copy(
+                    uiState.value.copy(
                         isLoading = false,
                         errorMessage = throwable.message
                     )
@@ -85,7 +95,7 @@ abstract class MediaViewModel<T : Media>(
 
     fun fetchStatusCounts(mediaType: MediaType) {
         viewModelScope.launch {
-            val savedMedia = userService.getAllSavedMedia<Media>(mediaType.name)
+            val savedMedia = userService.getAllSavedMediaForType<Media>(mediaType.name)
 
             val counts = savedMedia
                 .mapNotNull { it.consumeStatus }
@@ -96,7 +106,7 @@ abstract class MediaViewModel<T : Media>(
                     this[ConsumeStatus.ALL] = savedMedia.size
                 }
 
-            updateUiState(uiState.value.copy(statusCounts = counts))
+            _uiState.value = uiState.value.copy(statusCounts = counts)
         }
     }
 }
