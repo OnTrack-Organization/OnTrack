@@ -23,7 +23,7 @@ data class VideoGame(
 @Serializable
 data class Franchise(
     val name: String,
-    val games: List<SimilarGame>,
+    val games: List<SimilarGame>?,
 )
 
 @Serializable

@@ -47,6 +47,9 @@ class VideoGameRepository(
         requestBuilder: HttpRequestBuilder.() -> Unit
     ): HttpRequestBuilder {
         val token = accessTokenManager.getAccessToken()
+
+        println("IGDB TOKEN: $token")
+
         return HttpRequestBuilder().apply {
             header(HttpHeaders.Authorization, "Bearer $token")
             requestBuilder()

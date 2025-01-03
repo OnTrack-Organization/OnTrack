@@ -34,7 +34,7 @@ fun VideoGameDto.toDomain(): VideoGame {
 fun FranchiseDto.toDomain(): Franchise {
     return Franchise(
         name = name,
-        games = games.map { it.toDomain() }
+        games = games?.map { it.toDomain() }
     )
 }
 

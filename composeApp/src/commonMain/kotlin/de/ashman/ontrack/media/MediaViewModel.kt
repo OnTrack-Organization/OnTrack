@@ -25,6 +25,8 @@ abstract class MediaViewModel<T : Media>(
 
             val result = repository.fetchMediaByQuery(query)
 
+            println(result)
+
             _uiState.value = result.fold(
                 onSuccess = { mediaList ->
                     _uiState.value.copy(

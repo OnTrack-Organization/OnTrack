@@ -26,7 +26,7 @@ data class CoverDto(
 @Serializable
 data class FranchiseDto(
     val name: String,
-    val games: List<SimilarGameDto>,
+    val games: List<SimilarGameDto>? = null,
 )
 
 @Serializable
