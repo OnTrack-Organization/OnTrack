@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// TODO probably use this instead of thousand viewmodels
 abstract class MediaViewModel<T : Media>(
     private val repository: MediaRepository<T>,
     private val userService: UserService
@@ -23,6 +22,7 @@ abstract class MediaViewModel<T : Media>(
     fun fetchMediaByQuery(query: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
+
             val result = repository.fetchMediaByQuery(query)
 
             _uiState.value = result.fold(

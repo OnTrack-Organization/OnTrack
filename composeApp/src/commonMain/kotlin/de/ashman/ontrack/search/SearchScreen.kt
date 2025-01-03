@@ -1,9 +1,11 @@
 package de.ashman.ontrack.search
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -95,15 +97,26 @@ fun SearchScreen(
             onOptionSelected = { selectedOption = it },
         )
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            items(viewState.mediaList) {
-                SearchItem(
-                    item = it,
-                    onClickItem = { id -> onClickItem(id, it.type) }
-                )
+        if (viewState.isLoading) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                items(viewState.mediaList) {
+                    SearchItem(
+                        item = it,
+                        onClickItem = { id -> onClickItem(id, it.type) }
+                    )
+                }
             }
         }
     }
