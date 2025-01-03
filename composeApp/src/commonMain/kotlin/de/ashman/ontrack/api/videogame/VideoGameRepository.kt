@@ -5,6 +5,7 @@ import de.ashman.ontrack.media.domain.VideoGame
 import de.ashman.ontrack.api.videogame.dto.VideoGameDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -62,6 +63,7 @@ class VideoGameRepository(
                 url("games")
                 parameter("fields", fields)
                 parameter("search", query)
+                parameter("limit", DEFAULT_FETCH_LIMIT)
             }
 
             val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()

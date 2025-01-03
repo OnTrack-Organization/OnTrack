@@ -5,6 +5,7 @@ import de.ashman.ontrack.api.book.dto.BookSearchResponseDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -20,7 +21,7 @@ class BookRepository(
             val response: BookSearchResponseDto = httpClient.get("search.json") {
                 //parameter("fields", "title, cover_i, key")
                 parameter("title", query)
-                parameter("limit", "3")
+                parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
 
             response.books.map { it.toDomain() }

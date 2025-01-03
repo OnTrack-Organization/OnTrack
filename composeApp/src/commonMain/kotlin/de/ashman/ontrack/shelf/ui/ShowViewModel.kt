@@ -3,6 +3,7 @@ package de.ashman.ontrack.shelf.ui
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.MediaViewModel
 import de.ashman.ontrack.api.show.ShowRepository
+import de.ashman.ontrack.di.DEFAULT_SHOW_QUERY
 import de.ashman.ontrack.media.domain.Show
 import de.ashman.ontrack.media.domain.MediaType
 
@@ -12,7 +13,7 @@ class ShowViewModel(
 ) : MediaViewModel<Show>(repository, userService) {
 
     init {
-        fetchMediaByQuery("attack on titan")
+        fetchMediaByQuery(DEFAULT_SHOW_QUERY)
         fetchStatusCounts(MediaType.SHOW)
     }
 }

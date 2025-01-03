@@ -5,6 +5,7 @@ import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.MovieResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -17,6 +18,7 @@ class MovieRepository(
         return safeApiCall {
             val response: MovieResponseDto = httpClient.get("search/movie") {
                 parameter("query", query)
+                parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
             response.movies.map { it.toDomain() }
         }

@@ -3,6 +3,7 @@ package de.ashman.ontrack.shelf.ui
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.media.MediaViewModel
 import de.ashman.ontrack.api.movie.MovieRepository
+import de.ashman.ontrack.di.DEFAULT_MOVIE_QUERY
 import de.ashman.ontrack.media.domain.Movie
 import de.ashman.ontrack.media.domain.MediaType
 
@@ -12,7 +13,7 @@ class MovieViewModel(
 ) : MediaViewModel<Movie>(repository, userService) {
 
     init {
-        fetchMediaByQuery("lion")
+        fetchMediaByQuery(DEFAULT_MOVIE_QUERY)
         fetchStatusCounts(MediaType.MOVIE)
     }
 }

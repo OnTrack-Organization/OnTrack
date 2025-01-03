@@ -4,6 +4,7 @@ import de.ashman.ontrack.media.domain.BoardGame
 import de.ashman.ontrack.api.boardgame.dto.BoardGameResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -24,8 +25,7 @@ class BoardGameRepository(
             val boardgameIds = convertXmlToResponse(simpleResponse).boardGames.map { it.id }
 
             val detailedResponse: String = httpClient.get("thing") {
-                // TODO only the first 20 are possible all at once. maybe get 5 or 10 and show more on scroll... or do more fetches immediately
-                parameter("id", boardgameIds.take(3).joinToString(","))
+                parameter("id", boardgameIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
             }.body()
 
             convertXmlToResponse(detailedResponse).boardGames.map { it.toDomain() }

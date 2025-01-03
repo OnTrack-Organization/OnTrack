@@ -5,6 +5,7 @@ import de.ashman.ontrack.media.domain.Album
 import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumSearchResult
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -34,7 +35,7 @@ class AlbumRepository(
                 url("search")
                 parameter("q", query)
                 parameter("type", "album")
-                parameter("limit", "10")
+                parameter("limit", DEFAULT_FETCH_LIMIT)
             }
             val response: AlbumSearchResult = httpClient.request(requestBuilder).body()
 
