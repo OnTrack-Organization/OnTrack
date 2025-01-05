@@ -99,7 +99,6 @@ fun MovieDetailContent(
             CenterAlignedTopAppBar(
                 title = {
                     Icon(
-                        modifier = Modifier.size(48.dp),
                         imageVector = Icons.Filled.Movie,
                         contentDescription = "Title Icon"
                     )

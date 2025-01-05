@@ -3,6 +3,7 @@ package de.ashman.ontrack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import de.ashman.ontrack.di.initKoin
@@ -17,6 +18,8 @@ class MainActivity : ComponentActivity() {
         initKoin {
             androidContext(applicationContext)
         }
+
+        enableEdgeToEdge()
 
         setContent {
             App()
