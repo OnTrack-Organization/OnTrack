@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api.boardgame
 
-import de.ashman.ontrack.media.domain.BoardGame
+import de.ashman.ontrack.media.model.BoardGame
 import de.ashman.ontrack.api.boardgame.dto.BoardGameResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall

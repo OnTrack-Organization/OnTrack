@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.login.UserService
-import de.ashman.ontrack.media.domain.Media
-import de.ashman.ontrack.media.domain.ConsumeStatus
-import de.ashman.ontrack.media.domain.MediaType
+import de.ashman.ontrack.media.model.Media
+import de.ashman.ontrack.media.model.ConsumeStatus
+import de.ashman.ontrack.media.model.MediaType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,32 +18,6 @@ abstract class MediaViewModel<T : Media>(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MediaUiState<T>())
     val uiState: StateFlow<MediaUiState<T>> = _uiState.asStateFlow()
-
-    fun fetchMediaByQuery(query: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            val result = repository.fetchMediaByQuery(query)
-
-            println(result)
-
-            _uiState.value = result.fold(
-                onSuccess = { mediaList ->
-                    _uiState.value.copy(
-                        mediaList = mediaList,
-                        isLoading = false,
-                        errorMessage = null
-                    )
-                },
-                onFailure = { throwable ->
-                    _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message
-                    )
-                }
-            )
-        }
-    }
 
     fun getMediaList(mediaType: MediaType) {
         viewModelScope.launch {
@@ -112,3 +86,12 @@ abstract class MediaViewModel<T : Media>(
         }
     }
 }
+
+data class MediaUiState<T : Media>(
+    val mediaList: List<Media> = emptyList(),
+
+    val selectedMedia: T? = null,
+    val statusCounts: Map<ConsumeStatus, Int> = emptyMap(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+)

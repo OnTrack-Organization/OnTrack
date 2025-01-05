@@ -5,6 +5,7 @@ androidx-lifecycle = "2.8.0"
 coil3 = "3.0.0-alpha08"
 compose-plugin = "1.7.3"
 datastore = "1.1.1"
+kermit = "2.0.4"
 kotlin = "2.0.20"
 google-services = "4.4.2"
 firebase-bom = "33.2.0"
@@ -63,6 +64,8 @@ coil-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "c
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 androidx-paging = { module = "androidx.paging:paging-common", version.ref = "paging" }
+
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

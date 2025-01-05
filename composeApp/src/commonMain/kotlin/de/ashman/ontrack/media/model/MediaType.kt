@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.domain
+package de.ashman.ontrack.media.model
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album

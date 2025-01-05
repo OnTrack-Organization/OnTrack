@@ -13,55 +13,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.media.domain.MediaType
-import de.ashman.ontrack.shelf.ui.AlbumViewModel
-import de.ashman.ontrack.shelf.ui.BoardGameViewModel
-import de.ashman.ontrack.shelf.ui.BookViewModel
-import de.ashman.ontrack.media.domain.ConsumeStatus
-import de.ashman.ontrack.shelf.ui.MovieViewModel
-import de.ashman.ontrack.shelf.ui.ShowViewModel
-import de.ashman.ontrack.shelf.ui.VideoGameViewModel
+import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.media.model.ConsumeStatus
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 
 @Composable
 fun ShelfScreen(
     modifier: Modifier = Modifier,
     goToShelf: (MediaType) -> Unit = {},
-    movieViewModel: MovieViewModel = koinInject(),
-    showViewModel: ShowViewModel = koinInject(),
-    bookViewModel: BookViewModel = koinInject(),
-    videoGameViewModel: VideoGameViewModel = koinInject(),
-    boardGameViewModel: BoardGameViewModel = koinInject(),
-    albumViewModel: AlbumViewModel = koinInject(),
+    // TODO add ShelfViewModel
 ) {
-    val movieState by movieViewModel.uiState.collectAsState()
-    val showState by showViewModel.uiState.collectAsState()
-    val bookState by bookViewModel.uiState.collectAsState()
-    val videogameState by videoGameViewModel.uiState.collectAsState()
-    val boardgameState by boardGameViewModel.uiState.collectAsState()
-    val albumState by albumViewModel.uiState.collectAsState()
-
     Column(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         MediaType.entries.forEach { mediaType ->
-            val counts = when (mediaType) {
-                MediaType.MOVIE -> movieState.statusCounts
-                MediaType.SHOW -> showState.statusCounts
-                MediaType.BOOK -> bookState.statusCounts
-                MediaType.VIDEOGAME -> videogameState.statusCounts
-                MediaType.BOARDGAME -> boardgameState.statusCounts
-                MediaType.ALBUM -> albumState.statusCounts
-            }
+            val counts = emptyMap<ConsumeStatus, Int>()
 
             MediaCard(
                 modifier = Modifier.weight(1f),

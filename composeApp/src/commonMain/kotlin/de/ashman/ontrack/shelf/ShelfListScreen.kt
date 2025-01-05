@@ -7,22 +7,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,48 +42,31 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.media.MediaViewModel
-import de.ashman.ontrack.shelf.ui.AlbumViewModel
-import de.ashman.ontrack.shelf.ui.BoardGameViewModel
-import de.ashman.ontrack.shelf.ui.BookViewModel
-import de.ashman.ontrack.media.domain.Media
-import de.ashman.ontrack.media.domain.MediaType
-import de.ashman.ontrack.media.domain.ConsumeStatus
-import de.ashman.ontrack.shelf.ui.MovieViewModel
-import de.ashman.ontrack.shelf.ui.ShowViewModel
-import de.ashman.ontrack.shelf.ui.VideoGameViewModel
+import de.ashman.ontrack.media.model.Media
+import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.media.model.ConsumeStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 
 // TODO screen hat eine column mit allen einträgen, pager, searchbar, fab und bottomsheet mit settings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShelfListScreen(
     mediaType: MediaType,
+    // TODO add ShelfViewModel
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberBottomSheetScaffoldState(rememberStandardBottomSheetState())
     var searchQuery by rememberSaveable { mutableStateOf("") }
     val localFocusManager = LocalFocusManager.current
 
-    // TODO change so that we actually get saved items
-    val viewModel: MediaViewModel<*> = when (mediaType) {
-        MediaType.MOVIE -> koinInject<MovieViewModel>()
-        MediaType.SHOW -> koinInject<ShowViewModel>()
-        MediaType.BOOK -> koinInject<BookViewModel>()
-        MediaType.VIDEOGAME -> koinInject<VideoGameViewModel>()
-        MediaType.BOARDGAME -> koinInject<BoardGameViewModel>()
-        MediaType.ALBUM -> koinInject<AlbumViewModel>()
-    }
-
-    val viewState = viewModel.uiState.collectAsState().value
+    /*val viewState = viewModel.uiState.collectAsState().value
 
     val filteredShelfItems = viewState.mediaList
         .filter { it.name.contains(searchQuery, ignoreCase = true) }
-        .ifEmpty { viewState.mediaList }
+        .ifEmpty { viewState.mediaList }*/
 
     Scaffold(
         topBar = {
@@ -110,7 +88,7 @@ fun ShelfListScreen(
                     })
                 },
             mediaType = mediaType,
-            shelfItems = filteredShelfItems,
+            shelfItems = emptyList(),
         )
     }
 

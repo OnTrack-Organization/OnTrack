@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api.show
 
-import de.ashman.ontrack.media.domain.Show
+import de.ashman.ontrack.media.model.Show
 import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.api.MediaRepository

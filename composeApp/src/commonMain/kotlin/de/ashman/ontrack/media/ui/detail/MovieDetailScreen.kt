@@ -27,9 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,22 +41,20 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
-import de.ashman.ontrack.media.domain.Movie
-import de.ashman.ontrack.media.domain.ConsumeStatus
-import de.ashman.ontrack.media.domain.MediaType
-import de.ashman.ontrack.shelf.ui.MovieViewModel
+import de.ashman.ontrack.media.model.Movie
+import de.ashman.ontrack.media.model.ConsumeStatus
+import de.ashman.ontrack.media.model.MediaType
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(
     id: String,
     onBack: () -> Unit,
-    viewModel: MovieViewModel = koinInject(),
+    // TODO add DetailViewModel
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    /*val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(id) {
         viewModel.fetchMediaDetails(id)
@@ -80,7 +76,7 @@ fun MovieDetailScreen(
             viewModel.updateSelectedDb(newMovie)
         },
         movie = uiState.selectedMedia
-    )
+    )*/
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

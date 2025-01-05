@@ -76,6 +76,8 @@ kotlin {
             implementation("network.chaintech:compose-multiplatform-media-player:1.0.22")
 
             //implementation(libs.androidx.paging)
+
+            implementation(libs.kermit)
         }
 
         androidMain.dependencies {

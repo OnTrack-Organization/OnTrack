@@ -1,10 +1,10 @@
 package de.ashman.ontrack.api.videogame
 
 import de.ashman.ontrack.api.getIGDBCoverUrl
-import de.ashman.ontrack.media.domain.Franchise
-import de.ashman.ontrack.media.domain.Platform
-import de.ashman.ontrack.media.domain.SimilarGame
-import de.ashman.ontrack.media.domain.VideoGame
+import de.ashman.ontrack.media.model.Franchise
+import de.ashman.ontrack.media.model.Platform
+import de.ashman.ontrack.media.model.SimilarGame
+import de.ashman.ontrack.media.model.VideoGame
 import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PlatformDto
 import de.ashman.ontrack.api.videogame.dto.SimilarGameDto

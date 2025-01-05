@@ -9,16 +9,13 @@ sealed class Route {
 
     // BOTTOM NAVIGATION
     @Serializable
-    data object Home : Route()
+    data object Feed : Route()
 
     @Serializable
     data object Search : Route()
 
     @Serializable
     data object Shelf : Route()
-
-    @Serializable
-    data object Feed : Route()
 
     // OTHER
     @Serializable

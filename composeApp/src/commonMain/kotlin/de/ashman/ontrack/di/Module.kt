@@ -2,20 +2,15 @@ package de.ashman.ontrack.di
 
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.api.boardgame.BoardGameRepository
-import de.ashman.ontrack.shelf.ui.BoardGameViewModel
 import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.show.ShowRepository
-import de.ashman.ontrack.shelf.ui.BookViewModel
 import de.ashman.ontrack.api.movie.MovieRepository
-import de.ashman.ontrack.shelf.ui.MovieViewModel
-import de.ashman.ontrack.shelf.ui.ShowViewModel
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.api.album.AlbumRepository
-import de.ashman.ontrack.shelf.ui.AlbumViewModel
 import de.ashman.ontrack.api.videogame.VideoGameRepository
-import de.ashman.ontrack.shelf.ui.VideoGameViewModel
+import de.ashman.ontrack.search.SearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -210,13 +205,11 @@ val appModule =
         single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         // VIEWMODEL
-        viewModelDefinition { MovieViewModel(get(), get()) }
-        viewModelDefinition { ShowViewModel(get(), get()) }
-        viewModelDefinition { BookViewModel(get(), get()) }
-        viewModelDefinition { VideoGameViewModel(get(), get()) }
-        viewModelDefinition { BoardGameViewModel(get(), get()) }
-        viewModelDefinition { AlbumViewModel(get(), get()) }
         viewModelDefinition { UserViewModel(get()) }
+
+        // TODO add viewmodels for the screens
+        // So for Feed, Search, Detail and Shelf
+        viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

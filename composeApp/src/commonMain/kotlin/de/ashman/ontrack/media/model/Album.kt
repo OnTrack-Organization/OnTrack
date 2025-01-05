@@ -1,4 +1,4 @@
-package de.ashman.ontrack.media.domain
+package de.ashman.ontrack.media.model
 
 import kotlinx.serialization.Serializable
 

@@ -1,7 +1,7 @@
 package de.ashman.ontrack.api.videogame
 
 import de.ashman.ontrack.auth.AccessTokenManager
-import de.ashman.ontrack.media.domain.VideoGame
+import de.ashman.ontrack.media.model.VideoGame
 import de.ashman.ontrack.api.videogame.dto.VideoGameDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
