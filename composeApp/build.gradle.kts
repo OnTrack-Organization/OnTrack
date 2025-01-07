@@ -96,7 +96,7 @@ kotlin {
 
 android {
     namespace = "de.ashman.ontrack"
-    compileSdk = 34
+    compileSdk = 35
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -105,7 +105,7 @@ android {
     defaultConfig {
         applicationId = "de.ashman.ontrack"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -138,42 +138,42 @@ buildkonfig {
         buildConfigField(
             STRING,
             "GOOGLE_AUTH_CLIENT_ID",
-            gradleLocalProperties(rootDir).getProperty("google_auth_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("google_auth_client_id") ?: ""
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TMDB_API_KEY",
-            gradleLocalProperties(rootDir).getProperty("tmdb_api_key") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("tmdb_api_key") ?: ""
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_ID",
-            gradleLocalProperties(rootDir).getProperty("twitch_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_id") ?: ""
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_SECRET",
-            gradleLocalProperties(rootDir).getProperty("twitch_client_secret") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_secret") ?: ""
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_ID",
-            gradleLocalProperties(rootDir).getProperty("spotify_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_id") ?: ""
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_SECRET",
-            gradleLocalProperties(rootDir).getProperty("spotify_client_secret") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_secret") ?: ""
         )
     }
 }
