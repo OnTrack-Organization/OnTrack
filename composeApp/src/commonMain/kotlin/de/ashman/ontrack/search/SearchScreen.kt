@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
@@ -48,6 +49,8 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
 import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.stringResource
 
@@ -71,28 +74,29 @@ fun SearchScreen(
             },
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        SearchBar(
-            query = viewState.query,
-            selectedMediaType = viewState.selectedMediaType,
-            onQueryChanged = viewModel::onQueryChanged,
-            onSearch = viewModel::search,
-            closeKeyboard = { localFocusManager.clearFocus() }
-        )
+        Column {
+            SearchBar(
+                query = viewState.query,
+                selectedMediaType = viewState.selectedMediaType,
+                onQueryChanged = viewModel::onQueryChanged,
+                onSearch = viewModel::search,
+                closeKeyboard = { localFocusManager.clearFocus() }
+            )
 
-        FilterChips(
-            mediaTypes = MediaType.entries.toList(),
-            selectedMediaType = viewState.selectedMediaType,
-            onMediaTypeSelected = viewModel::onMediaTypeSelected,
-        )
+            FilterChips(
+                mediaTypes = MediaType.entries.toList(),
+                selectedMediaType = viewState.selectedMediaType,
+                onMediaTypeSelected = viewModel::onMediaTypeSelected,
+            )
+        }
 
-        if (viewState.isLoading) {
-            LoadingSearch()
-        } else if (viewState.searchResults.isEmpty()) {
-            EmptySearch(title = stringResource(viewState.selectedMediaType.title))
-        } else {
-            SearchItemRow(
+        when (viewState.searchResultState) {
+            SearchResultState.Empty -> EmptySearch(title = stringResource(viewState.selectedMediaType.title))
+            SearchResultState.Loading -> LoadingSearch()
+            SearchResultState.Error -> ErrorSearch()
+            SearchResultState.Success -> SearchItemRow(
                 viewState = viewState,
-                onClickItem = onClickItem
+                onClickItem = onClickItem,
             )
         }
     }
@@ -134,6 +138,28 @@ fun EmptySearch(
 }
 
 @Composable
+fun ErrorSearch() {
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(100.dp),
+            imageVector = Icons.Default.Error,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = "Error Icon"
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = "Network error",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
 fun SearchItem(
     item: Media,
     onClickItem: (String) -> Unit = {},
@@ -143,15 +169,18 @@ fun SearchItem(
         model = item.coverUrl,
         contentScale = ContentScale.Crop,
         contentDescription = "Cover",
-        modifier = modifier.clickable {
-            onClickItem(item.id)
-        }
+        modifier = modifier
+            .size(width = DEFAULT_POSTER_WIDTH, height = DEFAULT_POSTER_HEIGHT)
+            .clip(shape = RoundedCornerShape(16.dp))
+            .clickable {
+                onClickItem(item.id)
+            }
     ) {
         val state = painter.state.collectAsState().value
 
         when (state) {
             is AsyncImagePainter.State.Loading -> {
-                Card(modifier = Modifier.size(width = 200.dp, height = 300.dp)) {
+                Card {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -163,7 +192,7 @@ fun SearchItem(
             }
 
             is AsyncImagePainter.State.Error -> {
-                Card(modifier = Modifier.size(width = 200.dp, height = 300.dp)) {
+                Card {
                     Box(
                         modifier = Modifier.fillMaxSize().padding(8.dp),
                         contentAlignment = Alignment.Center
@@ -176,9 +205,7 @@ fun SearchItem(
             else -> {
                 SubcomposeAsyncImageContent(
                     modifier = Modifier
-                        .size(width = 200.dp, height = 300.dp)
-                        .shadow(elevation = 8.dp, RoundedCornerShape(12.dp))
-                        .clip(shape = RoundedCornerShape(12.dp))
+
                 )
             }
         }
@@ -221,7 +248,10 @@ fun SearchBar(
         inputField = {
             SearchBarDefaults.InputField(
                 query = query,
-                onQueryChange = onQueryChanged,
+                onQueryChange = { newQuery ->
+                    onQueryChanged(newQuery)
+                    onSearch()
+                },
                 onSearch = { onSearch() },
                 expanded = false,
                 onExpandedChange = { },

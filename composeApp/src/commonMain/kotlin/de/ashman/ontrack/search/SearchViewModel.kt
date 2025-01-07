@@ -33,7 +33,6 @@ class SearchViewModel(
 
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
-        search()
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
@@ -46,10 +45,11 @@ class SearchViewModel(
 
     fun search() {
         if (uiState.value.query.isEmpty()) {
+            _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Empty)
             return
         }
 
-        _uiState.value = _uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
 
         val query = uiState.value.query
 
@@ -66,13 +66,13 @@ class SearchViewModel(
             result.fold(
                 onSuccess = {
                     _uiState.value = _uiState.value.copy(
-                        isLoading = false,
+                        searchResultState = if (it.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
                         searchResults = it,
                     )
                 },
                 onFailure = { exception ->
                     _uiState.value = _uiState.value.copy(
-                        isLoading = false,
+                        searchResultState = SearchResultState.Error,
                         errorMessage = "Failed to fetch results: ${exception.message}"
                     )
                 }
@@ -85,6 +85,13 @@ data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
-    val isLoading: Boolean = false,
+    val searchResultState: SearchResultState = SearchResultState.Empty,
     val errorMessage: String? = null,
 )
+
+enum class SearchResultState {
+    Empty,
+    Loading,
+    Success,
+    Error,
+}

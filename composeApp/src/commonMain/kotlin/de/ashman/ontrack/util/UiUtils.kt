@@ -6,6 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+
+// Default Poster Size ist 2:3 Ratio
+val DEFAULT_POSTER_HEIGHT = 256.dp
+val DEFAULT_POSTER_WIDTH = DEFAULT_POSTER_HEIGHT * (2f / 3f)
 
 @Composable
 fun keyboardAsState(): State<Boolean> {
