@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.model.ConsumeStatus
-import de.ashman.ontrack.media.ui.detail.MovieDetailContent
+import de.ashman.ontrack.detail.MovieDetailContent
 
 @Composable
 @Preview

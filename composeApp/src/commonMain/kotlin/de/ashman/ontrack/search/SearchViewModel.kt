@@ -37,12 +37,18 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
-        _uiState.value = _uiState.value.copy(selectedMediaType = mediaType)
-
-        if (uiState.value.query.isNotEmpty()) search()
+        _uiState.value = _uiState.value.copy(
+            selectedMediaType = mediaType,
+            searchResults = emptyList()
+        )
+        search()
     }
 
     fun search() {
+        if (uiState.value.query.isEmpty()) {
+            return
+        }
+
         _uiState.value = _uiState.value.copy(isLoading = true)
 
         val query = uiState.value.query

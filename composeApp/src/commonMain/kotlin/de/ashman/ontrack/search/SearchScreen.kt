@@ -5,11 +5,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AssistChipDefaults
@@ -31,9 +32,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +41,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
@@ -73,38 +71,65 @@ fun SearchScreen(
             },
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        SearchBarWithFilterChips(
+        SearchBar(
             query = viewState.query,
+            selectedMediaType = viewState.selectedMediaType,
             onQueryChanged = viewModel::onQueryChanged,
             onSearch = viewModel::search,
-            mediaTypes = MediaType.entries.toList(),
-            selectedMediaType = viewState.selectedMediaType,
-            onMediaTypeSelected = viewModel::onMediaTypeSelected,
             closeKeyboard = { localFocusManager.clearFocus() }
         )
 
+        FilterChips(
+            mediaTypes = MediaType.entries.toList(),
+            selectedMediaType = viewState.selectedMediaType,
+            onMediaTypeSelected = viewModel::onMediaTypeSelected,
+        )
+
         if (viewState.isLoading) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            LoadingSearch()
+        } else if (viewState.searchResults.isEmpty()) {
+            EmptySearch(title = stringResource(viewState.selectedMediaType.title))
         } else {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items(viewState.searchResults) {
-                    SearchItem(
-                        item = it,
-                        onClickItem = { id -> onClickItem(id, it.type) }
-                    )
-                }
-            }
+            SearchItemRow(
+                viewState = viewState,
+                onClickItem = onClickItem
+            )
         }
+    }
+}
+
+@Composable
+fun LoadingSearch() {
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator(modifier = Modifier.scale(1.5f))
+    }
+}
+
+@Composable
+fun EmptySearch(
+    title: String,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(100.dp),
+            imageVector = Icons.Default.HideSource,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = "No Results Icon"
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = "No $title found",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -160,15 +185,32 @@ fun SearchItem(
     }
 }
 
+@Composable
+fun SearchItemRow(
+    viewState: SearchUiState,
+    onClickItem: (String, MediaType) -> Unit = { _, _ -> },
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items(viewState.searchResults) {
+            SearchItem(
+                item = it,
+                onClickItem = { id -> onClickItem(id, it.type) }
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarWithFilterChips(
+fun SearchBar(
     query: String,
-    mediaTypes: List<MediaType>,
     selectedMediaType: MediaType,
     onSearch: () -> Unit,
     onQueryChanged: (String) -> Unit,
-    onMediaTypeSelected: (MediaType) -> Unit,
     closeKeyboard: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -210,12 +252,6 @@ fun SearchBarWithFilterChips(
         tonalElevation = 0.dp,
         windowInsets = WindowInsets(top = 0.dp),
     ) {}
-
-    FilterChips(
-        mediaTypes = mediaTypes,
-        selectedMediaType = selectedMediaType,
-        onMediaTypeSelected = onMediaTypeSelected,
-    )
 }
 
 @Composable

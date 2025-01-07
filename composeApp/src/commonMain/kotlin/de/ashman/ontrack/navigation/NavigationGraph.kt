@@ -13,7 +13,7 @@ import androidx.navigation.toRoute
 import de.ashman.ontrack.OnTrackScreen
 import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.login.ui.LoginScreen
-import de.ashman.ontrack.media.ui.detail.MovieDetailScreen
+import de.ashman.ontrack.detail.MovieDetailScreen
 import de.ashman.ontrack.media.model.MediaType
 import de.ashman.ontrack.media.ui.detail.AlbumDetailScreen
 import de.ashman.ontrack.media.ui.detail.BoardgameDetailScreen
