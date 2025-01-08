@@ -18,7 +18,17 @@ data class Album(
     val spotifyUrl: String,
     val totalTracks: Int,
     val tracks: List<Track>,
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        infoItems.add(releaseDate)
+        infoItems.add("$totalTracks Tracks")
+        infoItems.add(artists.first())
+
+        return infoItems
+    }
+}
 
 @Serializable
 data class Track(

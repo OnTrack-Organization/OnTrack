@@ -26,7 +26,17 @@ data class Show(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        firstAirDate?.let { infoItems.add(it.take(4)) }
+        numberOfSeasons?.let { infoItems.add("$it Seasons") }
+        numberOfEpisodes?.let { infoItems.add("$it Episodes") }
+
+        return infoItems
+    }
+}
 
 @Serializable
 data class Season(

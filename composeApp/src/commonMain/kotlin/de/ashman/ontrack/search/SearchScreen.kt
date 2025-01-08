@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -62,7 +61,7 @@ fun SearchScreen(
     onClickItem: (Media) -> Unit = { },
 ) {
     val localFocusManager = LocalFocusManager.current
-    val viewState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
 
     Column(
         modifier = modifier
@@ -76,8 +75,8 @@ fun SearchScreen(
     ) {
         Column {
             SearchBar(
-                query = viewState.query,
-                selectedMediaType = viewState.selectedMediaType,
+                query = uiState.query,
+                selectedMediaType = uiState.selectedMediaType,
                 onQueryChanged = viewModel::onQueryChanged,
                 onSearch = viewModel::search,
                 closeKeyboard = { localFocusManager.clearFocus() }
@@ -85,17 +84,17 @@ fun SearchScreen(
 
             FilterChips(
                 mediaTypes = MediaType.entries.toList(),
-                selectedMediaType = viewState.selectedMediaType,
+                selectedMediaType = uiState.selectedMediaType,
                 onMediaTypeSelected = viewModel::onMediaTypeSelected,
             )
         }
 
-        when (viewState.searchResultState) {
-            SearchResultState.Empty -> EmptySearch(title = stringResource(viewState.selectedMediaType.title))
+        when (uiState.searchResultState) {
+            SearchResultState.Empty -> EmptySearch(title = stringResource(uiState.selectedMediaType.title))
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
             SearchResultState.Success -> SearchItemRow(
-                viewState = viewState,
+                viewState = uiState,
                 onClickItem = onClickItem,
             )
         }

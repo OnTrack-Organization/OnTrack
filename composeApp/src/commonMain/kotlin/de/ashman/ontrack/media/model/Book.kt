@@ -23,4 +23,14 @@ data class Book(
     val ratingsAverage: Double? = null,
     val ratingsCount: Int? = null,
     val subject: List<String>? = null,
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        firstPublishYear?.let { infoItems.add("$it") }
+        numberOfPagesMedian?.let { infoItems.add("$it Pages") }
+        authorName?.let { infoItems.add("$it") }
+
+        return infoItems
+    }
+}

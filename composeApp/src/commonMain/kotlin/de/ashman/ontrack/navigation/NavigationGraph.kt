@@ -2,7 +2,12 @@ package de.ashman.ontrack.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -11,15 +16,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.OnTrackScreen
+import de.ashman.ontrack.detail.DetailScreen
+import de.ashman.ontrack.detail.DetailViewModel
 import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.login.ui.LoginScreen
-import de.ashman.ontrack.detail.MovieDetailScreen
 import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.media.ui.detail.AlbumDetailScreen
-import de.ashman.ontrack.media.ui.detail.BoardgameDetailScreen
-import de.ashman.ontrack.media.ui.detail.BookDetailScreen
-import de.ashman.ontrack.media.ui.detail.ShowDetailScreen
-import de.ashman.ontrack.media.ui.detail.VideogameDetailScreen
+import de.ashman.ontrack.navigation.Route.Detail
 import de.ashman.ontrack.search.SearchScreen
 import de.ashman.ontrack.search.SearchViewModel
 import de.ashman.ontrack.shelf.ShelfListScreen
@@ -28,13 +30,21 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationGraph() {
     val navController = rememberNavController()
     // TODO maybe put somewhere else, but for now it needs to be here so its not recreated on every navigation
     val searchViewModel: SearchViewModel = koinInject()
+    val detailViewModel: DetailViewModel = koinInject()
 
-    OnTrackScreen(navController) { padding ->
+    // TODO do the topbar stuff differently
+    val uiState by detailViewModel.uiState.collectAsState()
+
+    OnTrackScreen(
+        navController = navController,
+        icon = { uiState.selectedMedia?.type?.icon() ?: Icons.Filled.Image },
+    ) { padding ->
         NavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -47,7 +57,7 @@ fun NavigationGraph() {
             }
             mainGraph(navController, searchViewModel)
 
-            mediaGraph(navController)
+            mediaGraph(navController, detailViewModel)
 
             shelfGraph(navController)
         }
@@ -56,52 +66,15 @@ fun NavigationGraph() {
 
 fun NavGraphBuilder.mediaGraph(
     navController: NavHostController,
+    detailViewModel: DetailViewModel,
 ) {
-    composable<Route.Movie> { backStackEntry ->
-        val movie: Route.Movie = backStackEntry.toRoute()
-        MovieDetailScreen(
-            id = movie.id,
-            onBack = { navController.popBackStack() }
-        )
-    }
+    composable<Route.Detail> { backStackEntry ->
+        val detail: Route.Detail = backStackEntry.toRoute()
 
-    composable<Route.Show> { backStackEntry ->
-        val show: Route.Show = backStackEntry.toRoute()
-        ShowDetailScreen(
-            id = show.id,
-            onBack = { navController.popBackStack() }
-        )
-    }
-
-    composable<Route.Videogame> { backStackEntry ->
-        val videogame: Route.Videogame = backStackEntry.toRoute()
-        VideogameDetailScreen(
-            id = videogame.id,
-            onBack = { navController.popBackStack() }
-        )
-    }
-
-    composable<Route.Boardgame> { backStackEntry ->
-        val boardgame: Route.Boardgame = backStackEntry.toRoute()
-        BoardgameDetailScreen(
-            id = boardgame.id,
-            onBack = { navController.popBackStack() }
-        )
-    }
-
-    composable<Route.Book> { backStackEntry ->
-        val book: Route.Book = backStackEntry.toRoute()
-        BookDetailScreen(
-            id = book.id,
-            onBack = { navController.popBackStack() }
-        )
-    }
-
-    composable<Route.Album> { backStackEntry ->
-        val album: Route.Album = backStackEntry.toRoute()
-        AlbumDetailScreen(
-            id = album.id,
-            onBack = { navController.popBackStack() }
+        DetailScreen(
+            id = detail.id,
+            mediaType = detail.mediaType,
+            viewModel = detailViewModel,
         )
     }
 }
@@ -130,14 +103,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             viewModel = searchViewModel,
             onClickItem = { item ->
-                when (item.type) {
-                    MediaType.MOVIE -> navController.navigate(Route.Movie(item.id))
-                    MediaType.SHOW -> navController.navigate(Route.Show(item.id))
-                    MediaType.BOOK -> navController.navigate(Route.Book(item.id))
-                    MediaType.VIDEOGAME -> navController.navigate(Route.Videogame(item.id))
-                    MediaType.BOARDGAME -> navController.navigate(Route.Boardgame(item.id))
-                    MediaType.ALBUM -> navController.navigate(Route.Album(item.id))
-                }
+                navController.navigate(Route.Detail(item.id, item.type))
             }
         )
     }

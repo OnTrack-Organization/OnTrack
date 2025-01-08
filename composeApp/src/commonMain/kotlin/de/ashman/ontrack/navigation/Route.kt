@@ -1,5 +1,9 @@
 package de.ashman.ontrack.navigation
 
+import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.navigation.BottomNavItem.FeedNav
+import de.ashman.ontrack.navigation.BottomNavItem.SearchNav
+import de.ashman.ontrack.navigation.BottomNavItem.ShelfNav
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,32 +29,8 @@ sealed class Route {
 
     // TODO change to just one in the future, but lets make it work for now
     @Serializable
-    data class Movie(
+    data class Detail(
         val id: String,
-    ) : Route()
-
-    @Serializable
-    data class Show(
-        val id: String,
-    ) : Route()
-
-    @Serializable
-    data class Book(
-        val id: String,
-    ) : Route()
-
-    @Serializable
-    data class Videogame(
-        val id: String,
-    ) : Route()
-
-    @Serializable
-    data class Album(
-        val id: String,
-    ) : Route()
-
-    @Serializable
-    data class Boardgame(
-        val id: String,
+        val mediaType: MediaType,
     ) : Route()
 }

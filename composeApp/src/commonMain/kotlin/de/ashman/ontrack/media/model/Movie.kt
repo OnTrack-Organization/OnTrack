@@ -23,4 +23,13 @@ data class Movie(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        releaseDate?.let { infoItems.add(it.take(4)) }
+        runtime?.let { infoItems.add("$it Min") }
+
+        return infoItems
+    }
+}

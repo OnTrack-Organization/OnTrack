@@ -18,7 +18,24 @@ data class BoardGame(
     val minAge: String?,
     val thumbnail: String?,
     val ratings: Ratings?,
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        yearPublished?.let { infoItems.add(it) }
+        playingTime?.let { infoItems.add("$it Min") }
+        // TODO change
+        if (!minPlayers.isNullOrEmpty() && !maxPlayers.isNullOrEmpty()) {
+            infoItems.add("$minPlayers-$maxPlayers Players")
+        } else if (!minPlayers.isNullOrEmpty()) {
+            infoItems.add("$minPlayers Players")
+        } else if (!maxPlayers.isNullOrEmpty()) {
+            infoItems.add("$maxPlayers Players")
+        }
+
+        return infoItems
+    }
+}
 
 @Serializable
 data class Ratings(

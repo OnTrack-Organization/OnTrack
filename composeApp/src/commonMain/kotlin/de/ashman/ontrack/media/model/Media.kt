@@ -10,4 +10,6 @@ sealed class Media {
     abstract val coverUrl: String
     abstract val consumeStatus: ConsumeStatus?
     abstract val userRating: Float?
+
+    abstract fun getMainInfoItems(): List<String>
 }

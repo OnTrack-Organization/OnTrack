@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.model.ConsumeStatus
-import de.ashman.ontrack.detail.MovieDetailContent
+import de.ashman.ontrack.detail.DetailContent
 
 @Composable
 @Preview
@@ -28,9 +28,5 @@ fun MovieDetailsPreview() {
         status = "Filmed",
         voteAverage = 99.0,
         voteCount = 1000,
-    )
-
-    MovieDetailContent(
-        movie = movie
     )
 }

@@ -18,7 +18,16 @@ data class VideoGame(
     val totalRatingCount: Int?,
     val similarGames: List<SimilarGame>?,
     val summary: String?,
-) : Media()
+) : Media() {
+    override fun getMainInfoItems(): List<String> {
+        val infoItems = mutableListOf<String>()
+
+        firstReleaseDate?.let { infoItems.add(it.take(4)) }
+        platforms?.let { infoItems.add(it.first().name) }
+
+        return infoItems
+    }
+}
 
 @Serializable
 data class Franchise(

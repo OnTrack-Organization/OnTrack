@@ -10,6 +10,7 @@ import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.videogame.VideoGameRepository
+import de.ashman.ontrack.detail.DetailViewModel
 import de.ashman.ontrack.search.SearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -207,9 +208,9 @@ val appModule =
         // VIEWMODEL
         viewModelDefinition { UserViewModel(get()) }
 
-        // TODO add viewmodels for the screens
         // So for Feed, Search, Detail and Shelf
         viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
