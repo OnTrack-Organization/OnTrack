@@ -67,6 +67,7 @@ class DetailViewModel(
                         detailResultState = DetailResultState.Error,
                         errorMessage = "Failed to fetch details: ${exception.message}"
                     )
+                    Logger.e { _uiState.value.errorMessage.toString() }
                 }
             )
         }

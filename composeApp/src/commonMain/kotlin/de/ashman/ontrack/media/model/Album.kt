@@ -39,7 +39,7 @@ data class Track(
     val artists: List<String>,
     val durationMs: Int,
     val name: String,
-    val previewUrl: String,
+    val previewUrl: String?,
     val trackNumber: Int,
     val url: String,
 ) : CommonParcelable

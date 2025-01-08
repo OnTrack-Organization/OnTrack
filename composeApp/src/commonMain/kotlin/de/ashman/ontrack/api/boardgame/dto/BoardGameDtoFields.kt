@@ -194,7 +194,7 @@ data class StatisticsDto(
                 val name: String,
                 val friendlyname: String,
                 val value: String,
-                val bayesaverage: Double
+                val bayesaverage: String
             )
         }
 

@@ -25,13 +25,12 @@ data class BoardGame(
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        playingTime?.let { infoItems.add("$it Min") }
-        // TODO change
-        if (!minPlayers.isNullOrEmpty() && !maxPlayers.isNullOrEmpty()) {
-            infoItems.add("$minPlayers-$maxPlayers Players")
-        } else if (!minPlayers.isNullOrEmpty()) {
-            infoItems.add("$minPlayers Players")
-        } else if (!maxPlayers.isNullOrEmpty()) {
+        playingTime?.takeIf { it != "0" }?.let { infoItems.add("$it Min") }
+
+        // Add player count, showing just one value if min and max are the same, excluding 0
+        if (!minPlayers.isNullOrEmpty() && minPlayers != "0") {
+            infoItems.add(if (minPlayers == maxPlayers) "$minPlayers Players" else "$minPlayers-$maxPlayers Players")
+        } else if (!maxPlayers.isNullOrEmpty() && maxPlayers != "0") {
             infoItems.add("$maxPlayers Players")
         }
 

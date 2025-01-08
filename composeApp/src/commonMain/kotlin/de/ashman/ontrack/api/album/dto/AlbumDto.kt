@@ -78,7 +78,7 @@ data class TrackDto(
     val linkedFrom: LinkedFromDto? = null,
     val restrictions: RestrictionsDto? = null,
     val name: String,
-    val previewUrl: String,
+    val previewUrl: String? = null,
     val trackNumber: Int,
     val type: String,
     val uri: String,
