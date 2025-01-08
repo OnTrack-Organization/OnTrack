@@ -59,7 +59,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    onClickItem: (String, MediaType) -> Unit = { _, _ -> },
+    onClickItem: (Media) -> Unit = { },
 ) {
     val localFocusManager = LocalFocusManager.current
     val viewState = viewModel.uiState.collectAsState().value
@@ -162,7 +162,7 @@ fun ErrorSearch() {
 @Composable
 fun SearchItem(
     item: Media,
-    onClickItem: (String) -> Unit = {},
+    onClickItem: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     SubcomposeAsyncImage(
@@ -173,7 +173,7 @@ fun SearchItem(
             .size(width = DEFAULT_POSTER_WIDTH, height = DEFAULT_POSTER_HEIGHT)
             .clip(shape = RoundedCornerShape(16.dp))
             .clickable {
-                onClickItem(item.id)
+                onClickItem()
             }
     ) {
         val state = painter.state.collectAsState().value
@@ -205,7 +205,6 @@ fun SearchItem(
             else -> {
                 SubcomposeAsyncImageContent(
                     modifier = Modifier
-
                 )
             }
         }
@@ -215,17 +214,17 @@ fun SearchItem(
 @Composable
 fun SearchItemRow(
     viewState: SearchUiState,
-    onClickItem: (String, MediaType) -> Unit = { _, _ -> },
+    onClickItem: (Media) -> Unit = { },
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        items(viewState.searchResults) {
+        items(viewState.searchResults) { item ->
             SearchItem(
-                item = it,
-                onClickItem = { id -> onClickItem(id, it.type) }
+                item = item,
+                onClickItem = { onClickItem(item) }
             )
         }
     }

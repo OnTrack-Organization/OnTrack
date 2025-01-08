@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -81,12 +82,12 @@ fun BottomAppBar(
                     onClick = {
                         if (!isSelected) navController.navigate(route.route)
                     },
-                    icon = { route.icon() },
+                    icon = { if (isSelected) route.filledIcon() else route.icon() },
                     label = {
                         Text(
                             text = route.title,
-                            fontSize = 10.sp,
                             softWrap = false,
+                            fontWeight = FontWeight.Bold,
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.primaryContainer),

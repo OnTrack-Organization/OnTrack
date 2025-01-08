@@ -129,14 +129,14 @@ fun NavGraphBuilder.mainGraph(
     composable<Route.Search> {
         SearchScreen(
             viewModel = searchViewModel,
-            onClickItem = { id, mediaType ->
-                when (mediaType) {
-                    MediaType.MOVIE -> navController.navigate(Route.Movie(id))
-                    MediaType.SHOW -> navController.navigate(Route.Show(id))
-                    MediaType.BOOK -> navController.navigate(Route.Book(id))
-                    MediaType.VIDEOGAME -> navController.navigate(Route.Videogame(id))
-                    MediaType.BOARDGAME -> navController.navigate(Route.Boardgame(id))
-                    MediaType.ALBUM -> navController.navigate(Route.Album(id))
+            onClickItem = { item ->
+                when (item.type) {
+                    MediaType.MOVIE -> navController.navigate(Route.Movie(item.id))
+                    MediaType.SHOW -> navController.navigate(Route.Show(item.id))
+                    MediaType.BOOK -> navController.navigate(Route.Book(item.id))
+                    MediaType.VIDEOGAME -> navController.navigate(Route.Videogame(item.id))
+                    MediaType.BOARDGAME -> navController.navigate(Route.Boardgame(item.id))
+                    MediaType.ALBUM -> navController.navigate(Route.Album(item.id))
                 }
             }
         )
