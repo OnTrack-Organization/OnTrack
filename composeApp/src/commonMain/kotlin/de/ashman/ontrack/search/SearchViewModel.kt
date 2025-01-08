@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.album.AlbumRepository
-import de.ashman.ontrack.api.boardgame.BoardGameRepository
+import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
-import de.ashman.ontrack.api.videogame.VideoGameRepository
+import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +19,8 @@ class SearchViewModel(
     private val movieRepository: MovieRepository,
     private val showRepository: ShowRepository,
     private val bookRepository: BookRepository,
-    private val videoGameRepository: VideoGameRepository,
-    private val boardGameRepository: BoardGameRepository,
+    private val videogameRepository: VideogameRepository,
+    private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
 ) : ViewModel() {
 
@@ -58,8 +58,8 @@ class SearchViewModel(
                 MediaType.MOVIE -> movieRepository.fetchMediaByQuery(query)
                 MediaType.SHOW -> showRepository.fetchMediaByQuery(query)
                 MediaType.BOOK -> bookRepository.fetchMediaByQuery(query)
-                MediaType.VIDEOGAME -> videoGameRepository.fetchMediaByQuery(query)
-                MediaType.BOARDGAME -> boardGameRepository.fetchMediaByQuery(query)
+                MediaType.VIDEOGAME -> videogameRepository.fetchMediaByQuery(query)
+                MediaType.BOARDGAME -> boardgameRepository.fetchMediaByQuery(query)
                 MediaType.ALBUM -> albumRepository.fetchMediaByQuery(query)
             }
 

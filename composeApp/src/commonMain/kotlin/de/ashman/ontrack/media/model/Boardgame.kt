@@ -5,7 +5,7 @@ import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BoardGame(
+data class Boardgame(
     override val id: String,
     override val mediaType: MediaType = MediaType.BOARDGAME,
     override val name: String,

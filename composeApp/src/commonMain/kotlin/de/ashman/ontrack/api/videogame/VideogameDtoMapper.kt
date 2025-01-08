@@ -4,17 +4,17 @@ import de.ashman.ontrack.api.getIGDBCoverUrl
 import de.ashman.ontrack.media.model.Franchise
 import de.ashman.ontrack.media.model.Platform
 import de.ashman.ontrack.media.model.SimilarGame
-import de.ashman.ontrack.media.model.VideoGame
+import de.ashman.ontrack.media.model.Videogame
 import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PlatformDto
 import de.ashman.ontrack.api.videogame.dto.SimilarGameDto
-import de.ashman.ontrack.api.videogame.dto.VideoGameDto
+import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun VideoGameDto.toDomain(): VideoGame {
-    return VideoGame(
+fun VideogameDto.toDomain(): Videogame {
+    return Videogame(
         id = id.toString(),
         coverUrl = cover?.url.getIGDBCoverUrl(),
         releaseYear = firstReleaseDate?.let {

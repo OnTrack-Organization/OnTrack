@@ -1,8 +1,8 @@
 package de.ashman.ontrack.api.videogame
 
 import de.ashman.ontrack.auth.AccessTokenManager
-import de.ashman.ontrack.media.model.VideoGame
-import de.ashman.ontrack.api.videogame.dto.VideoGameDto
+import de.ashman.ontrack.media.model.Videogame
+import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
@@ -16,10 +16,10 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.HttpHeaders
 
-class VideoGameRepository(
+class VideogameRepository(
     private val httpClient: HttpClient,
     private val accessTokenManager: AccessTokenManager,
-) : MediaRepository<VideoGame> {
+) : MediaRepository<Videogame> {
 
     // Some APIS need field selection to reduce traffic
     // fields * um alle zu holen
@@ -57,7 +57,7 @@ class VideoGameRepository(
         }
     }
 
-    override suspend fun fetchMediaByQuery(query: String): Result<List<VideoGame>> {
+    override suspend fun fetchMediaByQuery(query: String): Result<List<Videogame>> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
@@ -66,12 +66,12 @@ class VideoGameRepository(
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }
 
-            val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
+            val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
             response.map { it.toDomain() }
         }
     }
 
-    override suspend fun fetchMediaDetails(id: String): Result<VideoGame> {
+    override suspend fun fetchMediaDetails(id: String): Result<Videogame> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
@@ -83,7 +83,7 @@ class VideoGameRepository(
                 )
             }
 
-            val response: List<VideoGameDto> = httpClient.post(requestBuilder).body()
+            val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
             response.first().toDomain()
         }
     }

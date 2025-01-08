@@ -1,7 +1,7 @@
 package de.ashman.ontrack.di
 
 import de.ashman.ontrack.BuildKonfig
-import de.ashman.ontrack.api.boardgame.BoardGameRepository
+import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.movie.MovieRepository
@@ -9,7 +9,7 @@ import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.login.ui.UserViewModel
 import de.ashman.ontrack.login.UserService
 import de.ashman.ontrack.api.album.AlbumRepository
-import de.ashman.ontrack.api.videogame.VideoGameRepository
+import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.detail.DetailViewModel
 import de.ashman.ontrack.search.SearchViewModel
 import io.ktor.client.HttpClient
@@ -201,8 +201,8 @@ val appModule =
         single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
         single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
         single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
-        single { BoardGameRepository(get(named(BGG_CLIENT_NAME))) }
-        single { VideoGameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
+        single { BoardgameRepository(get(named(BGG_CLIENT_NAME))) }
+        single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
         single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         // VIEWMODEL

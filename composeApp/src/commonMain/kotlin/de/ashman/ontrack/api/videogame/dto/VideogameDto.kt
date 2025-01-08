@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 // https://api-docs.igdb.com/#game
 @Serializable
-data class VideoGameDto(
+data class VideogameDto(
     val id: Int,
     val cover: CoverDto? = null,
     val firstReleaseDate: Long? = null,

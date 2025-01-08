@@ -6,7 +6,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 @Serializable
 @XmlSerialName("item")
-data class BoardGameDto(
+data class BoardgameDto(
     val id: String,
     val type: String,
     @XmlElement

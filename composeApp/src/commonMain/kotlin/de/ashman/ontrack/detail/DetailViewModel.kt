@@ -4,26 +4,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.album.AlbumRepository
-import de.ashman.ontrack.api.boardgame.BoardGameRepository
+import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
-import de.ashman.ontrack.api.videogame.VideoGameRepository
+import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.search.SearchResultState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
 
 class DetailViewModel(
     private val movieRepository: MovieRepository,
     private val showRepository: ShowRepository,
     private val bookRepository: BookRepository,
-    private val videoGameRepository: VideoGameRepository,
-    private val boardGameRepository: BoardGameRepository,
+    private val videogameRepository: VideogameRepository,
+    private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
 ) : ViewModel() {
 
@@ -50,8 +48,8 @@ class DetailViewModel(
                     //bookRepository.fetchMediaDetails(id)
                     bookRepository.fetchMediaDetailsWithPartial(media as Book)
                 }
-                MediaType.VIDEOGAME -> videoGameRepository.fetchMediaDetails(media.id)
-                MediaType.BOARDGAME -> boardGameRepository.fetchMediaDetails(media.id)
+                MediaType.VIDEOGAME -> videogameRepository.fetchMediaDetails(media.id)
+                MediaType.BOARDGAME -> boardgameRepository.fetchMediaDetails(media.id)
                 MediaType.ALBUM -> albumRepository.fetchMediaDetails(media.id)
             }
 

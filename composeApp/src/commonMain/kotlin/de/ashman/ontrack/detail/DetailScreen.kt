@@ -1,10 +1,8 @@
 package de.ashman.ontrack.detail
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -47,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -57,9 +54,21 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
+import de.ashman.ontrack.detail.content.AlbumDetailContent
+import de.ashman.ontrack.detail.content.BoardgameDetailContent
+import de.ashman.ontrack.detail.content.BookDetailContent
+import de.ashman.ontrack.detail.content.MovieDetailContent
+import de.ashman.ontrack.detail.content.ShowDetailContent
+import de.ashman.ontrack.detail.content.VideogameDetailContent
+import de.ashman.ontrack.media.model.Album
+import de.ashman.ontrack.media.model.Boardgame
+import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.media.model.ConsumeStatus
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.media.model.Movie
+import de.ashman.ontrack.media.model.Show
+import de.ashman.ontrack.media.model.Videogame
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
 import kotlinx.coroutines.launch
@@ -142,6 +151,15 @@ fun DetailContent(
             coverUrl = media.coverUrl,
             mainInfoItems = media.getMainInfoItems(),
         )
+
+        when (media.mediaType) {
+            MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
+            MediaType.SHOW -> ShowDetailContent(show = media as Show)
+            MediaType.BOOK -> BookDetailContent(book = media as Book)
+            MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame)
+            MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame)
+            MediaType.ALBUM -> AlbumDetailContent(album = media as Album)
+        }
         /*
                 ConsumeStatusRow(
                     mediaType = media.type,
@@ -163,7 +181,6 @@ fun DetailContent(
                     content = { Icon(Icons.Filled.KeyboardArrowDown, "Arrow Down Icon") }
                 )*/
     }
-
 }
 
 @Composable

@@ -1,12 +1,12 @@
 package de.ashman.ontrack.api.boardgame
 
-import de.ashman.ontrack.media.model.BoardGame
-import de.ashman.ontrack.api.boardgame.dto.BoardGameDto
+import de.ashman.ontrack.media.model.Boardgame
+import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.media.model.Ratings
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 
-fun BoardGameDto.toDomain(): BoardGame {
-    return BoardGame(
+fun BoardgameDto.toDomain(): Boardgame {
+    return Boardgame(
         id = id,
         name = name.value,
         coverUrl = image.orEmpty(),
