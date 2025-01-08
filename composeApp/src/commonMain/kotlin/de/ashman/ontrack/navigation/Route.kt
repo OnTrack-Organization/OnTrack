@@ -27,7 +27,6 @@ sealed class Route {
         val mediaType: String,
     ) : Route()
 
-    // TODO change to just one in the future, but lets make it work for now
     @Serializable
     data class Detail(
         val id: String,

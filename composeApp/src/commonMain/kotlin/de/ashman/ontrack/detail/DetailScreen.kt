@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
@@ -75,13 +77,32 @@ fun DetailScreen(
         viewModel.fetchDetails(id = id, mediaType = mediaType)
     }
 
-    if (uiState.selectedMedia != null) {
-        DetailContent(
-            modifier = Modifier
-                .padding(16.dp),
-            media = uiState.selectedMedia,
-        )
+    when (uiState.detailResultState) {
+        DetailResultState.Loading -> {
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(modifier = Modifier.scale(1.5f))
+            }
+        }
+
+        DetailResultState.Success -> {
+            if (uiState.selectedMedia != null) {
+                DetailContent(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    media = uiState.selectedMedia,
+                )
+            }
+        }
+
+        DetailResultState.Error -> {
+
+        }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,11 +185,23 @@ fun PosterTitleAndInfo(
 
                 is AsyncImagePainter.State.Error -> {
                     Card {
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(8.dp),
-                            contentAlignment = Alignment.Center
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(name)
+                            Icon(
+                                modifier = Modifier.size(50.dp),
+                                imageVector = Icons.Default.HideSource,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                contentDescription = "No Results Icon"
+                            )
+                            Spacer(modifier = Modifier.size(8.dp))
+                            Text(
+                                text = "No cover found",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                     }
                 }
@@ -185,7 +218,7 @@ fun PosterTitleAndInfo(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = name,
+            text = if (name.isEmpty()) "No title found" else name,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -217,11 +250,6 @@ fun PosterTitleAndInfo(
             }
         }
     }
-}
-
-@Composable
-fun MovieMainInfo() {
-
 }
 
 @Composable

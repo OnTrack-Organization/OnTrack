@@ -83,8 +83,8 @@ class SearchViewModel(
 
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
-    val query: String = "",
-    val selectedMediaType: MediaType = MediaType.MOVIE,
+    val query: String = "Naruto",
+    val selectedMediaType: MediaType = MediaType.BOOK,
     val searchResultState: SearchResultState = SearchResultState.Empty,
     val errorMessage: String? = null,
 )

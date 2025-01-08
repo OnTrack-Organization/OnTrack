@@ -32,7 +32,7 @@ fun BookWorksResponseDto.toDomain(): Book {
         id = "",
         name = "",
         coverUrl = "",
-        description = description?.value,
+        description = description,
         releaseYear = "",
     )
 }

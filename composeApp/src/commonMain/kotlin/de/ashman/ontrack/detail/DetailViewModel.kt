@@ -9,6 +9,7 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideoGameRepository
+import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
 import de.ashman.ontrack.search.SearchResultState
@@ -33,7 +34,7 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun fetchDetails(id: String, mediaType: MediaType) {
+    fun fetchDetails(id: String, mediaType: MediaType, partialMedia: Media? = null) {
         if (_uiState.value.selectedMedia?.id != id) {
             _uiState.value = _uiState.value.copy(selectedMedia = null)
         }
@@ -44,7 +45,11 @@ class DetailViewModel(
             val result = when (mediaType) {
                 MediaType.MOVIE -> movieRepository.fetchMediaDetails(id)
                 MediaType.SHOW -> showRepository.fetchMediaDetails(id)
-                MediaType.BOOK -> bookRepository.fetchMediaDetails(id)
+                MediaType.BOOK -> {
+                    // TODO fix
+                    //bookRepository.fetchMediaDetails(id)
+                    bookRepository.fetchMediaDetailsWithPartial(id, partialMedia as? Book)
+                }
                 MediaType.VIDEOGAME -> videoGameRepository.fetchMediaDetails(id)
                 MediaType.BOARDGAME -> boardGameRepository.fetchMediaDetails(id)
                 MediaType.ALBUM -> albumRepository.fetchMediaDetails(id)

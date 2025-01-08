@@ -16,10 +16,8 @@ class BookRepository(
 ) : MediaRepository<Book> {
 
     override suspend fun fetchMediaByQuery(query: String): Result<List<Book>> {
-        // TODO CHANGE SO THAT WE ONLY GET TITLE AND COVER URL HERE!!! REST COMES FROM MEDIA DETAILS AFTERWARDS
         return safeApiCall {
             val response: BookSearchResponseDto = httpClient.get("search.json") {
-                //parameter("fields", "title, cover_i, key")
                 parameter("title", query)
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
@@ -35,4 +33,20 @@ class BookRepository(
             response.toDomain()
         }
     }
+
+    suspend fun fetchMediaDetailsWithPartial(id: String, partialBook: Book?): Result<Book> {
+        return safeApiCall {
+            val response: BookWorksResponseDto = httpClient.get("$id.json").body()
+            val detailedBook = response.toDomain()
+
+            println("RESPONSE: $response")
+            println("DETAILED BOOK: $detailedBook")
+            println("PARTIAL BOOK: $partialBook")
+
+            partialBook?.copy(
+                description = detailedBook.description,
+            ) ?: detailedBook
+        }
+    }
+
 }

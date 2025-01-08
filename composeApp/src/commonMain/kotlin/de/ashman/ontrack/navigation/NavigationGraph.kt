@@ -20,6 +20,7 @@ import de.ashman.ontrack.detail.DetailScreen
 import de.ashman.ontrack.detail.DetailViewModel
 import de.ashman.ontrack.feed.FeedScreen
 import de.ashman.ontrack.login.ui.LoginScreen
+import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
 import de.ashman.ontrack.navigation.Route.Detail
 import de.ashman.ontrack.search.SearchScreen
@@ -39,11 +40,11 @@ fun NavigationGraph() {
     val detailViewModel: DetailViewModel = koinInject()
 
     // TODO do the topbar stuff differently
-    val uiState by detailViewModel.uiState.collectAsState()
+    val detailUiState by detailViewModel.uiState.collectAsState()
 
     OnTrackScreen(
         navController = navController,
-        icon = { uiState.selectedMedia?.type?.icon() ?: Icons.Filled.Image },
+        icon = { detailUiState.selectedMedia?.type?.icon() ?: Icons.Filled.Image },
     ) { padding ->
         NavHost(
             navController = navController,
@@ -57,7 +58,7 @@ fun NavigationGraph() {
             }
             mainGraph(navController, searchViewModel)
 
-            mediaGraph(navController, detailViewModel)
+            mediaGraph(detailViewModel)
 
             shelfGraph(navController)
         }
@@ -65,7 +66,6 @@ fun NavigationGraph() {
 }
 
 fun NavGraphBuilder.mediaGraph(
-    navController: NavHostController,
     detailViewModel: DetailViewModel,
 ) {
     composable<Route.Detail> { backStackEntry ->
