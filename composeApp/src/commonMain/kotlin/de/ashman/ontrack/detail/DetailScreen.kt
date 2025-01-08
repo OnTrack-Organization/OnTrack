@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -67,20 +68,20 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    id: String,
-    mediaType: MediaType,
+    modifier: Modifier = Modifier,
+    media: Media,
     viewModel: DetailViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    LaunchedEffect(id) {
-        viewModel.fetchDetails(id = id, mediaType = mediaType)
+    LaunchedEffect(media.id) {
+        viewModel.fetchDetails(media = media)
     }
 
     when (uiState.detailResultState) {
         DetailResultState.Loading -> {
             Column(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+                modifier = modifier.fillMaxWidth().fillMaxHeight(0.5f).padding(16.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -91,18 +92,33 @@ fun DetailScreen(
         DetailResultState.Success -> {
             if (uiState.selectedMedia != null) {
                 DetailContent(
-                    modifier = Modifier
-                        .padding(16.dp),
+                    modifier = modifier.padding(16.dp),
                     media = uiState.selectedMedia,
                 )
             }
         }
 
         DetailResultState.Error -> {
-
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(100.dp),
+                    imageVector = Icons.Default.Error,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = "Error Icon"
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(
+                    text = "Network error",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -233,7 +249,7 @@ fun PosterTitleAndInfo(
             mainInfoItems.forEachIndexed { index, item ->
                 Text(
                     text = item,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

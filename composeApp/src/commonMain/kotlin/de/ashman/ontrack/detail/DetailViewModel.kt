@@ -34,25 +34,25 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun fetchDetails(id: String, mediaType: MediaType, partialMedia: Media? = null) {
-        if (_uiState.value.selectedMedia?.id != id) {
+    fun fetchDetails(media: Media) {
+        if (_uiState.value.selectedMedia?.id != media.id) {
             _uiState.value = _uiState.value.copy(selectedMedia = null)
         }
 
         _uiState.value = _uiState.value.copy(detailResultState = DetailResultState.Loading)
 
         viewModelScope.launch {
-            val result = when (mediaType) {
-                MediaType.MOVIE -> movieRepository.fetchMediaDetails(id)
-                MediaType.SHOW -> showRepository.fetchMediaDetails(id)
+            val result = when (media.mediaType) {
+                MediaType.MOVIE -> movieRepository.fetchMediaDetails(media.id)
+                MediaType.SHOW -> showRepository.fetchMediaDetails(media.id)
                 MediaType.BOOK -> {
                     // TODO fix
                     //bookRepository.fetchMediaDetails(id)
-                    bookRepository.fetchMediaDetailsWithPartial(id, partialMedia as? Book)
+                    bookRepository.fetchMediaDetailsWithPartial(media as Book)
                 }
-                MediaType.VIDEOGAME -> videoGameRepository.fetchMediaDetails(id)
-                MediaType.BOARDGAME -> boardGameRepository.fetchMediaDetails(id)
-                MediaType.ALBUM -> albumRepository.fetchMediaDetails(id)
+                MediaType.VIDEOGAME -> videoGameRepository.fetchMediaDetails(media.id)
+                MediaType.BOARDGAME -> boardGameRepository.fetchMediaDetails(media.id)
+                MediaType.ALBUM -> albumRepository.fetchMediaDetails(media.id)
             }
 
             result.fold(

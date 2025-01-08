@@ -30,6 +30,7 @@ import de.ashman.ontrack.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
+import kotlin.reflect.typeOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +45,7 @@ fun NavigationGraph() {
 
     OnTrackScreen(
         navController = navController,
-        icon = { detailUiState.selectedMedia?.type?.icon() ?: Icons.Filled.Image },
+        icon = { detailUiState.selectedMedia?.mediaType?.icon() ?: Icons.Filled.Image },
     ) { padding ->
         NavHost(
             navController = navController,
@@ -68,12 +69,13 @@ fun NavigationGraph() {
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
 ) {
-    composable<Route.Detail> { backStackEntry ->
+    composable<Route.Detail>(
+        typeMap = mapOf(typeOf<Media>() to CustomNavType.MediaNavType)
+    ) { backStackEntry ->
         val detail: Route.Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            id = detail.id,
-            mediaType = detail.mediaType,
+            media = detail.media,
             viewModel = detailViewModel,
         )
     }
@@ -103,7 +105,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             viewModel = searchViewModel,
             onClickItem = { item ->
-                navController.navigate(Route.Detail(item.id, item.type))
+                navController.navigate(Route.Detail(item))
             }
         )
     }

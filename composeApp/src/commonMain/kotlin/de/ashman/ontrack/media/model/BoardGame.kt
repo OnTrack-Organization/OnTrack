@@ -1,11 +1,13 @@
 package de.ashman.ontrack.media.model
 
+import de.ashman.ontrack.navigation.CommonParcelable
+import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BoardGame(
     override val id: String,
-    override val type: MediaType = MediaType.BOARDGAME,
+    override val mediaType: MediaType = MediaType.BOARDGAME,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
@@ -37,10 +39,11 @@ data class BoardGame(
     }
 }
 
+@CommonParcelize
 @Serializable
 data class Ratings(
     val usersRated: Int?,
     val average: Double?,
     val numWeights: Int?,
     val averageWeight: Double?,
-)
+) : CommonParcelable

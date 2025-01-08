@@ -1,9 +1,6 @@
 package de.ashman.ontrack.navigation
 
-import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.navigation.BottomNavItem.FeedNav
-import de.ashman.ontrack.navigation.BottomNavItem.SearchNav
-import de.ashman.ontrack.navigation.BottomNavItem.ShelfNav
+import de.ashman.ontrack.media.model.Media
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,7 +26,6 @@ sealed class Route {
 
     @Serializable
     data class Detail(
-        val id: String,
-        val mediaType: MediaType,
+        val media: Media,
     ) : Route()
 }

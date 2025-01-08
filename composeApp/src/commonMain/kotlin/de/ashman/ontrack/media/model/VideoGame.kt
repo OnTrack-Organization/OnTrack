@@ -1,11 +1,13 @@
 package de.ashman.ontrack.media.model
 
+import de.ashman.ontrack.navigation.CommonParcelable
+import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VideoGame(
     override val id: String,
-    override val type: MediaType = MediaType.VIDEOGAME,
+    override val mediaType: MediaType = MediaType.VIDEOGAME,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
@@ -29,21 +31,24 @@ data class VideoGame(
     }
 }
 
+@CommonParcelize
 @Serializable
 data class Franchise(
     val name: String,
     val games: List<SimilarGame>?,
-)
+) : CommonParcelable
 
+@CommonParcelize
 @Serializable
 data class Platform(
     val abbreviation: String,
     val name: String,
     val platformLogo: String?,
-)
+) : CommonParcelable
 
+@CommonParcelize
 @Serializable
 data class SimilarGame(
     val name: String,
     val cover: String?,
-)
+) : CommonParcelable

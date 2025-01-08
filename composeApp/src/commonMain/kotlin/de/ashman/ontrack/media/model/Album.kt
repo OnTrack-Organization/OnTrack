@@ -1,11 +1,13 @@
 package de.ashman.ontrack.media.model
 
+import de.ashman.ontrack.navigation.CommonParcelable
+import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Album(
     override val id: String,
-    override val type: MediaType = MediaType.ALBUM,
+    override val mediaType: MediaType = MediaType.ALBUM,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
@@ -30,6 +32,7 @@ data class Album(
     }
 }
 
+@CommonParcelize
 @Serializable
 data class Track(
     val id: String,
@@ -39,4 +42,4 @@ data class Track(
     val previewUrl: String,
     val trackNumber: Int,
     val url: String,
-)
+) : CommonParcelable

@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.serialization)
     alias(libs.plugins.buildKonfig)
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 kotlin {
@@ -90,6 +92,17 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.ktor.darwin)
+        }
+    }
+
+    androidTarget {
+        // https://youtrack.jetbrains.com/issue/KT-66448
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-P",
+                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=de.ashman.ontrack.navigation.CommonParcelize"
+            )
         }
     }
 }

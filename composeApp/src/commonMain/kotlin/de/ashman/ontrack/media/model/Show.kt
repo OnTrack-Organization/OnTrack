@@ -1,11 +1,13 @@
 package de.ashman.ontrack.media.model
 
+import de.ashman.ontrack.navigation.CommonParcelable
+import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Show(
     override val id: String,
-    override val type: MediaType = MediaType.SHOW,
+    override val mediaType: MediaType = MediaType.SHOW,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
@@ -38,6 +40,7 @@ data class Show(
     }
 }
 
+@CommonParcelize
 @Serializable
 data class Season(
     val id: Int,
@@ -48,4 +51,4 @@ data class Season(
     val posterPath: String?,
     val seasonNumber: Int?,
     val voteAverage: Double?
-)
+) : CommonParcelable

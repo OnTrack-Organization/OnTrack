@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Movie(
     override val id: String,
-    override val type: MediaType = MediaType.MOVIE,
+    override val mediaType: MediaType = MediaType.MOVIE,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,

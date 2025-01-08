@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Book(
     override val id: String,
-    override val type: MediaType = MediaType.BOOK,
+    override val mediaType: MediaType = MediaType.BOOK,
     override val name: String,
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
     override val releaseYear: String?,
-    val authorKey: List<String>? = null,
-    val authorName: List<String>? = null,
+    val authorKeys: List<String>? = null,
+    val authors: List<String>? = null,
     val description: String? = null,
     val firstSentence: List<String>? = null,
     val language: List<String>? = null,
@@ -29,7 +29,7 @@ data class Book(
 
         releaseYear?.let { infoItems.add(it) }
         numberOfPagesMedian?.let { infoItems.add("$it Pages") }
-        authorName?.let { infoItems.add("$it") }
+        authors?.let { infoItems.add(it.first()) }
 
         return infoItems
     }

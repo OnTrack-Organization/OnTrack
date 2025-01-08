@@ -34,18 +34,14 @@ class BookRepository(
         }
     }
 
-    suspend fun fetchMediaDetailsWithPartial(id: String, partialBook: Book?): Result<Book> {
+    suspend fun fetchMediaDetailsWithPartial(partialBook: Book): Result<Book> {
         return safeApiCall {
-            val response: BookWorksResponseDto = httpClient.get("$id.json").body()
+            val response: BookWorksResponseDto = httpClient.get("${partialBook.id}.json").body()
             val detailedBook = response.toDomain()
 
-            println("RESPONSE: $response")
-            println("DETAILED BOOK: $detailedBook")
-            println("PARTIAL BOOK: $partialBook")
-
-            partialBook?.copy(
+            partialBook.copy(
                 description = detailedBook.description,
-            ) ?: detailedBook
+            )
         }
     }
 

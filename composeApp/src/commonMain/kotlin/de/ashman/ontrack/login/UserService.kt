@@ -23,7 +23,7 @@ class UserService {
     }
 
     suspend inline fun <reified T : Media> updateUserMedia(media: T) {
-        val mediaRef = database.reference("$userRef/${media.type}/${media.id}")
+        val mediaRef = database.reference("$userRef/${media.mediaType}/${media.id}")
         mediaRef.setValue(media)
     }
 
