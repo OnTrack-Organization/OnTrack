@@ -4,6 +4,7 @@ package de.ashman.ontrack.di
 const val DEFAULT_FETCH_LIMIT = 20
 
 // TMDB: MOVIES AND TV SHOWS
+// TMDB supported keine custom fields
 const val TMDB_CLIENT_NAME = "TMDBClient"
 const val TMDB_URL = "api.themoviedb.org"
 const val TMDB_PATH_URL = "3/"

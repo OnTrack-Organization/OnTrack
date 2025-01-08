@@ -3,7 +3,7 @@ package de.ashman.ontrack.api.boardgame
 import de.ashman.ontrack.media.model.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameResponseDto
 import de.ashman.ontrack.api.MediaRepository
-import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

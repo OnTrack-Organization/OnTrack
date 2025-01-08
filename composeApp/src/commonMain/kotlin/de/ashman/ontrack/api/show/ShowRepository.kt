@@ -4,7 +4,7 @@ import de.ashman.ontrack.media.model.Show
 import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.api.MediaRepository
-import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -18,6 +18,7 @@ class ShowRepository(
         return safeApiCall {
             val response: ShowResponseDto = httpClient.get("search/tv") {
                 parameter("query", query)
+                parameter("include_adult", false)
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
             response.shows.map { it.toDomain() }

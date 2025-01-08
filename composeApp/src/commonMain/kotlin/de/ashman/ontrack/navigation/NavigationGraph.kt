@@ -40,12 +40,11 @@ fun NavigationGraph() {
     val searchViewModel: SearchViewModel = koinInject()
     val detailViewModel: DetailViewModel = koinInject()
 
-    // TODO do the topbar stuff differently
-    val detailUiState by detailViewModel.uiState.collectAsState()
+    val searchUiState by searchViewModel.uiState.collectAsState()
 
     OnTrackScreen(
         navController = navController,
-        icon = { detailUiState.selectedMedia?.mediaType?.icon() ?: Icons.Filled.Image },
+        icon = searchUiState.selectedMediaType.icon
     ) { padding ->
         NavHost(
             navController = navController,

@@ -43,11 +43,7 @@ class DetailViewModel(
             val result = when (media.mediaType) {
                 MediaType.MOVIE -> movieRepository.fetchMediaDetails(media.id)
                 MediaType.SHOW -> showRepository.fetchMediaDetails(media.id)
-                MediaType.BOOK -> {
-                    // TODO fix
-                    //bookRepository.fetchMediaDetails(id)
-                    bookRepository.fetchMediaDetailsWithPartial(media as Book)
-                }
+                MediaType.BOOK -> bookRepository.fetchMediaDetailsWithPartial(media as Book)
                 MediaType.VIDEOGAME -> videogameRepository.fetchMediaDetails(media.id)
                 MediaType.BOARDGAME -> boardgameRepository.fetchMediaDetails(media.id)
                 MediaType.ALBUM -> albumRepository.fetchMediaDetails(media.id)

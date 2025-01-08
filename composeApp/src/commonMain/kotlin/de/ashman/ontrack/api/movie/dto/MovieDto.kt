@@ -2,8 +2,6 @@ package de.ashman.ontrack.api.movie.dto
 
 import kotlinx.serialization.Serializable
 
-// https://developer.themoviedb.org/reference/intro/getting-started
-// TODO get similar movies
 @Serializable
 data class MovieDto(
     val id: Int,

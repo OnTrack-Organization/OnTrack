@@ -1,10 +1,11 @@
 package de.ashman.ontrack.api.videogame
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.auth.AccessTokenManager
 import de.ashman.ontrack.media.model.Videogame
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.api.MediaRepository
-import de.ashman.ontrack.api.album.safeApiCall
+import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -21,9 +22,14 @@ class VideogameRepository(
     private val accessTokenManager: AccessTokenManager,
 ) : MediaRepository<Videogame> {
 
-    // Some APIS need field selection to reduce traffic
-    // fields * um alle zu holen
     private val fields =
+        """
+    id,
+    cover.url,
+    name
+    """.trimIndent()
+
+    private val detailFields =
         """
     id,
     cover.url,
@@ -48,8 +54,7 @@ class VideogameRepository(
         requestBuilder: HttpRequestBuilder.() -> Unit
     ): HttpRequestBuilder {
         val token = accessTokenManager.getAccessToken()
-
-        println("IGDB TOKEN: $token")
+        Logger.d("IGDB Token: $token")
 
         return HttpRequestBuilder().apply {
             header(HttpHeaders.Authorization, "Bearer $token")
@@ -61,7 +66,8 @@ class VideogameRepository(
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
-                parameter("fields", fields)
+                //parameter("fields", fields)
+                parameter("fields", detailFields)
                 parameter("search", query)
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }
@@ -77,7 +83,7 @@ class VideogameRepository(
                 url("games")
                 setBody(
                     """
-            fields $fields;
+            fields $detailFields;
             where id = $id;
             """.trimIndent()
                 )
