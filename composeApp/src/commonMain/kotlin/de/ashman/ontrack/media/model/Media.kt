@@ -8,6 +8,7 @@ sealed class Media {
     abstract val type: MediaType
     abstract val name: String
     abstract val coverUrl: String
+    abstract val releaseYear: String?
     abstract val consumeStatus: ConsumeStatus?
     abstract val userRating: Float?
 

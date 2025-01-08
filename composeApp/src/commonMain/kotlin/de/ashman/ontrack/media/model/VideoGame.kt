@@ -10,7 +10,7 @@ data class VideoGame(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
-    val firstReleaseDate: String?,
+    override val releaseYear: String?,
     val franchises: List<Franchise>?,
     val genres: List<String>?,
     val platforms: List<Platform>?,
@@ -22,7 +22,7 @@ data class VideoGame(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        firstReleaseDate?.let { infoItems.add(it.take(4)) }
+        releaseYear?.let { infoItems.add(it) }
         platforms?.let { infoItems.add(it.first().name) }
 
         return infoItems

@@ -10,10 +10,10 @@ fun BookDto.toDomain(): Book {
         id = key,
         name = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
+        releaseYear = firstPublishYear.toString(),
         authorKey = authorKey,
         authorName = authorName,
         description = description,
-        firstPublishYear = firstPublishYear,
         firstSentence = firstSentence,
         language = language,
         numberOfPagesMedian = numberOfPagesMedian,
@@ -33,5 +33,6 @@ fun BookWorksResponseDto.toDomain(): Book {
         name = "",
         coverUrl = "",
         description = description?.value,
+        releaseYear = "",
     )
 }

@@ -10,9 +10,9 @@ data class Show(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
+    override val releaseYear: String?,
     val backdropPath: String?,
     val episodeRunTime: List<Int>?,
-    val firstAirDate: String?,
     val genres: List<String>?,
     val languages: List<String>?,
     val numberOfEpisodes: Int?,
@@ -30,7 +30,7 @@ data class Show(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        firstAirDate?.let { infoItems.add(it.take(4)) }
+        releaseYear?.let { infoItems.add(it) }
         numberOfSeasons?.let { infoItems.add("$it Seasons") }
         numberOfEpisodes?.let { infoItems.add("$it Episodes") }
 

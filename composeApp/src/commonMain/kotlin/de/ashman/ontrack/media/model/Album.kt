@@ -10,11 +10,11 @@ data class Album(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
+    override val releaseYear: String?,
     val artists: List<String>,
     val genres: List<String>?,
     val label: String?,
     val popularity: Int?,
-    val releaseDate: String,
     val spotifyUrl: String,
     val totalTracks: Int,
     val tracks: List<Track>,
@@ -22,7 +22,7 @@ data class Album(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        infoItems.add(releaseDate)
+        releaseYear?.let { infoItems.add(it) }
         infoItems.add("$totalTracks Tracks")
         infoItems.add(artists.first())
 

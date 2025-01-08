@@ -10,7 +10,7 @@ data class BoardGame(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
-    val yearPublished: String?,
+    override val releaseYear: String?,
     val minPlayers: String?,
     val maxPlayers: String?,
     val playingTime: String?,
@@ -22,7 +22,7 @@ data class BoardGame(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        yearPublished?.let { infoItems.add(it) }
+        releaseYear?.let { infoItems.add(it) }
         playingTime?.let { infoItems.add("$it Min") }
         // TODO change
         if (!minPlayers.isNullOrEmpty() && !maxPlayers.isNullOrEmpty()) {

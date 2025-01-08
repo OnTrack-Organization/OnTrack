@@ -11,11 +11,11 @@ fun AlbumDto.toDomain(): Album {
         id = id,
         name = name,
         coverUrl = images.first().url,
+        releaseYear = releaseDate.take(4),
         artists = artists.map { it.name },
         genres = genres,
         label = label,
         popularity = popularity,
-        releaseDate = releaseDate,
         spotifyUrl = externalUrls.spotify,
         totalTracks = totalTracks,
         tracks = tracks?.items?.map { it.toDomain() } ?: emptyList()

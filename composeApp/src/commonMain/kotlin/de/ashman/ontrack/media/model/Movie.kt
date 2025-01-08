@@ -10,6 +10,7 @@ data class Movie(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
+    override val releaseYear: String?,
     val backdropPath: String?,
     val genres: List<String>?,
     val originCountry: List<String>?,
@@ -17,7 +18,6 @@ data class Movie(
     val originalTitle: String?,
     val overview: String?,
     val popularity: Double?,
-    val releaseDate: String?,
     val revenue: Long?,
     val runtime: Int?,
     val status: String?,
@@ -27,7 +27,7 @@ data class Movie(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        releaseDate?.let { infoItems.add(it.take(4)) }
+        releaseYear?.let { infoItems.add(it) }
         runtime?.let { infoItems.add("$it Min") }
 
         return infoItems

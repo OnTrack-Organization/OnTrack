@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.model.ConsumeStatus
-import de.ashman.ontrack.detail.DetailContent
 
 @Composable
 @Preview
@@ -22,7 +21,7 @@ fun MovieDetailsPreview() {
         originalTitle = "Raion",
         overview = "A very cool film about a lion. Rawr.",
         popularity = 20.0,
-        releaseDate = "23/01/2023",
+        releaseYear = "23/01/2023",
         revenue = 5000L,
         runtime = 100,
         status = "Filmed",

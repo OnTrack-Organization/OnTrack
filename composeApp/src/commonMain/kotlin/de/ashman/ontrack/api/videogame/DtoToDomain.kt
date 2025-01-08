@@ -17,8 +17,8 @@ fun VideoGameDto.toDomain(): VideoGame {
     return VideoGame(
         id = id.toString(),
         coverUrl = cover?.url.getIGDBCoverUrl(),
-        firstReleaseDate = firstReleaseDate?.let {
-            Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString()
+        releaseYear = firstReleaseDate?.let {
+            Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString().take(4)
         },
         franchises = franchises?.map { it.toDomain() },
         genres = genres?.map { it.name },

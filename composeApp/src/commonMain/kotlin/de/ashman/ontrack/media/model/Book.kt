@@ -10,10 +10,10 @@ data class Book(
     override val consumeStatus: ConsumeStatus? = null,
     override val userRating: Float? = null,
     override val coverUrl: String,
+    override val releaseYear: String?,
     val authorKey: List<String>? = null,
     val authorName: List<String>? = null,
     val description: String? = null,
-    val firstPublishYear: Int? = null,
     val firstSentence: List<String>? = null,
     val language: List<String>? = null,
     val numberOfPagesMedian: Int? = null,
@@ -27,7 +27,7 @@ data class Book(
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
-        firstPublishYear?.let { infoItems.add("$it") }
+        releaseYear?.let { infoItems.add(it) }
         numberOfPagesMedian?.let { infoItems.add("$it Pages") }
         authorName?.let { infoItems.add("$it") }
 
