@@ -1,10 +1,10 @@
 package de.ashman.ontrack.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.SavedSearch
+import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -23,14 +23,20 @@ sealed class BottomNavItem(
         title = "Feed",
         route = Route.Feed,
         icon = { Icon(Icons.Outlined.Home, "Feed Icon") },
-        filledIcon = { Icon(Icons.Default.Home, "Filled Feed Icon") }
+        filledIcon = { Icon(Icons.Filled.Home, "Filled Feed Icon") }
     )
 
     data object SearchNav : BottomNavItem(
         title = "Search",
         route = Route.Search,
-        icon = { Icon(Icons.Outlined.Search, "Search Icon") },
-        filledIcon = { Icon(Icons.Default.Search, "Filled Search Icon") })
+        icon = {
+            Icon(Icons.Outlined.Search, "Add Icon")
+            //Icon(Icons.Outlined.AddCircle, "Add Icon")
+        },
+        filledIcon = {
+            Icon(Icons.Filled.SavedSearch, "Filled Search Icon")
+            //Icon(Icons.Filled.AddCircle, "Filled Add Icon")
+        })
 
     data object ShelfNav : BottomNavItem(
         title = "Shelf",
