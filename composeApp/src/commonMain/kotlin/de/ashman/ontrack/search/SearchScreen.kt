@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
@@ -165,49 +168,63 @@ fun SearchItem(
     onClickItem: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    SubcomposeAsyncImage(
-        model = item.coverUrl,
-        contentScale = ContentScale.Crop,
-        contentDescription = "Cover",
-        modifier = modifier
-            .size(width = DEFAULT_POSTER_WIDTH, height = DEFAULT_POSTER_HEIGHT)
-            .clip(shape = RoundedCornerShape(16.dp))
-            .clickable {
-                onClickItem()
-            }
+    Column(
+        modifier = modifier.width(DEFAULT_POSTER_WIDTH),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val state = painter.state.collectAsState().value
+        SubcomposeAsyncImage(
+            model = item.coverUrl,
+            contentScale = ContentScale.Crop,
+            contentDescription = "Cover",
+            modifier = Modifier
+                .size(width = DEFAULT_POSTER_WIDTH, height = DEFAULT_POSTER_HEIGHT)
+                .clip(shape = RoundedCornerShape(16.dp))
+                .clickable {
+                    onClickItem()
+                }
+        ) {
+            val state = painter.state.collectAsState().value
 
-        when (state) {
-            is AsyncImagePainter.State.Loading -> {
-                Card {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.scale(1.5f))
+            when (state) {
+                is AsyncImagePainter.State.Loading -> {
+                    Card {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.scale(1.5f))
+                        }
                     }
                 }
-            }
 
-            is AsyncImagePainter.State.Error -> {
-                Card {
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(item.name)
+                is AsyncImagePainter.State.Error -> {
+                    Card {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(item.name)
+                        }
                     }
                 }
-            }
 
-            else -> {
-                SubcomposeAsyncImageContent(
-                    modifier = Modifier
-                )
+                else -> {
+                    SubcomposeAsyncImageContent(
+                        modifier = Modifier
+                    )
+                }
             }
         }
+
+        Text(
+            text = if (item.name.isEmpty()) "N/A" else item.name,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -219,7 +236,6 @@ fun SearchItemRow(
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
         items(viewState.searchResults) { item ->
             SearchItem(
