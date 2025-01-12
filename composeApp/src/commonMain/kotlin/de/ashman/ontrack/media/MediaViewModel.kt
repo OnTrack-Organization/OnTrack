@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 // TODO REMOVE
 abstract class MediaViewModel<T : Media>(
-    private val repository: MediaRepository<T>,
+    private val repository: MediaRepository,
     private val userService: UserService
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MediaUiState<T>())
@@ -34,29 +34,6 @@ abstract class MediaViewModel<T : Media>(
                     errorMessage = e.message
                 )
             }
-        }
-    }
-
-    fun fetchMediaDetails(id: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            val result = repository.fetchMediaDetails(id)
-
-            _uiState.value = result.fold(
-                onSuccess = { media ->
-                    uiState.value.copy(
-                        selectedMedia = media,
-                        isLoading = false,
-                        errorMessage = null
-                    )
-                },
-                onFailure = { throwable ->
-                    uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message
-                    )
-                }
-            )
         }
     }
 

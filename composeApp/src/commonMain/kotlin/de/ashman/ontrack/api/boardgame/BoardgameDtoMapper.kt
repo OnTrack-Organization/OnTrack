@@ -1,5 +1,6 @@
 package de.ashman.ontrack.api.boardgame
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.media.model.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.media.model.Ratings
@@ -8,7 +9,7 @@ import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 fun BoardgameDto.toDomain(): Boardgame {
     return Boardgame(
         id = id,
-        name = name.value,
+        name = names.find { it.type == "primary" }?.value ?: names.first().value,
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         minAge = minage?.value,
@@ -32,7 +33,12 @@ fun StatisticsDto.RatingsDto.toDomain(): Ratings {
 
 fun String.decodeHtmlManually(): String {
     return this
-        .replace("&amp;#10;", "\n")
-        .replace("&amp;ndash;", "–")
-        .replace("&amp;", "&")
+        .replace(Regex("&amp;#10;"), "\n")
+        .replace(Regex("&#10;"), "\n")
+        .replace(Regex("&ndash;"), "–")
+        .replace(Regex("&mdash;"), "—")
+        .replace(Regex("&amp;"), "&")
+        .replace(Regex("&quot;"), "\"")
+        .replace(Regex("—description from the publisher\\n{2}"), "")
 }
+

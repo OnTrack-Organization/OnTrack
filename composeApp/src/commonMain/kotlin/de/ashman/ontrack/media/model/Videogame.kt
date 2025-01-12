@@ -41,7 +41,7 @@ data class Franchise(
 @CommonParcelize
 @Serializable
 data class Platform(
-    val abbreviation: String,
+    val abbreviation: String?,
     val name: String,
     val platformLogo: String?,
 ) : CommonParcelable

@@ -28,7 +28,8 @@ class SearchViewModel(
     val uiState: StateFlow<SearchUiState> = _uiState
 
     init {
-        Logger.d { "SearchViewModel init" }
+        Logger.i { "SearchViewModel init" }
+        getTrending()
     }
 
     fun onQueryChanged(query: String) {
@@ -40,7 +41,7 @@ class SearchViewModel(
             selectedMediaType = mediaType,
             searchResults = emptyList()
         )
-        search()
+        if (uiState.value.query.isEmpty()) getTrending() else search()
     }
 
     fun search() {
@@ -55,12 +56,12 @@ class SearchViewModel(
 
         viewModelScope.launch {
             val result = when (uiState.value.selectedMediaType) {
-                MediaType.MOVIE -> movieRepository.fetchMediaByQuery(query)
-                MediaType.SHOW -> showRepository.fetchMediaByQuery(query)
-                MediaType.BOOK -> bookRepository.fetchMediaByQuery(query)
-                MediaType.VIDEOGAME -> videogameRepository.fetchMediaByQuery(query)
-                MediaType.BOARDGAME -> boardgameRepository.fetchMediaByQuery(query)
-                MediaType.ALBUM -> albumRepository.fetchMediaByQuery(query)
+                MediaType.MOVIE -> movieRepository.fetchByQuery(query)
+                MediaType.SHOW -> showRepository.fetchByQuery(query)
+                MediaType.BOOK -> bookRepository.fetchByQuery(query)
+                MediaType.VIDEOGAME -> videogameRepository.fetchByQuery(query)
+                MediaType.BOARDGAME -> boardgameRepository.fetchByQuery(query)
+                MediaType.ALBUM -> albumRepository.fetchByQuery(query)
             }
 
             result.fold(
@@ -79,12 +80,42 @@ class SearchViewModel(
             )
         }
     }
+
+    fun getTrending() {
+        _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
+        viewModelScope.launch {
+
+            val result = when (uiState.value.selectedMediaType) {
+                MediaType.MOVIE -> movieRepository.fetchTrending()
+                MediaType.SHOW -> showRepository.fetchTrending()
+                MediaType.BOOK -> bookRepository.fetchTrending()
+                MediaType.VIDEOGAME -> videogameRepository.fetchTrending()
+                MediaType.BOARDGAME -> boardgameRepository.fetchTrending()
+                MediaType.ALBUM -> albumRepository.fetchTrending()
+            }
+
+            result.fold(
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(
+                        searchResultState = SearchResultState.Success,
+                        searchResults = it,
+                    )
+                },
+                onFailure = { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        searchResultState = SearchResultState.Error,
+                        errorMessage = "Failed to fetch trending results: ${exception.message}"
+                    )
+                }
+            )
+        }
+    }
 }
 
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
-    val query: String = "Naruto",
-    val selectedMediaType: MediaType = MediaType.BOOK,
+    val query: String = "",
+    val selectedMediaType: MediaType = MediaType.MOVIE,
     val searchResultState: SearchResultState = SearchResultState.Empty,
     val errorMessage: String? = null,
 )

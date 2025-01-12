@@ -14,6 +14,7 @@ data class BookDto(
     val firstSentence: List<String>? = null,
     val language: List<String>? = null,
     val numberOfPagesMedian: Int? = null,
+    // TODO fix. it can be subject_person for details stuff
     val person: List<String>? = null,
     val place: List<String>? = null,
     val publisher: List<String>? = null,

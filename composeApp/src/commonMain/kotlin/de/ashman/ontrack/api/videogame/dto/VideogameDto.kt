@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 // https://api-docs.igdb.com/#game
 @Serializable
 data class VideogameDto(
-    val id: Int,
+    val id: Int? = null,
     val cover: CoverDto? = null,
     val firstReleaseDate: Long? = null,
     val franchises: List<FranchiseDto>? = null,
     val genres: List<GenreDto>? = null,
-    val name: String,
+    val name: String? = null,
     val platforms: List<PlatformDto>? = null,
     val totalRating: Double? = null,
     val totalRatingCount: Int? = null,
@@ -36,7 +36,7 @@ data class GenreDto(
 
 @Serializable
 data class PlatformDto(
-    val abbreviation: String,
+    val abbreviation: String? = null,
     val name: String,
     val platformLogo: PlatformLogoDto? = null,
 )

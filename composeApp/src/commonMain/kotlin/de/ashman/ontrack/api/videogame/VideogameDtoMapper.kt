@@ -22,7 +22,7 @@ fun VideogameDto.toDomain(): Videogame {
         },
         franchises = franchises?.map { it.toDomain() },
         genres = genres?.map { it.name },
-        name = name,
+        name = name.orEmpty(),
         platforms = platforms?.map { it.toDomain() },
         similarGames = similarGames?.map { it.toDomain() },
         totalRating = totalRating,

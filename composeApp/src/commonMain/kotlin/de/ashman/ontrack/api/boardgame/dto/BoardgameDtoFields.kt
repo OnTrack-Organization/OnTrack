@@ -8,9 +8,9 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @Serializable
 @SerialName("name")
 data class Name(
-    val type: String,
+    val type: String? = null,
     val sortindex: Int? = null,
-    val value: String
+    val value: String,
 )
 
 @Serializable

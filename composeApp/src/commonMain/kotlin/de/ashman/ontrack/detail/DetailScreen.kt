@@ -2,6 +2,7 @@ package de.ashman.ontrack.detail
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.Error
@@ -152,13 +154,17 @@ fun DetailContent(
             mainInfoItems = media.getMainInfoItems(),
         )
 
-        when (media.mediaType) {
-            MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
-            MediaType.SHOW -> ShowDetailContent(show = media as Show)
-            MediaType.BOOK -> BookDetailContent(book = media as Book)
-            MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame)
-            MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame)
-            MediaType.ALBUM -> AlbumDetailContent(album = media as Album)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            when (media.mediaType) {
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show)
+                MediaType.BOOK -> BookDetailContent(book = media as Book)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame)
+                MediaType.ALBUM -> AlbumDetailContent(album = media as Album)
+            }
         }
         /*
                 ConsumeStatusRow(

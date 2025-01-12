@@ -41,12 +41,12 @@ class DetailViewModel(
 
         viewModelScope.launch {
             val result = when (media.mediaType) {
-                MediaType.MOVIE -> movieRepository.fetchMediaDetails(media.id)
-                MediaType.SHOW -> showRepository.fetchMediaDetails(media.id)
+                MediaType.MOVIE -> movieRepository.fetchDetails(media.id)
+                MediaType.SHOW -> showRepository.fetchDetails(media.id)
                 MediaType.BOOK -> bookRepository.fetchMediaDetailsWithPartial(media as Book)
-                MediaType.VIDEOGAME -> videogameRepository.fetchMediaDetails(media.id)
-                MediaType.BOARDGAME -> boardgameRepository.fetchMediaDetails(media.id)
-                MediaType.ALBUM -> albumRepository.fetchMediaDetails(media.id)
+                MediaType.VIDEOGAME -> videogameRepository.fetchDetails(media.id)
+                MediaType.BOARDGAME -> boardgameRepository.fetchDetails(media.id)
+                MediaType.ALBUM -> albumRepository.fetchDetails(media.id)
             }
 
             result.fold(

@@ -13,8 +13,8 @@ import io.ktor.client.request.parameter
 
 class MovieRepository(
     private val httpClient: HttpClient,
-) : MediaRepository<Movie> {
-    override suspend fun fetchMediaByQuery(query: String): Result<List<Movie>> {
+) : MediaRepository {
+    override suspend fun fetchByQuery(query: String): Result<List<Movie>> {
         return safeApiCall {
             val response: MovieResponseDto = httpClient.get("search/movie") {
                 parameter("query", query)
@@ -25,10 +25,20 @@ class MovieRepository(
         }
     }
 
-    override suspend fun fetchMediaDetails(id: String): Result<Movie> {
+    override suspend fun fetchDetails(id: String): Result<Movie> {
         return safeApiCall {
             val response: MovieDto = httpClient.get("movie/$id").body()
             response.toDomain()
+        }
+    }
+
+     override suspend fun fetchTrending(): Result<List<Movie>> {
+        return safeApiCall {
+            val response: MovieResponseDto = httpClient.get("trending/movie/week") {
+                parameter("include_adult", false)
+                parameter("limit", DEFAULT_FETCH_LIMIT)
+            }.body()
+            response.movies.map { it.toDomain() }
         }
     }
 }

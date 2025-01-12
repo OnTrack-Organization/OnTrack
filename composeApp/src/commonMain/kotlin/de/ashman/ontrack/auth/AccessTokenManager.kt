@@ -1,5 +1,6 @@
 package de.ashman.ontrack.auth
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.parameter
@@ -16,15 +17,18 @@ class AccessTokenManager(
     private var accessToken: String? = null
     private var tokenExpiration: Instant? = null
 
-    suspend fun getAccessToken(): String {
+    suspend fun getAccessToken(client: String): String {
         if (isTokenExpired()) {
             fetchAccessToken()
         }
+
+        Logger.i("$client Token: $accessToken")
+
         return accessToken!!
     }
 
     private suspend fun fetchAccessToken() {
-        val response : AccessTokenResponse = httpClient.post {
+        val response: AccessTokenResponse = httpClient.post {
             parameter("client_id", clientId)
             parameter("client_secret", clientSecret)
             parameter("grant_type", "client_credentials")
@@ -32,8 +36,6 @@ class AccessTokenManager(
 
         accessToken = response.accessToken
         tokenExpiration = Clock.System.now() + response.expiresIn.seconds
-
-        println("ACCESS TOKEN:" + accessToken)
     }
 
     private fun isTokenExpired(): Boolean {
