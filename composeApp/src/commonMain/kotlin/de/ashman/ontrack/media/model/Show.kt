@@ -27,7 +27,8 @@ data class Show(
     val seasons: List<Season>?,
     val status: String?,
     val voteAverage: Double?,
-    val voteCount: Int?
+    val voteCount: Int?,
+    val similarShows: List<Show>? = null,
 ) : Media() {
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

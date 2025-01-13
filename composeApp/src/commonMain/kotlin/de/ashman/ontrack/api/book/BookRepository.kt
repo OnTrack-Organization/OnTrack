@@ -38,7 +38,7 @@ class BookRepository(
     }
 
     // TODO trending doesnt return all the data needed like search or details. need to call those in detailviewmodel to collect all the data
-    override suspend fun fetchTrending(): Result<List<Media>> {
+    override suspend fun fetchTrending(): Result<List<Book>> {
         return safeApiCall {
             val response: BookTrendingResponseDto = httpClient.get("trending/monthly.json") {
                 // TODO add fields as soon as openlibrary allows it

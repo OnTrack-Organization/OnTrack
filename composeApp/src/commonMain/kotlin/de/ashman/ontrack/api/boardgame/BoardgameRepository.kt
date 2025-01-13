@@ -48,7 +48,7 @@ class BoardgameRepository(
         }
     }
 
-    override suspend fun fetchTrending(): Result<List<Media>> {
+    override suspend fun fetchTrending(): Result<List<Boardgame>> {
         return safeApiCall {
             val simpleResponse: String = httpClient.get("hot") {
                 parameter("type", "boardgame")

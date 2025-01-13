@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -126,10 +127,12 @@ fun MediaPoster(
 @Composable
 fun MediaDescription(
     description: String?,
+    modifier: Modifier = Modifier,
 ) {
     if (description == null) return
 
     Column(
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -143,10 +146,12 @@ fun MediaDescription(
 @Composable
 fun MediaGenres(
     genres: List<String>?,
+    modifier: Modifier = Modifier,
 ) {
     if (genres == null) return
 
     Column(
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -169,6 +174,7 @@ fun MediaGenres(
 
 @Composable
 fun SimilarMedia(
+    mediaString: String,
     similarMedia: List<Media>?,
     onClickItem: (Media) -> Unit = { },
 ) {
@@ -177,7 +183,8 @@ fun SimilarMedia(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = stringResource(Res.string.detail_similar, stringResource(Res.string.media_movies)),
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = stringResource(Res.string.detail_similar, mediaString),
                 style = MaterialTheme.typography.titleMedium,
             )
 

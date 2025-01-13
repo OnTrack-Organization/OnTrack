@@ -55,7 +55,7 @@ class AlbumRepository(
     }
 
     // Maybe just create a list of artists manually and take their newest albums
-    override suspend fun fetchTrending(): Result<List<Media>> {
+    override suspend fun fetchTrending(): Result<List<Album>> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("browse/new-releases")

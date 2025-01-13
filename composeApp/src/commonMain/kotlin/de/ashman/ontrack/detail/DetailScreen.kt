@@ -92,7 +92,7 @@ fun DetailScreen(
 
         DetailResultState.Success -> {
             DetailContent(
-                modifier = modifier.padding(16.dp),
+                modifier = modifier,
                 media = uiState.selectedMedia,
             )
         }

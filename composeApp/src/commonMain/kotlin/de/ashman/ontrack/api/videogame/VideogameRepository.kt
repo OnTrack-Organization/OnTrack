@@ -69,7 +69,7 @@ class VideogameRepository(
         }
     }
 
-    override suspend fun fetchTrending(): Result<List<Media>> {
+    override suspend fun fetchTrending(): Result<List<Videogame>> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
