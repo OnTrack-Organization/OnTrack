@@ -204,9 +204,7 @@ fun SearchItem(
                         Box(
                             modifier = Modifier.fillMaxSize().padding(8.dp),
                             contentAlignment = Alignment.Center
-                        ) {
-                            Text(item.name)
-                        }
+                        ) {}
                     }
                 }
 

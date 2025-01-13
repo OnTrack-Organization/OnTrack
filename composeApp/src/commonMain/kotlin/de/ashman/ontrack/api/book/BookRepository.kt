@@ -21,7 +21,7 @@ class BookRepository(
         return safeApiCall {
             val response: BookSearchResponseDto = httpClient.get("search.json") {
                 parameter("title", query)
-                //parameter("fields", "key,title,cover_i")
+                parameter("fields", "key, title, cover_i")
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
 
@@ -41,6 +41,8 @@ class BookRepository(
     override suspend fun fetchTrending(): Result<List<Media>> {
         return safeApiCall {
             val response: BookTrendingResponseDto = httpClient.get("trending/monthly.json") {
+                // TODO add fields as soon as openlibrary allows it
+                //parameter("fields", "key, title, cover_i")
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
 

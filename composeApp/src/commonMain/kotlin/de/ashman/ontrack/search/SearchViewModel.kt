@@ -37,10 +37,13 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
+        if (_uiState.value.selectedMediaType == mediaType) return
+
         _uiState.value = _uiState.value.copy(
             selectedMediaType = mediaType,
             searchResults = emptyList()
         )
+
         if (uiState.value.query.isEmpty()) getTrending() else search()
     }
 

@@ -37,4 +37,3 @@ fun TrackDto.toDomain(): Track {
 fun AlbumResponseDto.toDomain(): List<Album> {
     return this.items.map { it.toDomain() }
 }
-
