@@ -23,6 +23,7 @@ data class Movie(
     val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
+    val similarMovies: List<Movie>? = null,
 ) : Media() {
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

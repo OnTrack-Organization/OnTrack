@@ -11,13 +11,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.media_albums
+import ontrack.composeapp.generated.resources.media_boardgames
+import ontrack.composeapp.generated.resources.media_books
+import ontrack.composeapp.generated.resources.media_movies
+import ontrack.composeapp.generated.resources.media_shows
+import ontrack.composeapp.generated.resources.media_videogames
 import ontrack.composeapp.generated.resources.playingcards
-import ontrack.composeapp.generated.resources.shelf_title_album
-import ontrack.composeapp.generated.resources.shelf_title_boardgames
-import ontrack.composeapp.generated.resources.shelf_title_books
-import ontrack.composeapp.generated.resources.shelf_title_movies
-import ontrack.composeapp.generated.resources.shelf_title_shows
-import ontrack.composeapp.generated.resources.shelf_title_videogames
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -25,14 +25,12 @@ import org.jetbrains.compose.resources.vectorResource
 enum class MediaType(
     val title: StringResource,
     val icon: @Composable () -> ImageVector,
-    val iconDescription: StringResource,
     val consumeStatuses: List<ConsumeStatus> = emptyList()
 ) {
     @SerialName("movie")
     MOVIE(
-        title = Res.string.shelf_title_movies,
+        title = Res.string.media_movies,
         icon = { Icons.Default.Movie },
-        iconDescription = Res.string.shelf_title_movies,
         consumeStatuses = listOf(
             ConsumeStatus.WATCHED,
             ConsumeStatus.DROPPED,
@@ -42,9 +40,8 @@ enum class MediaType(
 
     @SerialName("show")
     SHOW(
-        title = Res.string.shelf_title_shows,
+        title = Res.string.media_shows,
         icon = { Icons.Default.Tv },
-        iconDescription = Res.string.shelf_title_shows,
         consumeStatuses = listOf(
             ConsumeStatus.BINGED,
             ConsumeStatus.BINGING,
@@ -55,9 +52,8 @@ enum class MediaType(
 
     @SerialName("book")
     BOOK(
-        title = Res.string.shelf_title_books,
+        title = Res.string.media_books,
         icon = { Icons.Default.AutoStories },
-        iconDescription = Res.string.shelf_title_books,
         consumeStatuses = listOf(
             ConsumeStatus.READ,
             ConsumeStatus.READING,
@@ -68,9 +64,8 @@ enum class MediaType(
 
     @SerialName("videogame")
     VIDEOGAME(
-        title = Res.string.shelf_title_videogames,
+        title = Res.string.media_videogames,
         icon = { Icons.Default.SportsEsports },
-        iconDescription = Res.string.shelf_title_videogames,
         consumeStatuses = listOf(
             ConsumeStatus.PLAYED,
             ConsumeStatus.PLAYING,
@@ -81,9 +76,8 @@ enum class MediaType(
 
     @SerialName("boardgame")
     BOARDGAME(
-        title = Res.string.shelf_title_boardgames,
+        title = Res.string.media_boardgames,
         icon = { vectorResource(Res.drawable.playingcards) },
-        iconDescription = Res.string.shelf_title_boardgames,
         consumeStatuses = listOf(
             ConsumeStatus.PLAYED,
             ConsumeStatus.CATALOG,
@@ -92,9 +86,8 @@ enum class MediaType(
 
     @SerialName("album")
     ALBUM(
-        title = Res.string.shelf_title_album,
+        title = Res.string.media_albums,
         icon = { Icons.Default.Album },
-        iconDescription = Res.string.shelf_title_album,
         consumeStatuses = listOf(
             ConsumeStatus.LISTENED,
             ConsumeStatus.CATALOG,

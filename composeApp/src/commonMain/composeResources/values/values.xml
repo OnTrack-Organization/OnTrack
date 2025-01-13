@@ -1,10 +1,10 @@
 <resources>
-    <string name="shelf_title_movies">Movies</string>
-    <string name="shelf_title_shows">Shows</string>
-    <string name="shelf_title_videogames">Videogames</string>
-    <string name="shelf_title_boardgames">Boardgames</string>
-    <string name="shelf_title_books">Books</string>
-    <string name="shelf_title_album">Albums</string>
+    <string name="media_movies">Movies</string>
+    <string name="media_shows">Shows</string>
+    <string name="media_videogames">Videogames</string>
+    <string name="media_boardgames">Boardgames</string>
+    <string name="media_books">Books</string>
+    <string name="media_albums">Albums</string>
 
     <string name="status_all">All</string>
     <string name="status_binging">Binging</string>
@@ -18,4 +18,7 @@
     <string name="status_dropped">Dropped</string>
     <string name="status_catalog">Catalog</string>
 
+    <string name="detail_description">Description</string>
+    <string name="detail_genres">Genres</string>
+    <string name="detail_similar">Similar %1$s</string>
 </resources>

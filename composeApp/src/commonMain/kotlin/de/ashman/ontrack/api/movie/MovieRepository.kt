@@ -28,17 +28,31 @@ class MovieRepository(
     override suspend fun fetchDetails(id: String): Result<Movie> {
         return safeApiCall {
             val response: MovieDto = httpClient.get("movie/$id").body()
-            response.toDomain()
+
+            val similarMovies = fetchSimilar(id).getOrNull()
+
+            response.toDomain().copy(similarMovies = similarMovies)
         }
     }
 
-     override suspend fun fetchTrending(): Result<List<Movie>> {
+    override suspend fun fetchTrending(): Result<List<Movie>> {
         return safeApiCall {
             val response: MovieResponseDto = httpClient.get("trending/movie/week") {
                 parameter("include_adult", false)
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }.body()
             response.movies.map { it.toDomain() }
+        }
+    }
+
+    suspend fun fetchSimilar(id: String): Result<List<Movie>> {
+        return safeApiCall {
+            val similarResponse: MovieResponseDto = httpClient.get("movie/$id/similar") {
+                parameter("include_adult", false)
+                parameter("limit", DEFAULT_FETCH_LIMIT)
+            }.body()
+
+            similarResponse.movies.map { it.toDomain() }
         }
     }
 }

@@ -1,21 +1,17 @@
 package de.ashman.ontrack.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Error
@@ -23,7 +19,6 @@ import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -34,26 +29,17 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImagePainter
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.SubcomposeAsyncImageContent
+import de.ashman.ontrack.detail.MediaPoster
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
 import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.stringResource
 
@@ -69,7 +55,7 @@ fun SearchScreen(
 
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(vertical = 16.dp)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     localFocusManager.clearFocus()
@@ -96,10 +82,20 @@ fun SearchScreen(
             SearchResultState.Empty -> EmptySearch(title = stringResource(uiState.selectedMediaType.title))
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
-            SearchResultState.Success -> SearchItemRow(
-                searchResults = uiState.searchResults,
-                onClickItem = onClickItem,
-            )
+            SearchResultState.Success ->
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                ) {
+                    items(uiState.searchResults) {
+                        MediaPoster(
+                            name = it.name,
+                            coverUrl = it.coverUrl,
+                            onClickItem = { onClickItem(it) },
+                        )
+                    }
+                }
         }
     }
 }
@@ -161,88 +157,6 @@ fun ErrorSearch() {
     }
 }
 
-@Composable
-fun SearchItem(
-    item: Media,
-    onClickItem: () -> Unit = {},
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.width(DEFAULT_POSTER_WIDTH),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        SubcomposeAsyncImage(
-            model = item.coverUrl,
-            contentScale = ContentScale.Crop,
-            contentDescription = "Cover",
-            modifier = Modifier
-                .size(width = DEFAULT_POSTER_WIDTH, height = DEFAULT_POSTER_HEIGHT)
-                .clip(shape = RoundedCornerShape(16.dp))
-                .clickable {
-                    onClickItem()
-                }
-        ) {
-            val state = painter.state.collectAsState().value
-
-            when (state) {
-                is AsyncImagePainter.State.Loading -> {
-                    Card {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.scale(1.5f))
-                        }
-                    }
-                }
-
-                is AsyncImagePainter.State.Error -> {
-                    Card {
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {}
-                    }
-                }
-
-                else -> {
-                    SubcomposeAsyncImageContent(
-                        modifier = Modifier
-                    )
-                }
-            }
-        }
-
-        Text(
-            text = if (item.name.isEmpty()) "N/A" else item.name,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-fun SearchItemRow(
-    searchResults: List<Media>,
-    onClickItem: (Media) -> Unit = { },
-) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        items(searchResults) { item ->
-            SearchItem(
-                item = item,
-                onClickItem = { onClickItem(item) }
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
@@ -255,7 +169,7 @@ fun SearchBar(
     val isKeyboardOpen by keyboardAsState()
 
     SearchBar(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         inputField = {
             SearchBarDefaults.InputField(
                 query = query,
@@ -306,6 +220,7 @@ fun FilterChips(
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
         items(mediaTypes) { option ->
             FilterChip(

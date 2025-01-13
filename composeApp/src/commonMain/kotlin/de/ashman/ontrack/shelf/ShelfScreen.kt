@@ -77,7 +77,7 @@ fun MediaCard(
             Icon(
                 modifier = Modifier.size(50.dp),
                 imageVector = mediaType.icon(),
-                contentDescription = stringResource(mediaType.iconDescription)
+                contentDescription = stringResource(mediaType.title)
             )
         }
     }
