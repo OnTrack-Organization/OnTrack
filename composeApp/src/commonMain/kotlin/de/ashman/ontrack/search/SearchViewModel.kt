@@ -11,6 +11,7 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +27,8 @@ class SearchViewModel(
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState
+
+    private var searchJob: Job? = null
 
     init {
         Logger.i { "SearchViewModel init" }
@@ -55,17 +58,16 @@ class SearchViewModel(
 
         _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
 
-        val query = uiState.value.query
-
         viewModelScope.launch {
-            val result = when (uiState.value.selectedMediaType) {
-                MediaType.MOVIE -> movieRepository.fetchByQuery(query)
-                MediaType.SHOW -> showRepository.fetchByQuery(query)
-                MediaType.BOOK -> bookRepository.fetchByQuery(query)
-                MediaType.VIDEOGAME -> videogameRepository.fetchByQuery(query)
-                MediaType.BOARDGAME -> boardgameRepository.fetchByQuery(query)
-                MediaType.ALBUM -> albumRepository.fetchByQuery(query)
+            val repository = when (uiState.value.selectedMediaType) {
+                MediaType.MOVIE -> movieRepository
+                MediaType.SHOW -> showRepository
+                MediaType.BOOK -> bookRepository
+                MediaType.VIDEOGAME -> videogameRepository
+                MediaType.BOARDGAME -> boardgameRepository
+                MediaType.ALBUM -> albumRepository
             }
+            val result = repository.fetchByQuery(uiState.value.query)
 
             result.fold(
                 onSuccess = {
@@ -86,16 +88,17 @@ class SearchViewModel(
 
     fun getTrending() {
         _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
-        viewModelScope.launch {
 
-            val result = when (uiState.value.selectedMediaType) {
-                MediaType.MOVIE -> movieRepository.fetchTrending()
-                MediaType.SHOW -> showRepository.fetchTrending()
-                MediaType.BOOK -> bookRepository.fetchTrending()
-                MediaType.VIDEOGAME -> videogameRepository.fetchTrending()
-                MediaType.BOARDGAME -> boardgameRepository.fetchTrending()
-                MediaType.ALBUM -> albumRepository.fetchTrending()
+        viewModelScope.launch {
+            val repository = when (uiState.value.selectedMediaType) {
+                MediaType.MOVIE -> movieRepository
+                MediaType.SHOW -> showRepository
+                MediaType.BOOK -> bookRepository
+                MediaType.VIDEOGAME -> videogameRepository
+                MediaType.BOARDGAME -> boardgameRepository
+                MediaType.ALBUM -> albumRepository
             }
+            val result = repository.fetchTrending()
 
             result.fold(
                 onSuccess = {
