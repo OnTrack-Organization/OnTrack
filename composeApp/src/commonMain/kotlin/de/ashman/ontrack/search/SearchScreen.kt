@@ -34,7 +34,6 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +46,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
@@ -65,7 +65,7 @@ fun SearchScreen(
     onClickItem: (Media) -> Unit = { },
 ) {
     val localFocusManager = LocalFocusManager.current
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -82,7 +82,6 @@ fun SearchScreen(
                 query = uiState.query,
                 selectedMediaType = uiState.selectedMediaType,
                 onQueryChanged = viewModel::onQueryChanged,
-                onSearch = viewModel::search,
                 closeKeyboard = { localFocusManager.clearFocus() }
             )
 
@@ -98,7 +97,7 @@ fun SearchScreen(
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
             SearchResultState.Success -> SearchItemRow(
-                viewState = uiState,
+                searchResults = uiState.searchResults,
                 onClickItem = onClickItem,
             )
         }
@@ -228,14 +227,14 @@ fun SearchItem(
 
 @Composable
 fun SearchItemRow(
-    viewState: SearchUiState,
+    searchResults: List<Media>,
     onClickItem: (Media) -> Unit = { },
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(viewState.searchResults) { item ->
+        items(searchResults) { item ->
             SearchItem(
                 item = item,
                 onClickItem = { onClickItem(item) }
@@ -248,9 +247,8 @@ fun SearchItemRow(
 @Composable
 fun SearchBar(
     query: String,
-    selectedMediaType: MediaType,
-    onSearch: () -> Unit,
     onQueryChanged: (String) -> Unit,
+    selectedMediaType: MediaType,
     closeKeyboard: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -263,9 +261,10 @@ fun SearchBar(
                 query = query,
                 onQueryChange = { newQuery ->
                     onQueryChanged(newQuery)
-                    onSearch()
                 },
-                onSearch = { onSearch() },
+                onSearch = {
+                    closeKeyboard()
+                },
                 expanded = false,
                 onExpandedChange = { },
                 placeholder = { Text("Search for ${stringResource(selectedMediaType.title)}") },
