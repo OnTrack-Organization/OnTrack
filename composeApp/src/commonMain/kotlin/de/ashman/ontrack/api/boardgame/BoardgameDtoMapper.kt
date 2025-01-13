@@ -8,8 +8,8 @@ import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 
 fun BoardgameDto.toDomain(): Boardgame {
     return Boardgame(
-        id = id,
-        name = names.find { it.type == "primary" }?.value ?: names.first().value,
+        id = id.orEmpty(),
+        name = names?.find { it.type == "primary" }?.value ?: names?.first()?.value.orEmpty(),
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         minAge = minage?.value,

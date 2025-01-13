@@ -7,14 +7,14 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @Serializable
 @XmlSerialName("item")
 data class BoardgameDto(
-    val id: String,
+    val id: String? = null,
     val type: String? = null,
     @XmlElement
     val image: String? = null,
     @XmlElement
     val thumbnail: String? = null,
     @XmlElement
-    val names: List<Name>,
+    val names: List<Name>? = null,
     @XmlElement
     val description: String? = null,
     @XmlElement
@@ -40,4 +40,6 @@ data class BoardgameDto(
     @XmlElement
     val statistics: StatisticsDto? = null,
     val rank: String? = null,
+    @XmlElement
+    val error: String? = null,
 )

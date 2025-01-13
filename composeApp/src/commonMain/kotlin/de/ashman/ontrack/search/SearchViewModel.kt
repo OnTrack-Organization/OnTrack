@@ -58,7 +58,9 @@ class SearchViewModel(
 
         _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
 
-        viewModelScope.launch {
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
             val repository = when (uiState.value.selectedMediaType) {
                 MediaType.MOVIE -> movieRepository
                 MediaType.SHOW -> showRepository
@@ -89,7 +91,9 @@ class SearchViewModel(
     fun getTrending() {
         _uiState.value = _uiState.value.copy(searchResultState = SearchResultState.Loading)
 
-        viewModelScope.launch {
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
             val repository = when (uiState.value.selectedMediaType) {
                 MediaType.MOVIE -> movieRepository
                 MediaType.SHOW -> showRepository

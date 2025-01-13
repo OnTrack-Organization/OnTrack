@@ -25,6 +25,9 @@ class BoardgameRepository(
             }.body()
 
             val boardgameIds = convertXmlToResponse(simpleResponse).boardgames.map { it.id }
+            if (boardgameIds.isEmpty()) {
+                return@safeApiCall emptyList()
+            }
 
             val detailedResponse: String = httpClient.get("thing") {
                 parameter("id", boardgameIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
@@ -41,8 +44,6 @@ class BoardgameRepository(
                 parameter("stats", 1)
             }.body()
 
-            Logger.i(response)
-
             convertXmlToResponse(response).boardgames.first().toDomain()
         }
     }
@@ -54,6 +55,9 @@ class BoardgameRepository(
             }.body()
 
             val boardgameIds = convertXmlToResponse(simpleResponse).boardgames.map { it.id }
+            if (boardgameIds.isEmpty()) {
+                return@safeApiCall emptyList()
+            }
 
             val detailedResponse: String = httpClient.get("thing") {
                 parameter("id", boardgameIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
@@ -65,6 +69,12 @@ class BoardgameRepository(
 
     private fun convertXmlToResponse(xmlString: String): BoardgameResponseDto {
         val xml = XML { indentString = "  " }
-        return xml.decodeFromString(BoardgameResponseDto.serializer(), xmlString)
+        val response = xml.decodeFromString(BoardgameResponseDto.serializer(), xmlString)
+
+        return if (response.boardgames.isEmpty() || response.boardgames.any { it.error != null }) {
+            BoardgameResponseDto()
+        } else {
+            response
+        }
     }
 }
