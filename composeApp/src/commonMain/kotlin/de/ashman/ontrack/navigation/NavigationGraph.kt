@@ -2,8 +2,6 @@ package de.ashman.ontrack.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,17 +14,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.OnTrackScreen
-import de.ashman.ontrack.detail.DetailScreen
-import de.ashman.ontrack.detail.DetailViewModel
-import de.ashman.ontrack.feed.FeedScreen
-import de.ashman.ontrack.login.ui.LoginScreen
-import de.ashman.ontrack.media.model.Media
-import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.features.detail.DetailScreen
+import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.features.feed.FeedScreen
+import de.ashman.ontrack.user.ui.LoginScreen
 import de.ashman.ontrack.navigation.Route.Detail
-import de.ashman.ontrack.search.SearchScreen
-import de.ashman.ontrack.search.SearchViewModel
-import de.ashman.ontrack.shelf.ShelfListScreen
-import de.ashman.ontrack.shelf.ShelfScreen
+import de.ashman.ontrack.features.search.SearchScreen
+import de.ashman.ontrack.features.search.SearchViewModel
+import de.ashman.ontrack.features.shelf.ShelfListScreen
+import de.ashman.ontrack.features.shelf.ShelfScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
@@ -104,7 +102,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             viewModel = searchViewModel,
             onClickItem = { item ->
-                navController.navigate(Route.Detail(item))
+                navController.navigate(Detail(item))
             }
         )
     }

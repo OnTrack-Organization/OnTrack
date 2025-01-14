@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api.book
 
-import de.ashman.ontrack.media.model.Book
+import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.api.book.dto.BookSearchResponseDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponseDto
 import de.ashman.ontrack.api.MediaRepository
@@ -54,7 +54,7 @@ class BookRepository(
     suspend fun fetchBookDescription(book: Book): Result<Book> {
         return safeApiCall {
             val response: BookWorksResponseDto = httpClient.get("${book.id}.json").body()
-            val bookDescription = response.toDomain().description
+            val bookDescription = response.description
 
             book.copy(
                 description = bookDescription,

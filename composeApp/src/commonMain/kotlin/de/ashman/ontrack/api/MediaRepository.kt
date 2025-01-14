@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api
 
-import de.ashman.ontrack.media.model.Media
+import de.ashman.ontrack.domain.Media
 
 interface MediaRepository {
     suspend fun fetchByQuery(query: String): Result<List<Media>>

@@ -1,7 +1,7 @@
 package de.ashman.ontrack.api.boardgame
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.media.model.Boardgame
+import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.safeApiCall

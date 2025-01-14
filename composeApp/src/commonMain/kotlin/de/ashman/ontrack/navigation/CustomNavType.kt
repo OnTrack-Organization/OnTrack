@@ -3,7 +3,7 @@ package de.ashman.ontrack.navigation
 import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
 import com.eygraber.uri.UriCodec
-import de.ashman.ontrack.media.model.Media
+import de.ashman.ontrack.domain.Media
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

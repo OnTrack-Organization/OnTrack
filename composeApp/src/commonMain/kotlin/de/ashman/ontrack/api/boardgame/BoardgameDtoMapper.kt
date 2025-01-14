@@ -1,9 +1,9 @@
 package de.ashman.ontrack.api.boardgame
 
-import de.ashman.ontrack.media.model.Boardgame
+import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
-import de.ashman.ontrack.media.model.Ratings
+import de.ashman.ontrack.domain.Ratings
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 
 fun BoardgameDto.toDomain(): Boardgame {

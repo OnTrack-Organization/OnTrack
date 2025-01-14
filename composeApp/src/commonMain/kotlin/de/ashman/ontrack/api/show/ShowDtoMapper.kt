@@ -1,8 +1,8 @@
 package de.ashman.ontrack.api.show
 
 import de.ashman.ontrack.api.getTMDBCoverUrl
-import de.ashman.ontrack.media.model.Season
-import de.ashman.ontrack.media.model.Show
+import de.ashman.ontrack.domain.Season
+import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.api.show.dto.SeasonDto
 import de.ashman.ontrack.api.show.dto.ShowDto
 

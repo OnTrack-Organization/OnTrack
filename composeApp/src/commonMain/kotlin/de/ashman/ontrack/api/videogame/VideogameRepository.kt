@@ -1,18 +1,15 @@
 package de.ashman.ontrack.api.videogame
 
-import co.touchlab.kermit.Logger
-import de.ashman.ontrack.auth.AccessTokenManager
-import de.ashman.ontrack.media.model.Videogame
+import de.ashman.ontrack.api.auth.AccessTokenManager
+import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.media.model.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
