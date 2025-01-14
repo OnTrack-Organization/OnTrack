@@ -1,8 +1,8 @@
 package de.ashman.ontrack.api.boardgame
 
-import co.touchlab.kermit.Logger
 import de.ashman.ontrack.media.model.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
+import de.ashman.ontrack.api.boardgame.dto.LinkDto
 import de.ashman.ontrack.media.model.Ratings
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 
@@ -18,7 +18,17 @@ fun BoardgameDto.toDomain(): Boardgame {
         playingTime = playingtime?.value,
         description = description?.decodeHtmlManually(),
         thumbnail = thumbnail,
-        ratings = statistics?.ratings?.toDomain()
+        ratings = statistics?.ratings?.toDomain(),
+        franchiseItems = links?.map { it.toDomain() }?.filter { it.boardgameType in setOf("boardgameimplementation", "boardgameexpansion", "boardgameintegration") },
+    )
+}
+
+fun LinkDto.toDomain(): Boardgame {
+    return Boardgame(
+        boardgameType = type.orEmpty(),
+        id = id.orEmpty(),
+        name = value.orEmpty(),
+        coverUrl = "",
     )
 }
 

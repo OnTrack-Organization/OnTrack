@@ -9,6 +9,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 data class BoardgameDto(
     val id: String? = null,
     val type: String? = null,
+    val rank: String? = null,
     @XmlElement
     val image: String? = null,
     @XmlElement
@@ -36,10 +37,9 @@ data class BoardgameDto(
     @XmlElement
     val polls: List<Poll>? = null,
     @XmlElement
-    val links: List<Link>? = null,
+    val links: List<LinkDto>? = null,
     @XmlElement
     val statistics: StatisticsDto? = null,
-    val rank: String? = null,
     @XmlElement
     val error: String? = null,
 )

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 // Default Poster Size ist 2:3 Ratio
@@ -14,6 +15,13 @@ val SMALL_POSTER_HEIGHT = 128.dp
 val DEFAULT_POSTER_WIDTH = DEFAULT_POSTER_HEIGHT * (2f / 3f)
 val SMALL_POSTER_WIDTH = SMALL_POSTER_HEIGHT * (2f / 3f)
 
+enum class PosterSize(
+    val width: Dp,
+    val height: Dp,
+) {
+    SMALL(SMALL_POSTER_WIDTH, SMALL_POSTER_HEIGHT),
+    DEFAULT(DEFAULT_POSTER_WIDTH, DEFAULT_POSTER_HEIGHT),
+}
 @Composable
 fun keyboardAsState(): State<Boolean> {
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0

@@ -7,6 +7,7 @@ import de.ashman.ontrack.media.model.Book
 @Composable
 fun BookDetailContent(
     book: Book,
+    onClickItem: (String) -> Unit = { },
 ) {
     Text(book.toString())
 }

@@ -43,7 +43,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.detail.content.AlbumDetailContent
@@ -61,8 +60,6 @@ import de.ashman.ontrack.media.model.MediaType
 import de.ashman.ontrack.media.model.Movie
 import de.ashman.ontrack.media.model.Show
 import de.ashman.ontrack.media.model.Videogame
-import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -135,37 +132,20 @@ fun DetailContent(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Top,
     ) {
-        MediaPoster(
-            name = media.name,
-            coverUrl = media.coverUrl,
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            media.getMainInfoItems().forEachIndexed { index, item ->
-                Text(
-                    text = item,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            MediaPoster(
+                title = media.name,
+                coverUrl = media.coverUrl,
+                textStyle = MaterialTheme.typography.titleLarge,
+                isTextOverflow = true,
+            )
 
-                if (index < media.getMainInfoItems().size - 1) {
-                    VerticalDivider(
-                        color = Color.Gray,
-                        thickness = 2.dp,
-                        modifier = Modifier
-                            .height(20.dp)
-                            .padding(horizontal = 8.dp)
-                    )
-                }
-            }
+            MainInfo(mainInfoItems = media.getMainInfoItems())
         }
 
         Column(
@@ -201,6 +181,36 @@ fun DetailContent(
                     },
                     content = { Icon(Icons.Filled.KeyboardArrowDown, "Arrow Down Icon") }
                 )*/
+    }
+}
+
+@Composable
+fun MainInfo(
+    mainInfoItems: List<String>,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        mainInfoItems.forEachIndexed { index, item ->
+            Text(
+                text = item,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            if (index < mainInfoItems.size - 1) {
+                VerticalDivider(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    thickness = 2.dp,
+                    modifier = Modifier
+                        .height(16.dp)
+                        .padding(horizontal = 8.dp),
+                )
+            }
+        }
     }
 }
 

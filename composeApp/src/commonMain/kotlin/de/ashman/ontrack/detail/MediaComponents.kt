@@ -3,9 +3,11 @@ package de.ashman.ontrack.detail
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,36 +40,33 @@ import coil3.compose.SubcomposeAsyncImageContent
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
+import de.ashman.ontrack.util.PosterSize
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.util.SMALL_POSTER_WIDTH
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
-import ontrack.composeapp.generated.resources.detail_similar
-import ontrack.composeapp.generated.resources.media_movies
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MediaPoster(
-    name: String,
+    title: String,
     coverUrl: String?,
-    onClickItem: () -> Unit = {},
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    width: Dp = DEFAULT_POSTER_WIDTH,
-    height: Dp = DEFAULT_POSTER_HEIGHT,
-    modifier: Modifier = Modifier,
+    posterSize: PosterSize = PosterSize.DEFAULT,
+    isTextOverflow: Boolean = false,
+    onClickItem: () -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.width(width)
     ) {
         SubcomposeAsyncImage(
             model = coverUrl,
             contentScale = ContentScale.Crop,
             contentDescription = "Cover",
-            modifier = modifier
-                .size(width = width, height = height)
+            modifier = Modifier
+                .size(width = posterSize.width, height = posterSize.height)
                 .clip(shape = RoundedCornerShape(16.dp))
                 .clickable {
                     onClickItem()
@@ -114,13 +113,47 @@ fun MediaPoster(
         }
 
         Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = if (name.isEmpty()) "N/A" else name,
+            modifier = if (isTextOverflow) Modifier.fillMaxWidth() else Modifier.width(posterSize.width),
+            text = if (title.isEmpty()) "N/A" else title,
             style = textStyle,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
+    }
+}
+
+@Composable
+fun MediaRow(
+    title: String,
+    otherMedia: List<Media>?,
+    onClickItem: (String) -> Unit = { },
+) {
+    if (otherMedia != null) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+            ) {
+                items(otherMedia) {
+                    MediaPoster(
+                        title = it.name,
+                        coverUrl = it.coverUrl,
+                        textStyle = MaterialTheme.typography.titleSmall,
+                        posterSize = PosterSize.SMALL,
+                        onClickItem = { onClickItem(it.id) }
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -167,41 +200,6 @@ fun MediaGenres(
                     onClick = {},
                     label = { Text(it) },
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun SimilarMedia(
-    mediaString: String,
-    similarMedia: List<Media>?,
-    onClickItem: (Media) -> Unit = { },
-) {
-    if (similarMedia != null) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = stringResource(Res.string.detail_similar, mediaString),
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                items(similarMedia) {
-                    MediaPoster(
-                        name = it.name,
-                        coverUrl = it.coverUrl,
-                        textStyle = MaterialTheme.typography.titleSmall,
-                        width = SMALL_POSTER_WIDTH,
-                        height = SMALL_POSTER_HEIGHT,
-                        onClickItem = { onClickItem(it) },
-                    )
-                }
             }
         }
     }

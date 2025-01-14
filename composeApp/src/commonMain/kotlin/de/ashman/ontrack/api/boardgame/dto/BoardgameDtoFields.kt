@@ -73,15 +73,10 @@ data class MinAge(
 @Serializable
 @SerialName("poll")
 data class Poll(
-    @SerialName("name")
     val name: String,
-
-    @SerialName("title")
     val title: String,
-
     @SerialName("totalvotes")
     val totalVotes: Int,
-
     @XmlElement
     val results: List<Result>
 ) {
@@ -90,19 +85,14 @@ data class Poll(
     data class Result(
         @SerialName("numplayers")
         val numPlayers: String?,
-
         @XmlElement
         val result: List<IndividualResult>
     ) {
         @Serializable
         @SerialName("result")
         data class IndividualResult(
-            @SerialName("level")
             val level: String?,
-
-            @SerialName("value")
             val value: String,
-
             @SerialName("numvotes")
             val numVotes: Int
         )
@@ -110,18 +100,11 @@ data class Poll(
 }
 
 @Serializable
-@SerialName("link")
-data class Link(
-    @SerialName("type")
-    val type: String,
-
-    @SerialName("id")
-    val id: String,
-
-    @SerialName("value")
-    val value: String,
-
-    @SerialName("inbound")
+@XmlSerialName("link")
+data class LinkDto(
+    val type: String?,
+    val id: String?,
+    val value: String?,
     val inbound: Boolean?,
 )
 

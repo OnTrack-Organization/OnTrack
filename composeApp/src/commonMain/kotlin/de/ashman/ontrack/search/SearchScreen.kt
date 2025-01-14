@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -40,6 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.detail.MediaPoster
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
+import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.util.DEFAULT_POSTER_WIDTH
 import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.stringResource
 
@@ -89,11 +92,16 @@ fun SearchScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
                     items(uiState.searchResults) {
-                        MediaPoster(
-                            name = it.name,
-                            coverUrl = it.coverUrl,
-                            onClickItem = { onClickItem(it) },
-                        )
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            MediaPoster(
+                                title = it.name,
+                                coverUrl = it.coverUrl,
+                                onClickItem = { onClickItem(it) },
+                            )
+                        }
                     }
                 }
         }

@@ -13,13 +13,13 @@ data class Videogame(
     override val userRating: Float? = null,
     override val coverUrl: String,
     override val releaseYear: String?,
+    val description: String?,
     val franchises: List<Franchise>?,
     val genres: List<String>?,
     val platforms: List<Platform>?,
     val totalRating: Double?,
     val totalRatingCount: Int?,
-    val similarGames: List<SimilarGame>?,
-    val summary: String?,
+    val similarGames: List<Videogame>?,
 ) : Media() {
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
@@ -34,21 +34,15 @@ data class Videogame(
 @CommonParcelize
 @Serializable
 data class Franchise(
+    val id: Int,
     val name: String,
-    val games: List<SimilarGame>?,
 ) : CommonParcelable
 
 @CommonParcelize
 @Serializable
 data class Platform(
+    val id: Int,
     val abbreviation: String?,
     val name: String,
     val platformLogo: String?,
-) : CommonParcelable
-
-@CommonParcelize
-@Serializable
-data class SimilarGame(
-    val name: String,
-    val cover: String?,
 ) : CommonParcelable

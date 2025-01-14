@@ -13,7 +13,7 @@ fun MovieDto.toDomain(): Movie {
         backdropPath = backdropPath,
         genres = genres?.map { it.name },
         originCountry = originCountry,
-        overview = overview,
+        description = overview,
         popularity = popularity,
         revenue = revenue,
         runtime = runtime,

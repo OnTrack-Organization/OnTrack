@@ -1,14 +1,20 @@
 package de.ashman.ontrack.detail.content
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import co.touchlab.kermit.Logger
+import de.ashman.ontrack.detail.MediaRow
 import de.ashman.ontrack.media.model.Boardgame
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_franchise
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BoardgameDetailContent(
     boardgame: Boardgame,
+    onClickItem: (String) -> Unit = { },
 ) {
-    Logger.i { "HERE: " + boardgame.description.toString() }
-    Text(boardgame.toString())
+    MediaRow(
+        title = stringResource(Res.string.detail_franchise),
+        otherMedia = boardgame.franchiseItems,
+        onClickItem = onClickItem,
+    )
 }

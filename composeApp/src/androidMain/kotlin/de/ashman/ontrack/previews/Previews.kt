@@ -19,7 +19,7 @@ fun MovieDetailsPreview() {
         originCountry = listOf("Japan"),
         originalLanguage = "JP",
         originalTitle = "Raion",
-        overview = "A very cool film about a lion. Rawr.",
+        description = "A very cool film about a lion. Rawr.",
         popularity = 20.0,
         releaseYear = "23/01/2023",
         revenue = 5000L,

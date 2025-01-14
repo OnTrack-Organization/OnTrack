@@ -2,7 +2,6 @@ package de.ashman.ontrack.api.videogame.dto
 
 import kotlinx.serialization.Serializable
 
-// https://api-docs.igdb.com/#game
 @Serializable
 data class VideogameDto(
     val id: Int? = null,
@@ -14,28 +13,31 @@ data class VideogameDto(
     val platforms: List<PlatformDto>? = null,
     val totalRating: Double? = null,
     val totalRatingCount: Int? = null,
-    val similarGames: List<SimilarGameDto>? = null,
+    val similarGames: List<VideogameDto>? = null,
     val summary: String? = null,
 )
 
 @Serializable
 data class CoverDto(
+    val id: Int,
     val url: String?,
 )
 
 @Serializable
 data class FranchiseDto(
+    val id: Int,
     val name: String,
-    val games: List<SimilarGameDto>? = null,
 )
 
 @Serializable
 data class GenreDto(
+    val id: Int,
     val name: String,
 )
 
 @Serializable
 data class PlatformDto(
+    val id: Int,
     val abbreviation: String? = null,
     val name: String,
     val platformLogo: PlatformLogoDto? = null,
@@ -43,11 +45,6 @@ data class PlatformDto(
 
 @Serializable
 data class PlatformLogoDto(
-    val url: String
-)
-
-@Serializable
-data class SimilarGameDto(
-    val name: String,
-    val cover: CoverDto? = null,
+    val id: Int,
+    val url: String,
 )
