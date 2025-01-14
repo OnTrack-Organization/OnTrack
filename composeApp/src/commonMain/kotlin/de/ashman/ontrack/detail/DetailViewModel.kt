@@ -12,7 +12,6 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.media.model.Media
 import de.ashman.ontrack.media.model.MediaType
-import de.ashman.ontrack.search.SearchUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +53,7 @@ class DetailViewModel(
         val result = when (media.mediaType) {
             MediaType.MOVIE -> movieRepository.fetchDetails(media.id)
             MediaType.SHOW -> showRepository.fetchDetails(media.id)
-            MediaType.BOOK -> bookRepository.fetchMediaDetailsWithPartial(media as Book)
+            MediaType.BOOK -> bookRepository.fetchBookDescription(media as Book)
             MediaType.VIDEOGAME -> videogameRepository.fetchDetails(media.id)
             MediaType.BOARDGAME -> boardgameRepository.fetchDetails(media.id)
             MediaType.ALBUM -> albumRepository.fetchDetails(media.id)

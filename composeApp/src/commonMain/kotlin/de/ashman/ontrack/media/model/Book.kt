@@ -22,7 +22,7 @@ data class Book(
     val publisher: List<String>? = null,
     val ratingsAverage: Double? = null,
     val ratingsCount: Int? = null,
-    val subject: List<String>? = null,
+    val subjects: List<String>? = null,
 ) : Media() {
     override fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

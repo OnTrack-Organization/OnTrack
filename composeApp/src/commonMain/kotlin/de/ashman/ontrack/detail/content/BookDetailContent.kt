@@ -1,7 +1,8 @@
 package de.ashman.ontrack.detail.content
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import de.ashman.ontrack.detail.MediaDescription
+import de.ashman.ontrack.detail.MediaGenres
 import de.ashman.ontrack.media.model.Book
 
 @Composable
@@ -9,5 +10,11 @@ fun BookDetailContent(
     book: Book,
     onClickItem: (String) -> Unit = { },
 ) {
-    Text(book.toString())
+    MediaDescription(
+        description = book.description,
+    )
+
+    MediaGenres(
+        genres = book.subjects,
+    )
 }

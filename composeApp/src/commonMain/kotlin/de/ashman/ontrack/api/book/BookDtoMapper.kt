@@ -2,7 +2,6 @@ package de.ashman.ontrack.api.book
 
 import de.ashman.ontrack.media.model.Book
 import de.ashman.ontrack.api.book.dto.BookDto
-import de.ashman.ontrack.api.book.dto.BookTrendingResponseDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponseDto
 import de.ashman.ontrack.api.getOpenLibraryCoverUrl
 
@@ -23,11 +22,10 @@ fun BookDto.toDomain(): Book {
         publisher = publisher,
         ratingsAverage = ratingsAverage,
         ratingsCount = ratingsCount,
-        subject = subject,
+        subjects = subject?.take(5),
     )
 }
 
-// TODO change
 fun BookWorksResponseDto.toDomain(): Book {
     return Book(
         id = "",
