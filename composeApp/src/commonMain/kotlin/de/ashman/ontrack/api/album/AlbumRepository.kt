@@ -5,6 +5,7 @@ import de.ashman.ontrack.media.model.Album
 import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumSearchResult
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.album.dto.AlbumResponseDto
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.media.model.Media
@@ -50,7 +51,15 @@ class AlbumRepository(
                 url("albums/$id")
             }
             val response: AlbumDto = httpClient.request(requestBuilder).body()
-            response.toDomain()
+            val album = response.toDomain()
+
+            val requestBuilder2 = buildRequestWithToken {
+                url("artists/${album.artists.first().id}/albums")
+            }
+            val response2: AlbumResponseDto = httpClient.request(requestBuilder2).body()
+            val albums = response2.toDomain()
+
+            album.copy(artistAlbums = albums)
         }
     }
 

@@ -113,7 +113,7 @@ fun MediaPoster(
         }
 
         Text(
-            modifier = if (isTextOverflow) Modifier.fillMaxWidth() else Modifier.width(posterSize.width),
+            modifier = if (isTextOverflow) Modifier.fillMaxWidth().padding(horizontal = 16.dp) else Modifier.width(posterSize.width),
             text = if (title.isEmpty()) "N/A" else title,
             style = textStyle,
             fontWeight = FontWeight.Bold,

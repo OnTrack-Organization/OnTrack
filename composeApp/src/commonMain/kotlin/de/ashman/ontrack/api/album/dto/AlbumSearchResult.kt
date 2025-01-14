@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AlbumSearchResult(
-    val albums: AlbumResponseDto
+    val albums: AlbumResponseDto,
 )
 
 @Serializable
@@ -15,5 +15,5 @@ data class AlbumResponseDto(
     val next: String?,
     val offset: Int,
     val previous: String?,
-    val total: Int
+    val total: Int,
 )

@@ -4,7 +4,9 @@ import de.ashman.ontrack.media.model.Album
 import de.ashman.ontrack.media.model.Track
 import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
+import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.album.dto.TrackDto
+import de.ashman.ontrack.media.model.Artist
 
 fun AlbumDto.toDomain(): Album {
     return Album(
@@ -12,13 +14,12 @@ fun AlbumDto.toDomain(): Album {
         name = name,
         coverUrl = images.first().url,
         releaseYear = releaseDate.take(4),
-        artists = artists.map { it.name },
-        genres = genres,
+        artists = artists.map { it.toDomain() },
         label = label,
         popularity = popularity,
         spotifyUrl = externalUrls.spotify,
         totalTracks = totalTracks,
-        tracks = tracks?.items?.map { it.toDomain() } ?: emptyList()
+        tracks = tracks?.items?.map { it.toDomain() } ?: emptyList(),
     )
 }
 
@@ -31,6 +32,13 @@ fun TrackDto.toDomain(): Track {
         previewUrl = previewUrl,
         trackNumber = trackNumber,
         url = externalUrls.spotify
+    )
+}
+
+fun ArtistDto.toDomain() : Artist {
+    return Artist(
+        id = id,
+        name = name,
     )
 }
 

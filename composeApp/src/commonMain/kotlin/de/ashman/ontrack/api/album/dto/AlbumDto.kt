@@ -40,7 +40,7 @@ data class ImageDto(
 
 @Serializable
 data class RestrictionsDto(
-    val reason: String
+    val reason: String,
 )
 
 @Serializable
@@ -50,7 +50,7 @@ data class ArtistDto(
     val id: String,
     val name: String,
     val type: String,
-    val uri: String
+    val uri: String,
 )
 
 @Serializable
