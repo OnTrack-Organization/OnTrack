@@ -32,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
@@ -55,7 +56,7 @@ fun MediaPoster(
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     posterSize: PosterSize = PosterSize.DEFAULT,
     isTextOverflow: Boolean = false,
-    onClickItem: () -> Unit = {},
+    onClickItem: (() -> Unit)? = null,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,9 +69,7 @@ fun MediaPoster(
             modifier = Modifier
                 .size(width = posterSize.width, height = posterSize.height)
                 .clip(shape = RoundedCornerShape(16.dp))
-                .clickable {
-                    onClickItem()
-                }
+                .let { if (onClickItem != null) it.clickable { onClickItem() } else it }
         ) {
             val state = painter.state.collectAsState().value
 
@@ -119,6 +118,8 @@ fun MediaPoster(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface,
+            maxLines = if (isTextOverflow) Int.MAX_VALUE else 2,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -129,7 +130,7 @@ fun MediaRow(
     otherMedia: List<Media>?,
     onClickItem: (String) -> Unit = { },
 ) {
-    if (otherMedia != null) {
+    otherMedia?.let {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -162,17 +163,16 @@ fun MediaDescription(
     description: String?,
     modifier: Modifier = Modifier,
 ) {
-    if (description == null) return
-
-    Column(
-        modifier = modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.detail_description),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(description)
+    description?.let {
+        Column(
+            modifier = modifier.padding(horizontal = 16.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.detail_description),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(description)
+        }
     }
 }
 
@@ -181,25 +181,24 @@ fun MediaGenres(
     genres: List<String>?,
     modifier: Modifier = Modifier,
 ) {
-    if (genres == null) return
-
-    Column(
-        modifier = modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.detail_genres),
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+    genres?.let {
+        Column(
+            modifier = modifier.padding(horizontal = 16.dp),
         ) {
-            items(genres) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(it) },
-                )
+            Text(
+                text = stringResource(Res.string.detail_genres),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(genres) {
+                    AssistChip(
+                        onClick = {},
+                        label = { Text(it) },
+                    )
+                }
             }
         }
     }

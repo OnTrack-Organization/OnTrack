@@ -19,7 +19,7 @@ fun BoardgameDto.toDomain(): Boardgame {
         description = description?.decodeHtmlManually(),
         thumbnail = thumbnail,
         ratings = statistics?.ratings?.toDomain(),
-        franchiseItems = links?.map { it.toDomain() }?.filter { it.boardgameType in setOf("boardgameimplementation", "boardgameexpansion", "boardgameintegration") },
+        franchiseItems = links?.map { it.toDomain() },
     )
 }
 
@@ -29,6 +29,7 @@ fun LinkDto.toDomain(): Boardgame {
         id = id.orEmpty(),
         name = value.orEmpty(),
         coverUrl = "",
+        description = "",
     )
 }
 
@@ -43,6 +44,7 @@ fun StatisticsDto.RatingsDto.toDomain(): Ratings {
 
 fun String.decodeHtmlManually(): String {
     return this
+        .replace(Regex("&nbsp;"), " ")
         .replace(Regex("&amp;#10;"), "\n")
         .replace(Regex("&#10;"), "\n")
         .replace(Regex("&ndash;"), "–")
@@ -50,5 +52,6 @@ fun String.decodeHtmlManually(): String {
         .replace(Regex("&amp;"), "&")
         .replace(Regex("&quot;"), "\"")
         .replace(Regex("—description from the publisher\\n{2}"), "")
+        .trimEnd()
 }
 

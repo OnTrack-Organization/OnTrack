@@ -109,6 +109,14 @@ data class LinkDto(
 )
 
 @Serializable
+@XmlSerialName("error")
+data class ErrorDto(
+    //val code: String,
+    @XmlElement
+    val message: String,
+)
+
+@Serializable
 @XmlSerialName("statistics")
 data class StatisticsDto(
     val page: String,

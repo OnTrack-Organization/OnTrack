@@ -152,6 +152,8 @@ fun DetailContent(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            Text(media.id)
+
             when (media.mediaType) {
                 MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
                 MediaType.SHOW -> ShowDetailContent(show = media as Show)
