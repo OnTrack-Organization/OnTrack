@@ -31,8 +31,7 @@ class DetailViewModel(
 
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState
-        .onStart {
-        }
+        .onStart {}
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -78,6 +77,11 @@ class DetailViewModel(
                 Logger.e { _uiState.value.errorMessage.toString() }
             }
         )
+    }
+
+    fun onConfirmTrackStatus() {
+        // TODO: Implement logic to confirm track status
+
     }
 }
 

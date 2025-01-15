@@ -6,10 +6,10 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
-import de.ashman.ontrack.user.ui.UserViewModel
-import de.ashman.ontrack.user.UserService
+import de.ashman.ontrack.authentication.AuthViewModel
 import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.authentication.AuthRepository
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import io.ktor.client.HttpClient
@@ -193,7 +193,7 @@ val appModule =
         }
 
         // SERVICES
-        single { UserService() }
+        single { AuthRepository() }
         single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
         single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
@@ -206,9 +206,8 @@ val appModule =
         single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
         // VIEWMODEL
-        viewModelDefinition { UserViewModel(get()) }
+        viewModelDefinition { AuthViewModel(get()) }
 
-        // So for Feed, Search, Detail and Shelf
         viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get()) }
         viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get()) }
     }

@@ -19,7 +19,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -44,8 +44,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
             implementation(libs.compose.navigation)
-            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
@@ -53,11 +53,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
-
-           /* runtimeOnly(libs.androidx.datastore.preferences.core)
-            implementation("androidx.datastore:datastore:1.1.1")
-            runtimeOnly("androidx.datastore:datastore-preferences:1.1.1")
-            implementation("androidx.datastore:datastore-core:1.1.1")*/
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -68,16 +63,13 @@ kotlin {
             implementation(libs.kmpauth.firebase)
             implementation(libs.kmpauth.uihelper)
 
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.core)
             implementation(libs.ktor.contentNegotiation)
             implementation(libs.ktor.json)
-
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
-
-            implementation("network.chaintech:compose-multiplatform-media-player:1.0.22")
-
-            //implementation(libs.androidx.paging)
+            implementation(libs.uri.kmp)
 
             implementation(libs.kermit)
         }
@@ -96,7 +88,6 @@ kotlin {
     }
 
     androidTarget {
-        // https://youtrack.jetbrains.com/issue/KT-66448
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             freeCompilerArgs.addAll(
@@ -133,8 +124,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true

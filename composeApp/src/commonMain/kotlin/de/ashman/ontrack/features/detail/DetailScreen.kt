@@ -40,7 +40,6 @@ import de.ashman.ontrack.features.detail.content.VideogameDetailContent
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.Book
-import de.ashman.ontrack.domain.ConsumeStatus
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Movie
@@ -78,6 +77,7 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
+                onConfirmTrackStatus = { viewModel.onConfirmTrackStatus() }
             )
         }
     }
@@ -87,8 +87,7 @@ fun DetailScreen(
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    onChangeStatus: (ConsumeStatus) -> Unit = {},
-    onChangeRating: (Float) -> Unit = {},
+    onConfirmTrackStatus: () -> Unit = {},
 ) {
     media?.let {
         val scrollState = rememberScrollState()

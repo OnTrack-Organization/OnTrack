@@ -15,16 +15,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.OnTrackScreen
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
-import de.ashman.ontrack.user.ui.LoginScreen
+import de.ashman.ontrack.authentication.LoginScreen
 import de.ashman.ontrack.navigation.Route.Detail
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
-import de.ashman.ontrack.features.shelf.ShelfListScreen
 import de.ashman.ontrack.features.shelf.ShelfScreen
+import de.ashman.ontrack.authentication.AuthViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
@@ -34,9 +33,10 @@ import kotlin.reflect.typeOf
 @Composable
 fun NavigationGraph() {
     val navController = rememberNavController()
-    // TODO maybe put somewhere else, but for now it needs to be here so its not recreated on every navigation
+
     val searchViewModel: SearchViewModel = koinInject()
     val detailViewModel: DetailViewModel = koinInject()
+    val authViewModel: AuthViewModel = koinInject()
 
     val searchUiState by searchViewModel.uiState.collectAsState()
 
@@ -47,18 +47,16 @@ fun NavigationGraph() {
         NavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize().padding(padding),
-            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Login,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Feed else Route.Login,
         ) {
             composable<Route.Login> {
                 LoginScreen(
+                    authViewModel = authViewModel,
                     onLoginSuccess = { navController.navigate(Route.Feed) }
                 )
             }
-            mainGraph(navController, searchViewModel)
-
+            mainGraph(navController, searchViewModel, authViewModel)
             mediaGraph(detailViewModel)
-
-            shelfGraph(navController)
         }
     }
 }
@@ -78,24 +76,16 @@ fun NavGraphBuilder.mediaGraph(
     }
 }
 
-fun NavGraphBuilder.shelfGraph(
-    navController: NavHostController,
-) {
-    composable<Route.ShelfList> { backStackEntry ->
-        val shelfList: Route.ShelfList = backStackEntry.toRoute()
-
-        val mediaTypeEnum = MediaType.valueOf(shelfList.mediaType.uppercase())
-        //TODO die liste implementieren
-        ShelfListScreen(mediaTypeEnum)
-    }
-}
-
 fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
     searchViewModel: SearchViewModel,
+    authViewModel: AuthViewModel,
 ) {
     composable<Route.Feed> {
-        FeedScreen()
+        FeedScreen(
+            authViewModel = authViewModel,
+            onClickLogout = { navController.navigate(Route.Login) },
+        )
     }
 
     composable<Route.Search> {
