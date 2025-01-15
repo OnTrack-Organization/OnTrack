@@ -9,8 +9,9 @@ import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.authentication.AuthViewModel
 import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.authentication.AuthRepository
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.features.detail.MediaService
 import de.ashman.ontrack.features.search.SearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -193,7 +194,8 @@ val appModule =
         }
 
         // SERVICES
-        single { AuthRepository() }
+        single { AuthService() }
+        single { MediaService() }
         single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
         single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
@@ -209,7 +211,7 @@ val appModule =
         viewModelDefinition { AuthViewModel(get()) }
 
         viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get()) }
-        viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

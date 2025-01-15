@@ -24,6 +24,7 @@ import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.domain.sub.getMediaTypeUi
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
@@ -42,7 +43,7 @@ fun NavigationGraph() {
 
     OnTrackScreen(
         navController = navController,
-        icon = searchUiState.selectedMediaType.icon
+        icon = getMediaTypeUi(searchUiState.selectedMediaType).icon,
     ) { padding ->
         NavHost(
             navController = navController,

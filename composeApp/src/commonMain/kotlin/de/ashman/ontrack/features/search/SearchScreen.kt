@@ -37,9 +37,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.features.detail.MediaPoster
+import de.ashman.ontrack.features.detail.ui.MediaPoster
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.sub.getMediaTypeUi
 import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.stringResource
 
@@ -79,7 +80,7 @@ fun SearchScreen(
         }
 
         when (uiState.searchResultState) {
-            SearchResultState.Empty -> EmptySearch(title = stringResource(uiState.selectedMediaType.title))
+            SearchResultState.Empty -> EmptySearch(title = stringResource(getMediaTypeUi(uiState.selectedMediaType).title))
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
             SearchResultState.Success ->
@@ -186,7 +187,7 @@ fun SearchBar(
                 },
                 expanded = false,
                 onExpandedChange = { },
-                placeholder = { Text("Search for ${stringResource(selectedMediaType.title)}") },
+                placeholder = { Text("Search for ${stringResource(getMediaTypeUi(selectedMediaType).title)}") },
                 leadingIcon = {
                     if (isKeyboardOpen) {
                         IconButton(onClick = closeKeyboard) {
@@ -227,14 +228,14 @@ fun FilterChips(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        items(mediaTypes) { option ->
+        items(mediaTypes) { mediaType ->
             FilterChip(
-                selected = selectedMediaType == option,
-                onClick = { onMediaTypeSelected(option) },
-                label = { Text(stringResource(option.title)) },
+                selected = selectedMediaType == mediaType,
+                onClick = { onMediaTypeSelected(mediaType) },
+                label = { Text(stringResource(getMediaTypeUi(mediaType).title)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = option.icon(),
+                        imageVector = getMediaTypeUi(mediaType).icon(),
                         contentDescription = "Chip icon",
                         Modifier.size(AssistChipDefaults.IconSize)
                     )

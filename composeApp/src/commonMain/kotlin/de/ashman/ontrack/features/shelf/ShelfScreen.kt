@@ -17,8 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.ConsumeStatus
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.sub.MediaType
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -28,7 +27,7 @@ fun ShelfScreen(
     goToShelf: (MediaType) -> Unit = {},
     // TODO add ShelfViewModel
 ) {
-    Column(
+    /*Column(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -42,10 +41,10 @@ fun ShelfScreen(
                 goToShelf = goToShelf,
             )
         }
-    }
+    }*/
 }
 
-@Composable
+/*@Composable
 fun MediaCard(
     modifier: Modifier = Modifier,
     mediaType: MediaType,
@@ -124,4 +123,4 @@ private fun MediaTitle(mediaTitle: StringResource) {
         style = MaterialTheme.typography.displaySmall,
         fontWeight = FontWeight.Bold,
     )
-}
+}*/

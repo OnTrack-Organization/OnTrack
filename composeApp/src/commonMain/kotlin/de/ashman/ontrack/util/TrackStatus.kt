@@ -1,5 +1,6 @@
 package de.ashman.ontrack.util
 
+import de.ashman.ontrack.domain.sub.MediaType
 import kotlinx.serialization.Serializable
 
 data class TrackStatus(
@@ -24,7 +25,7 @@ data class MediaEntity(
     val id: String,
     val name: String,
     val coverUrl: String,
-    val type: MediaTypeEnum,
+    val type: MediaType,
     val trackStatus: TrackStatusEntity?,
 )
 
@@ -32,6 +33,18 @@ enum class TrackStatusEnum {
     CONSUMING, CONSUMED, DROPPED, CATALOG, NONE
 }
 
-enum class MediaTypeEnum {
-    MOVIE, SHOW, BOOK, VIDEOGAME, BOARDGAME, ALBUM
-}
+fun TrackStatus.toEntity() = TrackStatusEntity(
+    id = id,
+    status = status,
+    timestamp = timestamp,
+    rating = rating,
+    review = review,
+)
+
+fun TrackStatusEntity.toDomain() = TrackStatus(
+    id = id,
+    status = status,
+    timestamp = timestamp,
+    rating = rating,
+    review = review,
+)

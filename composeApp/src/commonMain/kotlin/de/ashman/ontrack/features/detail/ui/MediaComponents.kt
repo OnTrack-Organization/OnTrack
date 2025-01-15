@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail
+package de.ashman.ontrack.features.detail.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.clickable
@@ -58,9 +58,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
-import de.ashman.ontrack.domain.ConsumeStatus
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.util.PosterSize
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
@@ -263,43 +262,6 @@ fun MediaGenres(
                         label = { Text(it) },
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun ConsumeStatusRow(
-    mediaType: MediaType,
-    currentStatus: ConsumeStatus?,
-    onChangeStatus: (ConsumeStatus) -> Unit,
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        mediaType.consumeStatuses.forEachIndexed { index, statusType ->
-            val isSelected = currentStatus == statusType
-            val icon = statusType.getConsumeStatusIcon(isSelected)
-            val label = stringResource(statusType.getConsumeStatusLabel())
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    modifier = Modifier.scale(2f),
-                    onClick = { onChangeStatus(statusType) },
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = statusType.name
-                    )
-                }
-                Text(text = label, style = MaterialTheme.typography.bodySmall)
-            }
-
-            if (index < mediaType.consumeStatuses.size - 1) {
-                Spacer(modifier = Modifier.width(64.dp))
             }
         }
     }

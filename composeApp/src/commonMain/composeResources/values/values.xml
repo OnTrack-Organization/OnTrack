@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">OnTrack</string>
-    <string name="welcome">Welcome to OnTrack!</string>">
+    <string name="welcome">Welcome to OnTrack!</string>
     <string name="google_login">Continue with Google</string>
+
+    <string name="track_button">Track</string>
 
     <string name="media_movies">Movies</string>
     <string name="media_shows">Shows</string>
@@ -10,19 +12,65 @@
     <string name="media_books">Books</string>
     <string name="media_albums">Albums</string>
 
-    <string name="status_all">All</string>
-    <string name="status_binging">Binging</string>
-    <string name="status_playing">Playing</string>
-    <string name="status_reading">Reading</string>
+    <!-- MOVIE -->
+    <string name="movie_status_consuming_label">Watching</string>
+    <string name="movie_status_consuming_sublabel">Currently watching</string>
+    <string name="movie_status_consumed_label">Watched</string>
+    <string name="movie_status_consumed_sublabel">Finished watching</string>
+    <string name="movie_status_catalog_label">Catalog</string>
+    <string name="movie_status_catalog_sublabel">Plan to watch</string>
+    <string name="movie_status_dropped_label">Dropped</string>
+    <string name="movie_status_dropped_sublabel">Stopped watching</string>
 
-    <string name="status_watched">Watched</string>
-    <string name="status_binged">Binged</string>
-    <string name="status_read">Read</string>
-    <string name="status_played">Played</string>
-    <string name="status_listened">Listened</string>
+    <!-- SHOW -->
+    <string name="show_status_consumed_label">Binged</string>
+    <string name="show_status_consumed_sublabel">Finished binging</string>
+    <string name="show_status_catalog_label">Catalog</string>
+    <string name="show_status_catalog_sublabel">Plan to binge</string>
+    <string name="show_status_consuming_label">Binging</string>
+    <string name="show_status_consuming_sublabel">Currently binging</string>
+    <string name="show_status_dropped_label">Dropped</string>
+    <string name="show_status_dropped_sublabel">Stopped binging</string>
 
-    <string name="status_dropped">Dropped</string>
-    <string name="status_catalog">Catalog</string>
+    <!-- VIDEOGAME -->
+    <string name="videogame_status_consumed_label">Gamed</string>
+    <string name="videogame_status_consumed_sublabel">Finished gaming</string>
+    <string name="videogame_status_catalog_label">Catalog</string>
+    <string name="videogame_status_catalog_sublabel">Plan to game</string>
+    <string name="videogame_status_consuming_label">Gaming</string>
+    <string name="videogame_status_consuming_sublabel">Currently gaming</string>
+    <string name="videogame_status_dropped_label">Dropped</string>
+    <string name="videogame_status_dropped_sublabel">Stopped gaming</string>
+
+    <!-- BOARDGAME -->
+    <string name="boardgame_status_consumed_label">Played</string>
+    <string name="boardgame_status_consumed_sublabel">Finished playing</string>
+    <string name="boardgame_status_catalog_label">Catalog</string>
+    <string name="boardgame_status_catalog_sublabel">Plan to play</string>
+    <string name="boardgame_status_consuming_label">Playing</string>
+    <string name="boardgame_status_consuming_sublabel">Currently playing</string>
+    <string name="boardgame_status_dropped_label">Dropped</string>
+    <string name="boardgame_status_dropped_sublabel">Stopped playing</string>
+
+    <!-- BOOK -->
+    <string name="book_status_consumed_label">Read</string>
+    <string name="book_status_consumed_sublabel">Finished reading</string>
+    <string name="book_status_catalog_label">Catalog</string>
+    <string name="book_status_catalog_sublabel">Plan to read</string>
+    <string name="book_status_consuming_label">Reading</string>
+    <string name="book_status_consuming_sublabel">Currently reading</string>
+    <string name="book_status_dropped_label">Dropped</string>
+    <string name="book_status_dropped_sublabel">Stopped reading</string>
+
+    <!-- ALBUM -->
+    <string name="album_status_consumed_label">Listened</string>
+    <string name="album_status_consumed_sublabel">Finished listening</string>
+    <string name="album_status_catalog_label">Catalog</string>
+    <string name="album_status_catalog_sublabel">Plan to listen</string>
+    <string name="album_status_consuming_label">Listening</string>
+    <string name="album_status_consuming_sublabel">Currently listening</string>
+    <string name="album_status_dropped_label">Dropped</string>
+    <string name="album_status_dropped_sublabel">Stopped listening</string>
 
     <string name="network_error">Network error</string>
 
@@ -30,5 +78,5 @@
     <string name="detail_genres">Genres</string>
     <string name="detail_similar">Similar %1$s</string>
     <string name="detail_franchise">Franchise</string>
-    <string name="detail_artist_albums">Artists Albums</string>
+    <string name="detail_artist_albums">Artist's Albums</string>
 </resources>

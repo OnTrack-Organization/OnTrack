@@ -43,12 +43,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.ConsumeStatus
+import de.ashman.ontrack.domain.sub.MediaType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
 
 // TODO screen hat eine column mit allen einträgen, pager, searchbar, fab und bottomsheet mit settings
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +76,7 @@ fun ShelfListScreen(
             )
         }
     ) { innerPadding ->
-        ShelfListContent(
+        /*ShelfListContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -89,7 +87,7 @@ fun ShelfListScreen(
                 },
             mediaType = mediaType,
             shelfItems = emptyList(),
-        )
+        )*/
     }
 
     if (showBottomSheet) {
@@ -105,7 +103,7 @@ fun ShelfListScreen(
     }
 }
 
-@Composable
+/*@Composable
 fun ShelfListContent(
     modifier: Modifier,
     mediaType: MediaType,
@@ -135,7 +133,7 @@ fun ShelfListContent(
                             contentDescription = title.name
                         )
                     },
-                    text = { Text(stringResource(title.getConsumeStatusLabel())) },
+                    text = { Text("") },
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
@@ -168,7 +166,7 @@ fun ShelfListContent(
             }
         }
     }
-}
+}*/
 
 @Composable
 fun ShelfCard(media: Media) {

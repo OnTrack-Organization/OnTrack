@@ -8,6 +8,7 @@ import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Artist
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

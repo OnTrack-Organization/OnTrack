@@ -1,9 +1,9 @@
-package de.ashman.ontrack.features.detail.content
+package de.ashman.ontrack.features.detail.ui.content
 
 import androidx.compose.runtime.Composable
-import de.ashman.ontrack.features.detail.MediaDescription
-import de.ashman.ontrack.features.detail.MediaGenres
-import de.ashman.ontrack.features.detail.MediaRow
+import de.ashman.ontrack.features.detail.ui.MediaDescription
+import de.ashman.ontrack.features.detail.ui.MediaGenres
+import de.ashman.ontrack.features.detail.ui.MediaRow
 import ontrack.composeapp.generated.resources.Res
 import de.ashman.ontrack.domain.Videogame
 import ontrack.composeapp.generated.resources.detail_similar

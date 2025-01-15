@@ -11,7 +11,9 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.util.TrackStatus
+import de.ashman.ontrack.util.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +29,7 @@ class DetailViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
+    private val mediaService: MediaService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -79,14 +82,25 @@ class DetailViewModel(
         )
     }
 
-    fun onConfirmTrackStatus() {
-        // TODO: Implement logic to confirm track status
+    fun updateTrackStatus(trackStatus: TrackStatus) {
+        _uiState.update { it.copy(trackStatus = trackStatus) }
+        Logger.d { "UI TrackStatus updated: $trackStatus" }
+    }
 
+    fun onConfirmTrackStatus() = viewModelScope.launch {
+        val updatedMedia = _uiState.value.selectedMedia
+        val updatedTrackStatus = _uiState.value.trackStatus
+
+        mediaService.updateTrackStatus(
+            mediaId = updatedMedia!!.id,
+            status = updatedTrackStatus!!.toEntity()
+        )
     }
 }
 
 data class DetailUiState(
     val selectedMedia: Media? = null,
+    val trackStatus: TrackStatus? = null,
     val detailResultState: DetailResultState = DetailResultState.Loading,
     val errorMessage: String? = null,
 )

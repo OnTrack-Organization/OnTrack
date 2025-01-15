@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authRepository: AuthRepository,
+    private val authService: AuthService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState
@@ -40,7 +40,7 @@ class AuthViewModel(
     fun signUp(user: FirebaseUser) = viewModelScope.launch {
         try {
             val userEntity = user.toEntity()
-            authRepository.signUpUser(userEntity)
+            authService.signUpUser(userEntity)
 
             val userDomain = userEntity.toDomain()
             _uiState.update { it.copy(user = userDomain) }
@@ -61,7 +61,7 @@ class AuthViewModel(
 
     fun deleteAccount() = viewModelScope.launch {
         try {
-            authRepository.deleteUser(_uiState.value.user!!.id)
+            authService.deleteUser(_uiState.value.user!!.id)
             _uiState.update { it.copy(user = null) }
         } catch (e: Exception) {
             Logger.e("Error deleting account: ${e.message}")

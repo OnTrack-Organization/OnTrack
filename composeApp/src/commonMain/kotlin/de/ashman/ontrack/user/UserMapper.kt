@@ -1,8 +1,8 @@
 package de.ashman.ontrack.user
 
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.util.MediaEntity
-import de.ashman.ontrack.util.MediaTypeEnum
 import dev.gitlive.firebase.auth.FirebaseUser
 
 fun FirebaseUser.toEntity() =
@@ -28,11 +28,11 @@ fun UserEntity.toDomain() =
 // TODO maybe save seperate lists of books, albums etc. to avoid this
 fun MediaEntity.toDomain(): Media {
     return when (type) {
-        MediaTypeEnum.MOVIE -> TODO()
-        MediaTypeEnum.SHOW -> TODO()
-        MediaTypeEnum.BOOK -> TODO()
-        MediaTypeEnum.VIDEOGAME -> TODO()
-        MediaTypeEnum.BOARDGAME -> TODO()
-        MediaTypeEnum.ALBUM -> TODO()
+        MediaType.MOVIE -> TODO()
+        MediaType.SHOW -> TODO()
+        MediaType.BOOK -> TODO()
+        MediaType.VIDEOGAME -> TODO()
+        MediaType.BOARDGAME -> TODO()
+        MediaType.ALBUM -> TODO()
     }
 }
