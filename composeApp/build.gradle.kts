@@ -63,13 +63,15 @@ kotlin {
             implementation(libs.kmpauth.firebase)
             implementation(libs.kmpauth.uihelper)
 
-            implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.core)
             implementation(libs.ktor.contentNegotiation)
             implementation(libs.ktor.json)
+
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
+
             implementation(libs.uri.kmp)
+            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.kermit)
         }

@@ -1,8 +1,8 @@
 [versions]
-agp = "8.7.2"
+agp = "8.8.0"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
-coil3 = "3.0.0-alpha08"
+coil3 = "3.0.0-rc01"
 compose-plugin = "1.7.3"
 kermit = "2.0.4"
 kotlin = "2.1.0"
@@ -27,8 +27,8 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
+coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
-coil-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
 
 # KMP Auth
 kmpauth-firebase = { module = "io.github.mirzemehdi:kmpauth-firebase", version.ref = "kmpauthGoogle" }
@@ -51,6 +51,7 @@ ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 # Serialization
 ktor-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 uri-kmp = { module = "com.eygraber:uri-kmp", version.ref = "uriKmp" }
