@@ -1,4 +1,8 @@
 <resources>
+    <string name="app_name">OnTrack</string>
+    <string name="welcome">Welcome to OnTrack!</string>">
+    <string name="google_login">Continue with Google</string>
+
     <string name="media_movies">Movies</string>
     <string name="media_shows">Shows</string>
     <string name="media_videogames">Videogames</string>

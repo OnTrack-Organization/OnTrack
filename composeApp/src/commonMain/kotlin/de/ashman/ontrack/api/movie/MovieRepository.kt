@@ -29,9 +29,9 @@ class MovieRepository(
         return safeApiCall {
             val response: MovieDto = httpClient.get("movie/$id").body()
 
-            val similar = fetchSimilar(id).getOrNull()
+            val similar = fetchSimilar(id).getOrNull()?.takeIf { it.isNotEmpty() }
 
-            response.toDomain().copy(similarMovies = similar)
+           response.toDomain().copy(similarMovies = similar)
         }
     }
 
