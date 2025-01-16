@@ -4,6 +4,9 @@
     <string name="google_login">Continue with Google</string>
 
     <string name="track_button">Track</string>
+    <string name="continue_button">Continue</string>
+    <string name="review_label">Review the media...</string>
+    <string name="save_button">Save</string>
 
     <string name="media_movies">Movies</string>
     <string name="media_shows">Shows</string>

@@ -12,8 +12,10 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.util.TrackStatus
-import de.ashman.ontrack.util.toEntity
+import de.ashman.ontrack.entity.MediaEntity
+import de.ashman.ontrack.domain.sub.TrackStatus
+import de.ashman.ontrack.domain.sub.TrackStatusEnum
+import de.ashman.ontrack.domain.sub.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +23,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class DetailViewModel(
     private val movieRepository: MovieRepository,
     private val showRepository: ShowRepository,
@@ -82,19 +88,31 @@ class DetailViewModel(
         )
     }
 
-    fun updateTrackStatus(trackStatus: TrackStatus) {
-        _uiState.update { it.copy(trackStatus = trackStatus) }
-        Logger.d { "UI TrackStatus updated: $trackStatus" }
-    }
+    fun saveTrack(status: TrackStatusEnum, review: String) = viewModelScope.launch {
+        val selectedMedia = _uiState.value.selectedMedia
+        if (selectedMedia == null) return@launch
 
-    fun onConfirmTrackStatus() = viewModelScope.launch {
-        val updatedMedia = _uiState.value.selectedMedia
-        val updatedTrackStatus = _uiState.value.trackStatus
-
-        mediaService.updateTrackStatus(
-            mediaId = updatedMedia!!.id,
-            status = updatedTrackStatus!!.toEntity()
+        val trackStatus = TrackStatus(
+            id = Uuid.random().toString(),
+            timestamp = Clock.System.now().toEpochMilliseconds(),
+            status = status,
+            review = review,
+            rating = null,
         )
+
+        _uiState.update { it.copy(trackStatus = trackStatus) }
+
+        val mediaEntity = MediaEntity(
+            id = selectedMedia.id,
+            name = selectedMedia.name,
+            coverUrl = selectedMedia.coverUrl,
+            type = selectedMedia.mediaType,
+            trackStatus = trackStatus.toEntity(),
+        )
+
+        mediaService.saveMediaEntity(mediaEntity)
+
+        Logger.d { "MediaEntity saved with updated TrackStatus: $mediaEntity" }
     }
 }
 

@@ -7,11 +7,13 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,8 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.util.TrackStatus
-import de.ashman.ontrack.util.TrackStatusEnum
+import de.ashman.ontrack.domain.sub.TrackStatusEnum
 import ontrack.composeapp.generated.resources.*
 import ontrack.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.StringResource
@@ -33,86 +34,76 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TrackBottomSheetContent(
     mediaType: MediaType,
-    onStatusSelected: (TrackStatusEnum) -> Unit,
+    onSaveTrackStatus: (TrackStatusEnum, String) -> Unit,
 ) {
-    // TODO den TrackStatus hier bauen und dann weiterreichen
-    TrackStatusButtons(
-        mediaType = mediaType,
-        onStatusSelected = onStatusSelected,
-    )
+    var currentContent by remember { mutableStateOf(TrackBottomSheetContent.TRACK_STATUS) }
+    var selectedStatus by remember { mutableStateOf<TrackStatusEnum?>(null) }
+    var reviewText by remember { mutableStateOf("") }
+
+    when (currentContent) {
+        TrackBottomSheetContent.TRACK_STATUS -> TrackStatusContent(
+            mediaType = mediaType,
+            selectedStatus = selectedStatus,
+            onStatusSelected = { selectedStatus = it },
+            onContinue = { currentContent = TrackBottomSheetContent.REVIEW },
+        )
+
+        TrackBottomSheetContent.REVIEW -> ReviewContent(
+            reviewText = reviewText,
+            onReviewChange = { reviewText = it },
+            onSave = {
+                selectedStatus?.let { onSaveTrackStatus(it, reviewText) }
+            },
+        )
+    }
 }
 
 @Composable
-fun TrackStatusButtons(
+fun TrackStatusContent(
     mediaType: MediaType,
+    selectedStatus: TrackStatusEnum?,
     onStatusSelected: (TrackStatusEnum) -> Unit,
+    onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedStatus by remember { mutableStateOf<TrackStatusEnum>(TrackStatusEnum.NONE) }
-
     Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = modifier.fillMaxWidth().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        TrackStatusButton(
-            onClick = {
-                selectedStatus = TrackStatusEnum.CONSUMING
-                onStatusSelected(selectedStatus)
-            },
-            icon = Icons.Outlined.Visibility,
-            filledIcon = Icons.Filled.Visibility,
-            labelRes = getConsumingLabel(mediaType),
-            subLabelRes = getConsumingSublabel(mediaType),
-            isSelected = selectedStatus == TrackStatusEnum.CONSUMING
-        )
+        TrackStatusEnum.entries.forEach { status ->
+            TrackStatusButton(
+                onClick = { onStatusSelected(status) },
+                icon = getStatusIcon(status),
+                filledIcon = getFilledStatusIcon(status),
+                label = getLabelForStatus(mediaType, status),
+                subLabel = getSublabelForStatus(mediaType, status),
+                isSelected = selectedStatus == status,
+            )
+        }
 
-        TrackStatusButton(
-            onClick = {
-                selectedStatus = TrackStatusEnum.CONSUMED
-                onStatusSelected(selectedStatus)
-            },
-            icon = Icons.Outlined.CheckCircle,
-            filledIcon = Icons.Filled.CheckCircle,
-            labelRes = getConsumedLabel(mediaType),
-            subLabelRes = getConsumedSublabel(mediaType),
-            isSelected = selectedStatus == TrackStatusEnum.CONSUMED
-        )
-
-        TrackStatusButton(
-            onClick = {
-                selectedStatus = TrackStatusEnum.DROPPED
-                onStatusSelected(selectedStatus)
-            },
-            icon = Icons.Outlined.Cancel,
-            filledIcon = Icons.Filled.Cancel,
-            labelRes = getDroppedLabel(mediaType),
-            subLabelRes = getDroppedSublabel(mediaType),
-            isSelected = selectedStatus == TrackStatusEnum.DROPPED
-        )
-
-        TrackStatusButton(
-            onClick = {
-                selectedStatus = TrackStatusEnum.CATALOG
-                onStatusSelected(selectedStatus)
-            },
-            icon = Icons.Outlined.BookmarkBorder,
-            filledIcon = Icons.Filled.Bookmark,
-            labelRes = getCatalogLabel(mediaType),
-            subLabelRes = getCatalogSublabel(mediaType),
-            isSelected = selectedStatus == TrackStatusEnum.CATALOG
-        )
+        Button(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            onClick = { onContinue() },
+        ) {
+            Icon(imageVector = Icons.Default.Check, contentDescription = "Continue Icon")
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = stringResource(Res.string.continue_button),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
     }
 }
 
 @Composable
 fun TrackStatusButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     icon: ImageVector,
     filledIcon: ImageVector,
-    labelRes: StringResource,
-    subLabelRes: StringResource,
+    label: StringResource,
+    subLabel: StringResource,
     isSelected: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -130,16 +121,16 @@ fun TrackStatusButton(
             Icon(
                 modifier = Modifier.size(32.dp),
                 imageVector = if (isSelected) filledIcon else icon,
-                contentDescription = stringResource(labelRes),
+                contentDescription = stringResource(label),
             )
             Column {
                 Text(
-                    text = stringResource(labelRes),
+                    text = stringResource(label),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = stringResource(subLabelRes),
+                    text = stringResource(subLabel),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -147,74 +138,149 @@ fun TrackStatusButton(
     }
 }
 
-private fun getConsumingLabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_consuming_label
-    MediaType.BOOK -> Res.string.book_status_consuming_label
-    MediaType.SHOW -> Res.string.show_status_consuming_label
-    MediaType.VIDEOGAME -> Res.string.videogame_status_consuming_label
-    MediaType.BOARDGAME -> Res.string.boardgame_status_consuming_label
-    MediaType.ALBUM -> Res.string.album_status_consuming_label
+@Composable
+fun ReviewContent(
+    reviewText: String,
+    onReviewChange: (String) -> Unit,
+    onSave: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        TextField(
+            value = reviewText,
+            onValueChange = onReviewChange,
+            label = { Text(stringResource(Res.string.review_label)) },
+        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onSave,
+        ) {
+            Icon(imageVector = Icons.Default.Save, contentDescription = "Save Icon")
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(text = stringResource(Res.string.save_button))
+        }
+    }
 }
 
-private fun getConsumingSublabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_consuming_sublabel
-    MediaType.BOOK -> Res.string.book_status_consuming_sublabel
-    MediaType.SHOW -> Res.string.show_status_consuming_sublabel
-    MediaType.VIDEOGAME -> Res.string.videogame_status_consuming_sublabel
-    MediaType.BOARDGAME -> Res.string.boardgame_status_consuming_sublabel
-    MediaType.ALBUM -> Res.string.album_status_consuming_sublabel
+@Composable
+fun getLabelForStatus(mediaType: MediaType, status: TrackStatusEnum): StringResource {
+    return when (mediaType) {
+        MediaType.MOVIE -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.movie_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.movie_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.movie_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.movie_status_catalog_label
+        }
+
+        MediaType.BOOK -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.book_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.book_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.book_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.book_status_catalog_label
+        }
+
+        MediaType.SHOW -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.show_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.show_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.show_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.show_status_catalog_label
+        }
+
+        MediaType.VIDEOGAME -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.videogame_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.videogame_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.videogame_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.videogame_status_catalog_label
+        }
+
+        MediaType.BOARDGAME -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.boardgame_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.boardgame_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.boardgame_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.boardgame_status_catalog_label
+        }
+
+        MediaType.ALBUM -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.album_status_consuming_label
+            TrackStatusEnum.CONSUMED -> Res.string.album_status_consumed_label
+            TrackStatusEnum.DROPPED -> Res.string.album_status_dropped_label
+            TrackStatusEnum.CATALOG -> Res.string.album_status_catalog_label
+        }
+    }
 }
 
-private fun getConsumedLabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_consumed_label
-    MediaType.BOOK -> Res.string.book_status_consumed_label
-    MediaType.SHOW -> Res.string.show_status_consumed_label
-    MediaType.VIDEOGAME -> Res.string.videogame_status_consumed_label
-    MediaType.BOARDGAME -> Res.string.boardgame_status_consumed_label
-    MediaType.ALBUM -> Res.string.album_status_consumed_label
+@Composable
+fun getSublabelForStatus(mediaType: MediaType, status: TrackStatusEnum): StringResource {
+    return when (mediaType) {
+        MediaType.MOVIE -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.movie_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.movie_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.movie_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.movie_status_catalog_sublabel
+        }
+
+        MediaType.BOOK -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.book_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.book_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.book_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.book_status_catalog_sublabel
+        }
+
+        MediaType.SHOW -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.show_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.show_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.show_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.show_status_catalog_sublabel
+        }
+
+        MediaType.VIDEOGAME -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.videogame_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.videogame_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.videogame_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.videogame_status_catalog_sublabel
+        }
+
+        MediaType.BOARDGAME -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.boardgame_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.boardgame_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.boardgame_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.boardgame_status_catalog_sublabel
+        }
+
+        MediaType.ALBUM -> when (status) {
+            TrackStatusEnum.CONSUMING -> Res.string.album_status_consuming_sublabel
+            TrackStatusEnum.CONSUMED -> Res.string.album_status_consumed_sublabel
+            TrackStatusEnum.DROPPED -> Res.string.album_status_dropped_sublabel
+            TrackStatusEnum.CATALOG -> Res.string.album_status_catalog_sublabel
+        }
+    }
 }
 
-private fun getConsumedSublabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_consumed_sublabel
-    MediaType.BOOK -> Res.string.book_status_consumed_sublabel
-    MediaType.SHOW -> Res.string.show_status_consumed_sublabel
-    MediaType.VIDEOGAME -> Res.string.videogame_status_consumed_sublabel
-    MediaType.BOARDGAME -> Res.string.boardgame_status_consumed_sublabel
-    MediaType.ALBUM -> Res.string.album_status_consumed_sublabel
+@Composable
+fun getStatusIcon(status: TrackStatusEnum): ImageVector {
+    return when (status) {
+        TrackStatusEnum.CONSUMING -> Icons.Outlined.Visibility
+        TrackStatusEnum.CONSUMED -> Icons.Outlined.CheckCircle
+        TrackStatusEnum.DROPPED -> Icons.Outlined.Cancel
+        TrackStatusEnum.CATALOG -> Icons.Outlined.BookmarkBorder
+    }
 }
 
-private fun getDroppedLabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_dropped_label
-    MediaType.BOOK -> Res.string.book_status_dropped_label
-    MediaType.SHOW -> Res.string.show_status_dropped_label
-    MediaType.VIDEOGAME -> Res.string.videogame_status_dropped_label
-    MediaType.BOARDGAME -> Res.string.boardgame_status_dropped_label
-    MediaType.ALBUM -> Res.string.album_status_dropped_label
+@Composable
+fun getFilledStatusIcon(status: TrackStatusEnum): ImageVector {
+    return when (status) {
+        TrackStatusEnum.CONSUMING -> Icons.Filled.Visibility
+        TrackStatusEnum.CONSUMED -> Icons.Filled.CheckCircle
+        TrackStatusEnum.DROPPED -> Icons.Filled.Cancel
+        TrackStatusEnum.CATALOG -> Icons.Filled.Bookmark
+    }
 }
 
-private fun getDroppedSublabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_dropped_sublabel
-    MediaType.BOOK -> Res.string.book_status_dropped_sublabel
-    MediaType.SHOW -> Res.string.show_status_dropped_sublabel
-    MediaType.VIDEOGAME -> Res.string.videogame_status_dropped_sublabel
-    MediaType.BOARDGAME -> Res.string.boardgame_status_dropped_sublabel
-    MediaType.ALBUM -> Res.string.album_status_dropped_sublabel
-}
-
-private fun getCatalogLabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_catalog_label
-    MediaType.BOOK -> Res.string.book_status_catalog_label
-    MediaType.SHOW -> Res.string.show_status_catalog_label
-    MediaType.VIDEOGAME -> Res.string.videogame_status_catalog_label
-    MediaType.BOARDGAME -> Res.string.boardgame_status_catalog_label
-    MediaType.ALBUM -> Res.string.album_status_catalog_label
-}
-
-private fun getCatalogSublabel(mediaType: MediaType): StringResource = when (mediaType) {
-    MediaType.MOVIE -> Res.string.movie_status_catalog_sublabel
-    MediaType.BOOK -> Res.string.book_status_catalog_sublabel
-    MediaType.SHOW -> Res.string.show_status_catalog_sublabel
-    MediaType.VIDEOGAME -> Res.string.videogame_status_catalog_sublabel
-    MediaType.BOARDGAME -> Res.string.boardgame_status_catalog_sublabel
-    MediaType.ALBUM -> Res.string.album_status_catalog_sublabel
+enum class TrackBottomSheetContent {
+    TRACK_STATUS,
+    REVIEW,
 }

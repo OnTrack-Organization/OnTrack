@@ -1,7 +1,7 @@
 package de.ashman.ontrack.user
 
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.util.MediaEntity
+import de.ashman.ontrack.entity.MediaEntity
 import kotlinx.serialization.Serializable
 
 data class User(

@@ -58,7 +58,7 @@ import de.ashman.ontrack.features.detail.ui.MediaTitle
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.DEFAULT_POSTER_RATIO
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.util.TrackStatus
+import de.ashman.ontrack.domain.sub.TrackStatusEnum
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
 import ontrack.composeapp.generated.resources.track_button
@@ -89,8 +89,9 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
-                onConfirmTrackStatus = { viewModel.onConfirmTrackStatus() },
-                onUpdateTrackStatus = { viewModel.updateTrackStatus(it) },
+                onSaveTrackStatus = { status, review ->
+                    viewModel.saveTrack(status, review)
+                }
             )
         }
     }
@@ -101,8 +102,7 @@ fun DetailScreen(
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    onConfirmTrackStatus: () -> Unit = {},
-    onUpdateTrackStatus: (TrackStatus) -> Unit = {},
+    onSaveTrackStatus: (TrackStatusEnum, String) -> Unit,
 ) {
     media?.let {
         val scrollState = rememberScrollState()
@@ -152,7 +152,7 @@ fun SuccessContent(
                 }
 
                 Button(
-                    modifier = Modifier.fillMaxWidth().height(48.dp).padding(horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     onClick = { showBottomSheet = true },
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = "Track Icon")
@@ -193,10 +193,12 @@ fun SuccessContent(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
             ) {
-                // TODO TrackStatusBottomSheet
                 TrackBottomSheetContent(
                     mediaType = media.mediaType,
-                    onStatusSelected = {},
+                    onSaveTrackStatus = { status, review ->
+                        onSaveTrackStatus(status, review)
+                        showBottomSheet = false
+                    }
                 )
             }
         }

@@ -13,6 +13,7 @@ sealed class Media(): CommonParcelable {
     abstract val name: String
     abstract val coverUrl: String
     abstract val releaseYear: String?
+    // TODO maybe add the TrackStatus here so that it is accessible everywhere in the app
 
     abstract fun getMainInfoItems(): List<String>
 }
