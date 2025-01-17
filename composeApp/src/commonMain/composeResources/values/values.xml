@@ -3,6 +3,10 @@
     <string name="welcome">Welcome to OnTrack!</string>
     <string name="google_login">Continue with Google</string>
 
+    <string name="feed_nav_title">Feed</string>
+    <string name="search_nav_title">Search</string>
+    <string name="shelf_nav_title">Shelf</string>
+
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
     <string name="review_label">Review the media...</string>

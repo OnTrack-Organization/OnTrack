@@ -24,6 +24,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import de.ashman.ontrack.navigation.BottomNavItem
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +44,8 @@ fun OnTrackScreen(
     }
 
     val detailBaseRoute = "de.ashman.ontrack.navigation.Route.Detail"
-    topBarState.value = currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
+    topBarState.value =
+        currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
 
     // TODO fix animation
     Scaffold(
@@ -86,10 +88,12 @@ fun BottomAppBar(
                 onClick = {
                     if (!isSelected) navController.navigate(route.route)
                 },
-                icon = { if (isSelected) route.filledIcon() else route.icon() },
+                icon = {
+                    Icon(imageVector = if (isSelected) route.filledIcon() else route.icon(), contentDescription = null)
+                },
                 label = {
                     Text(
-                        text = route.title,
+                        text = stringResource(route.title),
                         softWrap = false,
                         fontWeight = FontWeight.Bold,
                     )
