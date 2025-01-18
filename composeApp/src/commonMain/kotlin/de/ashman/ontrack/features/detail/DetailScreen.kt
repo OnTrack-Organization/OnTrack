@@ -128,7 +128,7 @@ fun SuccessContent(
 
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 // TODO remove when we have more content

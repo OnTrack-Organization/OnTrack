@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.track
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,7 +43,13 @@ fun TrackBottomSheetContent(
             mediaType = mediaType,
             selectedStatusType = selectedTrackStatus,
             onSelectTrackStatusType = { selectedTrackStatus = it },
-            onContinue = { currentContent = TrackBottomSheetContent.REVIEW },
+            onContinue = {
+                if (selectedTrackStatus != TrackStatusType.CATALOG) {
+                    currentContent = TrackBottomSheetContent.REVIEW
+                } else {
+                    selectedTrackStatus?.let { onSaveTrackStatus(it, reviewText) }
+                }
+            },
         )
 
         TrackBottomSheetContent.REVIEW -> ReviewContent(
@@ -80,7 +87,8 @@ fun TrackStatusContent(
         }
 
         OnTrackButton(
-            text = Res.string.continue_button,
+            text = if (selectedStatusType == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
+            icon = if (selectedStatusType == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
             onClick = onContinue,
         )
     }
