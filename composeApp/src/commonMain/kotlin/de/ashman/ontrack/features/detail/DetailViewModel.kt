@@ -9,13 +9,22 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.db.MediaService
+import de.ashman.ontrack.db.entity.MediaEntity
+import de.ashman.ontrack.db.entity.TrackStatusEntity
+import de.ashman.ontrack.domain.Album
+import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.entity.MediaEntity
+import de.ashman.ontrack.domain.Movie
+import de.ashman.ontrack.domain.Show
+import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.addTrackStatus
 import de.ashman.ontrack.domain.sub.TrackStatus
 import de.ashman.ontrack.domain.sub.TrackStatusType
+import de.ashman.ontrack.domain.sub.toDomain
 import de.ashman.ontrack.domain.sub.toEntity
+import de.ashman.ontrack.user.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -51,28 +60,35 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun fetchDetails(media: Media) = viewModelScope.launch {
-        if (_uiState.value.selectedMedia?.id != media.id) {
+    fun resetSelectedMedia(id: String) {
+        if (_uiState.value.selectedMedia?.id != id) {
             _uiState.update { it.copy(selectedMedia = null) }
         }
+    }
+
+    fun fetchDetails(media: Media) = viewModelScope.launch {
+        resetSelectedMedia(media.id)
 
         _uiState.update { it.copy(detailResultState = DetailResultState.Loading) }
 
-        val result = when (media.mediaType) {
-            MediaType.MOVIE -> movieRepository.fetchDetails(media.id)
-            MediaType.SHOW -> showRepository.fetchDetails(media.id)
-            MediaType.BOOK -> bookRepository.fetchBookDescription(media as Book)
-            MediaType.VIDEOGAME -> videogameRepository.fetchDetails(media.id)
-            MediaType.BOARDGAME -> boardgameRepository.fetchDetails(media.id)
-            MediaType.ALBUM -> albumRepository.fetchDetails(media.id)
+        val dbResult = mediaService.getUserMediaById(media.id)
+        val apiResult = when (media) {
+            is Movie -> movieRepository.fetchDetails(media.id)
+            is Show -> showRepository.fetchDetails(media.id)
+            is Book -> bookRepository.fetchBookDescription(media)
+            is Videogame -> videogameRepository.fetchDetails(media.id)
+            is Boardgame -> boardgameRepository.fetchDetails(media.id)
+            is Album -> albumRepository.fetchDetails(media.id)
         }
 
-        result.fold(
+        apiResult.fold(
             onSuccess = { result ->
+                val enrichedResult = result.addTrackStatus(dbResult?.trackStatus?.toDomain())
+
                 _uiState.update {
                     it.copy(
                         detailResultState = DetailResultState.Success,
-                        selectedMedia = result,
+                        selectedMedia = enrichedResult
                     )
                 }
             },
@@ -90,50 +106,34 @@ class DetailViewModel(
 
     fun saveTrack(status: TrackStatusType, review: String) = viewModelScope.launch {
         val selectedMedia = _uiState.value.selectedMedia
-        if (selectedMedia == null) return@launch
 
-        val trackStatus = TrackStatus(
-            id = Uuid.random().toString(),
-            timestamp = Clock.System.now().toEpochMilliseconds(),
-            status = status,
-            review = review,
-            rating = null,
-        )
+        selectedMedia?.let {
+            val trackStatus = TrackStatusEntity(
+                id = Uuid.random().toString(),
+                timestamp = Clock.System.now().toEpochMilliseconds(),
+                status = status,
+                review = review,
+                rating = null,
+            )
 
-        // TODO changeeeee
-        _uiState.update { it.copy(trackStatus = trackStatus) }
+            val mediaEntity = MediaEntity(
+                id = selectedMedia.id,
+                name = selectedMedia.name,
+                coverUrl = selectedMedia.coverUrl,
+                type = selectedMedia.mediaType,
+                trackStatus = trackStatus,
+            )
 
-        val mediaEntity = MediaEntity(
-            id = selectedMedia.id,
-            name = selectedMedia.name,
-            coverUrl = selectedMedia.coverUrl,
-            type = selectedMedia.mediaType,
-            trackStatus = trackStatus.toEntity(),
-        )
+            mediaService.saveMedia(mediaEntity)
 
-        mediaService.saveMediaEntity(mediaEntity)
-
-        Logger.d { "MediaEntity saved with updated TrackStatus: $mediaEntity" }
-    }
-
-    fun selectTrackStatusType(statusType: TrackStatusType) {
-        // TODO change this ugly ass logic
-        _uiState.update { it.copy(trackStatus = it.trackStatus?.copy(status = statusType) ?: TrackStatus(
-            id = "",
-            timestamp = Clock.System.now().toEpochMilliseconds(),
-            status = statusType,
-            review = "",
-            rating = null
-        )) }
-
+            _uiState.update { it.copy(selectedMedia = selectedMedia.addTrackStatus(trackStatus.toDomain())) }
+        }
     }
 }
 
 data class DetailUiState(
     // TODO probably save something else here, like MediaUi
     val selectedMedia: Media? = null,
-    // TODO remove from here because right now it would be the same for all media
-    val trackStatus: TrackStatus? = null,
     val detailResultState: DetailResultState = DetailResultState.Loading,
     val errorMessage: String? = null,
 )

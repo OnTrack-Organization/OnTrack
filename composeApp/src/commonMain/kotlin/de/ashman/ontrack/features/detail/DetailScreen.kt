@@ -73,7 +73,7 @@ fun DetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(media.id) {
-        viewModel.fetchDetails(media = media)
+        viewModel.fetchDetails(media)
     }
 
     when (uiState.detailResultState) {
@@ -88,10 +88,7 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
-                trackStatusType = uiState.trackStatus?.status,
-                onSelectTrackStatusType = { status ->
-                    viewModel.selectTrackStatusType(status)
-                },
+                trackStatus = uiState.selectedMedia?.trackStatus?.status,
                 onSaveTrackStatus = { status, review ->
                     viewModel.saveTrack(status, review)
                 }
@@ -105,8 +102,7 @@ fun DetailScreen(
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    trackStatusType: TrackStatusType?,
-    onSelectTrackStatusType: (TrackStatusType) -> Unit,
+    trackStatus: TrackStatusType?,
     onSaveTrackStatus: (TrackStatusType, String) -> Unit,
 ) {
     media?.let {
@@ -126,7 +122,7 @@ fun SuccessContent(
             StickyMainContent(
                 imageModifier = Modifier.height(size),
                 media = media,
-                trackStatus = trackStatusType,
+                trackStatus = trackStatus,
                 onClickTrack = { showBottomSheet = true },
             )
 
@@ -156,8 +152,7 @@ fun SuccessContent(
             ) {
                 TrackBottomSheetContent(
                     mediaType = media.mediaType,
-                    selectedTrackStatusType = trackStatusType,
-                    onSelectTrackStatusType = onSelectTrackStatusType,
+                    currentTrackStatus = trackStatus,
                     onSaveTrackStatus = { status, review ->
                         onSaveTrackStatus(status, review)
                         showBottomSheet = false

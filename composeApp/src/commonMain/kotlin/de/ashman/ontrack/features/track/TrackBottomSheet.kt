@@ -30,18 +30,18 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TrackBottomSheetContent(
     mediaType: MediaType,
-    selectedTrackStatusType: TrackStatusType? = null,
-    onSelectTrackStatusType: (TrackStatusType) -> Unit,
+    currentTrackStatus: TrackStatusType?,
     onSaveTrackStatus: (TrackStatusType, String) -> Unit,
 ) {
     var currentContent by remember { mutableStateOf(TrackBottomSheetContent.TRACK_STATUS) }
     var reviewText by remember { mutableStateOf("") }
+    var selectedTrackStatus by remember { mutableStateOf<TrackStatusType?>(currentTrackStatus) }
 
     when (currentContent) {
         TrackBottomSheetContent.TRACK_STATUS -> TrackStatusContent(
             mediaType = mediaType,
-            selectedStatusType = selectedTrackStatusType,
-            onSelectTrackStatusType = onSelectTrackStatusType,
+            selectedStatusType = selectedTrackStatus,
+            onSelectTrackStatusType = { selectedTrackStatus = it },
             onContinue = { currentContent = TrackBottomSheetContent.REVIEW },
         )
 
@@ -49,7 +49,7 @@ fun TrackBottomSheetContent(
             reviewText = reviewText,
             onReviewChange = { reviewText = it },
             onSave = {
-                selectedTrackStatusType?.let { onSaveTrackStatus(it, reviewText) }
+                selectedTrackStatus?.let { onSaveTrackStatus(it, reviewText) }
             },
         )
     }

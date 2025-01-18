@@ -1,6 +1,7 @@
 package de.ashman.ontrack.domain
 
 import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.sub.TrackStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,6 +11,7 @@ data class Book(
     override val name: String,
     override val coverUrl: String,
     override val releaseYear: String?,
+    override val trackStatus: TrackStatus? = null,
     val description: String?,
     val authorKeys: List<String>? = null,
     val authors: List<String>? = null,

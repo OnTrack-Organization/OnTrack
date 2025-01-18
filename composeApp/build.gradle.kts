@@ -67,8 +67,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
+            implementation(libs.firebase.gitlive.common)
             implementation(libs.firebase.gitlive.auth)
-            implementation(libs.firebase.gitlive.database)
+            implementation(libs.firebase.gitlive.firestore)
+
             implementation(libs.kmpauth.google)
             implementation(libs.kmpauth.firebase)
             implementation(libs.kmpauth.uihelper)

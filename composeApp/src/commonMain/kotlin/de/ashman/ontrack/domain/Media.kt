@@ -14,8 +14,19 @@ sealed class Media(): CommonParcelable {
     abstract val name: String
     abstract val coverUrl: String
     abstract val releaseYear: String?
-    //abstract val trackStatus: TrackStatus?
+    abstract val trackStatus: TrackStatus?
     // TODO maybe add the TrackStatus here so that it is accessible everywhere in the app
 
     abstract fun getMainInfoItems(): List<String>
+}
+
+fun Media.addTrackStatus(trackStatus: TrackStatus?): Media {
+    return when (this) {
+        is Movie -> this.copy(trackStatus = trackStatus)
+        is Show -> this.copy(trackStatus = trackStatus)
+        is Book -> this.copy(trackStatus = trackStatus)
+        is Videogame -> this.copy(trackStatus = trackStatus)
+        is Boardgame -> this.copy(trackStatus = trackStatus)
+        is Album -> this.copy(trackStatus = trackStatus)
+    }
 }

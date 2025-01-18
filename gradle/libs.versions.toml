@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.0"
-androidx-activityCompose = "1.9.3"
+androidx-activityCompose = "1.10.0"
 androidx-lifecycle = "2.8.4"
 coil3 = "3.0.0-rc01"
 compose-plugin = "1.7.3"
@@ -27,26 +27,27 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
-coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
-
-# KMP Auth
+# Firebase
 kmpauth-firebase = { module = "io.github.mirzemehdi:kmpauth-firebase", version.ref = "kmpauthGoogle" }
 kmpauth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpauthGoogle" }
 kmpauth-uihelper = { module = "io.github.mirzemehdi:kmpauth-uihelper", version.ref = "kmpauthGoogle" }
 
 firebase-gitlive-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseSdk" }
-firebase-gitlive-database = { module = "dev.gitlive:firebase-database", version.ref = "firebaseSdk" }
+firebase-gitlive-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebaseSdk" }
+firebase-gitlive-common = { module = "dev.gitlive:firebase-common", version.ref = "firebaseSdk" }
 
 # Koin
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 
-# Ktor
+# Network
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 
 # Serialization
 ktor-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

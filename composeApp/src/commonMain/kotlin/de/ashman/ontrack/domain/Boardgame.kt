@@ -1,6 +1,7 @@
 package de.ashman.ontrack.domain
 
 import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.sub.TrackStatus
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
@@ -12,6 +13,7 @@ data class Boardgame(
     override val name: String,
     override val coverUrl: String,
     override val releaseYear: String? = null,
+    override val trackStatus: TrackStatus? = null,
     val description: String?,
     val boardgameType: String? = null,
     val minPlayers: String? = null,

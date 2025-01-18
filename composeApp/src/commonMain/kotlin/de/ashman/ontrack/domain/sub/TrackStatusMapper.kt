@@ -1,6 +1,6 @@
 package de.ashman.ontrack.domain.sub
 
-import de.ashman.ontrack.entity.TrackStatusEntity
+import de.ashman.ontrack.db.entity.TrackStatusEntity
 
 fun TrackStatus.toEntity() = TrackStatusEntity(
     id = id,
