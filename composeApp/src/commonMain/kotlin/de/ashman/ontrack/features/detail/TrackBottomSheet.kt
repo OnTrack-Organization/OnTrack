@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.domain.sub.TrackStatusEnum
+import de.ashman.ontrack.util.OnTrackButton
 import ontrack.composeapp.generated.resources.*
 import ontrack.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.StringResource
@@ -71,27 +72,21 @@ fun TrackStatusContent(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TrackStatusEnum.entries.forEach { status ->
+            val isSelected = selectedStatus == status
+
             TrackStatusButton(
                 onClick = { onStatusSelected(status) },
-                icon = getStatusIcon(status),
-                filledIcon = getFilledStatusIcon(status),
+                icon = getStatusIcon(status, isSelected),
                 label = getLabelForStatus(mediaType, status),
                 subLabel = getSublabelForStatus(mediaType, status),
                 isSelected = selectedStatus == status,
             )
         }
 
-        Button(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            onClick = { onContinue() },
-        ) {
-            Icon(imageVector = Icons.Default.Check, contentDescription = "Continue Icon")
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = stringResource(Res.string.continue_button),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
+        OnTrackButton(
+            text = Res.string.continue_button,
+            onClick = onContinue,
+        )
     }
 }
 
@@ -99,7 +94,6 @@ fun TrackStatusContent(
 fun TrackStatusButton(
     onClick: () -> Unit,
     icon: ImageVector,
-    filledIcon: ImageVector,
     label: StringResource,
     subLabel: StringResource,
     isSelected: Boolean,
@@ -120,7 +114,7 @@ fun TrackStatusButton(
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),
-                imageVector = if (isSelected) filledIcon else icon,
+                imageVector = icon,
                 contentDescription = stringResource(label),
             )
             Column {
@@ -155,14 +149,11 @@ fun ReviewContent(
             onValueChange = onReviewChange,
             label = { Text(stringResource(Res.string.review_label)) },
         )
-        Button(
-            modifier = Modifier.fillMaxWidth(),
+        OnTrackButton(
+            text = Res.string.save_button,
+            icon = Icons.Default.Save,
             onClick = onSave,
-        ) {
-            Icon(imageVector = Icons.Default.Save, contentDescription = "Save Icon")
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(text = stringResource(Res.string.save_button))
-        }
+        )
     }
 }
 
@@ -261,22 +252,12 @@ fun getSublabelForStatus(mediaType: MediaType, status: TrackStatusEnum): StringR
 }
 
 @Composable
-fun getStatusIcon(status: TrackStatusEnum): ImageVector {
+fun getStatusIcon(status: TrackStatusEnum, isFilled: Boolean): ImageVector {
     return when (status) {
-        TrackStatusEnum.CONSUMING -> Icons.Outlined.Visibility
-        TrackStatusEnum.CONSUMED -> Icons.Outlined.CheckCircle
-        TrackStatusEnum.DROPPED -> Icons.Outlined.Cancel
-        TrackStatusEnum.CATALOG -> Icons.Outlined.BookmarkBorder
-    }
-}
-
-@Composable
-fun getFilledStatusIcon(status: TrackStatusEnum): ImageVector {
-    return when (status) {
-        TrackStatusEnum.CONSUMING -> Icons.Filled.Visibility
-        TrackStatusEnum.CONSUMED -> Icons.Filled.CheckCircle
-        TrackStatusEnum.DROPPED -> Icons.Filled.Cancel
-        TrackStatusEnum.CATALOG -> Icons.Filled.Bookmark
+        TrackStatusEnum.CONSUMING -> if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
+        TrackStatusEnum.CONSUMED -> if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
+        TrackStatusEnum.DROPPED -> if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel
+        TrackStatusEnum.CATALOG -> if (isFilled) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
     }
 }
 

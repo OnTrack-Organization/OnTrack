@@ -47,26 +47,11 @@ fun OnTrackScreen(
     topBarState.value =
         currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
 
-    // TODO fix animation
     Scaffold(
         topBar = {
-            /*AnimatedVisibility(
-                visible = topBarState.value,
-                enter = slideInVertically(initialOffsetY = { -it }),
-                exit = slideOutVertically(targetOffsetY = { -it }),
-            ) {
-                DetailTopBar(navController, icon)
-            }*/
             if (topBarState.value) DetailTopBar(navController, icon)
         },
         bottomBar = {
-            /*AnimatedVisibility(
-                visible = bottomBarState.value,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
-            ) {
-                BottomAppBar(navController, currentRoute)
-            }*/
             if (bottomBarState.value) BottomAppBar(navController, currentRoute)
         }
     ) { innerPadding ->

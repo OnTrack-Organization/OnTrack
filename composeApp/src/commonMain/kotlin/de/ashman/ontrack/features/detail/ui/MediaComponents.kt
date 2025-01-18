@@ -5,9 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -59,8 +59,7 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.util.PosterSize
+import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
@@ -103,10 +102,10 @@ fun MediaPoster(
     title: String? = null,
     coverUrl: String?,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    posterSize: PosterSize = PosterSize.DEFAULT,
     onClickItem: (() -> Unit)? = null,
 ) {
     Column(
+        modifier = Modifier.width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -115,7 +114,7 @@ fun MediaPoster(
             contentScale = ContentScale.Crop,
             contentDescription = "Cover",
             modifier = modifier
-                .size(width = posterSize.width, height = posterSize.height)
+                .aspectRatio(2f / 3f)
                 .clip(shape = RoundedCornerShape(16.dp))
                 .let { if (onClickItem != null) it.clickable { onClickItem() } else it }
         ) {
@@ -162,7 +161,6 @@ fun MediaPoster(
         MediaTitle(
             title = title,
             textStyle = textStyle,
-            modifier = Modifier.width(posterSize.width)
         )
     }
 }
@@ -209,10 +207,10 @@ fun MediaRow(
             ) {
                 items(otherMedia) {
                     MediaPoster(
+                        modifier = Modifier.height(SMALL_POSTER_HEIGHT),
                         title = it.name,
                         coverUrl = it.coverUrl,
                         textStyle = MaterialTheme.typography.titleSmall,
-                        posterSize = PosterSize.SMALL,
                         onClickItem = { onClickItem(it.id) }
                     )
                 }
