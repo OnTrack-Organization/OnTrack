@@ -14,7 +14,7 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.entity.MediaEntity
 import de.ashman.ontrack.domain.sub.TrackStatus
-import de.ashman.ontrack.domain.sub.TrackStatusEnum
+import de.ashman.ontrack.domain.sub.TrackStatusType
 import de.ashman.ontrack.domain.sub.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -88,7 +88,7 @@ class DetailViewModel(
         )
     }
 
-    fun saveTrack(status: TrackStatusEnum, review: String) = viewModelScope.launch {
+    fun saveTrack(status: TrackStatusType, review: String) = viewModelScope.launch {
         val selectedMedia = _uiState.value.selectedMedia
         if (selectedMedia == null) return@launch
 
@@ -100,6 +100,7 @@ class DetailViewModel(
             rating = null,
         )
 
+        // TODO changeeeee
         _uiState.update { it.copy(trackStatus = trackStatus) }
 
         val mediaEntity = MediaEntity(
@@ -114,10 +115,24 @@ class DetailViewModel(
 
         Logger.d { "MediaEntity saved with updated TrackStatus: $mediaEntity" }
     }
+
+    fun selectTrackStatusType(statusType: TrackStatusType) {
+        // TODO change this ugly ass logic
+        _uiState.update { it.copy(trackStatus = it.trackStatus?.copy(status = statusType) ?: TrackStatus(
+            id = "",
+            timestamp = Clock.System.now().toEpochMilliseconds(),
+            status = statusType,
+            review = "",
+            rating = null
+        )) }
+
+    }
 }
 
 data class DetailUiState(
+    // TODO probably save something else here, like MediaUi
     val selectedMedia: Media? = null,
+    // TODO remove from here because right now it would be the same for all media
     val trackStatus: TrackStatus? = null,
     val detailResultState: DetailResultState = DetailResultState.Loading,
     val errorMessage: String? = null,

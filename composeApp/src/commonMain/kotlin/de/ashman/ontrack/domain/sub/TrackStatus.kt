@@ -2,12 +2,12 @@ package de.ashman.ontrack.domain.sub
 
 data class TrackStatus(
     val id: String,
-    val status: TrackStatusEnum,
+    val status: TrackStatusType,
     val timestamp: Long,
     val rating: Int?,
     val review: String?,
 )
 
-enum class TrackStatusEnum {
+enum class TrackStatusType {
     CONSUMING, CONSUMED, DROPPED, CATALOG
 }

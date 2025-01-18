@@ -42,7 +42,7 @@ import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusEnum
+import de.ashman.ontrack.domain.sub.TrackStatusType
 import de.ashman.ontrack.features.detail.ui.MainInfo
 import de.ashman.ontrack.features.detail.ui.MediaPoster
 import de.ashman.ontrack.features.detail.ui.MediaTitle
@@ -52,6 +52,9 @@ import de.ashman.ontrack.features.detail.ui.content.BookDetailContent
 import de.ashman.ontrack.features.detail.ui.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.ui.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.ui.content.VideogameDetailContent
+import de.ashman.ontrack.features.track.TrackBottomSheetContent
+import de.ashman.ontrack.features.track.getLabelForStatus
+import de.ashman.ontrack.features.track.getStatusIcon
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.OnTrackButton
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
@@ -85,6 +88,10 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
+                trackStatusType = uiState.trackStatus?.status,
+                onSelectTrackStatusType = { status ->
+                    viewModel.selectTrackStatusType(status)
+                },
                 onSaveTrackStatus = { status, review ->
                     viewModel.saveTrack(status, review)
                 }
@@ -98,7 +105,9 @@ fun DetailScreen(
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    onSaveTrackStatus: (TrackStatusEnum, String) -> Unit,
+    trackStatusType: TrackStatusType?,
+    onSelectTrackStatusType: (TrackStatusType) -> Unit,
+    onSaveTrackStatus: (TrackStatusType, String) -> Unit,
 ) {
     media?.let {
         val sheetState = rememberModalBottomSheetState()
@@ -117,6 +126,7 @@ fun SuccessContent(
             StickyMainContent(
                 imageModifier = Modifier.height(size),
                 media = media,
+                trackStatus = trackStatusType,
                 onClickTrack = { showBottomSheet = true },
             )
 
@@ -125,8 +135,8 @@ fun SuccessContent(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                // TODO remove when we have more content
                 item {
-
                 }
                 when (media.mediaType) {
                     MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
@@ -146,6 +156,8 @@ fun SuccessContent(
             ) {
                 TrackBottomSheetContent(
                     mediaType = media.mediaType,
+                    selectedTrackStatusType = trackStatusType,
+                    onSelectTrackStatusType = onSelectTrackStatusType,
                     onSaveTrackStatus = { status, review ->
                         onSaveTrackStatus(status, review)
                         showBottomSheet = false
@@ -160,6 +172,7 @@ fun SuccessContent(
 fun StickyMainContent(
     imageModifier: Modifier = Modifier,
     media: Media,
+    trackStatus: TrackStatusType? = null,
     onClickTrack: () -> Unit,
 ) {
     Column(
@@ -183,8 +196,9 @@ fun StickyMainContent(
 
         OnTrackButton(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = Res.string.track_button,
-            icon = Icons.Default.Add,
+            text = if (trackStatus != null) getLabelForStatus(trackStatus, media.mediaType) else Res.string.track_button,
+            icon = if (trackStatus != null) getStatusIcon(trackStatus, false) else Icons.Default.Add,
+            color = if (trackStatus != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
             onClick = onClickTrack,
         )
     }
