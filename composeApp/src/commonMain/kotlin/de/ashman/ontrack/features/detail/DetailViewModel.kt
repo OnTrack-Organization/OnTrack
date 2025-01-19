@@ -21,6 +21,7 @@ import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.domain.addTrackStatus
+import de.ashman.ontrack.domain.removeTrackStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -105,6 +106,16 @@ class DetailViewModel(
             mediaService.saveMedia(mediaEntity)
 
             _uiState.update { it.copy(selectedMedia = selectedMedia.addTrackStatus(status)) }
+        }
+    }
+
+    fun removeTrack() = viewModelScope.launch {
+        val selectedMedia = _uiState.value.selectedMedia
+
+        selectedMedia?.let {
+            mediaService.removeMedia(selectedMedia.id)
+
+            _uiState.update { it.copy(selectedMedia = selectedMedia.removeTrackStatus()) }
         }
     }
 }

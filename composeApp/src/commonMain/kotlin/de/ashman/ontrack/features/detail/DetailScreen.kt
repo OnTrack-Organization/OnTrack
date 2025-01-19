@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,18 +40,18 @@ import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.domain.Videogame
-import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.TrackStatusType
-import de.ashman.ontrack.features.detail.ui.content.MainInfo
-import de.ashman.ontrack.features.detail.ui.content.MediaPoster
-import de.ashman.ontrack.features.detail.ui.content.MediaTitle
+import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.detail.ui.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BookDetailContent
+import de.ashman.ontrack.features.detail.ui.content.MainInfo
+import de.ashman.ontrack.features.detail.ui.content.MediaPoster
+import de.ashman.ontrack.features.detail.ui.content.MediaTitle
 import de.ashman.ontrack.features.detail.ui.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.ui.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.ui.content.VideogameDetailContent
@@ -58,6 +60,7 @@ import de.ashman.ontrack.features.track.getLabelForStatus
 import de.ashman.ontrack.features.track.getStatusIcon
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.OnTrackButton
+import de.ashman.ontrack.util.OnTrackIconButton
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
@@ -90,6 +93,9 @@ fun DetailScreen(
                 media = uiState.selectedMedia,
                 onSaveTrackStatus = {
                     viewModel.saveTrack(it)
+                },
+                onRemoveTrack = {
+                    viewModel.removeTrack()
                 }
             )
         }
@@ -102,6 +108,7 @@ fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
     onSaveTrackStatus: (TrackStatus?) -> Unit,
+    onRemoveTrack: () -> Unit,
 ) {
     media?.let {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -122,6 +129,7 @@ fun SuccessContent(
                 media = media,
                 trackStatus = media.trackStatus?.statusType,
                 onClickTrack = { showBottomSheet = true },
+                onClickRemove = onRemoveTrack,
             )
 
             LazyColumn(
@@ -166,6 +174,7 @@ fun StickyMainContent(
     media: Media,
     trackStatus: TrackStatusType? = null,
     onClickTrack: () -> Unit,
+    onClickRemove: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -186,13 +195,23 @@ fun StickyMainContent(
             MainInfo(mainInfoItems = media.getMainInfoItems())
         }
 
-        OnTrackButton(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = if (trackStatus != null) getLabelForStatus(trackStatus, media.mediaType) else Res.string.track_button,
-            icon = if (trackStatus != null) getStatusIcon(trackStatus, false) else Icons.Default.Add,
-            color = if (trackStatus != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
-            onClick = onClickTrack,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OnTrackButton(
+                modifier = Modifier.weight(1f),
+                text = if (trackStatus != null) getLabelForStatus(trackStatus, media.mediaType) else Res.string.track_button,
+                icon = if (trackStatus != null) getStatusIcon(trackStatus, false) else Icons.Default.Add,
+                onClick = onClickTrack,
+            )
+            if (trackStatus != null) {
+                OnTrackIconButton(
+                    icon = Icons.Default.Delete,
+                    onClick = onClickRemove
+                )
+            }
+        }
     }
 }
 

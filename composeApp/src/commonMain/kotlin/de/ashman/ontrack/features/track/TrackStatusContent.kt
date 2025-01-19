@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.track
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatusType
@@ -26,20 +28,26 @@ import de.ashman.ontrack.util.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
 import ontrack.composeapp.generated.resources.save_button
+import ontrack.composeapp.generated.resources.track_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TrackStatusContent(
     mediaType: MediaType,
+    mediaTitle: String,
     selectedStatus: TrackStatusType?,
     onSelectStatus: (TrackStatusType) -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    Text(
+        text = stringResource(Res.string.track_title, mediaTitle),
+        style = MaterialTheme.typography.titleMedium,
+    )
+
     Column(
-        modifier = modifier.fillMaxWidth().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         TrackStatusType.entries.forEach { status ->
             val isSelected = selectedStatus == status
@@ -52,22 +60,22 @@ fun TrackStatusContent(
                 isSelected = selectedStatus == status,
             )
         }
-
-        OnTrackButton(
-            text = if (selectedStatus == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
-            icon = if (selectedStatus == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
-            onClick = onContinue,
-        )
     }
+
+    OnTrackButton(
+        text = if (selectedStatus == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
+        icon = if (selectedStatus == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
+        onClick = onContinue,
+    )
 }
 
 @Composable
 fun TrackStatusButton(
-    onClick: () -> Unit,
     icon: ImageVector,
     label: StringResource,
     subLabel: StringResource,
     isSelected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -79,26 +87,32 @@ fun TrackStatusButton(
         onClick = { onClick() },
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(42.dp),
                 imageVector = icon,
                 contentDescription = stringResource(label),
             )
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
                     text = stringResource(label),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
                 Text(
                     text = stringResource(subLabel),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            Spacer(modifier = Modifier.size(42.dp))
         }
     }
 }

@@ -8,7 +8,7 @@ import dev.gitlive.firebase.firestore.firestore
 
 interface MediaService {
     suspend fun saveMedia(media: MediaEntity)
-    suspend fun deleteMedia(id: String)
+    suspend fun removeMedia(id: String)
     suspend fun getAllUserMedia(): List<MediaEntity>
     suspend fun getUserMediaById(id: String): MediaEntity?
 }
@@ -30,7 +30,7 @@ class MediaServiceImpl : MediaService {
         }
     }
 
-    override suspend fun deleteMedia(id: String) {
+    override suspend fun removeMedia(id: String) {
         try {
             val mediaRef = Firebase.firestore
                 .collection("users")

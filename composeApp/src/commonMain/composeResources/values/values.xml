@@ -26,7 +26,10 @@
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
     <string name="save_button">Save</string>
+
     <string name="review_title">Review of "%1$s"</string>
+    <string name="track_title">Track status of "%1$s"</string>
+
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>
     <string name="rating_two">Alright</string>
@@ -34,6 +37,7 @@
     <string name="rating_four">Very nice</string>
     <string name="rating_five">Masterpiece</string>
     <string name="rating_subtitle">%1$d/%2$d %3$s</string>
+
     <string name="movie_review_label">Review the movie...</string>
     <string name="show_review_label">Review the show...</string>
     <string name="book_review_label">Review the book...</string>

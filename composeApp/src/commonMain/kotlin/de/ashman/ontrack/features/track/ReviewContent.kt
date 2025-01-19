@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,39 +42,34 @@ fun ReviewContent(
     onReviewChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.review_title, mediaTitle),
-            style = MaterialTheme.typography.titleMedium,
-        )
+    Text(
+        text = stringResource(Res.string.review_title, mediaTitle),
+        style = MaterialTheme.typography.titleMedium,
+    )
 
-        StarRatingBar(
-            rating = rating,
-            onRatingChange = onRatingChange,
-        )
+    StarRatingBar(
+        rating = rating,
+        onRatingChange = onRatingChange,
+    )
 
-        TextField(
-            modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth(),
-            value = review.orEmpty(),
-            onValueChange = onReviewChange,
-            placeholder = { Text(mediaType.getReviewLabel()) },
-            shape = RoundedCornerShape(16.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            )
+    TextField(
+        modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth(),
+        value = review.orEmpty(),
+        onValueChange = onReviewChange,
+        placeholder = { Text(mediaType.getReviewLabel()) },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
         )
+    )
 
-        OnTrackButton(
-            text = Res.string.save_button,
-            icon = Icons.Default.Save,
-            onClick = onSave,
-        )
-    }
+    OnTrackButton(
+        text = Res.string.save_button,
+        icon = Icons.Default.Save,
+        onClick = onSave,
+    )
 }
 
 @Composable
