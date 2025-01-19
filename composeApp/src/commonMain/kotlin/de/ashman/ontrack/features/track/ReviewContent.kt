@@ -59,7 +59,7 @@ fun ReviewContent(
 
         TextField(
             modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth(),
-            value = review ?: "",
+            value = review.orEmpty(),
             onValueChange = onReviewChange,
             placeholder = { Text(mediaType.getReviewLabel()) },
             shape = RoundedCornerShape(16.dp),

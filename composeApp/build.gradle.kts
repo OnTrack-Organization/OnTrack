@@ -1,7 +1,8 @@
+
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -156,42 +157,42 @@ buildkonfig {
         buildConfigField(
             STRING,
             "GOOGLE_AUTH_CLIENT_ID",
-            gradleLocalProperties(rootDir, providers).getProperty("google_auth_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("google_auth_client_id").orEmpty()
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TMDB_API_KEY",
-            gradleLocalProperties(rootDir, providers).getProperty("tmdb_api_key") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("tmdb_api_key").orEmpty()
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_ID",
-            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_id").orEmpty()
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_SECRET",
-            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_secret") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("twitch_client_secret").orEmpty()
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_ID",
-            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_id") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_id").orEmpty()
         )
     }
     defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_SECRET",
-            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_secret") ?: ""
+            gradleLocalProperties(rootDir, providers).getProperty("spotify_client_secret").orEmpty()
         )
     }
 }

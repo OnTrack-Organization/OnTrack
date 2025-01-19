@@ -16,14 +16,15 @@ fun Media.toEntity(): MediaEntity {
 
 fun TrackStatus.toEntity() = TrackStatusEntity(
     id = id,
-    statusType = statusType,
     timestamp = Clock.System.now().toEpochMilliseconds(),
+    statusType = statusType,
     rating = rating,
     review = review,
 )
 
 fun TrackStatusEntity.toDomain() = TrackStatus(
     id = id,
+    timestamp = timestamp,
     statusType = statusType,
     rating = rating,
     review = review,

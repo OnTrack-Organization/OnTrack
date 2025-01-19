@@ -18,7 +18,7 @@ class MediaServiceImpl : MediaService {
         try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid ?: "")
+                .document(Firebase.auth.currentUser?.uid.orEmpty())
                 .collection("media")
                 .document(media.id)
 
@@ -34,7 +34,7 @@ class MediaServiceImpl : MediaService {
         try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid ?: "")
+                .document(Firebase.auth.currentUser?.uid.orEmpty())
                 .collection("media")
                 .document(id)
 
@@ -50,7 +50,7 @@ class MediaServiceImpl : MediaService {
         return try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid ?: "")
+                .document(Firebase.auth.currentUser?.uid.orEmpty())
                 .collection("media")
 
             val mediaResponse = mediaRef.get()
@@ -68,7 +68,7 @@ class MediaServiceImpl : MediaService {
         return try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid ?: "")
+                .document(Firebase.auth.currentUser?.uid.orEmpty())
                 .collection("media")
                 .document(id)
 

@@ -31,6 +31,6 @@ object DescriptionSerializer : KSerializer<String?> {
     }
 
     override fun serialize(encoder: Encoder, value: String?) {
-        encoder.encodeString(value ?: "")
+        encoder.encodeString(value.orEmpty())
     }
 }
