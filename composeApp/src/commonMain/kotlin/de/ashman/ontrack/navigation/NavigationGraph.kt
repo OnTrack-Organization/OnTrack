@@ -14,17 +14,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.OnTrackScreen
+import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.authentication.LoginScreen
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
-import de.ashman.ontrack.authentication.LoginScreen
-import de.ashman.ontrack.navigation.Route.Detail
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfScreen
-import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.domain.sub.getMediaTypeUi
+import de.ashman.ontrack.navigation.Route.Detail
+import de.ashman.ontrack.util.getMediaTypeUi
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
@@ -43,7 +43,7 @@ fun NavigationGraph() {
 
     OnTrackScreen(
         navController = navController,
-        icon = getMediaTypeUi(searchUiState.selectedMediaType).icon,
+        icon = searchUiState.selectedMediaType.getMediaTypeUi().icon,
     ) { padding ->
         NavHost(
             navController = navController,

@@ -30,7 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun OnTrackScreen(
     navController: NavController,
-    icon: @Composable () -> ImageVector,
+    icon: ImageVector,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
@@ -93,12 +93,12 @@ fun BottomAppBar(
 @Composable
 fun DetailTopBar(
     navController: NavController,
-    icon: @Composable () -> ImageVector
+    icon: ImageVector,
 ) {
     CenterAlignedTopAppBar(
         title = {
             Icon(
-                imageVector = icon(),
+                imageVector = icon,
                 contentDescription = "Media Type Icon"
             )
         },

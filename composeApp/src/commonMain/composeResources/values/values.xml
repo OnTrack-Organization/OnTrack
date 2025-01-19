@@ -7,6 +7,21 @@
     <string name="search_nav_title">Search</string>
     <string name="shelf_nav_title">Shelf</string>
 
+    <!-- SEARCH -->
+    <string name="search_placeholder_movies">Search for movies...</string>
+    <string name="search_placeholder_shows">Search for shows...</string>
+    <string name="search_placeholder_books">Search for books...</string>
+    <string name="search_placeholder_videogames">Search for videogames...</string>
+    <string name="search_placeholder_boardgames">Search for boardgames...</string>
+    <string name="search_placeholder_albums">Search for albums...</string>
+
+    <string name="search_empty_movies">No movies found</string>
+    <string name="search_empty_shows">No shows found</string>
+    <string name="search_empty_books">No books found</string>
+    <string name="search_empty_videogames">No videogames found</string>
+    <string name="search_empty_boardgames">No boardgames found</string>
+    <string name="search_empty_albums">No albums found</string>
+
     <!-- TRACK -->
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
@@ -115,7 +130,12 @@
 
     <string name="detail_description">Description</string>
     <string name="detail_genres">Genres</string>
-    <string name="detail_similar">Similar %1$s</string>
+    <string name="detail_similar_movies">Similar movies</string>
+    <string name="detail_similar_shows">Similar shows</string>
+    <string name="detail_similar_books">Similar books</string>
+    <string name="detail_similar_videogames">Similar videogames</string>
+    <string name="detail_similar_boardgames">Similar boardgames</string>
+    <string name="detail_similar_albums">Similar albums</string>
     <string name="detail_franchise">Franchise</string>
     <string name="detail_artist_albums">Artist's Albums</string>
 </resources>

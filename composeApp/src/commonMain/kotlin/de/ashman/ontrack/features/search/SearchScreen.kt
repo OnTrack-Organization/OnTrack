@@ -38,13 +38,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.features.detail.ui.MediaPoster
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.getMediaTypeUi
+import de.ashman.ontrack.features.detail.ui.MediaPoster
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.util.getMediaTypeUi
 import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,14 +76,13 @@ fun SearchScreen(
             )
 
             FilterChips(
-                mediaTypes = MediaType.entries.toList(),
                 selectedMediaType = uiState.selectedMediaType,
                 onMediaTypeSelected = viewModel::onMediaTypeSelected,
             )
         }
 
         when (uiState.searchResultState) {
-            SearchResultState.Empty -> EmptySearch(title = pluralStringResource(getMediaTypeUi(uiState.selectedMediaType).title, 2))
+            SearchResultState.Empty -> EmptySearch(uiState.selectedMediaType)
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
             SearchResultState.Success ->
@@ -122,7 +122,7 @@ fun LoadingSearch() {
 
 @Composable
 fun EmptySearch(
-    title: String,
+    mediaType: MediaType
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
@@ -137,7 +137,7 @@ fun EmptySearch(
         )
         Spacer(modifier = Modifier.size(8.dp))
         Text(
-            text = "No $title found",
+            text = stringResource(mediaType.getMediaTypeUi().emptySearch),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -190,7 +190,7 @@ fun SearchBar(
                 },
                 expanded = false,
                 onExpandedChange = { },
-                placeholder = { Text("Search for ${pluralStringResource(getMediaTypeUi(selectedMediaType).title, 2)}") },
+                placeholder = { Text(stringResource(selectedMediaType.getMediaTypeUi().searchPlaceholder)) },
                 leadingIcon = {
                     if (isKeyboardOpen) {
                         IconButton(onClick = closeKeyboard) {
@@ -221,7 +221,6 @@ fun SearchBar(
 
 @Composable
 fun FilterChips(
-    mediaTypes: List<MediaType>,
     selectedMediaType: MediaType,
     onMediaTypeSelected: (MediaType) -> Unit,
     modifier: Modifier = Modifier,
@@ -231,16 +230,16 @@ fun FilterChips(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        items(mediaTypes) { mediaType ->
+        items(MediaType.entries) { mediaType ->
             FilterChip(
                 selected = selectedMediaType == mediaType,
                 onClick = { onMediaTypeSelected(mediaType) },
-                label = { Text(pluralStringResource(getMediaTypeUi(selectedMediaType).title, 2)) },
+                label = { Text(pluralStringResource(mediaType.getMediaTypeUi().title, 2)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = getMediaTypeUi(mediaType).icon(),
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                        imageVector = mediaType.getMediaTypeUi().icon,
                         contentDescription = "Chip icon",
-                        Modifier.size(AssistChipDefaults.IconSize)
                     )
                 }
             )

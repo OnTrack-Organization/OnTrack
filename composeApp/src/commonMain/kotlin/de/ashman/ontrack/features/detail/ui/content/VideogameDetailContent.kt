@@ -1,15 +1,12 @@
 package de.ashman.ontrack.features.detail.ui.content
 
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.runtime.Composable
+import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.detail.ui.MediaDescription
 import de.ashman.ontrack.features.detail.ui.MediaGenres
 import de.ashman.ontrack.features.detail.ui.MediaRow
 import ontrack.composeapp.generated.resources.Res
-import de.ashman.ontrack.domain.Videogame
-import de.ashman.ontrack.domain.sub.getMediaTypeUi
-import ontrack.composeapp.generated.resources.detail_similar
-import org.jetbrains.compose.resources.pluralStringResource
+import ontrack.composeapp.generated.resources.detail_similar_videogames
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.VideogameDetailContent(
@@ -24,7 +21,7 @@ fun LazyListScope.VideogameDetailContent(
     }
     item {
         MediaRow(
-            title = stringResource(Res.string.detail_similar, pluralStringResource(getMediaTypeUi(videogame.mediaType).title, 2)),
+            title = stringResource(Res.string.detail_similar_videogames),
             otherMedia = videogame.similarGames,
             onClickItem = onClickItem,
         )
