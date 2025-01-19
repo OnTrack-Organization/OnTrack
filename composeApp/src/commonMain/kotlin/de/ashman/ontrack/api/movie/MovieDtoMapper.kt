@@ -7,7 +7,7 @@ import de.ashman.ontrack.api.movie.dto.MovieDto
 fun MovieDto.toDomain(): Movie {
     return Movie(
         id = id.toString(),
-        name = title,
+        title = title,
         coverUrl = posterPath.getTMDBCoverUrl(),
         releaseYear = releaseDate?.take(4),
         backdropPath = backdropPath,

@@ -9,7 +9,7 @@ import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 fun BoardgameDto.toDomain(): Boardgame {
     return Boardgame(
         id = id.orEmpty(),
-        name = names?.find { it.type == "primary" }?.value ?: names?.first()?.value.orEmpty(),
+        title = names?.find { it.type == "primary" }?.value ?: names?.first()?.value.orEmpty(),
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         minAge = minage?.value,
@@ -27,7 +27,7 @@ fun LinkDto.toDomain(): Boardgame {
     return Boardgame(
         boardgameType = type.orEmpty(),
         id = id.orEmpty(),
-        name = value.orEmpty(),
+        title = value.orEmpty(),
         coverUrl = "",
         description = "",
     )

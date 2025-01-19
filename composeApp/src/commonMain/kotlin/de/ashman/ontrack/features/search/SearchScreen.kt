@@ -43,9 +43,8 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.domain.sub.getMediaTypeUi
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.util.keyboardAsState
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,7 +82,7 @@ fun SearchScreen(
         }
 
         when (uiState.searchResultState) {
-            SearchResultState.Empty -> EmptySearch(title = stringResource(getMediaTypeUi(uiState.selectedMediaType).title))
+            SearchResultState.Empty -> EmptySearch(title = pluralStringResource(getMediaTypeUi(uiState.selectedMediaType).title, 2))
             SearchResultState.Loading -> LoadingSearch()
             SearchResultState.Error -> ErrorSearch()
             SearchResultState.Success ->
@@ -99,7 +98,7 @@ fun SearchScreen(
                         ) {
                             MediaPoster(
                                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                title = it.name,
+                                title = it.title,
                                 coverUrl = it.coverUrl,
                                 onClickItem = { onClickItem(it) },
                             )
@@ -191,7 +190,7 @@ fun SearchBar(
                 },
                 expanded = false,
                 onExpandedChange = { },
-                placeholder = { Text("Search for ${stringResource(getMediaTypeUi(selectedMediaType).title)}") },
+                placeholder = { Text("Search for ${pluralStringResource(getMediaTypeUi(selectedMediaType).title, 2)}") },
                 leadingIcon = {
                     if (isKeyboardOpen) {
                         IconButton(onClick = closeKeyboard) {
@@ -236,7 +235,7 @@ fun FilterChips(
             FilterChip(
                 selected = selectedMediaType == mediaType,
                 onClick = { onMediaTypeSelected(mediaType) },
-                label = { Text(stringResource(getMediaTypeUi(mediaType).title)) },
+                label = { Text(pluralStringResource(getMediaTypeUi(selectedMediaType).title, 2)) },
                 leadingIcon = {
                     Icon(
                         imageVector = getMediaTypeUi(mediaType).icon(),

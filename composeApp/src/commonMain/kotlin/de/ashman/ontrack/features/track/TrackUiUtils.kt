@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import de.ashman.ontrack.domain.sub.MediaType
 import de.ashman.ontrack.domain.sub.TrackStatusType
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.album_review_label
 import ontrack.composeapp.generated.resources.album_status_catalog_label
 import ontrack.composeapp.generated.resources.album_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.album_status_consumed_label
@@ -22,6 +23,7 @@ import ontrack.composeapp.generated.resources.album_status_consuming_label
 import ontrack.composeapp.generated.resources.album_status_consuming_sublabel
 import ontrack.composeapp.generated.resources.album_status_dropped_label
 import ontrack.composeapp.generated.resources.album_status_dropped_sublabel
+import ontrack.composeapp.generated.resources.boardgame_review_label
 import ontrack.composeapp.generated.resources.boardgame_status_catalog_label
 import ontrack.composeapp.generated.resources.boardgame_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.boardgame_status_consumed_label
@@ -30,6 +32,7 @@ import ontrack.composeapp.generated.resources.boardgame_status_consuming_label
 import ontrack.composeapp.generated.resources.boardgame_status_consuming_sublabel
 import ontrack.composeapp.generated.resources.boardgame_status_dropped_label
 import ontrack.composeapp.generated.resources.boardgame_status_dropped_sublabel
+import ontrack.composeapp.generated.resources.book_review_label
 import ontrack.composeapp.generated.resources.book_status_catalog_label
 import ontrack.composeapp.generated.resources.book_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.book_status_consumed_label
@@ -38,6 +41,7 @@ import ontrack.composeapp.generated.resources.book_status_consuming_label
 import ontrack.composeapp.generated.resources.book_status_consuming_sublabel
 import ontrack.composeapp.generated.resources.book_status_dropped_label
 import ontrack.composeapp.generated.resources.book_status_dropped_sublabel
+import ontrack.composeapp.generated.resources.movie_review_label
 import ontrack.composeapp.generated.resources.movie_status_catalog_label
 import ontrack.composeapp.generated.resources.movie_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.movie_status_consumed_label
@@ -46,6 +50,14 @@ import ontrack.composeapp.generated.resources.movie_status_consuming_label
 import ontrack.composeapp.generated.resources.movie_status_consuming_sublabel
 import ontrack.composeapp.generated.resources.movie_status_dropped_label
 import ontrack.composeapp.generated.resources.movie_status_dropped_sublabel
+import ontrack.composeapp.generated.resources.no_rating
+import ontrack.composeapp.generated.resources.rating_five
+import ontrack.composeapp.generated.resources.rating_four
+import ontrack.composeapp.generated.resources.rating_one
+import ontrack.composeapp.generated.resources.rating_subtitle
+import ontrack.composeapp.generated.resources.rating_three
+import ontrack.composeapp.generated.resources.rating_two
+import ontrack.composeapp.generated.resources.show_review_label
 import ontrack.composeapp.generated.resources.show_status_catalog_label
 import ontrack.composeapp.generated.resources.show_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.show_status_consumed_label
@@ -54,6 +66,7 @@ import ontrack.composeapp.generated.resources.show_status_consuming_label
 import ontrack.composeapp.generated.resources.show_status_consuming_sublabel
 import ontrack.composeapp.generated.resources.show_status_dropped_label
 import ontrack.composeapp.generated.resources.show_status_dropped_sublabel
+import ontrack.composeapp.generated.resources.videogame_review_label
 import ontrack.composeapp.generated.resources.videogame_status_catalog_label
 import ontrack.composeapp.generated.resources.videogame_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.videogame_status_consumed_label
@@ -63,6 +76,7 @@ import ontrack.composeapp.generated.resources.videogame_status_consuming_sublabe
 import ontrack.composeapp.generated.resources.videogame_status_dropped_label
 import ontrack.composeapp.generated.resources.videogame_status_dropped_sublabel
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun getLabelForStatus(status: TrackStatusType, mediaType: MediaType): StringResource {
@@ -166,4 +180,38 @@ fun getStatusIcon(status: TrackStatusType, isFilled: Boolean): ImageVector {
         TrackStatusType.DROPPED -> if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel
         TrackStatusType.CATALOG -> if (isFilled) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
     }
+}
+
+@Composable
+fun getRatingLabel(rating: Int?, maxRating: Int): String {
+    val ratingLabel = when (rating) {
+        null -> stringResource(Res.string.no_rating)
+        1 -> stringResource(Res.string.rating_one)
+        2 -> stringResource(Res.string.rating_two)
+        3 -> stringResource(Res.string.rating_three)
+        4 -> stringResource(Res.string.rating_four)
+        5 -> stringResource(Res.string.rating_five)
+        else -> ""
+    }
+
+    return if (rating == null) {
+        ratingLabel
+    } else {
+        stringResource(Res.string.rating_subtitle, rating, maxRating, ratingLabel)
+    }
+}
+
+
+@Composable
+fun MediaType.getReviewLabel(): String {
+    return stringResource(
+        when (this) {
+            MediaType.MOVIE -> Res.string.movie_review_label
+            MediaType.SHOW -> Res.string.show_review_label
+            MediaType.BOOK -> Res.string.book_review_label
+            MediaType.VIDEOGAME -> Res.string.videogame_review_label
+            MediaType.BOARDGAME -> Res.string.boardgame_review_label
+            MediaType.ALBUM -> Res.string.album_review_label
+        }
+    )
 }

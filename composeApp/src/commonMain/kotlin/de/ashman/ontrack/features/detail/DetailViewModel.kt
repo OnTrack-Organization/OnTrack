@@ -20,11 +20,8 @@ import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.domain.addTrackStatus
-import de.ashman.ontrack.domain.sub.TrackStatus
 import de.ashman.ontrack.domain.sub.TrackStatusType
 import de.ashman.ontrack.domain.sub.toDomain
-import de.ashman.ontrack.domain.sub.toEntity
-import de.ashman.ontrack.user.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -104,7 +101,7 @@ class DetailViewModel(
         )
     }
 
-    fun saveTrack(status: TrackStatusType, review: String) = viewModelScope.launch {
+    fun saveTrack(status: TrackStatusType, review: String?, rating: Int?) = viewModelScope.launch {
         val selectedMedia = _uiState.value.selectedMedia
 
         selectedMedia?.let {
@@ -113,12 +110,12 @@ class DetailViewModel(
                 timestamp = Clock.System.now().toEpochMilliseconds(),
                 status = status,
                 review = review,
-                rating = null,
+                rating = rating,
             )
 
             val mediaEntity = MediaEntity(
                 id = selectedMedia.id,
-                name = selectedMedia.name,
+                name = selectedMedia.title,
                 coverUrl = selectedMedia.coverUrl,
                 type = selectedMedia.mediaType,
                 trackStatus = trackStatus,

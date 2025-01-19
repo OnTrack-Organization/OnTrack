@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class Boardgame(
     override val id: String,
     override val mediaType: MediaType = MediaType.BOARDGAME,
-    override val name: String,
+    override val title: String,
     override val coverUrl: String,
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,

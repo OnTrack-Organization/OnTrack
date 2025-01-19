@@ -89,8 +89,9 @@ fun DetailScreen(
             SuccessContent(
                 media = uiState.selectedMedia,
                 trackStatus = uiState.selectedMedia?.trackStatus?.status,
-                onSaveTrackStatus = { status, review ->
-                    viewModel.saveTrack(status, review)
+                rating = uiState.selectedMedia?.trackStatus?.rating,
+                onSaveTrackStatus = { status, review, rating ->
+                    viewModel.saveTrack(status, review, rating)
                 }
             )
         }
@@ -103,10 +104,11 @@ fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
     trackStatus: TrackStatusType?,
-    onSaveTrackStatus: (TrackStatusType, String) -> Unit,
+    rating: Int?,
+    onSaveTrackStatus: (TrackStatusType, String?, Int?) -> Unit,
 ) {
     media?.let {
-        val sheetState = rememberModalBottomSheetState()
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet by remember { mutableStateOf(false) }
 
         val listState = rememberLazyListState()
@@ -151,10 +153,12 @@ fun SuccessContent(
                 sheetState = sheetState,
             ) {
                 TrackBottomSheetContent(
+                    mediaTitle = media.title,
                     mediaType = media.mediaType,
                     currentTrackStatus = trackStatus,
-                    onSaveTrackStatus = { status, review ->
-                        onSaveTrackStatus(status, review)
+                    currentRating = rating,
+                    onSaveTrackStatus = { status, review, rating ->
+                        onSaveTrackStatus(status, review, rating)
                         showBottomSheet = false
                     }
                 )
@@ -181,7 +185,7 @@ fun StickyMainContent(
 
         Column {
             MediaTitle(
-                title = media.name,
+                title = media.title,
                 textStyle = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             )

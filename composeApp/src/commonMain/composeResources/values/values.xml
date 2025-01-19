@@ -7,17 +7,49 @@
     <string name="search_nav_title">Search</string>
     <string name="shelf_nav_title">Shelf</string>
 
+    <!-- TRACK -->
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
-    <string name="review_label">Review the media...</string>
     <string name="save_button">Save</string>
+    <string name="review_title">Review of "%1$s"</string>
+    <string name="no_rating">No rating</string>
+    <string name="rating_one">Trash</string>
+    <string name="rating_two">Alright</string>
+    <string name="rating_three">Good one</string>
+    <string name="rating_four">Very nice</string>
+    <string name="rating_five">Masterpiece</string>
+    <string name="rating_subtitle">%1$d/%2$d %3$s</string>
+    <string name="movie_review_label">Review the movie...</string>
+    <string name="show_review_label">Review the show...</string>
+    <string name="book_review_label">Review the book...</string>
+    <string name="videogame_review_label">Review the videogame...</string>
+    <string name="boardgame_review_label">Review the boardgame...</string>
+    <string name="album_review_label">Review the album...</string>
 
-    <string name="media_movies">Movies</string>
-    <string name="media_shows">Shows</string>
-    <string name="media_videogames">Videogames</string>
-    <string name="media_boardgames">Boardgames</string>
-    <string name="media_books">Books</string>
-    <string name="media_albums">Albums</string>
+    <plurals name="movie">
+        <item quantity="one">Movie</item>
+        <item quantity="other">Movies</item>
+    </plurals>
+    <plurals name="show">
+        <item quantity="one">Show</item>
+        <item quantity="other">Shows</item>
+    </plurals>
+    <plurals name="book">
+        <item quantity="one">Book</item>
+        <item quantity="other">Books</item>
+    </plurals>
+    <plurals name="videogame">
+        <item quantity="one">Videogame</item>
+        <item quantity="other">Videogames</item>
+    </plurals>
+    <plurals name="boardgame">
+        <item quantity="one">Boardgame</item>
+        <item quantity="other">Boardgames</item>
+    </plurals>
+    <plurals name="album">
+        <item quantity="one">Album</item>
+        <item quantity="other">Albums</item>
+    </plurals>
 
     <!-- MOVIE -->
     <string name="movie_status_consuming_label">Watching</string>

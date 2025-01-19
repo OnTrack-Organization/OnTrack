@@ -208,7 +208,7 @@ fun MediaRow(
                 items(otherMedia) {
                     MediaPoster(
                         modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                        title = it.name,
+                        title = it.title,
                         coverUrl = it.coverUrl,
                         textStyle = MaterialTheme.typography.titleSmall,
                         onClickItem = { onClickItem(it.id) }

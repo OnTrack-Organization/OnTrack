@@ -9,7 +9,7 @@ import de.ashman.ontrack.api.show.dto.ShowDto
 fun ShowDto.toDomain(): Show {
     return Show(
         id = id.toString(),
-        name = name,
+        title = name,
         coverUrl = posterPath.getTMDBCoverUrl(),
         releaseYear = firstAirDate?.take(4),
         description = overview,

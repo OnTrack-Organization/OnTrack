@@ -11,7 +11,7 @@ import de.ashman.ontrack.domain.Track
 fun AlbumDto.toDomain(): Album {
     return Album(
         id = id,
-        name = name,
+        title = name,
         coverUrl = images.first().url,
         releaseYear = releaseDate.take(4),
         artists = artists.map { it.toDomain() },

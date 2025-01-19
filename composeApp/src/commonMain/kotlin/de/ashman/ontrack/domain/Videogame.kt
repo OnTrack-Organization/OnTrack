@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class Videogame(
     override val id: String,
     override val mediaType: MediaType = MediaType.VIDEOGAME,
-    override val name: String,
+    override val title: String,
     override val coverUrl: String,
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,

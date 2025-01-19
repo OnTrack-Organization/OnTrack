@@ -11,11 +11,10 @@ import kotlinx.serialization.Serializable
 sealed class Media(): CommonParcelable {
     abstract val id: String
     abstract val mediaType: MediaType
-    abstract val name: String
+    abstract val title: String
     abstract val coverUrl: String
     abstract val releaseYear: String?
     abstract val trackStatus: TrackStatus?
-    // TODO maybe add the TrackStatus here so that it is accessible everywhere in the app
 
     abstract fun getMainInfoItems(): List<String>
 }

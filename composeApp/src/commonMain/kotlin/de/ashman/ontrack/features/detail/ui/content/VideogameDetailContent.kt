@@ -7,8 +7,9 @@ import de.ashman.ontrack.features.detail.ui.MediaGenres
 import de.ashman.ontrack.features.detail.ui.MediaRow
 import ontrack.composeapp.generated.resources.Res
 import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.sub.getMediaTypeUi
 import ontrack.composeapp.generated.resources.detail_similar
-import ontrack.composeapp.generated.resources.media_videogames
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.VideogameDetailContent(
@@ -23,7 +24,7 @@ fun LazyListScope.VideogameDetailContent(
     }
     item {
         MediaRow(
-            title = stringResource(Res.string.detail_similar, stringResource(Res.string.media_videogames)),
+            title = stringResource(Res.string.detail_similar, pluralStringResource(getMediaTypeUi(videogame.mediaType).title, 2)),
             otherMedia = videogame.similarGames,
             onClickItem = onClickItem,
         )

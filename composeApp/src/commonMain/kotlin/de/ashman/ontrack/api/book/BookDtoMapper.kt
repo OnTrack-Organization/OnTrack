@@ -8,7 +8,7 @@ import de.ashman.ontrack.api.getOpenLibraryCoverUrl
 fun BookDto.toDomain(): Book {
     return Book(
         id = key,
-        name = title,
+        title = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
         releaseYear = firstPublishYear.toString(),
         authorKeys = authorKey,
@@ -29,7 +29,7 @@ fun BookDto.toDomain(): Book {
 fun BookWorksResponseDto.toDomain(): Book {
     return Book(
         id = "",
-        name = "",
+        title = "",
         coverUrl = "",
         description = description,
         releaseYear = "",
