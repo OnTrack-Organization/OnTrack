@@ -39,8 +39,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.features.detail.ui.MediaPoster
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.features.detail.ui.content.MediaPoster
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.getMediaTypeUi
 import de.ashman.ontrack.util.keyboardAsState

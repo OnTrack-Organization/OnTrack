@@ -1,7 +1,7 @@
 package de.ashman.ontrack.db.entity
 
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusType
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.TrackStatusType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +16,7 @@ data class MediaEntity(
 @Serializable
 data class TrackStatusEntity(
     val id: String,
-    val status: TrackStatusType,
+    val statusType: TrackStatusType?,
     val timestamp: Long,
     val rating: Int?,
     val review: String?,

@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.MediaType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album
 import ontrack.composeapp.generated.resources.boardgame

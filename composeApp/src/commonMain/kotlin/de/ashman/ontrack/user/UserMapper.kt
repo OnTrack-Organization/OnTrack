@@ -1,7 +1,7 @@
 package de.ashman.ontrack.user
 
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.db.entity.MediaEntity
 import dev.gitlive.firebase.auth.FirebaseUser
 

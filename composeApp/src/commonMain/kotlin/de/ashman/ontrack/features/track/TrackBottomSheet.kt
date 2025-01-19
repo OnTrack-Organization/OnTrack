@@ -5,56 +5,49 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusType
+import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.TrackStatusType
+
+// TODO add back handling
+// Back Handling is being worked on rn
+// https://youtrack.jetbrains.com/issue/CMP-4419
+
+enum class CurrentTrackContent {
+    TRACK_STATUS,
+    REVIEW,
+}
 
 @Composable
 fun TrackBottomSheetContent(
-    mediaTitle: String,
-    mediaType: MediaType,
-    currentTrackStatus: TrackStatusType?,
-    currentRating: Int?,
-    onSaveTrackStatus: (TrackStatusType, String?, Int?) -> Unit,
+    media: Media,
+    onSaveTrackStatus: (TrackStatus?) -> Unit,
 ) {
     var currentContent by remember { mutableStateOf(CurrentTrackContent.TRACK_STATUS) }
-    // TODO put into vm and check if set and do a confirm when closing the sheet
-    var review by remember { mutableStateOf("") }
-    var rating by remember { mutableStateOf(currentRating) }
-    var selectedTrackStatus by remember { mutableStateOf<TrackStatusType?>(currentTrackStatus) }
-
-    // TODO add back handling
-    // Back Handling is being worked on rn
-    // https://youtrack.jetbrains.com/issue/CMP-4419
+    var trackStatus by remember { mutableStateOf(media.trackStatus ?: TrackStatus()) }
 
     when (currentContent) {
         CurrentTrackContent.TRACK_STATUS -> TrackStatusContent(
-            mediaType = mediaType,
-            selectedStatusType = selectedTrackStatus,
-            onSelectTrackStatusType = { selectedTrackStatus = it },
+            mediaType = media.mediaType,
+            selectedStatus = trackStatus.statusType,
+            onSelectStatus = { trackStatus = trackStatus.copy(statusType = it) },
             onContinue = {
-                if (selectedTrackStatus != TrackStatusType.CATALOG) {
+                if (trackStatus.statusType != TrackStatusType.CATALOG) {
                     currentContent = CurrentTrackContent.REVIEW
                 } else {
-                    selectedTrackStatus?.let { onSaveTrackStatus(it, null, null) }
+                    onSaveTrackStatus(trackStatus)
                 }
             },
         )
 
         CurrentTrackContent.REVIEW -> ReviewContent(
-            mediaTitle = mediaTitle,
-            mediaType = mediaType,
-            review = review,
-            rating = rating,
-            onReviewChange = { review = it },
-            onRatingChange = { rating = it },
-            onSave = {
-                selectedTrackStatus?.let { onSaveTrackStatus(it, review, rating) }
-            },
+            mediaTitle = media.title,
+            mediaType = media.mediaType,
+            review = trackStatus.review,
+            rating = trackStatus.rating,
+            onReviewChange = { trackStatus = trackStatus.copy(review = it) },
+            onRatingChange = { trackStatus = trackStatus.copy(rating = it) },
+            onSave = { onSaveTrackStatus(trackStatus) },
         )
     }
-}
-
-enum class CurrentTrackContent {
-    TRACK_STATUS,
-    REVIEW,
 }

@@ -1,17 +1,19 @@
-package de.ashman.ontrack.domain.sub
+package de.ashman.ontrack.domain
 
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @CommonParcelize
 @Serializable
 data class TrackStatus(
-    val id: String,
-    val status: TrackStatusType,
-    val timestamp: Long,
-    val rating: Int?,
-    val review: String?,
+    val id: String = Uuid.random().toString(),
+    val statusType: TrackStatusType? = null,
+    val rating: Int? = null,
+    val review: String? = null,
 ) : CommonParcelable
 
 enum class TrackStatusType {

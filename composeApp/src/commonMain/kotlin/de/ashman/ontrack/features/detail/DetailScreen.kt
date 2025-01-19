@@ -41,11 +41,12 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.Videogame
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusType
-import de.ashman.ontrack.features.detail.ui.MainInfo
-import de.ashman.ontrack.features.detail.ui.MediaPoster
-import de.ashman.ontrack.features.detail.ui.MediaTitle
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.TrackStatusType
+import de.ashman.ontrack.features.detail.ui.content.MainInfo
+import de.ashman.ontrack.features.detail.ui.content.MediaPoster
+import de.ashman.ontrack.features.detail.ui.content.MediaTitle
 import de.ashman.ontrack.features.detail.ui.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BookDetailContent
@@ -66,7 +67,6 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    modifier: Modifier = Modifier,
     media: Media,
     viewModel: DetailViewModel,
 ) {
@@ -88,10 +88,8 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
-                trackStatus = uiState.selectedMedia?.trackStatus?.status,
-                rating = uiState.selectedMedia?.trackStatus?.rating,
-                onSaveTrackStatus = { status, review, rating ->
-                    viewModel.saveTrack(status, review, rating)
+                onSaveTrackStatus = {
+                    viewModel.saveTrack(it)
                 }
             )
         }
@@ -103,9 +101,7 @@ fun DetailScreen(
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    trackStatus: TrackStatusType?,
-    rating: Int?,
-    onSaveTrackStatus: (TrackStatusType, String?, Int?) -> Unit,
+    onSaveTrackStatus: (TrackStatus?) -> Unit,
 ) {
     media?.let {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -124,7 +120,7 @@ fun SuccessContent(
             StickyMainContent(
                 imageModifier = Modifier.height(size),
                 media = media,
-                trackStatus = trackStatus,
+                trackStatus = media.trackStatus?.statusType,
                 onClickTrack = { showBottomSheet = true },
             )
 
@@ -153,12 +149,9 @@ fun SuccessContent(
                 sheetState = sheetState,
             ) {
                 TrackBottomSheetContent(
-                    mediaTitle = media.title,
-                    mediaType = media.mediaType,
-                    currentTrackStatus = trackStatus,
-                    currentRating = rating,
-                    onSaveTrackStatus = { status, review, rating ->
-                        onSaveTrackStatus(status, review, rating)
+                    media = media,
+                    onSaveTrackStatus = {
+                        onSaveTrackStatus(it)
                         showBottomSheet = false
                     }
                 )

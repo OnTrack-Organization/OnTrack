@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusType
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.TrackStatusType
 import de.ashman.ontrack.util.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
@@ -32,8 +32,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TrackStatusContent(
     mediaType: MediaType,
-    selectedStatusType: TrackStatusType?,
-    onSelectTrackStatusType: (TrackStatusType) -> Unit,
+    selectedStatus: TrackStatusType?,
+    onSelectStatus: (TrackStatusType) -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -42,20 +42,20 @@ fun TrackStatusContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         TrackStatusType.entries.forEach { status ->
-            val isSelected = selectedStatusType == status
+            val isSelected = selectedStatus == status
 
             TrackStatusButton(
-                onClick = { onSelectTrackStatusType(status) },
+                onClick = { onSelectStatus(status) },
                 icon = getStatusIcon(status, isSelected),
                 label = getLabelForStatus(status, mediaType),
                 subLabel = getSublabelForStatus(mediaType, status),
-                isSelected = selectedStatusType == status,
+                isSelected = selectedStatus == status,
             )
         }
 
         OnTrackButton(
-            text = if (selectedStatusType == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
-            icon = if (selectedStatusType == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
+            text = if (selectedStatus == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
+            icon = if (selectedStatus == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
             onClick = onContinue,
         )
     }

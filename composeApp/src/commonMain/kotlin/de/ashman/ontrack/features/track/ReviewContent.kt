@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.sub.MediaType
+import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.util.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.review_title
@@ -35,10 +35,10 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ReviewContent(
-    mediaTitle: String,
     mediaType: MediaType,
-    review: String,
+    mediaTitle: String,
     rating: Int?,
+    review: String?,
     onRatingChange: (Int) -> Unit,
     onReviewChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -59,7 +59,7 @@ fun ReviewContent(
 
         TextField(
             modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth(),
-            value = review,
+            value = review ?: "",
             onValueChange = onReviewChange,
             placeholder = { Text(mediaType.getReviewLabel()) },
             shape = RoundedCornerShape(16.dp),

@@ -1,7 +1,5 @@
 package de.ashman.ontrack.domain
 
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

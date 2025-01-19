@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.ui
+package de.ashman.ontrack.features.detail.ui.content
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.clickable

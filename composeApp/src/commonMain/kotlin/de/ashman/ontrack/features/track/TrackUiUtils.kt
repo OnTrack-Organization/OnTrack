@@ -11,8 +11,8 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.ashman.ontrack.domain.sub.MediaType
-import de.ashman.ontrack.domain.sub.TrackStatusType
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.TrackStatusType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album_review_label
 import ontrack.composeapp.generated.resources.album_status_catalog_label

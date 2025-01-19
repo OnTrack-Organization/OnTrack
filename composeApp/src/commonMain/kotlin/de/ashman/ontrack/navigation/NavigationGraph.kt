@@ -65,10 +65,10 @@ fun NavigationGraph() {
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
 ) {
-    composable<Route.Detail>(
+    composable<Detail>(
         typeMap = mapOf(typeOf<Media>() to CustomNavType.MediaNavType)
     ) { backStackEntry ->
-        val detail: Route.Detail = backStackEntry.toRoute()
+        val detail: Detail = backStackEntry.toRoute()
 
         DetailScreen(
             media = detail.media,
