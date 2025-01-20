@@ -1,18 +1,18 @@
 package de.ashman.ontrack.di
 
 import de.ashman.ontrack.BuildKonfig
+import de.ashman.ontrack.api.album.AlbumRepository
+import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
-import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.movie.MovieRepository
-import de.ashman.ontrack.api.auth.AccessTokenManager
-import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.api.album.AlbumRepository
+import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.authentication.AuthViewModel
 import de.ashman.ontrack.db.MediaService
 import de.ashman.ontrack.db.MediaServiceImpl
+import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -211,7 +211,7 @@ val appModule =
         // VIEWMODEL
         viewModelDefinition { AuthViewModel(get()) }
 
-        viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
         viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     }
 

@@ -1,12 +1,15 @@
 package de.ashman.ontrack.api
 
 import co.touchlab.kermit.Logger
+import kotlin.coroutines.cancellation.CancellationException
 
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     return try {
         val result = apiCall()
         Logger.d { "API call successful: $result" }
         Result.success(result)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         Logger.e(e) { "API call failed: $e" }
         Result.failure(e)

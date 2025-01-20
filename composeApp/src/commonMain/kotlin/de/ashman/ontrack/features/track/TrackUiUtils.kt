@@ -173,8 +173,8 @@ fun getSublabelForStatus(mediaType: MediaType, status: TrackStatusType): StringR
 }
 
 @Composable
-fun getStatusIcon(status: TrackStatusType, isFilled: Boolean): ImageVector {
-    return when (status) {
+fun TrackStatusType.getStatusIcon(isFilled: Boolean = false): ImageVector {
+    return when (this) {
         TrackStatusType.CONSUMING -> if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
         TrackStatusType.CONSUMED -> if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
         TrackStatusType.DROPPED -> if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel

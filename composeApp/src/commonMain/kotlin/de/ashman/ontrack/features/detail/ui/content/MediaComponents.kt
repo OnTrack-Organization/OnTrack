@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.detail.ui.content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,8 +31,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -82,6 +87,8 @@ fun MediaPoster(
     modifier: Modifier = Modifier,
     title: String? = null,
     coverUrl: String?,
+    trackStatusIcon: ImageVector? = null,
+    trackStatusRating: Int? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     onClickItem: (() -> Unit)? = null,
 ) {
@@ -132,8 +139,10 @@ fun MediaPoster(
                 }
 
                 else -> {
-                    SubcomposeAsyncImageContent(
-                        modifier = Modifier
+                    SubcomposeAsyncImageContent()
+                    TrackOverlay(
+                        trackStatusIcon = trackStatusIcon,
+                        trackStatusRating = trackStatusRating,
                     )
                 }
             }
@@ -143,6 +152,46 @@ fun MediaPoster(
             title = title,
             textStyle = textStyle,
         )
+    }
+}
+
+@Composable
+fun TrackOverlay(
+    trackStatusIcon: ImageVector?,
+    trackStatusRating: Int?,
+) {
+    Column(
+        modifier = Modifier.padding(4.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.End,
+    ) {
+        trackStatusRating?.let {
+            Box(
+                modifier = Modifier.size(36.dp).alpha(0.8F),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(36.dp),
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Status Icon",
+                    tint = Color.White,
+                )
+                Text(
+                    text = "$trackStatusRating",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.Black,
+                )
+            }
+        }
+
+        trackStatusIcon?.let {
+            Icon(
+                imageVector = trackStatusIcon,
+                contentDescription = "Status Icon",
+                modifier = Modifier.size(32.dp).alpha(0.8F),
+                tint = Color.White,
+            )
+        }
     }
 }
 

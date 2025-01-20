@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.detail.ui.content.MediaPoster
+import de.ashman.ontrack.features.track.getStatusIcon
 import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.getMediaTypeUi
 import de.ashman.ontrack.util.keyboardAsState
@@ -100,12 +101,21 @@ fun SearchScreen(
                                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                                 title = it.title,
                                 coverUrl = it.coverUrl,
+                                trackStatusIcon = it.trackStatus?.statusType?.getStatusIcon(true),
+                                trackStatusRating = it.trackStatus?.rating,
                                 onClickItem = { onClickItem(it) },
                             )
                         }
                     }
                 }
         }
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.End),
+            text = "Search took ${uiState.searchDuration}ms"
+        )
     }
 }
 

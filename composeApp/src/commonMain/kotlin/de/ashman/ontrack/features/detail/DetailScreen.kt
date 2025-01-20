@@ -202,7 +202,7 @@ fun StickyMainContent(
             OnTrackButton(
                 modifier = Modifier.weight(1f),
                 text = if (trackStatus != null) getLabelForStatus(trackStatus, media.mediaType) else Res.string.track_button,
-                icon = if (trackStatus != null) getStatusIcon(trackStatus, false) else Icons.Default.Add,
+                icon = if (trackStatus != null) trackStatus.getStatusIcon() else Icons.Default.Add,
                 onClick = onClickTrack,
             )
             if (trackStatus != null) {

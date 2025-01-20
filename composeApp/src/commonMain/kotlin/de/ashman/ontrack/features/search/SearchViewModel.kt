@@ -9,8 +9,11 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.db.MediaService
+import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.addTrackStatus
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +28,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.collections.map
+import kotlin.time.measureTime
 
-// TODO fix bug 1. input query 2. change media type 3. delete with clear
 class SearchViewModel(
     private val movieRepository: MovieRepository,
     private val showRepository: ShowRepository,
@@ -34,6 +38,7 @@ class SearchViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
+    private val mediaService: MediaService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -55,74 +60,106 @@ class SearchViewModel(
     }
 
     fun search(query: String) = viewModelScope.launch {
-        _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
+        val duration = measureTime {
+            _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
 
-        val repository = when (uiState.value.selectedMediaType) {
-            MediaType.MOVIE -> movieRepository
-            MediaType.SHOW -> showRepository
-            MediaType.BOOK -> bookRepository
-            MediaType.VIDEOGAME -> videogameRepository
-            MediaType.BOARDGAME -> boardgameRepository
-            MediaType.ALBUM -> albumRepository
-        }
-        val result = repository.fetchByQuery(query)
-
-        result.fold(
-            onSuccess = { searchResults ->
-                _uiState.update {
-                    it.copy(
-                        searchResultState = if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
-                        errorMessage = null,
-                        searchResults = searchResults,
-                    )
-                }
-            },
-            onFailure = { exception ->
-                _uiState.update {
-                    it.copy(
-                        searchResultState = SearchResultState.Error,
-                        errorMessage = "Failed to fetch results: ${exception.message}",
-                        searchResults = emptyList(),
-                    )
-                }
+            val repository = when (uiState.value.selectedMediaType) {
+                MediaType.MOVIE -> movieRepository
+                MediaType.SHOW -> showRepository
+                MediaType.BOOK -> bookRepository
+                MediaType.VIDEOGAME -> videogameRepository
+                MediaType.BOARDGAME -> boardgameRepository
+                MediaType.ALBUM -> albumRepository
             }
-        )
+
+            val result = repository.fetchByQuery(query)
+            val userMedia = mediaService.getAllUserMedia()
+
+            result.fold(
+                onSuccess = { searchResults ->
+                    val combinedResults = searchResults.map { apiMedia ->
+                        val userMediaData = userMedia.find { it.id == apiMedia.id }
+                        if (userMediaData != null) {
+                            apiMedia.addTrackStatus(userMediaData.trackStatus?.toDomain())
+                        } else {
+                            apiMedia
+                        }
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            searchResultState = if (combinedResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            errorMessage = null,
+                            searchResults = combinedResults,
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    _uiState.update {
+                        it.copy(
+                            searchResultState = SearchResultState.Error,
+                            errorMessage = "Failed to fetch results: ${exception.message}",
+                            searchResults = emptyList(),
+                        )
+                    }
+                }
+            )
+        }
+
+        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
+        Logger.i { "${_uiState.value.selectedMediaType.name} Search took $duration" }
     }
 
     private fun getTrending() = viewModelScope.launch {
-        _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
+        val duration = measureTime {
+            _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
 
-        val repository = when (uiState.value.selectedMediaType) {
-            MediaType.MOVIE -> movieRepository
-            MediaType.SHOW -> showRepository
-            MediaType.BOOK -> bookRepository
-            MediaType.VIDEOGAME -> videogameRepository
-            MediaType.BOARDGAME -> boardgameRepository
-            MediaType.ALBUM -> albumRepository
-        }
-        val result = repository.fetchTrending()
-
-        result.fold(
-            onSuccess = { trendingResults ->
-                _uiState.update {
-                    it.copy(
-                        searchResultState = if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
-                        errorMessage = null,
-                        cachedTrending = trendingResults,
-                        searchResults = trendingResults,
-                    )
-                }
-            },
-            onFailure = { exception ->
-                _uiState.update {
-                    it.copy(
-                        searchResultState = SearchResultState.Error,
-                        errorMessage = "Failed to fetch trending results: ${exception.message}",
-                        cachedTrending = emptyList(),
-                    )
-                }
+            val repository = when (uiState.value.selectedMediaType) {
+                MediaType.MOVIE -> movieRepository
+                MediaType.SHOW -> showRepository
+                MediaType.BOOK -> bookRepository
+                MediaType.VIDEOGAME -> videogameRepository
+                MediaType.BOARDGAME -> boardgameRepository
+                MediaType.ALBUM -> albumRepository
             }
-        )
+
+            val apiResult = repository.fetchTrending()
+            val dbResult = mediaService.getAllUserMedia()
+
+            apiResult.fold(
+                onSuccess = { trendingResults ->
+                    val combinedResults = trendingResults.map { apiMedia ->
+                        val userMediaData = dbResult.find { it.id == apiMedia.id }
+                        if (userMediaData != null) {
+                            apiMedia.addTrackStatus(userMediaData.trackStatus?.toDomain())
+                        } else {
+                            apiMedia
+                        }
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            searchResultState = if (combinedResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            errorMessage = null,
+                            cachedTrending = combinedResults,
+                            searchResults = combinedResults,
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    _uiState.update {
+                        it.copy(
+                            searchResultState = SearchResultState.Error,
+                            errorMessage = "Failed to fetch trending results: ${exception.message}",
+                            cachedTrending = emptyList(),
+                        )
+                    }
+                }
+            )
+        }
+
+        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
+        Logger.i { "${_uiState.value.selectedMediaType.name} Trending took $duration" }
     }
 
     @OptIn(FlowPreview::class)
@@ -172,6 +209,7 @@ data class SearchUiState(
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val searchResultState: SearchResultState = SearchResultState.Empty,
+    val searchDuration: Long = 0L,
     val errorMessage: String? = null,
 )
 

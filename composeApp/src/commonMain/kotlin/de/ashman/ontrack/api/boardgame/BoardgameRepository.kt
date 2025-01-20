@@ -1,11 +1,10 @@
 package de.ashman.ontrack.api.boardgame
 
-import co.touchlab.kermit.Logger
-import de.ashman.ontrack.domain.Boardgame
-import de.ashman.ontrack.api.boardgame.dto.BoardgameResponseDto
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.boardgame.dto.BoardgameResponseDto
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Boardgame
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -84,8 +83,6 @@ class BoardgameRepository(
     private fun convertXmlToResponse(xmlString: String): BoardgameResponseDto {
         val xml = XML { indentString = "  " }
         val response = xml.decodeFromString(BoardgameResponseDto.serializer(), xmlString)
-
-        Logger.i { "Response: $response" }
 
         return if (response.boardgames.isEmpty() || response.boardgames.any { it.error != null }) {
             BoardgameResponseDto()
