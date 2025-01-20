@@ -43,6 +43,8 @@ fun NavigationGraph() {
 
     OnTrackScreen(
         navController = navController,
+        onBack = { navController.popBackStack() },
+        onBottomNavigation = { route -> navController.navigate(route) },
         icon = searchUiState.selectedMediaType.getMediaTypeUi().icon,
     ) { padding ->
         NavHost(
@@ -76,7 +78,7 @@ fun NavGraphBuilder.mediaGraph(
             viewModel = detailViewModel,
             onClickItem = { item ->
                 navController.navigate(Detail(item))
-            }
+            },
         )
     }
 }

@@ -13,17 +13,24 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import de.ashman.ontrack.navigation.BottomNavItem
+import de.ashman.ontrack.navigation.Route
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,28 +38,38 @@ import org.jetbrains.compose.resources.stringResource
 fun OnTrackScreen(
     navController: NavController,
     icon: ImageVector,
+    onBack: () -> Unit,
+    onBottomNavigation: (Route) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val bottomBarState = rememberSaveable { mutableStateOf(true) }
-    val topBarState = rememberSaveable { mutableStateOf(false) }
+    var bottomBarState by rememberSaveable { mutableStateOf(true) }
+    var topBarState by rememberSaveable { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state = TopAppBarState(-Float.MAX_VALUE, 0F, 0F))
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 
-    bottomBarState.value = BottomNavItem.items.any { item ->
+    bottomBarState = BottomNavItem.items.any { item ->
         currentRoute?.route == item.route::class.qualifiedName
     }
 
     val detailBaseRoute = "de.ashman.ontrack.navigation.Route.Detail"
-    topBarState.value =
-        currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
+    topBarState = currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (topBarState.value) DetailTopBar(navController, icon)
+            if (topBarState) DetailTopBar(
+                icon = icon,
+                scrollBehavior = scrollBehavior,
+                onBack = onBack,
+            )
         },
         bottomBar = {
-            if (bottomBarState.value) BottomAppBar(navController, currentRoute)
+            if (bottomBarState) BottomAppBar(
+                currentRoute = currentRoute,
+                onBottomNavigation = onBottomNavigation,
+            )
         }
     ) { innerPadding ->
         content(innerPadding)
@@ -61,8 +78,8 @@ fun OnTrackScreen(
 
 @Composable
 fun BottomAppBar(
-    navController: NavController,
     currentRoute: NavDestination?,
+    onBottomNavigation: (Route) -> Unit,
 ) {
     NavigationBar {
         BottomNavItem.items.forEach { route ->
@@ -71,7 +88,7 @@ fun BottomAppBar(
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
-                    if (!isSelected) navController.navigate(route.route)
+                    if (!isSelected) onBottomNavigation(route.route)
                 },
                 icon = {
                     Icon(imageVector = if (isSelected) route.filledIcon() else route.icon(), contentDescription = null)
@@ -92,8 +109,9 @@ fun BottomAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailTopBar(
-    navController: NavController,
     icon: ImageVector,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -103,9 +121,10 @@ fun DetailTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = onBack) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back Icon")
             }
-        }
+        },
+        scrollBehavior = scrollBehavior,
     )
 }

@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -180,6 +180,7 @@ fun StickyMainContent(
     onClickRemove: () -> Unit,
 ) {
     Column(
+        modifier = Modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -205,12 +206,12 @@ fun StickyMainContent(
             OnTrackButton(
                 modifier = Modifier.weight(1f),
                 text = if (trackStatus != null) getLabelForStatus(trackStatus, media.mediaType) else Res.string.track_button,
-                icon = if (trackStatus != null) trackStatus.getStatusIcon() else Icons.Default.Add,
+                icon = if (trackStatus != null) trackStatus.getStatusIcon(true) else Icons.Default.Add,
                 onClick = onClickTrack,
             )
             if (trackStatus != null) {
                 OnTrackIconButton(
-                    icon = Icons.Default.Delete,
+                    icon = Icons.Outlined.Delete,
                     onClick = onClickRemove
                 )
             }
