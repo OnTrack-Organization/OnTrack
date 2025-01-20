@@ -7,6 +7,7 @@ compose-plugin = "1.7.3"
 kermit = "2.0.4"
 kotlin = "2.1.0"
 google-services = "4.4.2"
+firebase = "33.8.0"
 firebaseSdk = "2.1.0"
 kmpauthGoogle = "2.3.0-beta02"
 koin = "4.0.1"
@@ -28,6 +29,8 @@ androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 # Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
+
 kmpauth-firebase = { module = "io.github.mirzemehdi:kmpauth-firebase", version.ref = "kmpauthGoogle" }
 kmpauth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpauthGoogle" }
 kmpauth-uihelper = { module = "io.github.mirzemehdi:kmpauth-uihelper", version.ref = "kmpauthGoogle" }

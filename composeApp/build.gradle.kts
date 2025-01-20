@@ -95,6 +95,8 @@ kotlin {
             implementation(libs.koin.android)
 
             implementation(libs.ktor.android)
+
+            implementation(project.dependencies.platform(libs.firebase.bom))
         }
 
         iosMain.dependencies {
