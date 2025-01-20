@@ -4,19 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Album
+import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Track
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_artist_albums
+import ontrack.composeapp.generated.resources.detail_tracks
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.AlbumDetailContent(
     album: Album,
-    onClickItem: (String) -> Unit = {},
+    onClickItem: (Media) -> Unit = {},
 ) {
     item {
         AlbumTracks(
@@ -41,6 +44,11 @@ fun AlbumTracks(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
+        Text(
+            text = stringResource(Res.string.detail_tracks),
+            style = MaterialTheme.typography.titleMedium,
+        )
+
         tracks.forEach {
             Text("${it.trackNumber}. ${it.name}")
         }

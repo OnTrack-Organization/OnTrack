@@ -142,4 +142,5 @@
     <string name="detail_similar_albums">Similar albums</string>
     <string name="detail_franchise">Franchise</string>
     <string name="detail_artist_albums">Artist's Albums</string>
+    <string name="detail_tracks">Tracks</string>
 </resources>

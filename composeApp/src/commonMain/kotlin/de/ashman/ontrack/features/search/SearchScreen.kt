@@ -103,7 +103,7 @@ fun SearchScreen(
                                 coverUrl = it.coverUrl,
                                 trackStatusIcon = it.trackStatus?.statusType?.getStatusIcon(true),
                                 trackStatusRating = it.trackStatus?.rating,
-                                onClickItem = { onClickItem(it) },
+                                onClick = { onClickItem(it) },
                             )
                         }
                     }

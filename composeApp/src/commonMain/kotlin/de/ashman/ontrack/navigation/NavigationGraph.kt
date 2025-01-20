@@ -57,13 +57,14 @@ fun NavigationGraph() {
                 )
             }
             mainGraph(navController, searchViewModel, authViewModel)
-            mediaGraph(detailViewModel)
+            mediaGraph(detailViewModel, navController)
         }
     }
 }
 
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
+    navController: NavHostController,
 ) {
     composable<Detail>(
         typeMap = mapOf(typeOf<Media>() to CustomNavType.MediaNavType)
@@ -73,6 +74,9 @@ fun NavGraphBuilder.mediaGraph(
         DetailScreen(
             media = detail.media,
             viewModel = detailViewModel,
+            onClickItem = { item ->
+                navController.navigate(Detail(item))
+            }
         )
     }
 }

@@ -90,7 +90,7 @@ fun MediaPoster(
     trackStatusIcon: ImageVector? = null,
     trackStatusRating: Int? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    onClickItem: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
@@ -104,7 +104,7 @@ fun MediaPoster(
             modifier = modifier
                 .aspectRatio(2f / 3f)
                 .clip(shape = RoundedCornerShape(16.dp))
-                .let { if (onClickItem != null) it.clickable { onClickItem() } else it }
+                .let { if (onClick != null) it.clickable { onClick() } else it }
         ) {
             val state = painter.state.collectAsState().value
 
@@ -219,7 +219,7 @@ fun MediaTitle(
 fun MediaRow(
     title: String,
     otherMedia: List<Media>?,
-    onClickItem: (String) -> Unit = { },
+    onClickItem: (Media) -> Unit = { },
 ) {
     otherMedia?.let {
         Column(
@@ -241,7 +241,7 @@ fun MediaRow(
                         title = it.title,
                         coverUrl = it.coverUrl,
                         textStyle = MaterialTheme.typography.titleSmall,
-                        onClickItem = { onClickItem(it.id) }
+                        onClick = { onClickItem(it) }
                     )
                 }
             }

@@ -72,6 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 fun DetailScreen(
     media: Media,
     viewModel: DetailViewModel,
+    onClickItem: (Media) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -96,7 +97,8 @@ fun DetailScreen(
                 },
                 onRemoveTrack = {
                     viewModel.removeTrack()
-                }
+                },
+                onClickItem = onClickItem,
             )
         }
     }
@@ -109,6 +111,7 @@ fun SuccessContent(
     media: Media?,
     onSaveTrackStatus: (TrackStatus?) -> Unit,
     onRemoveTrack: () -> Unit,
+    onClickItem: (Media) -> Unit,
 ) {
     media?.let {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -141,12 +144,12 @@ fun SuccessContent(
                 item {
                 }
                 when (media.mediaType) {
-                    MediaType.MOVIE -> MovieDetailContent(movie = media as Movie)
-                    MediaType.SHOW -> ShowDetailContent(show = media as Show)
-                    MediaType.BOOK -> BookDetailContent(book = media as Book)
-                    MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame)
-                    MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame)
-                    MediaType.ALBUM -> AlbumDetailContent(album = media as Album)
+                    MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
+                    MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+                    MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
+                    MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+                    MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+                    MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
                 }
             }
         }
