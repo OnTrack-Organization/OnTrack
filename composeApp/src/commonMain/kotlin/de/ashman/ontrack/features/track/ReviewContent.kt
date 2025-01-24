@@ -5,8 +5,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,21 +25,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.MAX_RATING
 import de.ashman.ontrack.util.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.review_description_label
 import ontrack.composeapp.generated.resources.review_title
+import ontrack.composeapp.generated.resources.review_title_label
 import ontrack.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ReviewContent(
-    mediaType: MediaType,
     mediaTitle: String,
     rating: Int?,
-    review: String?,
+    reviewTitle: String?,
+    reviewDescription: String?,
     onRatingChange: (Int) -> Unit,
-    onReviewChange: (String) -> Unit,
+    onReviewTitleChange: (String) -> Unit,
+    onReviewDescriptionChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
     Text(
@@ -47,16 +50,29 @@ fun ReviewContent(
         style = MaterialTheme.typography.titleMedium,
     )
 
-    StarRatingBar(
+    SelectableStarRatingBar(
         rating = rating,
         onRatingChange = onRatingChange,
     )
 
     TextField(
-        modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth(),
-        value = review.orEmpty(),
-        onValueChange = onReviewChange,
-        placeholder = { Text(mediaType.getReviewLabel()) },
+        modifier = Modifier.height(50.dp).fillMaxWidth(),
+        value = reviewTitle.orEmpty(),
+        onValueChange = onReviewTitleChange,
+        placeholder = { Text(stringResource(Res.string.review_title_label)) },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        )
+    )
+
+    TextField(
+        modifier = Modifier.height(100.dp).fillMaxWidth(),
+        value = reviewDescription.orEmpty(),
+        onValueChange = onReviewDescriptionChange,
+        placeholder = { Text(stringResource(Res.string.review_description_label)) },
         shape = RoundedCornerShape(16.dp),
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
@@ -73,11 +89,10 @@ fun ReviewContent(
 }
 
 @Composable
-fun StarRatingBar(
+fun SelectableStarRatingBar(
     rating: Int?,
     onRatingChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    maxRating: Int = 5,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -88,7 +103,7 @@ fun StarRatingBar(
             modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            for (i in 1..maxRating) {
+            for (i in 1..MAX_RATING) {
                 Icon(
                     imageVector = if (rating != null && i <= rating) Icons.Filled.Star else Icons.Filled.StarBorder,
                     contentDescription = null,
@@ -104,7 +119,7 @@ fun StarRatingBar(
             }
         }
         Text(
-            text = getRatingLabel(rating, maxRating),
+            text = getRatingLabel(rating, MAX_RATING),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold,

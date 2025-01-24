@@ -62,7 +62,7 @@ class DetailViewModel(
     fun fetchDetails(media: Media) = viewModelScope.launch {
         resetSelectedMedia(media.id)
 
-        _uiState.update { it.copy(detailResultState = DetailResultState.Loading) }
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
         val dbResult = mediaService.getUserMediaById(media.id)
         val apiResult = when (media) {
@@ -80,7 +80,7 @@ class DetailViewModel(
 
                 _uiState.update {
                     it.copy(
-                        detailResultState = DetailResultState.Success,
+                        resultState = DetailResultState.Success,
                         selectedMedia = enrichedResult
                     )
                 }
@@ -88,7 +88,7 @@ class DetailViewModel(
             onFailure = { exception ->
                 _uiState.update {
                     it.copy(
-                        detailResultState = DetailResultState.Error,
+                        resultState = DetailResultState.Error,
                         errorMessage = "Failed to fetch details: ${exception.message}"
                     )
                 }
@@ -122,7 +122,7 @@ class DetailViewModel(
 
 data class DetailUiState(
     val selectedMedia: Media? = null,
-    val detailResultState: DetailResultState = DetailResultState.Loading,
+    val resultState: DetailResultState = DetailResultState.Loading,
     val errorMessage: String? = null,
 )
 

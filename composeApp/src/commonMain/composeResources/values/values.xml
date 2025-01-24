@@ -38,12 +38,8 @@
     <string name="rating_five">Masterpiece</string>
     <string name="rating_subtitle">%1$d/%2$d %3$s</string>
 
-    <string name="movie_review_label">Review the movie...</string>
-    <string name="show_review_label">Review the show...</string>
-    <string name="book_review_label">Review the book...</string>
-    <string name="videogame_review_label">Review the videogame...</string>
-    <string name="boardgame_review_label">Review the boardgame...</string>
-    <string name="album_review_label">Review the album...</string>
+    <string name="review_title_label">Write a review title...</string>
+    <string name="review_description_label">Write a review...</string>
 
     <plurals name="movie">
         <item quantity="one">Movie</item>

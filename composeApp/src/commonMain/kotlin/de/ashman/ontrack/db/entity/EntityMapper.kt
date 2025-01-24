@@ -3,6 +3,9 @@ package de.ashman.ontrack.db.entity
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.TrackStatus
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun Media.toEntity(): MediaEntity {
     return MediaEntity(
@@ -15,17 +18,21 @@ fun Media.toEntity(): MediaEntity {
 }
 
 fun TrackStatus.toEntity() = TrackStatusEntity(
-    id = id,
-    timestamp = Clock.System.now().toEpochMilliseconds(),
     statusType = statusType,
     rating = rating,
-    review = review,
+    reviewTitle = reviewTitle,
+    reviewDescription = reviewDescription,
+    timestamp = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
 )
 
 fun TrackStatusEntity.toDomain() = TrackStatus(
-    id = id,
-    timestamp = timestamp,
     statusType = statusType,
     rating = rating,
-    review = review,
+    reviewTitle = reviewTitle,
+    reviewDescription = reviewDescription,
+    timestamp = timestamp.formatDate(),
 )
+
+fun LocalDateTime.formatDate() : String {
+    return "${this.dayOfMonth.toString().padStart(2, '0')}.${this.monthNumber.toString().padStart(2, '0')}.${this.year}"
+}

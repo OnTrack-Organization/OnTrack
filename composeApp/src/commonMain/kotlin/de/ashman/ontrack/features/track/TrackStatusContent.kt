@@ -55,8 +55,8 @@ fun TrackStatusContent(
             TrackStatusButton(
                 onClick = { onSelectStatus(status) },
                 icon = status.getStatusIcon(isSelected),
-                label = getLabelForStatus(status, mediaType),
-                subLabel = getSublabelForStatus(mediaType, status),
+                label = status.getLabel(mediaType),
+                subLabel = status.getSublabel(mediaType),
                 isSelected = selectedStatus == status,
             )
         }

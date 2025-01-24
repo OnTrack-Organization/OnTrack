@@ -65,10 +65,11 @@ fun TrackBottomSheetContent(
 
             CurrentTrackContent.REVIEW -> ReviewContent(
                 mediaTitle = media.title,
-                mediaType = media.mediaType,
-                review = trackStatus.review,
+                reviewTitle = trackStatus.reviewTitle,
+                reviewDescription = trackStatus.reviewDescription,
                 rating = trackStatus.rating,
-                onReviewChange = { trackStatus = trackStatus.copy(review = it) },
+                onReviewTitleChange = { trackStatus = trackStatus.copy(reviewTitle = it) },
+                onReviewDescriptionChange = { trackStatus = trackStatus.copy(reviewDescription = it) },
                 onRatingChange = { trackStatus = trackStatus.copy(rating = it) },
                 onSave = { onSaveTrackStatus(trackStatus) },
             )
