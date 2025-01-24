@@ -253,8 +253,11 @@ fun ReviewCard(
                                 tint = MaterialTheme.colorScheme.primary,
                             )
                         }
+
                         MiniStarRatingBar(rating = trackStatus.rating)
+
                         Spacer(modifier = Modifier.weight(1f))
+
                         trackStatus.timestamp?.let {
                             Text(
                                 text = it,
@@ -293,15 +296,17 @@ fun ReviewCard(
 fun MiniStarRatingBar(
     rating: Int?,
 ) {
-    rating?.let {
-        Row {
-            for (i in 1..MAX_RATING) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = null,
-                    tint = if (i <= rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                )
-            }
+    Row {
+        for (i in 1..MAX_RATING) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = null,
+                tint = if (rating != null && i <= rating) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
         }
     }
 }

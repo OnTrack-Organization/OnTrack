@@ -101,11 +101,12 @@ class DetailViewModel(
         val selectedMedia = _uiState.value.selectedMedia
 
         selectedMedia?.let {
-            val mediaEntity = selectedMedia.toEntity().copy(trackStatus = status?.toEntity())
+            val trackEntity = status?.toEntity()
+            val mediaEntity = selectedMedia.toEntity().copy(trackStatus = trackEntity)
 
             mediaService.saveMedia(mediaEntity)
 
-            _uiState.update { it.copy(selectedMedia = selectedMedia.addTrackStatus(status)) }
+            _uiState.update { it.copy(selectedMedia = selectedMedia.addTrackStatus(trackEntity?.toDomain())) }
         }
     }
 
