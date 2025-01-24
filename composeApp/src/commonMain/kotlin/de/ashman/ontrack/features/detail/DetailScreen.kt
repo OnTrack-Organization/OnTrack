@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.detail
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +58,8 @@ fun DetailScreen(
                     coroutineScope.launch {
                         val result = snackbarHostState.showSnackbar(
                             message = getString(Res.string.track_status_removed),
-                            actionLabel = getString(Res.string.track_status_removed_undo)
+                            actionLabel = getString(Res.string.track_status_removed_undo),
+                            duration = SnackbarDuration.Short,
                         )
                         if (result == SnackbarResult.ActionPerformed) {
                             viewModel.undoRemoveTrack()

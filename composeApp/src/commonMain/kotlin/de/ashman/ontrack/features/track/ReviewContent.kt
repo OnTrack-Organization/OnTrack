@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -105,9 +104,9 @@ fun SelectableStarRatingBar(
         ) {
             for (i in 1..MAX_RATING) {
                 Icon(
-                    imageVector = if (rating != null && i <= rating) Icons.Filled.Star else Icons.Filled.StarBorder,
+                    imageVector =  Icons.Filled.Star,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = if (rating != null && i <= rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(62.dp)
                         .clickable(

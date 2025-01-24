@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Boardgame
@@ -232,6 +233,7 @@ fun ReviewCard(
     trackStatus: TrackStatus?,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var hasOverflow by remember { mutableStateOf(false) }
 
     trackStatus?.let {
         if (trackStatus.statusType != TrackStatusType.CATALOG) {
@@ -265,25 +267,29 @@ fun ReviewCard(
                             )
                         }
 
-                        trackStatus.reviewDescription?.let {
+                        if (hasOverflow) {
                             Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
                         }
                     }
 
-                    trackStatus.reviewTitle?.let {
+                    if (!trackStatus.reviewTitle.isNullOrBlank()) {
                         Text(
-                            text = it,
+                            text = trackStatus.reviewTitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             maxLines = 2,
                         )
                     }
 
-                    trackStatus.reviewDescription?.let {
+                    if (!trackStatus.reviewDescription.isNullOrBlank()) {
                         Text(
-                            text = it,
+                            text = trackStatus.reviewDescription,
                             style = MaterialTheme.typography.bodyMedium,
                             maxLines = if (expanded) Int.MAX_VALUE else 2,
+                            overflow = TextOverflow.Ellipsis,
+                            onTextLayout = {
+                                if (!expanded) hasOverflow = it.hasVisualOverflow
+                            }
                         )
                     }
                 }
