@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.detail
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,6 +15,7 @@ import de.ashman.ontrack.navigation.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.track_status_removed
+import ontrack.composeapp.generated.resources.track_status_removed_undo
 import ontrack.composeapp.generated.resources.track_status_saved
 import org.jetbrains.compose.resources.getString
 
@@ -53,7 +55,13 @@ fun DetailScreen(
                 onRemoveTrack = {
                     viewModel.removeTrack()
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar(getString(Res.string.track_status_removed))
+                        val result = snackbarHostState.showSnackbar(
+                            message = getString(Res.string.track_status_removed),
+                            actionLabel = getString(Res.string.track_status_removed_undo)
+                        )
+                        if (result == SnackbarResult.ActionPerformed) {
+                            viewModel.undoRemoveTrack()
+                        }
                     }
                 },
                 onClickItem = onClickItem,

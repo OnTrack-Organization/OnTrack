@@ -49,6 +49,8 @@ class DetailViewModel(
             _uiState.value,
         )
 
+    private var lastRemovedMedia: Media? = null
+
     init {
         Logger.d { "DetailViewModel init" }
     }
@@ -114,9 +116,17 @@ class DetailViewModel(
         val selectedMedia = _uiState.value.selectedMedia
 
         selectedMedia?.let {
+            lastRemovedMedia = it
             mediaService.removeMedia(selectedMedia.id)
 
             _uiState.update { it.copy(selectedMedia = selectedMedia.removeTrackStatus()) }
+        }
+    }
+
+    fun undoRemoveTrack() = viewModelScope.launch {
+        lastRemovedMedia?.let { media ->
+            mediaService.saveMedia(media.toEntity())
+            _uiState.update { it.copy(selectedMedia = media) }
         }
     }
 }
