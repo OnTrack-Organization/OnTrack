@@ -1,11 +1,11 @@
 package de.ashman.ontrack.api.movie
 
-import de.ashman.ontrack.domain.Movie
+import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.MovieResponseDto
-import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -31,7 +31,7 @@ class MovieRepository(
 
             val similar = fetchSimilar(id).getOrNull()?.takeIf { it.isNotEmpty() }
 
-           response.toDomain().copy(similarMovies = similar)
+            response.toDomain().copy(similarMovies = similar)
         }
     }
 

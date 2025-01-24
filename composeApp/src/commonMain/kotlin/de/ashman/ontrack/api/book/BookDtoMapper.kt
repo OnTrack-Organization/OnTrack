@@ -1,13 +1,13 @@
 package de.ashman.ontrack.api.book
 
-import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.api.book.dto.BookDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponseDto
 import de.ashman.ontrack.api.getOpenLibraryCoverUrl
+import de.ashman.ontrack.domain.Book
 
 fun BookDto.toDomain(): Book {
     return Book(
-        id = key,
+        id = key.substringAfter("/works/"),
         title = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
         releaseYear = firstPublishYear.toString(),
