@@ -12,6 +12,10 @@ import de.ashman.ontrack.features.detail.ui.LoadingContent
 import de.ashman.ontrack.features.detail.ui.SuccessContent
 import de.ashman.ontrack.navigation.LocalSnackbarHostState
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.track_status_removed
+import ontrack.composeapp.generated.resources.track_status_saved
+import org.jetbrains.compose.resources.getString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,16 +44,16 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
-                onSaveTrackStatus = {
+                onSaveTrack = {
                     viewModel.saveTrack(it)
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Track saved")
+                        snackbarHostState.showSnackbar(getString(Res.string.track_status_saved))
                     }
                 },
                 onRemoveTrack = {
                     viewModel.removeTrack()
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Track removed")
+                        snackbarHostState.showSnackbar(getString(Res.string.track_status_removed))
                     }
                 },
                 onClickItem = onClickItem,

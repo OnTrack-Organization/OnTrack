@@ -30,7 +30,7 @@ enum class CurrentTrackContent {
 @Composable
 fun TrackBottomSheetContent(
     media: Media,
-    onSaveTrackStatus: (TrackStatus?) -> Unit,
+    onSaveTrack: (TrackStatus?) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
 
@@ -58,7 +58,7 @@ fun TrackBottomSheetContent(
                     if (trackStatus.statusType != TrackStatusType.CATALOG) {
                         currentContent = CurrentTrackContent.REVIEW
                     } else {
-                        onSaveTrackStatus(trackStatus)
+                        onSaveTrack(trackStatus)
                     }
                 },
             )
@@ -71,7 +71,7 @@ fun TrackBottomSheetContent(
                 onReviewTitleChange = { trackStatus = trackStatus.copy(reviewTitle = it) },
                 onReviewDescriptionChange = { trackStatus = trackStatus.copy(reviewDescription = it) },
                 onRatingChange = { trackStatus = trackStatus.copy(rating = it) },
-                onSave = { onSaveTrackStatus(trackStatus) },
+                onSave = { onSaveTrack(trackStatus) },
             )
         }
     }

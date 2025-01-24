@@ -76,7 +76,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    onSaveTrackStatus: (TrackStatus?) -> Unit,
+    onSaveTrack: (TrackStatus?) -> Unit,
     onRemoveTrack: () -> Unit,
     onClickItem: (Media) -> Unit,
 ) {
@@ -132,8 +132,8 @@ fun SuccessContent(
             ) {
                 TrackBottomSheetContent(
                     media = media,
-                    onSaveTrackStatus = {
-                        onSaveTrackStatus(it)
+                    onSaveTrack = {
+                        onSaveTrack(it)
                         showBottomSheet = false
                     }
                 )
