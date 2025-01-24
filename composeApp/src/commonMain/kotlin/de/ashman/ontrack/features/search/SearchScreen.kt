@@ -102,7 +102,6 @@ fun SearchScreen(
                                 title = it.title,
                                 coverUrl = it.coverUrl,
                                 trackStatusIcon = it.trackStatus?.statusType?.getStatusIcon(true),
-                                trackStatusRating = it.trackStatus?.rating,
                                 onClick = { onClickItem(it) },
                             )
                         }

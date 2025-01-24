@@ -55,6 +55,8 @@ class MediaServiceImpl : MediaService {
 
             val mediaResponse = mediaRef.get()
 
+            Logger.i { "Successfully fetched all use media" }
+
             mediaResponse.documents.mapNotNull { document ->
                 document.data()
             }

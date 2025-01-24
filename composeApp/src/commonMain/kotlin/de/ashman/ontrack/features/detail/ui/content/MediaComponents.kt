@@ -187,7 +187,7 @@ fun TrackOverlay(
         trackStatusIcon?.let {
             Icon(
                 imageVector = trackStatusIcon,
-                contentDescription = "Status Icon",
+                contentDescription = trackStatusIcon.name,
                 modifier = Modifier.size(32.dp).alpha(0.8F),
                 tint = Color.White,
             )
