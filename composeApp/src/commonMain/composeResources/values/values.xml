@@ -144,13 +144,15 @@
         <item quantity="one">%1$d Episode</item>
         <item quantity="other">%1$d Episodes</item>
     </plurals>
-    <string name="detail_genres">Genres</string>
     <string name="detail_similar_movies">Similar movies</string>
     <string name="detail_similar_shows">Similar shows</string>
     <string name="detail_similar_books">Similar books</string>
     <string name="detail_similar_videogames">Similar videogames</string>
     <string name="detail_similar_boardgames">Similar boardgames</string>
     <string name="detail_similar_albums">Similar albums</string>
+
+    <string name="detail_platforms">Platforms</string>
+    <string name="detail_genres">Genres</string>
     <string name="detail_franchise">Franchise</string>
 
     <string name="detail_playing_time">%1$d min</string>

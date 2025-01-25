@@ -54,7 +54,6 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
-import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.not_available
 import org.jetbrains.compose.resources.stringResource
 
@@ -284,23 +283,24 @@ fun MediaDescription(
 }
 
 @Composable
-fun MediaGenres(
-    genres: List<String>?,
+fun MediaChips(
+    title: String,
+    items: List<String>?,
     modifier: Modifier = Modifier,
 ) {
-    genres?.let {
+    items?.let {
         Column(
             modifier = modifier.padding(horizontal = 16.dp),
         ) {
             Text(
-                text = stringResource(Res.string.detail_genres),
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
             )
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(genres) {
+                items(items) {
                     AssistChip(
                         onClick = {},
                         label = { Text(it) },

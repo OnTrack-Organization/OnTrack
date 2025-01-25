@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_similar_movies
 import org.jetbrains.compose.resources.stringResource
 
@@ -12,7 +13,10 @@ fun LazyListScope.MovieDetailContent(
     onClickItem: (Media) -> Unit,
 ) {
     item {
-        MediaGenres(movie.genres)
+        MediaChips(
+            title = stringResource(Res.string.detail_genres),
+            items = movie.genres,
+        )
     }
     item {
         MediaDescription(movie.description)

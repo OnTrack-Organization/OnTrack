@@ -4,6 +4,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Videogame
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_genres
+import ontrack.composeapp.generated.resources.detail_platforms
 import ontrack.composeapp.generated.resources.detail_similar_videogames
 import org.jetbrains.compose.resources.stringResource
 
@@ -15,7 +17,16 @@ fun LazyListScope.VideogameDetailContent(
         MediaDescription(videogame.description)
     }
     item {
-        MediaGenres(videogame.genres)
+        MediaChips(
+            title = stringResource(Res.string.detail_platforms),
+            items = videogame.platforms?.map { it.name },
+        )
+    }
+    item {
+        MediaChips(
+            title = stringResource(Res.string.detail_genres),
+            items = videogame.genres,
+        )
     }
     item {
         MediaRow(

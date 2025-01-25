@@ -18,6 +18,7 @@ import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_seasons
 import ontrack.composeapp.generated.resources.detail_similar_shows
 import org.jetbrains.compose.resources.pluralStringResource
@@ -26,13 +27,15 @@ import org.jetbrains.compose.resources.stringResource
 fun LazyListScope.ShowDetailContent(
     show: Show,
     onClickItem: (Media) -> Unit = { },
-    onClickSeason: (Season) -> Unit = { },
 ) {
     item {
         MediaDescription(show.description)
     }
     item {
-        MediaGenres(show.genres)
+        MediaChips(
+            title = stringResource(Res.string.detail_genres),
+            items = show.genres,
+        )
     }
     item {
         MediaRow(
