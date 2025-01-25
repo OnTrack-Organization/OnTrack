@@ -5,20 +5,25 @@ import de.ashman.ontrack.db.entity.MediaEntity
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface MediaService {
     suspend fun saveMedia(media: MediaEntity)
     suspend fun removeMedia(id: String)
-    suspend fun getAllUserMedia(): List<MediaEntity>
-    suspend fun getUserMediaById(id: String): MediaEntity?
+    fun getUserMediaListFlow(): Flow<List<MediaEntity>>
+    fun getUserMediaFlow(id: String): Flow<MediaEntity?>
 }
 
 class MediaServiceImpl : MediaService {
+    private val userId: String
+        get() = Firebase.auth.currentUser?.uid.orEmpty()
+
     override suspend fun saveMedia(media: MediaEntity) {
         try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid.orEmpty())
+                .document(userId)
                 .collection("media")
                 .document(media.id)
 
@@ -34,7 +39,7 @@ class MediaServiceImpl : MediaService {
         try {
             val mediaRef = Firebase.firestore
                 .collection("users")
-                .document(Firebase.auth.currentUser?.uid.orEmpty())
+                .document(userId)
                 .collection("media")
                 .document(id)
 
@@ -46,45 +51,44 @@ class MediaServiceImpl : MediaService {
         }
     }
 
-    override suspend fun getAllUserMedia(): List<MediaEntity> {
-        return try {
-            val mediaRef = Firebase.firestore
-                .collection("users")
-                .document(Firebase.auth.currentUser?.uid.orEmpty())
-                .collection("media")
+    override fun getUserMediaListFlow(): Flow<List<MediaEntity>> {
+        val mediaRef = Firebase.firestore
+            .collection("users")
+            .document(userId)
+            .collection("media")
 
-            val mediaResponse = mediaRef.get()
-
-            Logger.i { "Successfully fetched all use media" }
-
-            mediaResponse.documents.mapNotNull { document ->
-                document.data()
+        return mediaRef.snapshots.map { querySnapshot ->
+            querySnapshot.documents.mapNotNull { documentSnapshot ->
+                try {
+                    documentSnapshot.data<MediaEntity>()
+                } catch (e: Exception) {
+                    Logger.e { "Error parsing media document: ${e.message}" }
+                    null
+                }
             }
-        } catch (e: Exception) {
-            Logger.e { "Error fetching all user media: ${e.message}" }
-            emptyList()
         }
     }
 
-    override suspend fun getUserMediaById(id: String): MediaEntity? {
-        return try {
-            val mediaRef = Firebase.firestore
-                .collection("users")
-                .document(Firebase.auth.currentUser?.uid.orEmpty())
-                .collection("media")
-                .document(id)
+    override fun getUserMediaFlow(id: String): Flow<MediaEntity?> {
+        val mediaRef = Firebase.firestore
+            .collection("users")
+            .document(userId)
+            .collection("media")
+            .document(id)
 
-            val mediaSnapshot = mediaRef.get()
-
-            if (mediaSnapshot.exists) {
-                mediaSnapshot.data()
-            } else {
-                Logger.i { "No media found with ID: $id" }
+        return mediaRef.snapshots.map { documentSnapshot ->
+            try {
+                if (documentSnapshot.exists) {
+                    documentSnapshot.data<MediaEntity>()
+                } else {
+                    Logger.i { "No media found with ID: $id" }
+                    null
+                }
+            } catch (e: Exception) {
+                Logger.e { "Error parsing media document for ID $id: ${e.message}" }
                 null
             }
-        } catch (e: Exception) {
-            Logger.e { "Error fetching media with ID $id: ${e.message}" }
-            null
         }
     }
+
 }

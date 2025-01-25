@@ -25,7 +25,8 @@ import de.ashman.ontrack.domain.removeTrackStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,7 +43,9 @@ class DetailViewModel(
 
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState
-        .onStart {}
+        .onEach {
+            observeSelectedMedia()
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -55,35 +58,24 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun resetSelectedMedia(id: String) {
-        if (_uiState.value.selectedMedia?.id != id) {
-            _uiState.update { it.copy(selectedMedia = null) }
-        }
-    }
-
     fun fetchDetails(media: Media) = viewModelScope.launch {
-        resetSelectedMedia(media.id)
-
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        val dbResult = mediaService.getUserMediaById(media.id)
-        val apiResult = when (media) {
-            is Movie -> movieRepository.fetchDetails(media.id)
-            is Show -> showRepository.fetchDetails(media.id)
-            is Book -> bookRepository.fetchBookDescription(media)
-            is Videogame -> videogameRepository.fetchDetails(media.id)
-            is Boardgame -> boardgameRepository.fetchDetails(media.id)
-            is Album -> albumRepository.fetchDetails(media.id)
+        val repository = when (media) {
+            is Movie -> movieRepository
+            is Show -> showRepository
+            is Book -> bookRepository
+            is Videogame -> videogameRepository
+            is Boardgame -> boardgameRepository
+            is Album -> albumRepository
         }
 
-        apiResult.fold(
+        repository.fetchDetails(media).fold(
             onSuccess = { result ->
-                val enrichedResult = result.addTrackStatus(dbResult?.trackStatus?.toDomain())
-
                 _uiState.update {
                     it.copy(
                         resultState = DetailResultState.Success,
-                        selectedMedia = enrichedResult
+                        selectedMedia = result,
                     )
                 }
             },
@@ -127,6 +119,19 @@ class DetailViewModel(
         lastRemovedMedia?.let { media ->
             mediaService.saveMedia(media.toEntity())
             _uiState.update { it.copy(selectedMedia = media) }
+        }
+    }
+
+    private fun observeSelectedMedia() {
+        _uiState.value.selectedMedia?.let {
+            mediaService.getUserMediaFlow(it.id)
+                .onEach { mediaEntity ->
+                    if (mediaEntity != null) {
+                        val updatedMedia = it.addTrackStatus(mediaEntity.trackStatus?.toDomain())
+                        _uiState.update { it.copy(selectedMedia = updatedMedia) }
+                    }
+                }
+                .launchIn(viewModelScope)
         }
     }
 }

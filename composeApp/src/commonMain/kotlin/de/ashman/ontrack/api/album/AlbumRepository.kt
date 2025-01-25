@@ -1,14 +1,14 @@
 package de.ashman.ontrack.api.album
 
-import de.ashman.ontrack.api.auth.AccessTokenManager
-import de.ashman.ontrack.domain.Album
-import de.ashman.ontrack.api.album.dto.AlbumDto
-import de.ashman.ontrack.api.album.dto.AlbumSearchResult
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
+import de.ashman.ontrack.api.album.dto.AlbumSearchResult
+import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Artist
+import de.ashman.ontrack.domain.Album
+import de.ashman.ontrack.domain.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -45,10 +45,10 @@ class AlbumRepository(
         }
     }
 
-    override suspend fun fetchDetails(id: String): Result<Album> {
+    override suspend fun fetchDetails(media: Media): Result<Album> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
-                url("albums/$id")
+                url("albums/${media.id}")
             }
             val response: AlbumDto = httpClient.request(requestBuilder).body()
             val album = response.toDomain()

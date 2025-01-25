@@ -46,6 +46,9 @@ class SearchViewModel(
         .onStart {
             observeSearchQuery()
         }
+        .onEach {
+            observeUserMedia()
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -72,25 +75,13 @@ class SearchViewModel(
                 MediaType.ALBUM -> albumRepository
             }
 
-            val result = repository.fetchByQuery(query)
-            val userMedia = mediaService.getAllUserMedia()
-
-            result.fold(
+            repository.fetchByQuery(query).fold(
                 onSuccess = { searchResults ->
-                    val combinedResults = searchResults.map { apiMedia ->
-                        val userMediaData = userMedia.find { it.id == apiMedia.id }
-                        if (userMediaData != null) {
-                            apiMedia.addTrackStatus(userMediaData.trackStatus?.toDomain())
-                        } else {
-                            apiMedia
-                        }
-                    }
-
                     _uiState.update {
                         it.copy(
-                            searchResultState = if (combinedResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            searchResultState = if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
                             errorMessage = null,
-                            searchResults = combinedResults,
+                            searchResults = searchResults,
                         )
                     }
                 },
@@ -123,26 +114,14 @@ class SearchViewModel(
                 MediaType.ALBUM -> albumRepository
             }
 
-            val apiResult = repository.fetchTrending()
-            val dbResult = mediaService.getAllUserMedia()
-
-            apiResult.fold(
+            repository.fetchTrending().fold(
                 onSuccess = { trendingResults ->
-                    val combinedResults = trendingResults.map { apiMedia ->
-                        val userMediaData = dbResult.find { it.id == apiMedia.id }
-                        if (userMediaData != null) {
-                            apiMedia.addTrackStatus(userMediaData.trackStatus?.toDomain())
-                        } else {
-                            apiMedia
-                        }
-                    }
-
                     _uiState.update {
                         it.copy(
-                            searchResultState = if (combinedResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            searchResultState = if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
                             errorMessage = null,
-                            cachedTrending = combinedResults,
-                            searchResults = combinedResults,
+                            cachedTrending = trendingResults,
+                            searchResults = trendingResults,
                         )
                     }
                 },
@@ -184,6 +163,30 @@ class SearchViewModel(
                         searchJob?.cancel()
                         searchJob = search(query)
                     }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun observeUserMedia() {
+        mediaService.getUserMediaListFlow()
+            .onEach { mediaEntityList ->
+                _uiState.update {
+                    // Update search results by user media from db
+                    val enrichedSearchResults = it.searchResults.map { apiMedia ->
+                        val mediaEntity = mediaEntityList.find { it.id == apiMedia.id }
+                        if (mediaEntity != null) {
+                            apiMedia.addTrackStatus(mediaEntity.trackStatus?.toDomain())
+                        } else if (apiMedia.trackStatus != null) {
+                            // If the media is no longer in the user's media list, reset its status
+                            apiMedia.addTrackStatus(null)
+                        } else {
+                            // Keep media that hasn't been tracked
+                            apiMedia
+                        }
+                    }
+
+                    it.copy(searchResults = enrichedSearchResults)
                 }
             }
             .launchIn(viewModelScope)

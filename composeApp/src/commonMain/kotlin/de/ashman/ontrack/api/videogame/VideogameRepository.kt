@@ -1,11 +1,12 @@
 package de.ashman.ontrack.api.videogame
 
-import de.ashman.ontrack.api.auth.AccessTokenManager
-import de.ashman.ontrack.domain.Videogame
-import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.safeApiCall
+import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.Videogame
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -49,14 +50,14 @@ class VideogameRepository(
         }
     }
 
-    override suspend fun fetchDetails(id: String): Result<Videogame> {
+    override suspend fun fetchDetails(media: Media): Result<Videogame> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
                 setBody(
                 """
                     fields cover.url, first_release_date, franchises.name, genres.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
-                    where id = $id;
+                    where id = ${media.id};
                 """
                 )
             }

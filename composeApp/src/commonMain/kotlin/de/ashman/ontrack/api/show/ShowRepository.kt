@@ -1,11 +1,12 @@
 package de.ashman.ontrack.api.show
 
-import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.api.show.dto.ShowDto
-import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.safeApiCall
+import de.ashman.ontrack.api.show.dto.ShowDto
+import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.Show
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -25,11 +26,10 @@ class ShowRepository(
         }
     }
 
-    override suspend fun fetchDetails(id: String): Result<Show> {
+    override suspend fun fetchDetails(media: Media): Result<Show> {
         return safeApiCall {
-            val response: ShowDto = httpClient.get("tv/$id").body()
-
-            val similar = fetchSimilar(id).getOrNull()
+            val response: ShowDto = httpClient.get("tv/${media.id}").body()
+            val similar = fetchSimilar(media.id).getOrNull()
 
             response.toDomain().copy(similarShows = similar)
         }
