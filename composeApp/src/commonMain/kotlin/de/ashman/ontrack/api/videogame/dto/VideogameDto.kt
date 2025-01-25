@@ -9,6 +9,7 @@ data class VideogameDto(
     val firstReleaseDate: Long? = null,
     val franchises: List<FranchiseDto>? = null,
     val genres: List<GenreDto>? = null,
+    val involvedCompanies: List<InvolvedCompanyDto>? = null,
     val name: String? = null,
     val platforms: List<PlatformDto>? = null,
     val totalRating: Double? = null,
@@ -31,6 +32,17 @@ data class FranchiseDto(
 
 @Serializable
 data class GenreDto(
+    val id: Int,
+    val name: String,
+)
+
+@Serializable
+data class InvolvedCompanyDto(
+    val company: CompanyDto,
+)
+
+@Serializable
+data class CompanyDto(
     val id: Int,
     val name: String,
 )

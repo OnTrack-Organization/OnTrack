@@ -20,6 +20,7 @@ fun VideogameDto.toDomain(): Videogame {
         },
         franchises = franchises?.map { it.toDomain() },
         genres = genres?.map { it.name },
+        involvedCompanies = involvedCompanies?.map { it.company.name },
         title = name.orEmpty(),
         platforms = platforms?.map { it.toDomain() },
         similarGames = similarGames?.map { it.toDomain() },

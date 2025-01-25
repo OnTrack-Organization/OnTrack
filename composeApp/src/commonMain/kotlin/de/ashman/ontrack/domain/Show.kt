@@ -3,6 +3,10 @@ package de.ashman.ontrack.domain
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_episodes
+import ontrack.composeapp.generated.resources.detail_seasons
+import org.jetbrains.compose.resources.getPluralString
 
 @Serializable
 data class Show(
@@ -30,12 +34,12 @@ data class Show(
     val similarShows: List<Show>? = null,
     val seasonNumber: Int? = null,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        numberOfSeasons?.let { infoItems.add("$it Seasons") }
-        numberOfEpisodes?.let { infoItems.add("$it Episodes") }
+        numberOfSeasons?.let { infoItems.add(getPluralString(Res.plurals.detail_seasons, it, it)) }
+        numberOfEpisodes?.let { infoItems.add(getPluralString(Res.plurals.detail_episodes, it, it)) }
 
         return infoItems
     }

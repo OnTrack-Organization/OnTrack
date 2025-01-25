@@ -3,6 +3,12 @@ package de.ashman.ontrack.domain
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_player_count_range
+import ontrack.composeapp.generated.resources.detail_playing_time
+import ontrack.composeapp.generated.resources.detail_single_player_count
+import org.jetbrains.compose.resources.getPluralString
+import org.jetbrains.compose.resources.getString
 
 @Serializable
 data class Boardgame(
@@ -14,25 +20,30 @@ data class Boardgame(
     override val trackStatus: TrackStatus? = null,
     val description: String?,
     val boardgameType: String? = null,
-    val minPlayers: String? = null,
-    val maxPlayers: String? = null,
-    val playingTime: String? = null,
+    val minPlayers: Int? = null,
+    val maxPlayers: Int? = null,
+    val playingTime: Int? = null,
     val minAge: String? = null,
     val thumbnail: String? = null,
     val ratings: Ratings? = null,
     val franchiseItems: List<Boardgame>? = null,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        playingTime?.takeIf { it != "0" }?.let { infoItems.add("$it Min") }
+        playingTime?.let { infoItems.add(getString(Res.string.detail_playing_time, it)) }
 
-        // Add player count, showing just one value if min and max are the same, excluding 0
-        if (!minPlayers.isNullOrEmpty() && minPlayers != "0") {
-            infoItems.add(if (minPlayers == maxPlayers) "$minPlayers Players" else "$minPlayers-$maxPlayers Players")
-        } else if (!maxPlayers.isNullOrEmpty() && maxPlayers != "0") {
-            infoItems.add("$maxPlayers Players")
+        minPlayers?.let { min ->
+            maxPlayers?.let { max ->
+                infoItems.add(
+                    if (min == max) {
+                        getPluralString(Res.plurals.detail_single_player_count, min, min)
+                    } else {
+                        getString(Res.string.detail_player_count_range, min, max)
+                    }
+                )
+            }
         }
 
         return infoItems

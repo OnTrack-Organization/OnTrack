@@ -3,6 +3,9 @@ package de.ashman.ontrack.domain
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_tracks
+import org.jetbrains.compose.resources.getPluralString
 
 @Serializable
 data class Album(
@@ -20,11 +23,11 @@ data class Album(
     val tracks: List<Track>,
     val artistAlbums: List<Album>? = null,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        infoItems.add("$totalTracks Tracks")
+        infoItems.add(getPluralString(Res.plurals.detail_tracks, totalTracks, totalTracks))
         infoItems.add(artists.first().name)
 
         return infoItems

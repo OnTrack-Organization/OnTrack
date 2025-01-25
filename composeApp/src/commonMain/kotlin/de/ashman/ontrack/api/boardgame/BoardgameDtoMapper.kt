@@ -1,10 +1,10 @@
 package de.ashman.ontrack.api.boardgame
 
-import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
-import de.ashman.ontrack.domain.Ratings
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
+import de.ashman.ontrack.domain.Boardgame
+import de.ashman.ontrack.domain.Ratings
 
 fun BoardgameDto.toDomain(): Boardgame {
     return Boardgame(
@@ -13,9 +13,9 @@ fun BoardgameDto.toDomain(): Boardgame {
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         minAge = minage?.value,
-        minPlayers = minplayers?.value,
-        maxPlayers = maxplayers?.value,
-        playingTime = playingtime?.value,
+        minPlayers = minplayers?.value.takeIf { it != "0" }?.toInt(),
+        maxPlayers = maxplayers?.value.takeIf { it != "0" }?.toInt(),
+        playingTime = playingtime?.value.takeIf { it != "0" }?.toInt(),
         description = description?.decodeHtmlManually(),
         thumbnail = thumbnail,
         ratings = statistics?.ratings?.toDomain(),

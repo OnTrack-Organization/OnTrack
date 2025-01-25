@@ -1,6 +1,9 @@
 package de.ashman.ontrack.domain
 
 import kotlinx.serialization.Serializable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_pages
+import org.jetbrains.compose.resources.getPluralString
 
 @Serializable
 data class Book(
@@ -23,11 +26,11 @@ data class Book(
     val ratingsCount: Int? = null,
     val subjects: List<String>? = null,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        numberOfPagesMedian?.let { infoItems.add("$it Pages") }
+        numberOfPagesMedian?.let { infoItems.add(getPluralString(Res.plurals.detail_pages, it, it)) }
         authors?.let { infoItems.add(it.first()) }
 
         return infoItems

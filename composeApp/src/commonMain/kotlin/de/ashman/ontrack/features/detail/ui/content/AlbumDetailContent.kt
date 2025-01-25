@@ -15,6 +15,7 @@ import de.ashman.ontrack.domain.Track
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_artist_albums
 import ontrack.composeapp.generated.resources.detail_tracks
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.AlbumDetailContent(
@@ -45,7 +46,7 @@ fun AlbumTracks(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = stringResource(Res.string.detail_tracks),
+            text = pluralStringResource(Res.plurals.detail_tracks, tracks.size, tracks.size),
             style = MaterialTheme.typography.titleMedium,
         )
 

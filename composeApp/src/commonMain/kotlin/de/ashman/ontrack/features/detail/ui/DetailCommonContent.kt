@@ -67,6 +67,7 @@ import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.OnTrackButton
 import de.ashman.ontrack.util.OnTrackIconButton
 import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
+import kotlinx.coroutines.runBlocking
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
 import ontrack.composeapp.generated.resources.track_button
@@ -188,6 +189,11 @@ fun StickyMainContent(
     onClickTrack: () -> Unit,
     onClickRemove: () -> Unit,
 ) {
+    // TODO ugly, so change
+    val mainInfoItems by remember(media) {
+        mutableStateOf(runBlocking { media.getMainInfoItems() })
+    }
+
     Column(
         modifier = Modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -205,7 +211,7 @@ fun StickyMainContent(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             )
 
-            MainInfo(mainInfoItems = media.getMainInfoItems())
+            MainInfo(mainInfoItems = mainInfoItems)
         }
 
         Row(

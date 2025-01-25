@@ -133,10 +133,16 @@
     <string name="network_error">Network error</string>
     <string name="not_available">N/A</string>
 
+    <!-- DETAIL -->
     <string name="detail_description">Description</string>
+
     <plurals name="detail_seasons">
         <item quantity="one">%1$d Season</item>
         <item quantity="other">%1$d Seasons</item>
+    </plurals>
+    <plurals name="detail_episodes">
+        <item quantity="one">%1$d Episode</item>
+        <item quantity="other">%1$d Episodes</item>
     </plurals>
     <string name="detail_genres">Genres</string>
     <string name="detail_similar_movies">Similar movies</string>
@@ -146,6 +152,25 @@
     <string name="detail_similar_boardgames">Similar boardgames</string>
     <string name="detail_similar_albums">Similar albums</string>
     <string name="detail_franchise">Franchise</string>
+
+    <string name="detail_playing_time">%1$d min</string>
+    <plurals name="detail_single_player_count">
+        <item quantity="one">%1$d Player</item>
+        <item quantity="other">%1$d Players</item>
+    </plurals>
+    <string name="detail_player_count_range">%1$d-%2$d Players</string>
+    <string name="detail_max_player_count">Up to %1$d Players</string>
+
+    <plurals name="detail_pages">
+        <item quantity="one">%1$d Page</item>
+        <item quantity="other">%1$d Pages</item>
+    </plurals>
+
+    <string name="detail_runtime">%1$d min</string>
+
     <string name="detail_artist_albums">Artist's Albums</string>
-    <string name="detail_tracks">Tracks</string>
+    <plurals name="detail_tracks">
+        <item quantity="one">%1$d Track</item>
+        <item quantity="other">%1$d Tracks</item>
+    </plurals>
 </resources>

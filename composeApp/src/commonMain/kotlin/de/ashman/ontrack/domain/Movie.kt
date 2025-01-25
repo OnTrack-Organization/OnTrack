@@ -1,6 +1,9 @@
 package de.ashman.ontrack.domain
 
 import kotlinx.serialization.Serializable
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_runtime
+import org.jetbrains.compose.resources.getString
 
 @Serializable
 data class Movie(
@@ -24,11 +27,11 @@ data class Movie(
     val voteCount: Int?,
     val similarMovies: List<Movie>? = null,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        runtime?.let { infoItems.add("$it Min") }
+        runtime?.let { infoItems.add(getString(Res.string.detail_runtime, it)) }
 
         return infoItems
     }

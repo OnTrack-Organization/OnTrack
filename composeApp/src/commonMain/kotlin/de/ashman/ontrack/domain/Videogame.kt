@@ -15,16 +15,17 @@ data class Videogame(
     val description: String?,
     val franchises: List<Franchise>?,
     val genres: List<String>?,
+    val involvedCompanies: List<String>?,
     val platforms: List<Platform>?,
     val totalRating: Double?,
     val totalRatingCount: Int?,
     val similarGames: List<Videogame>?,
 ) : Media() {
-    override fun getMainInfoItems(): List<String> {
+    override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        platforms?.let { infoItems.add(it.first().name) }
+        involvedCompanies?.let { infoItems.add(it.first()) }
 
         return infoItems
     }
