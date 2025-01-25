@@ -1,10 +1,10 @@
 package de.ashman.ontrack.api.show
 
 import de.ashman.ontrack.api.getTMDBCoverUrl
-import de.ashman.ontrack.domain.Season
-import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.api.show.dto.SeasonDto
 import de.ashman.ontrack.api.show.dto.ShowDto
+import de.ashman.ontrack.domain.Season
+import de.ashman.ontrack.domain.Show
 
 fun ShowDto.toDomain(): Show {
     return Show(
@@ -33,12 +33,12 @@ fun ShowDto.toDomain(): Show {
 fun SeasonDto.toDomain(): Season {
     return Season(
         id = id,
-        airDate = airDate,
-        episodeCount = episodeCount,
-        name = name,
-        overview = overview,
-        posterPath = posterPath,
+        coverUrl = posterPath.getTMDBCoverUrl(),
+        title = name,
+        description = overview,
+        releaseYear = airDate?.take(4),
         seasonNumber = seasonNumber,
-        voteAverage = voteAverage
+        episodeCount = episodeCount,
+        voteAverage = voteAverage,
     )
 }

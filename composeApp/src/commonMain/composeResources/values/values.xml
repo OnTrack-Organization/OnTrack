@@ -131,8 +131,13 @@
     <string name="album_status_dropped_sublabel">Stopped listening</string>
 
     <string name="network_error">Network error</string>
+    <string name="not_available">N/A</string>
 
     <string name="detail_description">Description</string>
+    <plurals name="detail_seasons">
+        <item quantity="one">%1$d Season</item>
+        <item quantity="other">%1$d Seasons</item>
+    </plurals>
     <string name="detail_genres">Genres</string>
     <string name="detail_similar_movies">Similar movies</string>
     <string name="detail_similar_shows">Similar shows</string>

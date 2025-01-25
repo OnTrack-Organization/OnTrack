@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
+import ontrack.composeapp.generated.resources.not_available
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -204,13 +207,17 @@ fun MediaTitle(
     title?.let {
         Text(
             modifier = modifier,
-            text = if (title.isEmpty()) "N/A" else title,
-            style = textStyle,
+            text = if (title.isBlank()) stringResource(Res.string.not_available) else title,
+            style = textStyle.copy(
+                hyphens = Hyphens.Auto,
+                lineBreak = LineBreak.Heading,
+            ),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            softWrap = true
         )
     }
 }
