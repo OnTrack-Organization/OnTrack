@@ -3,9 +3,9 @@ package de.ashman.ontrack.authentication
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.user.User
-import de.ashman.ontrack.user.toDomain
-import de.ashman.ontrack.user.toEntity
+import de.ashman.ontrack.authentication.user.User
+import de.ashman.ontrack.authentication.user.toDomain
+import de.ashman.ontrack.authentication.user.toEntity
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.auth.auth
@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val authService: AuthService,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(UserUiState())
-    val uiState: StateFlow<UserUiState> = _uiState
+    private val _uiState = MutableStateFlow(AuthUiState())
+    val uiState: StateFlow<AuthUiState> = _uiState
         .onStart {}
         .stateIn(
             viewModelScope,
@@ -40,10 +40,10 @@ class AuthViewModel(
     fun signUp(user: FirebaseUser) = viewModelScope.launch {
         try {
             val userEntity = user.toEntity()
+
             authService.signUpUser(userEntity)
 
-            val userDomain = userEntity.toDomain()
-            _uiState.update { it.copy(user = userDomain) }
+            _uiState.update { it.copy(user = userEntity.toDomain()) }
         } catch (e: Exception) {
             Logger.e("Error signing up: ${e.message}")
             _uiState.update { it.copy(error = e.message) }
@@ -70,7 +70,7 @@ class AuthViewModel(
     }
 }
 
-data class UserUiState(
+data class AuthUiState(
     val user: User? = null,
     val error: String? = null,
 )

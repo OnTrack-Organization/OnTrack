@@ -9,9 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.features.detail.ui.ErrorContent
-import de.ashman.ontrack.features.detail.ui.LoadingContent
-import de.ashman.ontrack.features.detail.ui.SuccessContent
 import de.ashman.ontrack.navigation.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res

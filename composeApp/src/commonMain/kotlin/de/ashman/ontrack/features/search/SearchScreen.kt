@@ -68,7 +68,9 @@ fun SearchScreen(
             },
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             SearchBar(
                 query = uiState.query,
                 selectedMediaType = uiState.selectedMediaType,

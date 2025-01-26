@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.ui
+package de.ashman.ontrack.features.detail
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
@@ -58,12 +58,12 @@ import de.ashman.ontrack.features.common.MediaTitle
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.detail.ui.content.AlbumDetailContent
-import de.ashman.ontrack.features.detail.ui.content.BoardgameDetailContent
-import de.ashman.ontrack.features.detail.ui.content.BookDetailContent
-import de.ashman.ontrack.features.detail.ui.content.MovieDetailContent
-import de.ashman.ontrack.features.detail.ui.content.ShowDetailContent
-import de.ashman.ontrack.features.detail.ui.content.VideogameDetailContent
+import de.ashman.ontrack.features.detail.content.AlbumDetailContent
+import de.ashman.ontrack.features.detail.content.BoardgameDetailContent
+import de.ashman.ontrack.features.detail.content.BookDetailContent
+import de.ashman.ontrack.features.detail.content.MovieDetailContent
+import de.ashman.ontrack.features.detail.content.ShowDetailContent
+import de.ashman.ontrack.features.detail.content.VideogameDetailContent
 import de.ashman.ontrack.features.track.TrackBottomSheetContent
 import de.ashman.ontrack.features.track.getLabel
 import de.ashman.ontrack.features.track.getStatusIcon
