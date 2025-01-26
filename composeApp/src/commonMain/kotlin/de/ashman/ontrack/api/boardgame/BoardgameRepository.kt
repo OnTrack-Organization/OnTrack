@@ -46,7 +46,7 @@ class BoardgameRepository(
 
             val boardgame = convertXmlToResponse(response).boardgames.first().toDomain()
 
-            val franchiseItems = boardgame.franchiseItems
+            val franchiseItems = boardgame.franchise
                 ?.filter { it.boardgameType in setOf("boardgameimplementation", "boardgameexpansion", "boardgameintegration", "boardgamecompilation") }
                 ?.take(10)
                 ?.map {
@@ -57,8 +57,9 @@ class BoardgameRepository(
                     val boardgameDto = convertXmlToResponse(franchiseResponse).boardgames.firstOrNull()
                     it.copy(coverUrl = boardgameDto?.image.orEmpty())
                 }
+                ?.takeIf { it.isNotEmpty() }
 
-            boardgame.copy(franchiseItems = franchiseItems)
+            boardgame.copy(franchise = franchiseItems)
         }
     }
 

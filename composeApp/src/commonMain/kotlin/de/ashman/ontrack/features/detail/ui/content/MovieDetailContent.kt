@@ -24,7 +24,7 @@ fun LazyListScope.MovieDetailContent(
     item {
         MediaRow(
             title = stringResource(Res.string.detail_similar_movies),
-            otherMedia = movie.similarMovies,
+            items = movie.similarMovies,
             onClickItem = onClickItem,
         )
     }

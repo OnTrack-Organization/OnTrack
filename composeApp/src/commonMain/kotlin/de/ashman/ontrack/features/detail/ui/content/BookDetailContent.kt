@@ -17,7 +17,7 @@ fun LazyListScope.BookDetailContent(
     item {
         MediaChips(
             title = stringResource(Res.string.detail_genres),
-            items = book.subjects,
+            items = book.genres,
         )
     }
 }

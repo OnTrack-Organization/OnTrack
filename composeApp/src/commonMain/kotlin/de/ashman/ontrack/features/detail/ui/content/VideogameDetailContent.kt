@@ -31,7 +31,7 @@ fun LazyListScope.VideogameDetailContent(
     item {
         MediaRow(
             title = stringResource(Res.string.detail_similar_videogames),
-            otherMedia = videogame.similarGames,
+            items = videogame.similarGames,
             onClickItem = onClickItem,
         )
     }

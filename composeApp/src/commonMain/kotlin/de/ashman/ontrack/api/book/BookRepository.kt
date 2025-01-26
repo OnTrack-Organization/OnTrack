@@ -33,7 +33,7 @@ class BookRepository(
     override suspend fun fetchDetails(media: Media): Result<Book> {
         return safeApiCall {
             val response: BookWorksResponseDto = httpClient.get("/works/${media.id}.json").body()
-            val bookDescription = response.description
+            val bookDescription = response.description?.cleanupDescription()
 
             (media as Book).copy(
                 description = bookDescription,

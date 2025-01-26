@@ -40,7 +40,7 @@ fun LazyListScope.ShowDetailContent(
     item {
         MediaRow(
             title = stringResource(Res.string.detail_similar_shows),
-            otherMedia = show.similarShows,
+            items = show.similarShows,
             onClickItem = onClickItem,
         )
     }

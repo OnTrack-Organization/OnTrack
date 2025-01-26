@@ -26,7 +26,7 @@ data class Boardgame(
     val minAge: String? = null,
     val thumbnail: String? = null,
     val ratings: Ratings? = null,
-    val franchiseItems: List<Boardgame>? = null,
+    val franchise: List<Boardgame>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

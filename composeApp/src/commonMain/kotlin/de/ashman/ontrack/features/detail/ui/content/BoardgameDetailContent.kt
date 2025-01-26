@@ -19,7 +19,7 @@ fun LazyListScope.BoardgameDetailContent(
     item {
         MediaRow(
             title = stringResource(Res.string.detail_franchise),
-            otherMedia = boardgame.franchiseItems,
+            items = boardgame.franchise,
             onClickItem = onClickItem,
         )
     }

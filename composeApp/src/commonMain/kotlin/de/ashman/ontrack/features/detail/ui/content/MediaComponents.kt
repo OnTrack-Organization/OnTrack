@@ -233,10 +233,10 @@ fun MediaTitle(
 @Composable
 fun MediaRow(
     title: String,
-    otherMedia: List<Media>?,
+    items: List<Media>?,
     onClickItem: (Media) -> Unit = { },
 ) {
-    otherMedia?.let {
+    items?.let {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -250,7 +250,7 @@ fun MediaRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp),
             ) {
-                items(otherMedia) {
+                items(items) {
                     MediaPoster(
                         modifier = Modifier.height(SMALL_POSTER_HEIGHT),
                         title = it.title,

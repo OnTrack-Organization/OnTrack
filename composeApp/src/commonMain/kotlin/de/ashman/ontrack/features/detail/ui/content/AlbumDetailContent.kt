@@ -31,7 +31,7 @@ fun LazyListScope.AlbumDetailContent(
     item {
         MediaRow(
             title = stringResource(Res.string.detail_artist_albums),
-            otherMedia = album.artistAlbums,
+            items = album.artistAlbums,
             onClickItem = onClickItem,
         )
     }

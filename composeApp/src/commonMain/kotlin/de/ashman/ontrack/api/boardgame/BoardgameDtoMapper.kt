@@ -19,7 +19,7 @@ fun BoardgameDto.toDomain(): Boardgame {
         description = description?.decodeHtmlManually(),
         thumbnail = thumbnail,
         ratings = statistics?.ratings?.toDomain(),
-        franchiseItems = links?.map { it.toDomain() },
+        franchise = links?.map { it.toDomain() },
     )
 }
 
@@ -51,6 +51,7 @@ fun String.decodeHtmlManually(): String {
         .replace(Regex("&mdash;"), "—")
         .replace(Regex("&amp;"), "&")
         .replace(Regex("&quot;"), "\"")
+        .replace(Regex("&#9;"), "")
         .replace(Regex("—description from the publisher\\n{2}"), "")
         .trimEnd()
 }
