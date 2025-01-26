@@ -245,7 +245,9 @@ fun FilterChips(
         items(MediaType.entries) { mediaType ->
             FilterChip(
                 selected = selectedMediaType == mediaType,
-                onClick = { onMediaTypeSelected(mediaType) },
+                onClick = {
+                    if (selectedMediaType != mediaType) onMediaTypeSelected(mediaType)
+                },
                 label = { Text(pluralStringResource(mediaType.getMediaTypeUi().title, 2)) },
                 leadingIcon = {
                     Icon(

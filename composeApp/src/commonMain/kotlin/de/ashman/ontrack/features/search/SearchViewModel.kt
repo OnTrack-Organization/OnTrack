@@ -149,13 +149,19 @@ class SearchViewModel(
             .debounce(500L)
             .onEach { query ->
                 when {
-                    // Set results to cached trending if query is empty
                     query.isBlank() -> {
-                        _uiState.update {
-                            it.copy(
-                                errorMessage = null,
-                                searchResults = it.cachedTrending,
-                            )
+                        // Fetch trending if cached is empty
+                        if (_uiState.value.cachedTrending.isEmpty()) {
+                            searchJob?.cancel()
+                            searchJob = getTrending()
+                        } else {
+                            // Set results to cached trending if query is empty
+                            _uiState.update {
+                                it.copy(
+                                    errorMessage = null,
+                                    searchResults = _uiState.value.cachedTrending,
+                                )
+                            }
                         }
                     }
 
@@ -197,8 +203,6 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
-        if (_uiState.value.selectedMediaType == mediaType) return
-
         _uiState.update { it.copy(selectedMediaType = mediaType, cachedTrending = emptyList()) }
 
         searchJob?.cancel()
