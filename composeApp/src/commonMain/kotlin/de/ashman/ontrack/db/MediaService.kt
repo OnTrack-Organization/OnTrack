@@ -6,6 +6,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 interface MediaService {
@@ -52,6 +53,11 @@ class MediaServiceImpl : MediaService {
     }
 
     override fun getUserMediaListFlow(): Flow<List<MediaEntity>> {
+        if (userId.isEmpty()) {
+            Logger.e { "User is not logged in. Unable to fetch media list." }
+            return flowOf(emptyList())
+        }
+
         val mediaRef = Firebase.firestore
             .collection("users")
             .document(userId)

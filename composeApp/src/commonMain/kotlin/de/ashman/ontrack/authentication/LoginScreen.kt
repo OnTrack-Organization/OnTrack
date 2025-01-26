@@ -56,7 +56,7 @@ fun LoginScreen(
             }
         ) {
             GoogleSignInButton(
-                modifier = Modifier.fillMaxWidth(0.5f),
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.google_login),
             ) { onClick() }
         }
