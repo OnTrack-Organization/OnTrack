@@ -87,20 +87,14 @@ private val darkScheme =
 @Composable
 fun OnTrackTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content:
-    @Composable()
-        () -> Unit,
+    content: @Composable() () -> Unit,
 ) {
-    val colorScheme =
-        if (!darkTheme) {
-            lightScheme
-        } else {
-            darkScheme
-        }
+    val colorScheme = if (!darkTheme) lightScheme else darkScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography,
+        shapes = shapes,
+        typography = typography,
         content = content,
     )
 }

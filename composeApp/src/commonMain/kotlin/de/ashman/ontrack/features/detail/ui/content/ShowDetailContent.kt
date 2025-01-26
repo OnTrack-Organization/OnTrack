@@ -16,7 +16,11 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.MediaChips
+import de.ashman.ontrack.features.common.MediaDescription
+import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.MediaRow
+import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_seasons

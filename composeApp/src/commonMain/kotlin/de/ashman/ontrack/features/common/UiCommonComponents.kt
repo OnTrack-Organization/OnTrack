@@ -1,17 +1,18 @@
-package de.ashman.ontrack.util
+package de.ashman.ontrack.features.common
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +37,7 @@ fun OnTrackButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
         ),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -64,10 +65,7 @@ fun OnTrackIconButton(
     Button(
         modifier = modifier.size(48.dp),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.medium,
         contentPadding = PaddingValues(0.dp),
     ) {
         Icon(
@@ -76,4 +74,25 @@ fun OnTrackIconButton(
             contentDescription = icon.name,
         )
     }
+}
+
+@Composable
+fun OnTrackTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    value: String?,
+    onValueChange: (String) -> Unit,
+) {
+    TextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value.orEmpty(),
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder) },
+        shape = MaterialTheme.shapes.medium,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        )
+    )
 }

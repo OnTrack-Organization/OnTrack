@@ -51,22 +51,22 @@ import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.TrackStatusType
 import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.MainInfo
+import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.MediaTitle
+import de.ashman.ontrack.features.common.OnTrackButton
+import de.ashman.ontrack.features.common.OnTrackIconButton
+import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.detail.ui.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.ui.content.BookDetailContent
-import de.ashman.ontrack.features.detail.ui.content.MainInfo
-import de.ashman.ontrack.features.detail.ui.content.MediaPoster
-import de.ashman.ontrack.features.detail.ui.content.MediaTitle
 import de.ashman.ontrack.features.detail.ui.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.ui.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.ui.content.VideogameDetailContent
 import de.ashman.ontrack.features.track.TrackBottomSheetContent
 import de.ashman.ontrack.features.track.getLabel
 import de.ashman.ontrack.features.track.getStatusIcon
-import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.util.OnTrackButton
-import de.ashman.ontrack.util.OnTrackIconButton
-import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import kotlinx.coroutines.runBlocking
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
@@ -245,6 +245,7 @@ fun ReviewCard(
         if (trackStatus.statusType != TrackStatusType.CATALOG) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                shape = MaterialTheme.shapes.medium,
                 onClick = { expanded = !expanded }
             ) {
                 Column(

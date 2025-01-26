@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.features.detail.ui.content.MediaPoster
+import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.keyboardAsState
 import de.ashman.ontrack.features.track.getStatusIcon
-import de.ashman.ontrack.util.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.util.getMediaTypeUi
-import de.ashman.ontrack.util.keyboardAsState
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -223,6 +223,7 @@ fun SearchBar(
         colors = SearchBarDefaults.colors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
+        shape = MaterialTheme.shapes.medium,
         tonalElevation = 0.dp,
         windowInsets = WindowInsets(top = 0.dp),
     ) {}

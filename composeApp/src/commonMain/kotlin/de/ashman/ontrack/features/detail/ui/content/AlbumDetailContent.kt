@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Track
+import de.ashman.ontrack.features.common.MediaRow
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_artist_albums
 import ontrack.composeapp.generated.resources.detail_tracks

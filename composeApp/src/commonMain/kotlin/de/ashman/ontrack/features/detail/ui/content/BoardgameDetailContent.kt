@@ -3,6 +3,8 @@ package de.ashman.ontrack.features.detail.ui.content
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.features.common.MediaDescription
+import de.ashman.ontrack.features.common.MediaRow
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_franchise
 import org.jetbrains.compose.resources.stringResource

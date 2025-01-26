@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatusType
-import de.ashman.ontrack.util.OnTrackButton
+import de.ashman.ontrack.features.common.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
 import ontrack.composeapp.generated.resources.save_button
@@ -84,6 +84,7 @@ fun TrackStatusButton(
             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
             contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
         ),
+        shape = MaterialTheme.shapes.medium,
         onClick = { onClick() },
     ) {
         Row(

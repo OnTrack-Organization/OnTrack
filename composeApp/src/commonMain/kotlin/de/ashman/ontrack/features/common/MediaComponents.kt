@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.ui.content
+package de.ashman.ontrack.features.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,15 +19,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -51,7 +50,6 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.util.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.not_available
@@ -114,7 +112,7 @@ fun MediaPoster(
             contentDescription = "Cover",
             modifier = modifier
                 .aspectRatio(2f / 3f)
-                .clip(shape = RoundedCornerShape(16.dp))
+                .clip(shape = MaterialTheme.shapes.medium)
                 .let { if (onClick != null) it.clickable { onClick() } else it }
         ) {
             val state = painter.state.collectAsState().value
@@ -291,6 +289,7 @@ fun MediaChips(
     items?.let {
         Column(
             modifier = modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = title,
@@ -301,10 +300,16 @@ fun MediaChips(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(items) {
-                    AssistChip(
-                        onClick = {},
-                        label = { Text(it) },
-                    )
+                    OutlinedCard(
+                        modifier = Modifier.width(IntrinsicSize.Max),
+                        shape = MaterialTheme.shapes.small,
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                            text = it,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 }
             }
         }

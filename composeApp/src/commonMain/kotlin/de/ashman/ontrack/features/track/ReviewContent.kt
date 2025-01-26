@@ -8,24 +8,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MAX_RATING
-import de.ashman.ontrack.util.OnTrackButton
+import de.ashman.ontrack.features.common.OnTrackButton
+import de.ashman.ontrack.features.common.OnTrackTextField
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.review_description_label
 import ontrack.composeapp.generated.resources.review_title
@@ -54,30 +51,17 @@ fun ReviewContent(
         onRatingChange = onRatingChange,
     )
 
-    TextField(
-        modifier = Modifier.height(50.dp).fillMaxWidth(),
-        value = reviewTitle.orEmpty(),
+    OnTrackTextField(
+        placeholder = stringResource(Res.string.review_title_label),
+        value = reviewTitle,
         onValueChange = onReviewTitleChange,
-        placeholder = { Text(stringResource(Res.string.review_title_label)) },
-        shape = RoundedCornerShape(16.dp),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        )
     )
 
-    TextField(
-        modifier = Modifier.height(100.dp).fillMaxWidth(),
-        value = reviewDescription.orEmpty(),
+    OnTrackTextField(
+        modifier = Modifier.height(100.dp),
+        placeholder = stringResource(Res.string.review_description_label),
+        value = reviewDescription,
         onValueChange = onReviewDescriptionChange,
-        placeholder = { Text(stringResource(Res.string.review_description_label)) },
-        shape = RoundedCornerShape(16.dp),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        )
     )
 
     OnTrackButton(
@@ -104,7 +88,7 @@ fun SelectableStarRatingBar(
         ) {
             for (i in 1..MAX_RATING) {
                 Icon(
-                    imageVector =  Icons.Filled.Star,
+                    imageVector = Icons.Filled.Star,
                     contentDescription = null,
                     tint = if (rating != null && i <= rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
