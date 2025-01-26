@@ -63,8 +63,8 @@ fun TrackStatusContent(
     }
 
     OnTrackButton(
-        text = if (selectedStatus == TrackStatusType.CATALOG) Res.string.save_button else Res.string.continue_button,
-        icon = if (selectedStatus == TrackStatusType.CATALOG) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
+        text = if (selectedStatus == TrackStatusType.CATALOG || selectedStatus == TrackStatusType.CONSUMING) Res.string.save_button else Res.string.continue_button,
+        icon = if (selectedStatus == TrackStatusType.CATALOG || selectedStatus == TrackStatusType.CONSUMING) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
         onClick = onContinue,
     )
 }

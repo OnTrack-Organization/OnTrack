@@ -423,7 +423,7 @@ fun ReviewCard(
     var hasOverflow by remember { mutableStateOf(false) }
 
     trackStatus?.let {
-        if (trackStatus.statusType != TrackStatusType.CATALOG) {
+        if (trackStatus.statusType != TrackStatusType.CATALOG && trackStatus.statusType != TrackStatusType.CONSUMING) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 shape = MaterialTheme.shapes.medium,

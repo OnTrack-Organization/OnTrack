@@ -15,7 +15,7 @@ data class TrackStatus(
 ) : CommonParcelable
 
 enum class TrackStatusType {
-    CONSUMING, CONSUMED, DROPPED, CATALOG
+    CATALOG, CONSUMING, CONSUMED, DROPPED
 }
 
 const val MAX_RATING = 5

@@ -55,10 +55,10 @@ fun TrackBottomSheetContent(
                 selectedStatus = trackStatus.statusType,
                 onSelectStatus = { trackStatus = trackStatus.copy(statusType = it) },
                 onContinue = {
-                    if (trackStatus.statusType != TrackStatusType.CATALOG) {
-                        currentContent = CurrentTrackContent.REVIEW
-                    } else {
+                    if (trackStatus.statusType == TrackStatusType.CATALOG || trackStatus.statusType == TrackStatusType.CONSUMING) {
                         onSaveTrack(trackStatus)
+                    } else {
+                        currentContent = CurrentTrackContent.REVIEW
                     }
                 },
             )
