@@ -19,9 +19,10 @@ import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPoster
-import de.ashman.ontrack.features.common.MediaRow
+import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_seasons
 import ontrack.composeapp.generated.resources.detail_similar_shows
@@ -33,7 +34,10 @@ fun LazyListScope.ShowDetailContent(
     onClickItem: (Media) -> Unit = { },
 ) {
     item {
-        MediaDescription(show.description)
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = show.description,
+        )
     }
     item {
         MediaChips(
@@ -42,7 +46,7 @@ fun LazyListScope.ShowDetailContent(
         )
     }
     item {
-        MediaRow(
+        MediaPosterRow(
             title = stringResource(Res.string.detail_similar_shows),
             items = show.similarShows,
             onClickItem = onClickItem,

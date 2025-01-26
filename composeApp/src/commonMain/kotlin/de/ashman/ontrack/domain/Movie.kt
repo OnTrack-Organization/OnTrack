@@ -13,7 +13,7 @@ data class Movie(
     override val coverUrl: String,
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
-    val description: String?,
+    override val description: String?,
     val backdropPath: String?,
     val genres: List<String>?,
     val originCountry: List<String>?,

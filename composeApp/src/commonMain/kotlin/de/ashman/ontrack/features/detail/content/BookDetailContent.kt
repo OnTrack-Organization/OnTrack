@@ -6,6 +6,7 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
 import org.jetbrains.compose.resources.stringResource
 
@@ -14,7 +15,10 @@ fun LazyListScope.BookDetailContent(
     onClickItem: (Media) -> Unit = { },
 ) {
     item {
-        MediaDescription(book.description)
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = book.description,
+        )
     }
     item {
         MediaChips(

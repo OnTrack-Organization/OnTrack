@@ -5,8 +5,9 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
-import de.ashman.ontrack.features.common.MediaRow
+import de.ashman.ontrack.features.common.MediaPosterRow
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_similar_movies
 import org.jetbrains.compose.resources.stringResource
@@ -22,10 +23,13 @@ fun LazyListScope.MovieDetailContent(
         )
     }
     item {
-        MediaDescription(movie.description)
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = movie.description,
+        )
     }
     item {
-        MediaRow(
+        MediaPosterRow(
             title = stringResource(Res.string.detail_similar_movies),
             items = movie.similarMovies,
             onClickItem = onClickItem,

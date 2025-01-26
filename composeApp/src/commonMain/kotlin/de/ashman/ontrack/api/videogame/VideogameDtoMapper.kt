@@ -16,8 +16,9 @@ fun VideogameDto.toDomain(): Videogame {
         id = id.toString(),
         coverUrl = cover?.url.getIGDBCoverUrl(),
         releaseYear = firstReleaseDate?.let {
-            Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.toString().take(4)
+            Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.year.toString()
         },
+        description = summary,
         franchises = franchises?.map { it.toDomain() },
         genres = genres?.map { it.name },
         involvedCompanies = involvedCompanies?.map { it.company.name },
@@ -26,7 +27,6 @@ fun VideogameDto.toDomain(): Videogame {
         similarGames = similarGames?.map { it.toDomain() },
         totalRating = totalRating,
         totalRatingCount = totalRatingCount,
-        description = summary,
     )
 }
 

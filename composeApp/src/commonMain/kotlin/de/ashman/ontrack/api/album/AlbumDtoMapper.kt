@@ -7,6 +7,7 @@ import de.ashman.ontrack.api.album.dto.TrackDto
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Artist
 import de.ashman.ontrack.domain.Track
+import kotlin.collections.joinToString
 
 fun AlbumDto.toDomain(): Album {
     return Album(
@@ -14,6 +15,9 @@ fun AlbumDto.toDomain(): Album {
         title = name,
         coverUrl = images.first().url,
         releaseYear = releaseDate.take(4),
+        description = tracks?.items?.joinToString(separator = "\n") {
+            "${it.trackNumber}. ${it.name}"
+        },
         artists = artists.map { it.toDomain() },
         label = label,
         popularity = popularity,

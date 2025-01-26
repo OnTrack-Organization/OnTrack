@@ -13,7 +13,7 @@ data class Book(
     override val coverUrl: String,
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
-    val description: String? = null,
+    override val description: String? = null,
     val authorKeys: List<String>? = null,
     val authors: List<String>? = null,
     val firstSentence: List<String>? = null,
