@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookSearchResponseDto(
+data class BookSearchResponse(
     @SerialName("docs")
     val books: List<BookDto> = emptyList(),
 

@@ -156,6 +156,8 @@
     <string name="detail_genres">Genres</string>
     <string name="detail_franchise">Franchise</string>
 
+    <string name="detail_runtime">%1$d min</string>
+
     <string name="detail_playing_time">%1$d min</string>
     <plurals name="detail_single_player_count">
         <item quantity="one">%1$d Player</item>
@@ -168,8 +170,8 @@
         <item quantity="one">%1$d Page</item>
         <item quantity="other">%1$d Pages</item>
     </plurals>
-
-    <string name="detail_runtime">%1$d min</string>
+    <string name="detail_author">Author</string>
+    <string name="detail_author_books">Author's Books (%1$d)</string>
 
     <string name="detail_artist_albums">Artist's Albums</string>
     <plurals name="detail_tracks">

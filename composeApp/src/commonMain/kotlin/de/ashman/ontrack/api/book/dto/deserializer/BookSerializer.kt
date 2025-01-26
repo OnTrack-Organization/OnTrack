@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.book.dto
+package de.ashman.ontrack.api.book.dto.deserializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -12,20 +12,16 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
-object DescriptionSerializer : KSerializer<String?> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Description", PrimitiveKind.STRING)
+object BookSerializer : KSerializer<String?> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BookSerializer", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): String? {
-        // Ensure the decoder is a JsonDecoder
-        val jsonDecoder = decoder as? JsonDecoder
-            ?: throw IllegalStateException("DescriptionSerializer can only be used with JsonDecoder")
-
+        val jsonDecoder = decoder as? JsonDecoder ?: throw IllegalStateException("BookSerializer can only be used with JsonDecoder")
         val jsonElement = jsonDecoder.decodeJsonElement()
 
         return when (jsonElement) {
-            is JsonPrimitive -> jsonElement.contentOrNull // Handle direct string
-            is JsonObject -> jsonElement["value"]?.jsonPrimitive?.contentOrNull // Handle object with `value`
+            is JsonPrimitive -> jsonElement.contentOrNull
+            is JsonObject -> jsonElement["value"]?.jsonPrimitive?.contentOrNull
             else -> null
         }
     }

@@ -133,6 +133,7 @@ fun MediaPoster(
         ) {
             val state = painter.state.collectAsState().value
 
+            // TODO clean this up
             when (state) {
                 is AsyncImagePainter.State.Loading -> {
                     Card {

@@ -1,8 +1,14 @@
 package de.ashman.ontrack.api.book
 
+import de.ashman.ontrack.api.book.dto.AuthorDto
 import de.ashman.ontrack.api.book.dto.BookDto
+import de.ashman.ontrack.api.book.dto.BookWorksResponse
 import de.ashman.ontrack.api.getOpenLibraryCoverUrl
+import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.number
 
 fun BookDto.toDomain(): Book {
     return Book(
@@ -10,26 +16,29 @@ fun BookDto.toDomain(): Book {
         title = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
         releaseYear = firstPublishYear.toString(),
-        authorKeys = authorKey,
-        authors = authorName,
-        firstSentence = firstSentence,
         language = language,
         numberOfPagesMedian = numberOfPagesMedian,
-        person = person,
-        place = place,
         publisher = publisher,
         ratingsAverage = ratingsAverage,
         ratingsCount = ratingsCount,
         genres = subject?.filterGenres(),
+        author = Author(
+            id = authorKey.first().substringAfter("/authors/"),
+        )
     )
 }
 
 fun String.cleanupDescription(): String {
     return this
+        .substringBefore("[source]")
         .substringBefore("([source]")
         .substringBefore("[Source]")
+        .substringBefore("([Source]")
         .substringBefore("---------")
         .substringBefore("(From")
+        .substringBefore("See https")
+        .substringBefore("<sup>")
+        .substringBefore("- Wikipedia")
         .trimEnd()
 }
 
@@ -55,4 +64,55 @@ fun List<String>.filterGenres(): List<String>? {
         .take(5)
         .map { it.replaceFirstChar { char -> char.uppercase() } }
         .takeIf { it.isNotEmpty() }
+}
+
+fun BookWorksResponse.toDomain(): Book {
+    return Book(
+        id = key.substringAfter("/works/"),
+        title = title,
+        coverUrl = covers?.firstOrNull()?.getOpenLibraryCoverUrl().orEmpty(),
+        author = authors?.first()?.author?.toDomain() ?: Author(id = ""),
+    )
+}
+
+fun AuthorDto.toDomain(): Author {
+    return Author(
+        id = key.substringAfter("/authors/"),
+        name = name,
+        imageUrl = photos?.firstOrNull()?.getOpenLibraryCoverUrl(),
+        bio = bio,
+        birthDate = birthDate?.formatAuthorDate(),
+        deathDate = deathDate?.formatAuthorDate(),
+    )
+}
+
+fun String.formatAuthorDate(): String? {
+    val inputFormats = listOf(
+        "yyyy-MM-dd",
+        "d MMMM yyyy",
+    )
+
+    inputFormats.forEach {
+        try {
+            val date: LocalDate = when (it) {
+                "yyyy-MM-dd" -> LocalDate.parse(this)
+                "d MMMM yyyy" -> {
+                    val parts = this.split(" ")
+                    val day = parts[0].toInt()
+                    val month = Month.valueOf(parts[1].uppercase())
+                    val year = parts[2].toInt()
+                    LocalDate(year, month.number, day)
+                }
+
+                else -> throw IllegalArgumentException("Unsupported format: $it")
+            }
+
+            return "${date.dayOfMonth.toString().padStart(2, '0')}." +
+                    "${date.monthNumber.toString().padStart(2, '0')}." +
+                    "${date.year}"
+                        .cleanupDescription()
+        } catch (_: Exception) {
+        }
+    }
+    return null
 }
