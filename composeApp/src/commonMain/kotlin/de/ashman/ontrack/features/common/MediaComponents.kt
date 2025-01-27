@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.common
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -44,9 +46,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -57,8 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.SubcomposeAsyncImageContent
+import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.MAX_RATING
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.TrackStatus
@@ -117,60 +115,58 @@ fun MediaPoster(
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     onClick: (() -> Unit)? = null,
 ) {
+    val painter = rememberAsyncImagePainter(coverUrl)
+
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SubcomposeAsyncImage(
-            model = coverUrl,
-            contentScale = ContentScale.Crop,
-            contentDescription = "Cover",
+        Surface(
             modifier = modifier
                 .aspectRatio(2f / 3f)
-                .clip(shape = MaterialTheme.shapes.medium)
-                .let { if (onClick != null) it.clickable { onClick() } else it }
+                .let { if (onClick != null) it.clickable { onClick() } else it },
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surfaceVariant,
         ) {
             val state = painter.state.collectAsState().value
 
-            // TODO clean this up
             when (state) {
                 is AsyncImagePainter.State.Loading -> {
-                    Card {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.scale(1.5f))
-                        }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        CircularProgressIndicator()
+
                     }
                 }
 
-                is AsyncImagePainter.State.Error -> {
-                    Card {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(50.dp),
-                                imageVector = Icons.Default.HideSource,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                contentDescription = "No Results Icon"
-                            )
-                        }
-                    }
-                }
-
-                else -> {
-                    SubcomposeAsyncImageContent()
+                is AsyncImagePainter.State.Success -> {
+                    Image(
+                        painter = painter,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Poster Image",
+                    )
                     TrackOverlay(
                         trackStatusIcon = trackStatusIcon,
                         trackStatusRating = trackStatusRating,
                     )
                 }
+
+                is AsyncImagePainter.State.Error -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(0.5f),
+                            imageVector = Icons.Default.HideSource,
+                            contentDescription = "No Image",
+                        )
+                    }
+                }
+
+                else -> {}
             }
         }
 
@@ -200,12 +196,10 @@ fun TrackOverlay(
                     modifier = Modifier.size(36.dp),
                     imageVector = Icons.Default.Star,
                     contentDescription = "Status Icon",
-                    tint = Color.White,
                 )
                 Text(
                     text = "$trackStatusRating",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black,
                 )
             }
         }
@@ -214,8 +208,7 @@ fun TrackOverlay(
             Icon(
                 imageVector = trackStatusIcon,
                 contentDescription = trackStatusIcon.name,
-                modifier = Modifier.size(32.dp).alpha(0.8F),
-                tint = Color.White,
+                modifier = Modifier.size(32.dp),
             )
         }
     }

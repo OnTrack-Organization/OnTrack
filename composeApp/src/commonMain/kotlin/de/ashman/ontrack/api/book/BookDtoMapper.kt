@@ -30,15 +30,15 @@ fun BookDto.toDomain(): Book {
 
 fun String.cleanupDescription(): String {
     return this
-        .substringBefore("[source]")
-        .substringBefore("([source]")
-        .substringBefore("[Source]")
-        .substringBefore("([Source]")
-        .substringBefore("---------")
-        .substringBefore("(From")
-        .substringBefore("See https")
-        .substringBefore("<sup>")
-        .substringBefore("- Wikipedia")
+        .replace(Regex("""\(\[Source[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\*\*Source\*\*[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""----------[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\(From[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""See https[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""<sup>[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""- Wikipedia[\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\[\d+][\s\S]*""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""Source: wikipedia[\s\S]*""", RegexOption.IGNORE_CASE), "")
         .trimEnd()
 }
 
@@ -80,7 +80,7 @@ fun AuthorDto.toDomain(): Author {
         id = key.substringAfter("/authors/"),
         name = name,
         imageUrl = photos?.firstOrNull()?.getOpenLibraryCoverUrl(),
-        bio = bio,
+        bio = bio?.cleanupDescription(),
         birthDate = birthDate?.formatAuthorDate(),
         deathDate = deathDate?.formatAuthorDate(),
     )

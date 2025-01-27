@@ -214,7 +214,7 @@ data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val cachedTrending: List<Media> = emptyList(),
     val query: String = "",
-    val selectedMediaType: MediaType = MediaType.BOOK,
+    val selectedMediaType: MediaType = MediaType.MOVIE,
     val searchResultState: SearchResultState = SearchResultState.Empty,
     val searchDuration: Long = 0L,
     val errorMessage: String? = null,

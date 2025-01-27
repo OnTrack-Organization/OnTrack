@@ -1,20 +1,20 @@
 package de.ashman.ontrack.features.detail.content
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,13 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.SubcomposeAsyncImageContent
+import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
@@ -79,6 +77,7 @@ fun LazyListScope.BookDetailContent(
 @Composable
 fun AuthorCard(author: Author) {
     var expanded by remember { mutableStateOf(false) }
+    val painter = rememberAsyncImagePainter(author.imageUrl)
 
     Column(
         modifier = Modifier
@@ -109,40 +108,38 @@ fun AuthorCard(author: Author) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SubcomposeAsyncImage(
-                model = author.imageUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = "Author Image",
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(shape = CircleShape)
+            Surface(
+                modifier = Modifier.size(42.dp),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceVariant,
             ) {
                 val state = painter.state.collectAsState().value
 
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                ) {
-                    when (state) {
-                        is AsyncImagePainter.State.Loading -> {
-                            CircularProgressIndicator(modifier = Modifier.padding(8.dp))
-                        }
-
-                        is AsyncImagePainter.State.Error -> {
-                            Icon(
-                                modifier = Modifier.padding(8.dp),
-                                imageVector = Icons.Default.HideSource,
-                                contentDescription = "No Image",
-                            )
-                        }
-
-                        else -> {
-                            SubcomposeAsyncImageContent()
-                        }
+                when (state) {
+                    is AsyncImagePainter.State.Loading -> {
+                        CircularProgressIndicator()
                     }
+
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            painter = painter,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Author Image",
+                        )
+                    }
+
+                    is AsyncImagePainter.State.Error -> {
+                        Icon(
+                            modifier = Modifier.padding(8.dp),
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "No Image",
+                        )
+                    }
+
+                    else -> {}
                 }
             }
+
             Column(
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -153,9 +150,18 @@ fun AuthorCard(author: Author) {
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                author.birthDate?.let {
+
+                if (author.birthDate != null || author.deathDate != null) {
+                    val birthAndDeathDate = buildString {
+                        append(author.birthDate.orEmpty())
+                        author.deathDate?.let { deathDate ->
+                            if (isNotEmpty()) append(" - ")
+                            append(deathDate)
+                        }
+                    }
+
                     Text(
-                        text = author.birthDate,
+                        text = birthAndDeathDate,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
