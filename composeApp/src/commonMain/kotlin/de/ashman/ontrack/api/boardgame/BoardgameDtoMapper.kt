@@ -4,6 +4,7 @@ import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 import de.ashman.ontrack.domain.Boardgame
+import de.ashman.ontrack.domain.BoardgameDesigner
 import de.ashman.ontrack.domain.Ratings
 
 fun BoardgameDto.toDomain(): Boardgame {
@@ -13,18 +14,26 @@ fun BoardgameDto.toDomain(): Boardgame {
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         description = description?.decodeHtmlManually(),
-        designer = links?.find { it.type == "boardgamedesigner" }?.value,
+        designer = links?.find { it.type == "boardgamedesigner" }?.toBoardgameDesignerDomain(),
         minAge = minage?.value,
         minPlayers = minplayers?.value.takeIf { it != "0" }?.toInt(),
         maxPlayers = maxplayers?.value.takeIf { it != "0" }?.toInt(),
         playingTime = playingtime?.value.takeIf { it != "0" }?.toInt(),
         thumbnail = thumbnail,
         ratings = statistics?.ratings?.toDomain(),
-        franchise = links?.map { it.toDomain() },
+        franchise = links?.map { it.toBoardgameDomain() },
     )
 }
 
-fun LinkDto.toDomain(): Boardgame {
+fun LinkDto.toBoardgameDesignerDomain(): BoardgameDesigner {
+    return BoardgameDesigner(
+        id = id.orEmpty(),
+        name = value.orEmpty(),
+        imageUrl = null,
+    )
+}
+
+fun LinkDto.toBoardgameDomain(): Boardgame {
     return Boardgame(
         boardgameType = type.orEmpty(),
         id = id.orEmpty(),

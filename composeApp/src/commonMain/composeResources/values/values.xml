@@ -158,6 +158,7 @@
 
     <string name="detail_runtime">%1$d min</string>
 
+    <string name="detail_designer">Designer</string>
     <string name="detail_playing_time">%1$d min</string>
     <plurals name="detail_single_player_count">
         <item quantity="one">%1$d Player</item>

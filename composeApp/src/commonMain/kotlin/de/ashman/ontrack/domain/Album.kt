@@ -28,7 +28,6 @@ data class Album(
 
         releaseYear?.let { infoItems.add(it) }
         infoItems.add(getPluralString(Res.plurals.detail_tracks, totalTracks, totalTracks))
-        infoItems.add(mainArtist.name)
 
         return infoItems
     }
