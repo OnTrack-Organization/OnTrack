@@ -22,11 +22,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
@@ -67,6 +69,7 @@ import kotlinx.coroutines.runBlocking
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.not_available
 import ontrack.composeapp.generated.resources.track_button
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -411,69 +414,67 @@ fun StickyMainContent(
 
 @Composable
 fun ReviewCard(
-    trackStatus: TrackStatus?,
+    trackStatus: TrackStatus,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var hasOverflow by remember { mutableStateOf(false) }
 
-    trackStatus?.let {
-        if (trackStatus.statusType != TrackStatusType.CATALOG && trackStatus.statusType != TrackStatusType.CONSUMING) {
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-                onClick = { expanded = !expanded }
+    if (trackStatus.statusType != TrackStatusType.CATALOG && trackStatus.statusType != TrackStatusType.CONSUMING) {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            shape = MaterialTheme.shapes.medium,
+            onClick = { expanded = !expanded }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        trackStatus.statusType?.getStatusIcon(true)?.let {
-                            Icon(
-                                imageVector = it, it.name,
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-
-                        MiniStarRatingBar(rating = trackStatus.rating)
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        trackStatus.timestamp?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-
-                        if (hasOverflow) {
-                            Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
-                        }
-                    }
-
-                    if (!trackStatus.reviewTitle.isNullOrBlank()) {
-                        Text(
-                            text = trackStatus.reviewTitle,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 2,
+                    trackStatus.statusType?.getStatusIcon(true)?.let {
+                        Icon(
+                            imageVector = it, it.name,
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
 
-                    if (!trackStatus.reviewDescription.isNullOrBlank()) {
+                    MiniStarRatingBar(rating = trackStatus.rating)
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    trackStatus.timestamp?.let {
                         Text(
-                            text = trackStatus.reviewDescription,
+                            text = it,
                             style = MaterialTheme.typography.bodyMedium,
-                            maxLines = if (expanded) Int.MAX_VALUE else 2,
-                            overflow = TextOverflow.Ellipsis,
-                            onTextLayout = {
-                                if (!expanded) hasOverflow = it.hasVisualOverflow
-                            }
                         )
                     }
+
+                    if (hasOverflow) {
+                        Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+                    }
+                }
+
+                if (!trackStatus.reviewTitle.isNullOrBlank()) {
+                    Text(
+                        text = trackStatus.reviewTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                    )
+                }
+
+                if (!trackStatus.reviewDescription.isNullOrBlank()) {
+                    Text(
+                        text = trackStatus.reviewDescription,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = if (expanded) Int.MAX_VALUE else 2,
+                        overflow = TextOverflow.Ellipsis,
+                        onTextLayout = {
+                            if (!expanded) hasOverflow = it.hasVisualOverflow
+                        }
+                    )
                 }
             }
         }
@@ -495,6 +496,108 @@ fun MiniStarRatingBar(
                     MaterialTheme.colorScheme.onSurface
                 },
             )
+        }
+    }
+}
+
+@Composable
+fun CreatorCard(
+    title: StringResource,
+    name: String?,
+    subInfo: String? = null,
+    description: String? = null,
+    imageUrl: String?,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val painter = rememberAsyncImagePainter(imageUrl)
+
+    name?.let {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    expanded = !expanded
+                },
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                description?.let {
+                    Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    modifier = Modifier.size(42.dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                ) {
+                    val state = painter.state.collectAsState().value
+
+                    when (state) {
+                        is AsyncImagePainter.State.Loading -> {
+                            CircularProgressIndicator()
+                        }
+
+                        is AsyncImagePainter.State.Success -> {
+                            Image(
+                                painter = painter,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Creator Image",
+                            )
+                        }
+
+                        is AsyncImagePainter.State.Error -> {
+                            Icon(
+                                modifier = Modifier.padding(8.dp),
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "No Image",
+                            )
+                        }
+
+                        else -> {}
+                    }
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    subInfo?.let {
+                        Text(
+                            text = subInfo,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+            description?.let {
+                if (expanded) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
         }
     }
 }

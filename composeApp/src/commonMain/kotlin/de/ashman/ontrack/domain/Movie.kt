@@ -1,5 +1,7 @@
 package de.ashman.ontrack.domain
 
+import de.ashman.ontrack.navigation.CommonParcelable
+import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_runtime
@@ -26,6 +28,7 @@ data class Movie(
     val voteAverage: Double?,
     val voteCount: Int?,
     val similarMovies: List<Movie>? = null,
+    val director: Director? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
@@ -36,3 +39,18 @@ data class Movie(
         return infoItems
     }
 }
+
+@CommonParcelize
+@Serializable
+data class Director(
+    val id: String,
+    val name: String,
+    val imageUrl: String?,
+    val birthDate: String?,
+    val deathDate: String?,
+    val bio: String? = null,
+) : CommonParcelable
+
+fun Director.getLivingDates(): String? =
+    listOfNotNull(birthDate, deathDate)
+        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

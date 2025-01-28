@@ -3,12 +3,10 @@ package de.ashman.ontrack.api.book
 import de.ashman.ontrack.api.book.dto.AuthorDto
 import de.ashman.ontrack.api.book.dto.BookDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
+import de.ashman.ontrack.api.formatCreatorDate
 import de.ashman.ontrack.api.getOpenLibraryCoverUrl
 import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
-import kotlinx.datetime.number
 
 fun BookDto.toDomain(): Book {
     return Book(
@@ -81,38 +79,7 @@ fun AuthorDto.toDomain(): Author {
         name = name,
         imageUrl = photos?.firstOrNull()?.getOpenLibraryCoverUrl(),
         bio = bio?.cleanupDescription(),
-        birthDate = birthDate?.formatAuthorDate(),
-        deathDate = deathDate?.formatAuthorDate(),
+        birthDate = birthDate?.formatCreatorDate(),
+        deathDate = deathDate?.formatCreatorDate(),
     )
-}
-
-fun String.formatAuthorDate(): String? {
-    val inputFormats = listOf(
-        "yyyy-MM-dd",
-        "d MMMM yyyy",
-    )
-
-    inputFormats.forEach {
-        try {
-            val date: LocalDate = when (it) {
-                "yyyy-MM-dd" -> LocalDate.parse(this)
-                "d MMMM yyyy" -> {
-                    val parts = this.split(" ")
-                    val day = parts[0].toInt()
-                    val month = Month.valueOf(parts[1].uppercase())
-                    val year = parts[2].toInt()
-                    LocalDate(year, month.number, day)
-                }
-
-                else -> throw IllegalArgumentException("Unsupported format: $it")
-            }
-
-            return "${date.dayOfMonth.toString().padStart(2, '0')}." +
-                    "${date.monthNumber.toString().padStart(2, '0')}." +
-                    "${date.year}"
-                        .cleanupDescription()
-        } catch (_: Exception) {
-        }
-    }
-    return null
 }

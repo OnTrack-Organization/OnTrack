@@ -21,6 +21,8 @@ data class MovieDto(
     val status: String? = null,
     val voteAverage: Double? = null,
     val voteCount: Int? = null,
+
+    val credits: CreditsDto? = null,
 )
 
 @Serializable

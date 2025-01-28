@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.Show
+import de.ashman.ontrack.domain.getLivingDates
+import de.ashman.ontrack.features.common.CreatorCard
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPoster
@@ -23,6 +25,7 @@ import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
+import ontrack.composeapp.generated.resources.detail_director
 import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_seasons
 import ontrack.composeapp.generated.resources.detail_similar_shows
@@ -33,6 +36,15 @@ fun LazyListScope.ShowDetailContent(
     show: Show,
     onClickItem: (Media) -> Unit = { },
 ) {
+    item {
+        CreatorCard(
+            title = Res.string.detail_director,
+            name = show.director?.name,
+            subInfo = show.director?.getLivingDates(),
+            imageUrl = show.director?.imageUrl,
+            description = show.director?.bio,
+        )
+    }
     item {
         MediaDescription(
             title = stringResource(Res.string.detail_description),

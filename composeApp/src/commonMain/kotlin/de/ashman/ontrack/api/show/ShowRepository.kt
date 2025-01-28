@@ -1,6 +1,8 @@
 package de.ashman.ontrack.api.show
 
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
+import de.ashman.ontrack.api.movie.toDomain
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.show.dto.ShowResponseDto
@@ -28,10 +30,18 @@ class ShowRepository(
 
     override suspend fun fetchDetails(media: Media): Result<Show> {
         return safeApiCall {
-            val response: ShowDto = httpClient.get("tv/${media.id}").body()
+            val castAppend = "?append_to_response=credits"
+            val response: ShowDto = httpClient.get("tv/${media.id}$castAppend").body()
+
+            val director = response.credits?.crew?.firstOrNull { it.job == "Director" }
             val similar = fetchSimilar(media.id).getOrNull()
 
-            response.toDomain().copy(similarShows = similar)
+            val directorDetails = director?.id?.let {
+                val directorResponse: PersonDetailsDto = httpClient.get("person/$it").body()
+                directorResponse.toDomain()
+            }
+
+            response.toDomain().copy(similarShows = similar, director = directorDetails)
         }
     }
 

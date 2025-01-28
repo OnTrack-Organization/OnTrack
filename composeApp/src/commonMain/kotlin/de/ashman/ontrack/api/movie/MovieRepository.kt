@@ -3,6 +3,7 @@ package de.ashman.ontrack.api.movie
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.MovieResponseDto
+import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.Media
@@ -28,10 +29,18 @@ class MovieRepository(
 
     override suspend fun fetchDetails(media: Media): Result<Movie> {
         return safeApiCall {
-            val response: MovieDto = httpClient.get("movie/${media.id}").body()
+            val castAppend = "?append_to_response=credits"
+            val response: MovieDto = httpClient.get("movie/${media.id}$castAppend").body()
+
+            val director = response.credits?.crew?.firstOrNull { it.job == "Director" }
+            val directorDetails = director?.id?.let {
+                val directorResponse: PersonDetailsDto = httpClient.get("person/$it").body()
+                directorResponse.toDomain()
+            }
+
             val similar = fetchSimilar(media.id).getOrNull()?.takeIf { it.isNotEmpty() }
 
-            response.toDomain().copy(similarMovies = similar)
+            response.toDomain().copy(similarMovies = similar, director = directorDetails)
         }
     }
 

@@ -33,6 +33,7 @@ data class Show(
     val voteCount: Int? = null,
     val similarShows: List<Show>? = null,
     val seasonNumber: Int? = null,
+    val director: Director? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

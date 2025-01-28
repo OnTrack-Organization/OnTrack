@@ -1,5 +1,6 @@
 package de.ashman.ontrack.api.show.dto
 
+import de.ashman.ontrack.api.movie.dto.CreditsDto
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,7 +23,8 @@ data class ShowDto(
     val seasons: List<SeasonDto>? = null,
     val status: String? = null,
     val voteAverage: Double? = null,
-    val voteCount: Int? = null
+    val voteCount: Int? = null,
+    val credits: CreditsDto? = null,
 )
 
 @Serializable

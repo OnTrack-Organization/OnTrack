@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.detail.content
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.features.common.CreatorCard
 import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
 import ontrack.composeapp.generated.resources.Res

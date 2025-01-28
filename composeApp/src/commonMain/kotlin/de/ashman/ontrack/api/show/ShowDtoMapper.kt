@@ -26,7 +26,7 @@ fun ShowDto.toDomain(): Show {
         seasons = seasons?.map { it.toDomain() },
         status = status,
         voteAverage = voteAverage,
-        voteCount = voteCount
+        voteCount = voteCount,
     )
 }
 

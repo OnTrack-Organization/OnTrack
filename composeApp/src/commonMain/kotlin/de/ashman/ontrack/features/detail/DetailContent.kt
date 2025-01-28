@@ -91,10 +91,12 @@ fun SuccessContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item {
-                    ReviewCard(
-                        trackStatus = media.trackStatus,
-                    )
+                media.trackStatus?.let {
+                    item {
+                        ReviewCard(
+                            trackStatus = it,
+                        )
+                    }
                 }
 
                 when (media.mediaType) {
