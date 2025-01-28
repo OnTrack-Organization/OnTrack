@@ -32,6 +32,7 @@ class MovieRepository(
             val castAppend = "?append_to_response=credits"
             val response: MovieDto = httpClient.get("movie/${media.id}$castAppend").body()
 
+            // TODO maybe do director and producer or similar
             val director = response.credits?.crew?.firstOrNull { it.job == "Director" }
             val directorDetails = director?.id?.let {
                 val directorResponse: PersonDetailsDto = httpClient.get("person/$it").body()

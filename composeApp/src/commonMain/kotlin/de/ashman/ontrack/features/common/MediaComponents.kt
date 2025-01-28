@@ -127,10 +127,11 @@ fun MediaPoster(
     ) {
         Surface(
             modifier = modifier
-                .aspectRatio(2f / 3f)
-                .let { if (onClick != null) it.clickable { onClick() } else it },
+                .aspectRatio(2f / 3f),
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.surfaceVariant,
+            enabled = (onClick != null),
+            onClick = { onClick?.invoke() },
         ) {
             val state = painter.state.collectAsState().value
 

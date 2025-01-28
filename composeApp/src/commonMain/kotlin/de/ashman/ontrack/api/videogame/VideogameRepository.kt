@@ -15,6 +15,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.HttpHeaders
+import kotlinx.serialization.Serializable
 
 class VideogameRepository(
     private val httpClient: HttpClient,
@@ -37,7 +38,7 @@ class VideogameRepository(
             val requestBuilder = buildRequestWithToken {
                 url("games")
                 setBody(
-                """
+                    """
                     fields cover.url, name;
                     search "$query";
                     limit $DEFAULT_FETCH_LIMIT;
@@ -55,7 +56,7 @@ class VideogameRepository(
             val requestBuilder = buildRequestWithToken {
                 url("games")
                 setBody(
-                """
+                    """
                     fields cover.url, first_release_date, franchises.name, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
                     where id = ${media.id};
                 """
@@ -67,7 +68,8 @@ class VideogameRepository(
         }
     }
 
-    override suspend fun fetchTrending(): Result<List<Videogame>> {
+    // TODO maybe use custom trending again, who knows
+     suspend fun fetchTrending2(): Result<List<Videogame>> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
@@ -85,4 +87,45 @@ class VideogameRepository(
             response.map { it.toDomain() }
         }
     }
+
+    override suspend fun fetchTrending(): Result<List<Videogame>> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("popularity_primitives")
+                setBody(
+                """
+                    fields game_id,value,popularity_type; 
+                    sort value desc; 
+                    limit $DEFAULT_FETCH_LIMIT; 
+                    where popularity_type = 2;
+                """
+                )
+            }
+
+            val response: List<PopularityDto> = httpClient.post(requestBuilder).body()
+            val gamesIds = response.map { it.gameId }
+
+            val requestBuilder2 = buildRequestWithToken {
+                url("games")
+                setBody(
+                    """
+                        fields cover.url, name;
+                        limit $DEFAULT_FETCH_LIMIT; 
+                        where id = (${gamesIds.joinToString(",")});
+                    """
+                )
+            }
+
+            val response2: List<VideogameDto> = httpClient.post(requestBuilder2).body()
+            response2.map { it.toDomain() }
+        }
+    }
 }
+
+@Serializable
+data class PopularityDto(
+    val id: Int,
+    val gameId: Int,
+    val value: Float,
+    val popularityType: Int,
+)
