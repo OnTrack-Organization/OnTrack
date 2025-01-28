@@ -27,30 +27,8 @@ data class AlbumDto(
 )
 
 @Serializable
-data class ExternalUrlsDto(
-    val spotify: String
-)
-
-@Serializable
-data class ImageDto(
-    val url: String,
-    val height: Int,
-    val width: Int
-)
-
-@Serializable
 data class RestrictionsDto(
     val reason: String,
-)
-
-@Serializable
-data class ArtistDto(
-    val externalUrls: ExternalUrlsDto,
-    val href: String,
-    val id: String,
-    val name: String,
-    val type: String,
-    val uri: String,
 )
 
 @Serializable

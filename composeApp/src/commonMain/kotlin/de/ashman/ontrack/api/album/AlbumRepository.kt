@@ -4,10 +4,12 @@ import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
 import de.ashman.ontrack.api.album.dto.AlbumSearchResult
+import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.Album
+import de.ashman.ontrack.domain.Artist
 import de.ashman.ontrack.domain.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -41,6 +43,7 @@ class AlbumRepository(
                 parameter("limit", DEFAULT_FETCH_LIMIT)
             }
             val response: AlbumSearchResult = httpClient.request(requestBuilder).body()
+
             response.albums.toDomain()
         }
     }
@@ -53,13 +56,40 @@ class AlbumRepository(
             val response: AlbumDto = httpClient.request(requestBuilder).body()
             val album = response.toDomain()
 
-            val requestBuilder2 = buildRequestWithToken {
-                url("artists/${album.artists.first().id}/albums")
-            }
-            val response2: AlbumResponseDto = httpClient.request(requestBuilder2).body()
-            val albums = response2.toDomain()
+            val artistAndAlbums = fetchArtistAndAlbums(album.mainArtist.id).getOrNull()
 
-            album.copy(artistAlbums = albums)
+            album.copy(mainArtist = artistAndAlbums ?: album.mainArtist)
+        }
+    }
+
+    suspend fun fetchArtistAndAlbums(artistId: String): Result<Artist> {
+        return safeApiCall {
+            val artist = fetchArtist(artistId).getOrNull()
+            val albums = fetchArtistAlbums(artistId).getOrNull()
+
+            artist?.copy(artistAlbums = albums) ?: throw Exception("Artist not found")
+        }
+    }
+
+    suspend fun fetchArtistAlbums(artistId: String): Result<List<Album>> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("artists/$artistId/albums")
+            }
+            val response: AlbumResponseDto = httpClient.request(requestBuilder).body()
+
+            response.toDomain()
+        }
+    }
+
+    suspend fun fetchArtist(artistId: String): Result<Artist> {
+        return safeApiCall {
+            val requestBuilder = buildRequestWithToken {
+                url("artists/$artistId")
+            }
+            val response: ArtistDto = httpClient.request(requestBuilder).body()
+
+            response.toDomain()
         }
     }
 

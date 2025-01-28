@@ -16,20 +16,19 @@ data class Album(
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
     override val description: String?,
-    val artists: List<Artist>,
+    val mainArtist: Artist,
     val label: String?,
     val popularity: Int?,
     val spotifyUrl: String,
     val totalTracks: Int,
     val tracks: List<Track>,
-    val artistAlbums: List<Album>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
         infoItems.add(getPluralString(Res.plurals.detail_tracks, totalTracks, totalTracks))
-        infoItems.add(artists.first().name)
+        infoItems.add(mainArtist.name)
 
         return infoItems
     }
@@ -52,4 +51,7 @@ data class Track(
 data class Artist(
     val id: String,
     val name: String,
+    val imageUrl: String? = null,
+    val popularity: Int? = null,
+    val artistAlbums: List<Album>? = null,
 ) : CommonParcelable

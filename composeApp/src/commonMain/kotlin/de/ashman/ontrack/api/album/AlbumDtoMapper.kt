@@ -18,7 +18,7 @@ fun AlbumDto.toDomain(): Album {
         description = tracks?.items?.joinToString(separator = "\n") {
             "${it.trackNumber}. ${it.name}"
         },
-        artists = artists.map { it.toDomain() },
+        mainArtist = artists.first().toDomain(),
         label = label,
         popularity = popularity,
         spotifyUrl = externalUrls.spotify,
@@ -39,10 +39,12 @@ fun TrackDto.toDomain(): Track {
     )
 }
 
-fun ArtistDto.toDomain() : Artist {
+fun ArtistDto.toDomain(): Artist {
     return Artist(
         id = id,
         name = name,
+        popularity = popularity,
+        imageUrl = images?.firstOrNull()?.url,
     )
 }
 
