@@ -57,6 +57,7 @@ data class BoardgameDesigner(
     val id: String,
     val name: String,
     val imageUrl: String? = null,
+    val bio: String? = null,
 ) : CommonParcelable
 
 @CommonParcelize

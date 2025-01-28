@@ -68,14 +68,6 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
-            implementation(libs.firebase.gitlive.common)
-            implementation(libs.firebase.gitlive.auth)
-            implementation(libs.firebase.gitlive.firestore)
-
-            implementation(libs.kmpauth.google)
-            implementation(libs.kmpauth.firebase)
-            implementation(libs.kmpauth.uihelper)
-
             implementation(libs.ktor.core)
             implementation(libs.ktor.contentNegotiation)
             implementation(libs.ktor.json)
@@ -87,6 +79,10 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.kermit)
+
+            implementation(libs.bundles.ksoup)
+            implementation(libs.bundles.kmpauth)
+            implementation(libs.bundles.firebase)
         }
 
         androidMain.dependencies {

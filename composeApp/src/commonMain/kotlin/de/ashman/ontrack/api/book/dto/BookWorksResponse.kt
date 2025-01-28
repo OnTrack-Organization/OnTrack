@@ -1,6 +1,7 @@
 package de.ashman.ontrack.api.book.dto
 
 import de.ashman.ontrack.api.book.dto.deserializer.BookSerializer
+import de.ashman.ontrack.api.book.dto.deserializer.TypeSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,10 +18,6 @@ data class BookWorksResponse(
 @Serializable
 data class AuthorWrapper(
     val author: AuthorDto,
-    val type: AuthorType,
-)
-
-@Serializable
-data class AuthorType(
-    val key: String,
+    @Serializable(with = TypeSerializer::class)
+    val type: String? = null,
 )

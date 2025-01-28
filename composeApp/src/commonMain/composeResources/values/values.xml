@@ -175,7 +175,7 @@
     <string name="detail_author_books">Author's Books (%1$d)</string>
 
     <string name="detail_artist">Artist</string>
-    <string name="detail_popularity">Popularity: %1$d</string>
+    <string name="detail_artist_popularity">Popularity: %1$d</string>
     <string name="detail_artist_albums">Artist's Albums</string>
     <plurals name="detail_tracks">
         <item quantity="one">%1$d Track</item>

@@ -33,9 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
-import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.getLivingDates
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
@@ -44,6 +44,7 @@ import ontrack.composeapp.generated.resources.detail_author
 import ontrack.composeapp.generated.resources.detail_author_books
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_genres
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BookDetailContent(
@@ -51,7 +52,13 @@ fun LazyListScope.BookDetailContent(
     onClickItem: (Media) -> Unit = { },
 ) {
     item {
-        AuthorCard(book.author)
+        CreatorCard(
+            title = Res.string.detail_author,
+            name = book.author.name,
+            subInfo = book.author.getLivingDates(),
+            description = book.author.bio,
+            imageUrl = book.author.imageUrl,
+        )
     }
     item {
         MediaDescription(
@@ -75,9 +82,15 @@ fun LazyListScope.BookDetailContent(
 }
 
 @Composable
-fun AuthorCard(author: Author) {
+fun CreatorCard(
+    title: StringResource,
+    name: String?,
+    subInfo: String? = null,
+    description: String?? = null,
+    imageUrl: String?,
+) {
     var expanded by remember { mutableStateOf(false) }
-    val painter = rememberAsyncImagePainter(author.imageUrl)
+    val painter = rememberAsyncImagePainter(imageUrl)
 
     Column(
         modifier = Modifier
@@ -96,10 +109,10 @@ fun AuthorCard(author: Author) {
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = stringResource(Res.string.detail_author),
+                text = stringResource(title),
                 style = MaterialTheme.typography.titleMedium,
             )
-            author.bio?.let {
+            description?.let {
                 Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
             }
         }
@@ -124,7 +137,7 @@ fun AuthorCard(author: Author) {
                         Image(
                             painter = painter,
                             contentScale = ContentScale.Crop,
-                            contentDescription = "Author Image",
+                            contentDescription = "Creator Image",
                         )
                     }
 
@@ -143,35 +156,26 @@ fun AuthorCard(author: Author) {
             Column(
                 verticalArrangement = Arrangement.Center,
             ) {
-                author.name?.let {
+                name?.let {
                     Text(
-                        text = author.name,
+                        text = name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                     )
                 }
-
-                if (author.birthDate != null || author.deathDate != null) {
-                    val birthAndDeathDate = buildString {
-                        append(author.birthDate.orEmpty())
-                        author.deathDate?.let { deathDate ->
-                            if (isNotEmpty()) append(" - ")
-                            append(deathDate)
-                        }
-                    }
-
+                subInfo?.let {
                     Text(
-                        text = birthAndDeathDate,
+                        text = subInfo,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
         }
-        author.bio?.let {
+        description?.let {
             if (expanded) {
                 Text(
-                    text = author.bio,
+                    text = description,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

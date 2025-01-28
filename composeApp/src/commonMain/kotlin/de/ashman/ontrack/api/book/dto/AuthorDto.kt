@@ -1,6 +1,7 @@
 package de.ashman.ontrack.api.book.dto
 
 import de.ashman.ontrack.api.book.dto.deserializer.BookSerializer
+import de.ashman.ontrack.api.book.dto.deserializer.TypeSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +17,8 @@ data class AuthorDto(
     val entityType: String? = null,
     val links: List<LinkDto>? = null,
     val remoteIds: RemoteIdsDto? = null,
-    val type: TypeDto? = null,
+    @Serializable(with = TypeSerializer::class)
+    val type: String? = null,
     val title: String? = null,
     val fullerName: String? = null,
     val alternateNames: List<String>? = null,
@@ -31,7 +33,8 @@ data class AuthorDto(
 data class LinkDto(
     val title: String? = null,
     val url: String? = null,
-    val type: TypeDto? = null
+    @Serializable(with = TypeSerializer::class)
+    val type: String? = null,
 )
 
 @Serializable
@@ -43,11 +46,6 @@ data class RemoteIdsDto(
     val librarything: String? = null,
     val amazon: String? = null,
     val wikidata: String? = null
-)
-
-@Serializable
-data class TypeDto(
-    val key: String? = null
 )
 
 @Serializable

@@ -47,3 +47,7 @@ data class Author(
     val birthDate: String? = null,
     val deathDate: String? = null,
 ) : CommonParcelable
+
+fun Author.getLivingDates(): String? =
+    listOfNotNull(birthDate, deathDate)
+        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

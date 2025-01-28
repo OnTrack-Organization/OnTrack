@@ -13,6 +13,7 @@ kmpauthGoogle = "2.3.0-beta02"
 koin = "4.0.1"
 kotlinxDatetime = "0.6.1"
 ktor = "3.0.0"
+ksoup = "0.2.1"
 buildKonfig = "0.13.3"
 composeNavigation = "2.8.0-alpha10"
 serialization = "1.8.0"
@@ -52,6 +53,10 @@ ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
+ksoup-kotlinx = { module = "com.fleeksoft.ksoup:ksoup-kotlinx", version.ref = "ksoup" }
+ksoup-network = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "ksoup" }
+
 # Serialization
 ktor-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -64,6 +69,11 @@ xmlutil-serialization = { module = "io.github.pdvrieze.xmlutil:serialization", v
 
 # Logging
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+[bundles]
+firebase = ["firebase-gitlive-common", "firebase-gitlive-auth", "firebase-gitlive-firestore"]
+kmpauth = ["kmpauth-firebase", "kmpauth-google", "kmpauth-uihelper"]
+ksoup = ["ksoup", "ksoup-kotlinx", "ksoup-network"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
