@@ -121,6 +121,7 @@ fun MediaPoster(
     onClick: (() -> Unit)? = null,
 ) {
     val painter = rememberAsyncImagePainter(coverUrl)
+    val imageState = painter.state.collectAsState().value
 
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
@@ -135,16 +136,13 @@ fun MediaPoster(
             enabled = (onClick != null),
             onClick = { onClick?.invoke() },
         ) {
-            val state = painter.state.collectAsState().value
-
-            when (state) {
+            when (imageState) {
                 is AsyncImagePainter.State.Loading -> {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         CircularProgressIndicator()
-
                     }
                 }
 

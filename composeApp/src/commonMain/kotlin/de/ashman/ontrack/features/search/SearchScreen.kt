@@ -94,7 +94,7 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
-                    items(uiState.searchResults) {
+                    items(items = uiState.searchResults, key = { it.id }) {
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
