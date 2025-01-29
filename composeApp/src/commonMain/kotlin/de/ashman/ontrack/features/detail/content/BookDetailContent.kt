@@ -1,9 +1,9 @@
 package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
+import de.ashman.ontrack.api.utils.getLivingDates
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.getLivingDates
 import de.ashman.ontrack.features.common.CreatorCard
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
@@ -23,7 +23,7 @@ fun LazyListScope.BookDetailContent(
         CreatorCard(
             title = Res.string.detail_author,
             name = book.author.name,
-            subInfo = book.author.getLivingDates(),
+            subInfo = getLivingDates(book.author.birthDate, book.author.deathDate),
             description = book.author.bio,
             imageUrl = book.author.imageUrl,
         )
@@ -42,7 +42,9 @@ fun LazyListScope.BookDetailContent(
     }
     item {
         MediaPosterRow(
-            title = stringResource(Res.string.detail_author_books, book.author.booksCount ?: 0),
+            title = book.author.booksCount?.let {
+                stringResource(Res.string.detail_author_books, it)
+            } ?: stringResource(Res.string.detail_author_books),
             items = book.author.books,
             onClickItem = onClickItem,
         )

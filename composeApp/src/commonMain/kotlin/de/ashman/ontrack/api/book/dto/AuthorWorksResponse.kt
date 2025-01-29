@@ -3,7 +3,7 @@ package de.ashman.ontrack.api.book.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookAuthorWorksResponse(
+data class AuthorWorksResponse(
     val entries: List<BookWorksResponse> = emptyList(),
     val size: Int? = null,
     val links: AuthorLinks? = null,

@@ -13,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.api.getLivingDates
+import de.ashman.ontrack.api.utils.getLivingDates
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.Show
@@ -40,7 +40,7 @@ fun LazyListScope.ShowDetailContent(
         CreatorCard(
             title = Res.string.detail_director,
             name = show.director?.name,
-            subInfo = show.director?.getLivingDates(),
+            subInfo = getLivingDates(show.director?.birthDate, show.director?.deathDate),
             imageUrl = show.director?.imageUrl,
             description = show.director?.bio,
         )

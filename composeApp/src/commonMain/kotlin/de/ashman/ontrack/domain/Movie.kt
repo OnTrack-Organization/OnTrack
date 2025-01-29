@@ -16,12 +16,12 @@ data class Movie(
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
     override val description: String?,
-    val collection: Collection? = null,
-    val genres: List<String>?,
-    val popularity: Double?,
-    val runtime: Int?,
-    val voteAverage: Double?,
-    val voteCount: Int?,
+    val collection: MovieCollection? = null,
+    val genres: List<String>? = null,
+    val popularity: Double? = null,
+    val runtime: Int? = null,
+    val voteAverage: Double? = null,
+    val voteCount: Int? = null,
     val similarMovies: List<Movie>? = null,
     val director: Director? = null,
 ) : Media() {
@@ -37,11 +37,11 @@ data class Movie(
 
 @CommonParcelize
 @Serializable
-data class Collection(
-    val id: Int,
-    val name: String,
-    val movies: List<Movie>,
-    val imageUrl: String?,
+data class MovieCollection(
+    val id: Int? = null,
+    val name: String? = null,
+    val movies: List<Movie>? = null,
+    val imageUrl: String? = null,
 ): CommonParcelable
 
 @CommonParcelize

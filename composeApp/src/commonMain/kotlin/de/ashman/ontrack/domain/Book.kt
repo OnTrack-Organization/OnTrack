@@ -20,7 +20,6 @@ data class Book(
     val numberOfPagesMedian: Int? = null,
     val publisher: List<String>? = null,
     val genres: List<String>? = null,
-    val language: List<String>? = null,
     val ratingsCount: Int? = null,
     val ratingsAverage: Double? = null,
 ) : Media() {
@@ -47,7 +46,3 @@ data class Author(
     val birthDate: String? = null,
     val deathDate: String? = null,
 ) : CommonParcelable
-
-fun Author.getLivingDates(): String? =
-    listOfNotNull(birthDate, deathDate)
-        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

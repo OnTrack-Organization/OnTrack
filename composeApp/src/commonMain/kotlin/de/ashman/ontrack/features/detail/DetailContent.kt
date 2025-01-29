@@ -93,7 +93,7 @@ fun SuccessContent(
             ) {
                 // TODO fix scrolling bug
                 item {
-
+                    Text(media.id)
                 }
                 media.trackStatus?.let {
                     item {

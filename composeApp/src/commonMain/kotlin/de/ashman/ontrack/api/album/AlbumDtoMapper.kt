@@ -4,20 +4,19 @@ import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
 import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.album.dto.TrackDto
+import de.ashman.ontrack.api.utils.getYear
+import de.ashman.ontrack.api.utils.toNumberedTracks
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Artist
 import de.ashman.ontrack.domain.Track
-import kotlin.collections.joinToString
 
-fun AlbumDto.toDomain(): Album {
-    return Album(
+fun AlbumDto.toDomain(): Album =
+    Album(
         id = id,
         title = name,
         coverUrl = images.first().url,
-        releaseYear = releaseDate.take(4),
-        description = tracks?.items?.joinToString(separator = "\n") {
-            "${it.trackNumber}. ${it.name}"
-        },
+        releaseYear = releaseDate.getYear(),
+        description = tracks?.items?.toNumberedTracks(),
         mainArtist = artists.first().toDomain(),
         label = label,
         popularity = popularity,
@@ -25,10 +24,9 @@ fun AlbumDto.toDomain(): Album {
         totalTracks = totalTracks,
         tracks = tracks?.items?.map { it.toDomain() } ?: emptyList(),
     )
-}
 
-fun TrackDto.toDomain(): Track {
-    return Track(
+fun TrackDto.toDomain(): Track =
+    Track(
         id = id,
         artists = artists.map { it.name },
         durationMs = durationMs,
@@ -37,17 +35,13 @@ fun TrackDto.toDomain(): Track {
         trackNumber = trackNumber,
         url = externalUrls.spotify
     )
-}
 
-fun ArtistDto.toDomain(): Artist {
-    return Artist(
+fun ArtistDto.toDomain(): Artist =
+    Artist(
         id = id,
         name = name,
         popularity = popularity,
         imageUrl = images?.firstOrNull()?.url,
     )
-}
 
-fun AlbumResponseDto.toDomain(): List<Album> {
-    return this.items.map { it.toDomain() }
-}
+fun AlbumResponseDto.toDomain(): List<Album> = items.map { it.toDomain() }

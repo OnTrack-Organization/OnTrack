@@ -23,8 +23,6 @@ data class Boardgame(
     val minPlayers: Int? = null,
     val maxPlayers: Int? = null,
     val playingTime: Int? = null,
-    val minAge: String? = null,
-    val thumbnail: String? = null,
     val ratings: Ratings? = null,
     val franchise: List<Boardgame>? = null,
     val designer: BoardgameDesigner? = null,

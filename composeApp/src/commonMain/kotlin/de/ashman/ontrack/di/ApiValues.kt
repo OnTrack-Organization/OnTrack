@@ -2,6 +2,7 @@ package de.ashman.ontrack.di
 
 // DEFAULT FETCH LIMIT
 const val DEFAULT_FETCH_LIMIT = 20
+const val SMALL_FETCH_LIMIT = 10
 
 // TMDB: MOVIES AND TV SHOWS
 // TMDB supported keine custom fields

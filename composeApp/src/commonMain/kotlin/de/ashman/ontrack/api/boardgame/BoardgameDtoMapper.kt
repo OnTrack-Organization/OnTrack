@@ -3,66 +3,46 @@ package de.ashman.ontrack.api.boardgame
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
 import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
+import de.ashman.ontrack.api.utils.decodeHtmlManually
+import de.ashman.ontrack.api.utils.nonZeroToInt
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.BoardgameDesigner
 import de.ashman.ontrack.domain.Ratings
 
-fun BoardgameDto.toDomain(): Boardgame {
-    return Boardgame(
+fun BoardgameDto.toDomain(): Boardgame =
+    Boardgame(
         id = id.orEmpty(),
-        title = names?.find { it.type == "primary" }?.value ?: names?.first()?.value.orEmpty(),
+        title = names?.first()?.value.orEmpty(),
         coverUrl = image.orEmpty(),
         releaseYear = yearpublished?.value,
         description = description?.decodeHtmlManually(),
         designer = links?.find { it.type == "boardgamedesigner" }?.toBoardgameDesignerDomain(),
-        minAge = minage?.value,
-        minPlayers = minplayers?.value.takeIf { it != "0" }?.toInt(),
-        maxPlayers = maxplayers?.value.takeIf { it != "0" }?.toInt(),
-        playingTime = playingtime?.value.takeIf { it != "0" }?.toInt(),
-        thumbnail = thumbnail,
+        minPlayers = minplayers?.value?.nonZeroToInt(),
+        maxPlayers = maxplayers?.value?.nonZeroToInt(),
+        playingTime = playingtime?.value?.nonZeroToInt(),
         ratings = statistics?.ratings?.toDomain(),
-        franchise = links?.map { it.toBoardgameDomain() },
+        franchise = links?.mapNotNull { it.toBoardgameDomain() },
     )
-}
 
-fun LinkDto.toBoardgameDesignerDomain(): BoardgameDesigner {
-    return BoardgameDesigner(
+fun LinkDto.toBoardgameDesignerDomain(): BoardgameDesigner =
+    BoardgameDesigner(
         id = id.orEmpty(),
         name = value.orEmpty(),
-        imageUrl = null,
     )
-}
 
-fun LinkDto.toBoardgameDomain(): Boardgame {
-    return Boardgame(
+fun LinkDto.toBoardgameDomain(): Boardgame =
+    Boardgame(
         boardgameType = type.orEmpty(),
         id = id.orEmpty(),
         title = value.orEmpty(),
         coverUrl = "",
         description = "",
     )
-}
 
-fun StatisticsDto.RatingsDto.toDomain(): Ratings {
-    return Ratings(
+fun StatisticsDto.RatingsDto.toDomain(): Ratings =
+    Ratings(
         usersRated = usersRated.value,
         average = average.value,
         numWeights = numWeights.value,
         averageWeight = averageWeight.value
     )
-}
-
-fun String.decodeHtmlManually(): String {
-    return this
-        .replace(Regex("&nbsp;"), " ")
-        .replace(Regex("&amp;#10;"), "\n")
-        .replace(Regex("&#10;"), "\n")
-        .replace(Regex("&ndash;"), "–")
-        .replace(Regex("&mdash;"), "—")
-        .replace(Regex("&amp;"), "&")
-        .replace(Regex("&quot;"), "\"")
-        .replace(Regex("&#9;"), "")
-        .replace(Regex("—description from the publisher\\n{2}"), "")
-        .trimEnd()
-}
-

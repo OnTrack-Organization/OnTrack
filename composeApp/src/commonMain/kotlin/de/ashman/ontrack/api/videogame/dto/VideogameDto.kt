@@ -61,3 +61,11 @@ data class PlatformLogoDto(
     val id: Int,
     val url: String,
 )
+
+@Serializable
+data class PopularityDto(
+    val id: Int,
+    val gameId: Int,
+    val value: Float,
+    val popularityType: Int,
+)

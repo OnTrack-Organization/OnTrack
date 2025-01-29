@@ -1,8 +1,6 @@
-package de.ashman.ontrack.api
+package de.ashman.ontrack.api.utils
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.api.book.cleanupDescription
-import de.ashman.ontrack.domain.Director
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
@@ -21,11 +19,10 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     }
 }
 
-fun String?.getTMDBCoverUrl(): String = this?.let { "https://image.tmdb.org/t/p/original${it}" }.orEmpty()
-
-fun Int?.getOpenLibraryCoverUrl(): String = this?.let { "https://covers.openlibrary.org/b/id/${it}-L.jpg" }.orEmpty()
-
-fun String?.getIGDBCoverUrl(): String = this?.let { "https://$it".replace("t_thumb", "t_1080p") }.orEmpty()
+fun getLivingDates(birthDate: String?, deathDate: String?): String? =
+    listOfNotNull(birthDate, deathDate)
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString(" - ")
 
 fun String.formatCreatorDate(): String? {
     val inputFormats = listOf(
@@ -57,7 +54,3 @@ fun String.formatCreatorDate(): String? {
     }
     return null
 }
-
-fun Director.getLivingDates(): String? =
-    listOfNotNull(birthDate, deathDate)
-        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

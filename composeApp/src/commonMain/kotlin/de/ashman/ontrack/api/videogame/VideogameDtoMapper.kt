@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api.videogame
 
-import de.ashman.ontrack.api.getIGDBCoverUrl
+import de.ashman.ontrack.api.utils.getIGDBCoverUrl
 import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PlatformDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
@@ -11,8 +11,8 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun VideogameDto.toDomain(): Videogame {
-    return Videogame(
+fun VideogameDto.toDomain(): Videogame =
+    Videogame(
         id = id.toString(),
         coverUrl = cover?.url.getIGDBCoverUrl(),
         releaseYear = firstReleaseDate?.let {
@@ -27,22 +27,19 @@ fun VideogameDto.toDomain(): Videogame {
         totalRatingCount = totalRatingCount,
         similarGames = similarGames?.map { it.toDomain() },
     )
-}
 
-fun FranchiseDto.toDomain(): Franchise {
-    return Franchise(
+fun FranchiseDto.toDomain(): Franchise =
+    Franchise(
         id = id,
         name = name,
         games = games?.map { it.toDomain() } ?: emptyList(),
         imageUrl = games?.firstOrNull()?.cover?.url.getIGDBCoverUrl()
     )
-}
 
-fun PlatformDto.toDomain(): Platform {
-    return Platform(
+fun PlatformDto.toDomain(): Platform =
+    Platform(
         id = id,
         abbreviation = abbreviation,
         name = name,
         platformLogo = platformLogo?.url?.getIGDBCoverUrl(),
     )
-}

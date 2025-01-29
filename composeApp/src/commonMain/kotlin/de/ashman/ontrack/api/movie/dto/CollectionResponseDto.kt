@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CollectionResponseDto(
-    val id: Int,
-    val name: String,
-    val overview: String,
-    val posterPath: String?,
-    val backdropPath: String?,
-    val parts: List<MovieDto>,
+    val id: Int? = null,
+    val name: String? = null,
+    val overview: String? = null,
+    val posterPath: String? = null,
+    val backdropPath: String? = null,
+    val parts: List<MovieDto>? = null,
 )

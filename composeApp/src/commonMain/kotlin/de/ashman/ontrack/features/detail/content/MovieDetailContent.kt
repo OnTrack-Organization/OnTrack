@@ -1,7 +1,7 @@
 package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
-import de.ashman.ontrack.api.getLivingDates
+import de.ashman.ontrack.api.utils.getLivingDates
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.features.common.CreatorCard
@@ -24,7 +24,7 @@ fun LazyListScope.MovieDetailContent(
         CreatorCard(
             title = Res.string.detail_director,
             name = movie.director?.name,
-            subInfo = movie.director?.getLivingDates(),
+            subInfo = getLivingDates(movie.director?.birthDate, movie.director?.deathDate),
             imageUrl = movie.director?.imageUrl,
             description = movie.director?.bio,
         )
