@@ -19,18 +19,18 @@ fun LazyListScope.AlbumDetailContent(
     onClickItem: (Media) -> Unit = {},
 ) {
     item {
+        MediaDescription(
+            title = pluralStringResource(Res.plurals.detail_tracks, album.tracks.size, album.tracks.size),
+            description = album.description,
+        )
+    }
+
+    item {
         CreatorCard(
             title = Res.string.detail_artist,
             name = album.mainArtist.name,
             imageUrl = album.mainArtist.imageUrl,
             subInfo = album.mainArtist.popularity?.let { stringResource(Res.string.detail_artist_popularity, album.mainArtist.popularity) },
-        )
-    }
-
-    item {
-        MediaDescription(
-            title = pluralStringResource(Res.plurals.detail_tracks, album.tracks.size, album.tracks.size),
-            description = album.description,
         )
     }
 

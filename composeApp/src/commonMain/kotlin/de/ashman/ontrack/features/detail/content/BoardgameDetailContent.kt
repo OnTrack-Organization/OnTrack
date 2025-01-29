@@ -17,6 +17,13 @@ fun LazyListScope.BoardgameDetailContent(
     onClickItem: (Media) -> Unit = { },
 ) {
     item {
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = boardgame.description,
+        )
+    }
+
+    item {
         CreatorCard(
             title = Res.string.detail_designer,
             name = boardgame.designer?.name,
@@ -24,12 +31,7 @@ fun LazyListScope.BoardgameDetailContent(
             description = boardgame.designer?.bio,
         )
     }
-    item {
-        MediaDescription(
-            title = stringResource(Res.string.detail_description),
-            description = boardgame.description,
-        )
-    }
+
     item {
         MediaPosterRow(
             title = stringResource(Res.string.detail_franchise),

@@ -59,8 +59,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import de.ashman.ontrack.domain.Franchise
 import de.ashman.ontrack.domain.MAX_RATING
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.TrackStatusType
 import de.ashman.ontrack.features.track.getLabel
@@ -245,7 +247,7 @@ fun MediaTitle(
 @Composable
 fun MediaPosterRow(
     title: String,
-    items: List<Media>?,
+    items: List<Any>?,
     onClickItem: (Media) -> Unit = { },
 ) {
     items?.let {
@@ -262,14 +264,39 @@ fun MediaPosterRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp),
             ) {
-                items(items) {
-                    MediaPoster(
-                        modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                        title = it.title,
-                        coverUrl = it.coverUrl,
-                        textStyle = MaterialTheme.typography.titleSmall,
-                        onClick = { onClickItem(it) }
-                    )
+                items(items) { item ->
+                    // TODO different
+                    when (item) {
+                        is Franchise -> {
+                            MediaPoster(
+                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                                title = item.name,
+                                coverUrl = item.imageUrl,
+                                textStyle = MaterialTheme.typography.titleSmall,
+                            )
+                        }
+
+                        is Media -> {
+                            MediaPoster(
+                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                                title = item.title,
+                                coverUrl = item.coverUrl,
+                                textStyle = MaterialTheme.typography.titleSmall,
+                                onClick = { onClickItem(item) }
+                            )
+                        }
+
+                        is Season -> {
+                            MediaPoster(
+                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                                title = item.title,
+                                coverUrl = item.coverUrl,
+                                textStyle = MaterialTheme.typography.titleSmall,
+                            )
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }

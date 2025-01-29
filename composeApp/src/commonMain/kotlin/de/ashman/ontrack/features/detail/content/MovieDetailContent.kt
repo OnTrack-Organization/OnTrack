@@ -21,6 +21,13 @@ fun LazyListScope.MovieDetailContent(
     onClickItem: (Media) -> Unit,
 ) {
     item {
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = movie.description,
+        )
+    }
+
+    item {
         CreatorCard(
             title = Res.string.detail_director,
             name = movie.director?.name,
@@ -29,29 +36,26 @@ fun LazyListScope.MovieDetailContent(
             description = movie.director?.bio,
         )
     }
+
     item {
         MediaChips(
             title = stringResource(Res.string.detail_genres),
             items = movie.genres,
         )
     }
-    item {
-        MediaDescription(
-            title = stringResource(Res.string.detail_description),
-            description = movie.description,
-        )
-    }
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_similar_movies),
-            items = movie.similarMovies,
-            onClickItem = onClickItem,
-        )
-    }
+
     item {
         MediaPosterRow(
             title = stringResource(Res.string.detail_collection),
             items = movie.collection?.movies,
+            onClickItem = onClickItem,
+        )
+    }
+
+    item {
+        MediaPosterRow(
+            title = stringResource(Res.string.detail_similar_movies),
+            items = movie.similarMovies,
             onClickItem = onClickItem,
         )
     }

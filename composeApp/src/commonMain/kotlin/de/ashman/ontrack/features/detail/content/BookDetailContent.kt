@@ -20,6 +20,13 @@ fun LazyListScope.BookDetailContent(
     onClickItem: (Media) -> Unit = { },
 ) {
     item {
+        MediaDescription(
+            title = stringResource(Res.string.detail_description),
+            description = book.description,
+        )
+    }
+
+    item {
         CreatorCard(
             title = Res.string.detail_author,
             name = book.author.name,
@@ -28,18 +35,14 @@ fun LazyListScope.BookDetailContent(
             imageUrl = book.author.imageUrl,
         )
     }
-    item {
-        MediaDescription(
-            title = stringResource(Res.string.detail_description),
-            description = book.description,
-        )
-    }
+
     item {
         MediaChips(
             title = stringResource(Res.string.detail_genres),
             items = book.genres,
         )
     }
+
     item {
         MediaPosterRow(
             title = book.author.booksCount?.let {

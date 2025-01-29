@@ -27,7 +27,7 @@ fun MovieDto.toDomain(): Movie =
 fun PersonDetailsDto.toDomain(): Director =
     Director(
         id = id.toString(),
-        name = name.orEmpty(),
+        name = name?.takeIf { it.isNotEmpty() },
         imageUrl = profile_path.getTMDBCoverUrl(),
         birthDate = birthday?.formatCreatorDate(),
         deathDate = deathday?.formatCreatorDate(),

@@ -48,7 +48,7 @@ data class MovieCollection(
 @Serializable
 data class Director(
     val id: String,
-    val name: String,
+    val name: String?,
     val imageUrl: String?,
     val birthDate: String?,
     val deathDate: String?,
