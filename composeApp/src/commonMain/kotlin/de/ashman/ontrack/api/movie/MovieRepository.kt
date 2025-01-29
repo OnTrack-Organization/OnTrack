@@ -1,11 +1,13 @@
 package de.ashman.ontrack.api.movie
 
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.movie.dto.CollectionResponseDto
 import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.MovieResponseDto
 import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Collection
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import io.ktor.client.HttpClient
@@ -39,9 +41,18 @@ class MovieRepository(
                 directorResponse.toDomain()
             }
 
+            val collection = fetchMovieCollection(response.belongsToCollection?.id).getOrNull()
+
             val similar = fetchSimilar(media.id).getOrNull()?.takeIf { it.isNotEmpty() }
 
-            response.toDomain().copy(similarMovies = similar, director = directorDetails)
+            response.toDomain().copy(similarMovies = similar, director = directorDetails, collection = collection)
+        }
+    }
+
+    suspend fun fetchMovieCollection(collectionId: Int?): Result<Collection> {
+        return safeApiCall {
+            val response: CollectionResponseDto = httpClient.get("collection/$collectionId").body()
+            response.toDomain()
         }
     }
 

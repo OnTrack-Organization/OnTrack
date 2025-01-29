@@ -2,6 +2,7 @@ package de.ashman.ontrack.api
 
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.book.cleanupDescription
+import de.ashman.ontrack.domain.Director
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
@@ -56,3 +57,7 @@ fun String.formatCreatorDate(): String? {
     }
     return null
 }
+
+fun Director.getLivingDates(): String? =
+    listOfNotNull(birthDate, deathDate)
+        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

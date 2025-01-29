@@ -156,6 +156,7 @@
     <string name="detail_genres">Genres</string>
     <string name="detail_franchise">Franchise</string>
 
+    <string name="detail_collection">Collection</string>
     <string name="detail_director">Director</string>
     <string name="detail_runtime">%1$d min</string>
 

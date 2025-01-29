@@ -16,15 +16,10 @@ data class Movie(
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
     override val description: String?,
-    val backdropPath: String?,
+    val collection: Collection? = null,
     val genres: List<String>?,
-    val originCountry: List<String>?,
-    val originalLanguage: String?,
-    val originalTitle: String?,
     val popularity: Double?,
-    val revenue: Long?,
     val runtime: Int?,
-    val status: String?,
     val voteAverage: Double?,
     val voteCount: Int?,
     val similarMovies: List<Movie>? = null,
@@ -42,6 +37,15 @@ data class Movie(
 
 @CommonParcelize
 @Serializable
+data class Collection(
+    val id: Int,
+    val name: String,
+    val movies: List<Movie>,
+    val imageUrl: String?,
+): CommonParcelable
+
+@CommonParcelize
+@Serializable
 data class Director(
     val id: String,
     val name: String,
@@ -50,7 +54,3 @@ data class Director(
     val deathDate: String?,
     val bio: String? = null,
 ) : CommonParcelable
-
-fun Director.getLivingDates(): String? =
-    listOfNotNull(birthDate, deathDate)
-        .takeIf { it.isNotEmpty() }?.joinToString(" - ")

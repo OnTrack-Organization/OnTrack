@@ -13,10 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.api.getLivingDates
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.domain.getLivingDates
 import de.ashman.ontrack.features.common.CreatorCard
 import de.ashman.ontrack.features.common.MediaChips
 import de.ashman.ontrack.features.common.MediaDescription
