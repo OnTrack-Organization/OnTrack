@@ -13,13 +13,12 @@ data class Videogame(
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
     override val description: String? = null,
-    val mainFranchise: Int? = null,
+    val franchises: List<Franchise>? = null,
     val genres: List<String>? = null,
     val involvedCompanies: List<String>? = null,
     val platforms: List<Platform>? = null,
     val totalRating: Double? = null,
     val totalRatingCount: Int? = null,
-    val franchiseGames: List<Videogame>? = null,
     val similarGames: List<Videogame>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
@@ -31,6 +30,15 @@ data class Videogame(
         return infoItems
     }
 }
+
+@CommonParcelize
+@Serializable
+data class Franchise(
+    val id: Int,
+    val name: String,
+    val games: List<Videogame>,
+    val imageUrl: String?
+) : CommonParcelable
 
 @CommonParcelize
 @Serializable

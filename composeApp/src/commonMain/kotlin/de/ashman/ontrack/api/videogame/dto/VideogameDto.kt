@@ -19,6 +19,13 @@ data class VideogameDto(
 )
 
 @Serializable
+data class FranchiseDto(
+    val id: Int,
+    val name: String,
+    val games: List<VideogameDto>? = null
+)
+
+@Serializable
 data class CoverDto(
     val id: Int,
     val url: String?,

@@ -3,8 +3,10 @@ package de.ashman.ontrack.api.videogame
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.safeApiCall
+import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
+import de.ashman.ontrack.domain.Franchise
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Videogame
 import io.ktor.client.HttpClient
@@ -66,29 +68,27 @@ class VideogameRepository(
             val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
             val videogameDto = response.first()
 
-            val franchiseGames = fetchFranchiseGames(franchiseIds = videogameDto.franchises)
+            val franchises = fetchFranchises(franchiseIds = videogameDto.franchises)
 
-            videogameDto.toDomain().copy(franchiseGames = franchiseGames)
+            videogameDto.toDomain().copy(franchises = franchises)
         }
     }
 
-    private suspend fun fetchFranchiseGames(franchiseIds: List<Int>?): List<Videogame>? {
-        if (franchiseIds.isNullOrEmpty()) return null
+    private suspend fun fetchFranchises(franchiseIds: List<Int>?): List<Franchise>? {
+        val franchiseIdsString = franchiseIds?.takeIf { it.isNotEmpty() }?.joinToString(",") ?: return null
 
-        val gameIds = franchiseIds.joinToString(",")
         val requestBuilder = buildRequestWithToken {
-            url("games")
+            url("franchises")
             setBody(
             """
-                fields cover.url, name;
-                where franchise = ($gameIds);
-                limit 10;
+                fields *, games.cover.url, games.name;
+                where id = ($franchiseIdsString);
             """
             )
         }
 
-        val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
-        return response.map { it.toDomain() }
+        val response: List<FranchiseDto> = httpClient.post(requestBuilder).body()
+        return response.takeIf { it.isNotEmpty() }?.map { it.toDomain() }
     }
 
     // TODO maybe use custom trending again, who knows
