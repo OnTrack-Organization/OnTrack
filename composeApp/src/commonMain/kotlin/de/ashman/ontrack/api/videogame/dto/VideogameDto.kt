@@ -7,7 +7,7 @@ data class VideogameDto(
     val id: Int? = null,
     val cover: CoverDto? = null,
     val firstReleaseDate: Long? = null,
-    val franchises: List<FranchiseDto>? = null,
+    val franchises: List<Int>? = null,
     val genres: List<GenreDto>? = null,
     val involvedCompanies: List<InvolvedCompanyDto>? = null,
     val name: String? = null,
@@ -22,12 +22,6 @@ data class VideogameDto(
 data class CoverDto(
     val id: Int,
     val url: String?,
-)
-
-@Serializable
-data class FranchiseDto(
-    val id: Int,
-    val name: String,
 )
 
 @Serializable

@@ -8,6 +8,7 @@ import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
+import ontrack.composeapp.generated.resources.detail_franchise
 import ontrack.composeapp.generated.resources.detail_genres
 import ontrack.composeapp.generated.resources.detail_platforms
 import ontrack.composeapp.generated.resources.detail_similar_videogames
@@ -39,6 +40,13 @@ fun LazyListScope.VideogameDetailContent(
         MediaPosterRow(
             title = stringResource(Res.string.detail_similar_videogames),
             items = videogame.similarGames,
+            onClickItem = onClickItem,
+        )
+    }
+    item {
+        MediaPosterRow(
+            title = stringResource(Res.string.detail_franchise),
+            items = videogame.franchiseGames,
             onClickItem = onClickItem,
         )
     }

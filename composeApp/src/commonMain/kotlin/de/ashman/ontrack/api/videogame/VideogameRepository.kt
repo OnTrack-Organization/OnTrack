@@ -57,19 +57,42 @@ class VideogameRepository(
                 url("games")
                 setBody(
                     """
-                    fields cover.url, first_release_date, franchises.name, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
+                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
                     where id = ${media.id};
                 """
                 )
             }
 
             val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
-            response.first().toDomain()
+            val videogameDto = response.first()
+
+            val franchiseGames = fetchFranchiseGames(franchiseIds = videogameDto.franchises)
+
+            videogameDto.toDomain().copy(franchiseGames = franchiseGames)
         }
     }
 
+    private suspend fun fetchFranchiseGames(franchiseIds: List<Int>?): List<Videogame>? {
+        if (franchiseIds.isNullOrEmpty()) return null
+
+        val gameIds = franchiseIds.joinToString(",")
+        val requestBuilder = buildRequestWithToken {
+            url("games")
+            setBody(
+            """
+                fields cover.url, name;
+                where franchise = ($gameIds);
+                limit 10;
+            """
+            )
+        }
+
+        val response: List<VideogameDto> = httpClient.post(requestBuilder).body()
+        return response.map { it.toDomain() }
+    }
+
     // TODO maybe use custom trending again, who knows
-     suspend fun fetchTrending2(): Result<List<Videogame>> {
+    suspend fun fetchTrending2(): Result<List<Videogame>> {
         return safeApiCall {
             val requestBuilder = buildRequestWithToken {
                 url("games")
@@ -93,7 +116,7 @@ class VideogameRepository(
             val requestBuilder = buildRequestWithToken {
                 url("popularity_primitives")
                 setBody(
-                """
+                    """
                     fields game_id,value,popularity_type; 
                     sort value desc; 
                     limit $DEFAULT_FETCH_LIMIT; 
