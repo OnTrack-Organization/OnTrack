@@ -37,10 +37,13 @@ import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Movie
+import de.ashman.ontrack.domain.RatingStats
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.RatingCardRow
+import de.ashman.ontrack.features.common.RatingUi
 import de.ashman.ontrack.features.common.ReviewCard
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.StickyMainContent
@@ -60,6 +63,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
+    ratingStats: RatingStats,
     onSaveTrack: (TrackStatus?) -> Unit,
     onRemoveTrack: () -> Unit,
     onClickItem: (Media) -> Unit,
@@ -95,6 +99,26 @@ fun SuccessContent(
                 item {
                     Text(media.id)
                 }
+
+                item {
+                    val onTrackRating = RatingUi.OnTrack(totalRatings = ratingStats.totalAppRatings, averageRating = ratingStats.averageAppRating)
+
+                    val apiRating = when (media) {
+                        is Movie -> RatingUi.Movie(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                        is Show -> RatingUi.Show(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                        is Book -> RatingUi.Book(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                        is Album -> RatingUi.Album(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                        is Videogame -> RatingUi.Videogame(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                        is Boardgame -> RatingUi.Boardgame(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
+                    }
+
+                    RatingCardRow(
+                        onTrackRating = onTrackRating,
+                        apiRating = apiRating
+                    )
+                }
+
+
                 media.trackStatus?.let {
                     item {
                         ReviewCard(

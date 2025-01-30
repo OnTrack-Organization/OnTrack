@@ -12,6 +12,7 @@ data class Videogame(
     override val coverUrl: String,
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
+    override val ratingStats: RatingStats? = null,
     override val description: String? = null,
     val franchises: List<Franchise>? = null,
     val genres: List<String>? = null,

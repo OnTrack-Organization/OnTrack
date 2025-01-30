@@ -16,6 +16,7 @@ data class Movie(
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
     override val description: String?,
+    override val ratingStats: RatingStats? = null,
     val collection: MovieCollection? = null,
     val genres: List<String>? = null,
     val popularity: Double? = null,

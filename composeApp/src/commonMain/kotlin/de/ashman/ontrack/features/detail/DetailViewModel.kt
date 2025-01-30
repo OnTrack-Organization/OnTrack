@@ -17,6 +17,7 @@ import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
+import de.ashman.ontrack.domain.RatingStats
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Videogame
@@ -133,6 +134,11 @@ class DetailViewModel(
                 }
                 .launchIn(viewModelScope)
         }
+    }
+
+    fun getMediaRatingStats(mediaId: String): StateFlow<RatingStats> {
+        return mediaService.getMediaRatingStatsFlow(mediaId)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, RatingStats(0, 0.0, 0, 0.0))
     }
 }
 

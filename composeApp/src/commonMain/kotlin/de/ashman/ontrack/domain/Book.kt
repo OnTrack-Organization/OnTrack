@@ -15,6 +15,7 @@ data class Book(
     override val coverUrl: String,
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
+    override val ratingStats: RatingStats? = null,
     override val description: String? = null,
     val author: Author,
     val numberOfPagesMedian: Int? = null,

@@ -15,6 +15,7 @@ data class Album(
     override val coverUrl: String,
     override val releaseYear: String?,
     override val trackStatus: TrackStatus? = null,
+    override val ratingStats: RatingStats? = null,
     override val description: String?,
     val mainArtist: Artist,
     val label: String?,

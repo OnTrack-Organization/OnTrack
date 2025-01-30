@@ -16,6 +16,7 @@ data class Show(
     override val coverUrl: String,
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
+    override val ratingStats: RatingStats? = null,
     override val description: String? = null,
     val genres: List<String>? = null,
     val numberOfEpisodes: Int? = null,

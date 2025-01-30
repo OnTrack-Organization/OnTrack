@@ -14,6 +14,7 @@ sealed class Media() : CommonParcelable {
     abstract val releaseYear: String?
     abstract val description: String?
     abstract val trackStatus: TrackStatus?
+    abstract val ratingStats: RatingStats?
 
     abstract suspend fun getMainInfoItems(): List<String>
 }

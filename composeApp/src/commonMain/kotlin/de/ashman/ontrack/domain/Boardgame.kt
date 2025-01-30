@@ -18,6 +18,7 @@ data class Boardgame(
     override val coverUrl: String,
     override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
+    override val ratingStats: RatingStats? = null,
     override val description: String?,
     val boardgameType: String? = null,
     val minPlayers: Int? = null,
