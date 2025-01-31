@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -48,7 +47,6 @@ fun ShelfScreen(
     onClickItem: (Media) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val listState = rememberLazyListState()
 
     Column {
         uiState.user?.let {
@@ -61,7 +59,7 @@ fun ShelfScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
-            state = listState,
+            state = viewModel.listState,
         ) {
             val nonEmptySections = MediaType.entries.filter { mediaType ->
                 uiState.mediaList.any { it.mediaType == mediaType }

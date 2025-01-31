@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -81,6 +82,7 @@ fun SearchScreen(
             FilterChips(
                 selectedMediaType = uiState.selectedMediaType,
                 onMediaTypeSelected = viewModel::onMediaTypeSelected,
+                listState = viewModel.chipRowState,
             )
         }
 
@@ -235,12 +237,14 @@ fun SearchBar(
 fun FilterChips(
     selectedMediaType: MediaType,
     onMediaTypeSelected: (MediaType) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
+        state = listState,
     ) {
         items(MediaType.entries) { mediaType ->
             FilterChip(

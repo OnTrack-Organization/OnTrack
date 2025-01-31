@@ -1,5 +1,9 @@
 package de.ashman.ontrack.features.shelf
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
@@ -34,6 +38,8 @@ class ShelfViewModel(
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
+
+    var listState: LazyListState by mutableStateOf( LazyListState(0,0))
 
     // TODO handle other users, not just logged in one
     private fun observeUser() {
