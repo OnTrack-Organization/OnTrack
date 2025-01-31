@@ -37,7 +37,7 @@ class BookRepository(
         val book = media as Book
 
         val description = fetchDescription(book.id)
-        val author = fetchAuthorWithBooks(book.author.id)
+        val author = fetchAuthorWithBooks(book.author?.id)
 
         book.copy(
             description = description,
@@ -63,7 +63,9 @@ class BookRepository(
         return response.description?.cleanupDescription()
     }
 
-    private suspend fun fetchAuthorWithBooks(authorId: String): Author? {
+    private suspend fun fetchAuthorWithBooks(authorId: String?): Author? {
+        authorId ?: return null
+
         val authorDto: AuthorDto = httpClient.get("authors/$authorId.json").body()
         val authorWorksResponse: AuthorWorksResponse = httpClient.get("authors/$authorId/works.json") {
             parameter("limit", SMALL_FETCH_LIMIT)

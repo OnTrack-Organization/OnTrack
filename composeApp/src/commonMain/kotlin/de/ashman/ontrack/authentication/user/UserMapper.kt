@@ -7,7 +7,9 @@ fun FirebaseUser.toEntity() =
         id = uid,
         email = email,
         name = displayName,
-        username = displayName,
+        // TODO different way
+        username = "@${displayName?.lowercase()}",
+        imageUrl = photoURL,
     )
 
 fun UserEntity.toDomain() =
@@ -16,4 +18,5 @@ fun UserEntity.toDomain() =
         email = email,
         name = name,
         username = username,
+        imageUrl = imageUrl,
     )

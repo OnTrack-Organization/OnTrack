@@ -43,7 +43,7 @@ class AlbumRepository(
 
     override suspend fun fetchDetails(media: Media): Result<Album> = safeApiCall {
         val album = requestWithToken<AlbumDto>("albums/${media.id}").toDomain()
-        album.copy(mainArtist = fetchArtist(album.mainArtist.id))
+        album.copy(mainArtist = fetchArtist(album.mainArtist?.id))
     }
 
     // Maybe just create a list of artists manually and take their newest albums
@@ -53,7 +53,7 @@ class AlbumRepository(
         }.albums.toDomain()
     }
 
-    private suspend fun fetchArtist(artistId: String): Artist {
+    private suspend fun fetchArtist(artistId: String?): Artist {
         val artist = requestWithToken<ArtistDto>("artists/$artistId").toDomain()
         val albums = requestWithToken<AlbumResponseDto>("artists/$artistId/albums").toDomain()
         return artist.copy(artistAlbums = albums)

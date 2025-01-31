@@ -17,7 +17,7 @@ data class Book(
     override val trackStatus: TrackStatus? = null,
     override val ratingStats: RatingStats? = null,
     override val description: String? = null,
-    val author: Author,
+    val author: Author? = null,
     val numberOfPagesMedian: Int? = null,
     val publisher: List<String>? = null,
     val genres: List<String>? = null,
@@ -29,7 +29,7 @@ data class Book(
 
         releaseYear?.let { infoItems.add(it) }
         numberOfPagesMedian?.let { infoItems.add(getPluralString(Res.plurals.detail_pages, it, it)) }
-        author.name?.let { infoItems.add(it) }
+        author?.name?.let { infoItems.add(it) }
 
         return infoItems
     }

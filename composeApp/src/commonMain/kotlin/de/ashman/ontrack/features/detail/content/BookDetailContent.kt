@@ -29,10 +29,10 @@ fun LazyListScope.BookDetailContent(
     item {
         CreatorCard(
             title = Res.string.detail_author,
-            name = book.author.name,
-            subInfo = getLivingDates(book.author.birthDate, book.author.deathDate),
-            description = book.author.bio,
-            imageUrl = book.author.imageUrl,
+            name = book.author?.name,
+            subInfo = getLivingDates(book.author?.birthDate, book.author?.deathDate),
+            description = book.author?.bio,
+            imageUrl = book.author?.imageUrl,
         )
     }
 
@@ -45,10 +45,10 @@ fun LazyListScope.BookDetailContent(
 
     item {
         MediaPosterRow(
-            title = book.author.booksCount?.let {
+            title = book.author?.booksCount?.let {
                 stringResource(Res.string.detail_author_books, it)
             } ?: stringResource(Res.string.detail_author_books),
-            items = book.author.books,
+            items = book.author?.books,
             onClickItem = onClickItem,
         )
     }

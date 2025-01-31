@@ -13,22 +13,22 @@ data class Album(
     override val mediaType: MediaType = MediaType.ALBUM,
     override val title: String,
     override val coverUrl: String,
-    override val releaseYear: String?,
+    override val releaseYear: String? = null,
     override val trackStatus: TrackStatus? = null,
     override val ratingStats: RatingStats? = null,
-    override val description: String?,
-    val mainArtist: Artist,
-    val label: String?,
-    val popularity: Int?,
-    val spotifyUrl: String,
-    val totalTracks: Int,
-    val tracks: List<Track>,
+    override val description: String? = null,
+    val mainArtist: Artist? = null,
+    val label: String? = null,
+    val popularity: Int? = null,
+    val spotifyUrl: String? = null,
+    val totalTracks: Int? = null,
+    val tracks: List<Track>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        infoItems.add(getPluralString(Res.plurals.detail_tracks, totalTracks, totalTracks))
+        totalTracks?.let { infoItems.add(getPluralString(Res.plurals.detail_tracks, it, it)) }
 
         return infoItems
     }

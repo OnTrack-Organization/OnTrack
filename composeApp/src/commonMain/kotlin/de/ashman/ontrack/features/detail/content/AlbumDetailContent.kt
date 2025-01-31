@@ -20,7 +20,7 @@ fun LazyListScope.AlbumDetailContent(
 ) {
     item {
         MediaDescription(
-            title = pluralStringResource(Res.plurals.detail_tracks, album.tracks.size, album.tracks.size),
+            title = album.tracks?.size?.let { pluralStringResource(Res.plurals.detail_tracks, it, it) },
             description = album.description,
         )
     }
@@ -28,16 +28,16 @@ fun LazyListScope.AlbumDetailContent(
     item {
         CreatorCard(
             title = Res.string.detail_artist,
-            name = album.mainArtist.name,
-            imageUrl = album.mainArtist.imageUrl,
-            subInfo = album.mainArtist.popularity?.let { stringResource(Res.string.detail_artist_popularity, album.mainArtist.popularity) },
+            name = album.mainArtist?.name,
+            imageUrl = album.mainArtist?.imageUrl,
+            subInfo = album.mainArtist?.popularity?.let { stringResource(Res.string.detail_artist_popularity, it) },
         )
     }
 
     item {
         MediaPosterRow(
             title = stringResource(Res.string.detail_artist_albums),
-            items = album.mainArtist.artistAlbums,
+            items = album.mainArtist?.artistAlbums,
             onClickItem = onClickItem,
         )
     }

@@ -303,7 +303,7 @@ fun MediaPosterRow(
 
 @Composable
 fun MediaDescription(
-    title: String,
+    title: String?,
     description: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -327,10 +327,12 @@ fun MediaDescription(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                title?.let {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
                 if (hasOverflow) {
                     Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
                 }

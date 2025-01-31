@@ -60,7 +60,7 @@ fun OnTrackScreen(
     topBarState = currentRoute?.hierarchy?.any { it.route?.contains(detailBaseRoute) == true } == true
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = if (topBarState) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (topBarState) DetailTopBar(

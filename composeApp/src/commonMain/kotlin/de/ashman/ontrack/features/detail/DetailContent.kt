@@ -63,7 +63,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SuccessContent(
     modifier: Modifier = Modifier,
     media: Media?,
-    ratingStats: RatingStats,
+    ratingStats: RatingStats? = null,
     onSaveTrack: (TrackStatus?) -> Unit,
     onRemoveTrack: () -> Unit,
     onClickItem: (Media) -> Unit,
@@ -101,7 +101,7 @@ fun SuccessContent(
                 }
 
                 item {
-                    val onTrackRating = RatingUi.OnTrack(totalRatings = ratingStats.totalAppRatings, averageRating = ratingStats.averageAppRating)
+                    val onTrackRating = RatingUi.OnTrack(totalRatings = ratingStats?.totalAppRatings, averageRating = ratingStats?.averageAppRating)
 
                     val apiRating = when (media) {
                         is Movie -> RatingUi.Movie(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)

@@ -15,6 +15,7 @@ import de.ashman.ontrack.db.MediaService
 import de.ashman.ontrack.db.MediaServiceImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
+import de.ashman.ontrack.features.shelf.ShelfViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -210,9 +211,9 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { AuthViewModel(get()) }
-
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { ShelfViewModel(get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

@@ -5,7 +5,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,8 +28,6 @@ fun DetailScreen(
     val snackbarHostState = LocalSnackbarHostState.current
     val coroutineScope = rememberCoroutineScope()
 
-    val ratingStats by viewModel.getMediaRatingStats(media.id).collectAsState()
-
     LaunchedEffect(media.id) {
         viewModel.fetchDetails(media)
     }
@@ -47,7 +44,6 @@ fun DetailScreen(
         DetailResultState.Success -> {
             SuccessContent(
                 media = uiState.selectedMedia,
-                ratingStats = ratingStats,
                 onSaveTrack = {
                     viewModel.saveTrack(it)
                     coroutineScope.launch {

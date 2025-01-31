@@ -27,6 +27,7 @@ import de.ashman.ontrack.features.feed.FeedScreen
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfScreen
+import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.navigation.Route.Detail
 import de.ashman.ontrack.util.getMediaTypeUi
 import dev.gitlive.firebase.Firebase
@@ -43,6 +44,7 @@ fun NavigationGraph() {
 
     val searchViewModel: SearchViewModel = koinInject()
     val detailViewModel: DetailViewModel = koinInject()
+    val shelfViewModel: ShelfViewModel = koinInject()
     val authViewModel: AuthViewModel = koinInject()
 
     val searchUiState by searchViewModel.uiState.collectAsState()
@@ -59,7 +61,7 @@ fun NavigationGraph() {
             NavHost(
                 navController = navController,
                 modifier = Modifier.fillMaxSize().padding(padding),
-                startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Login,
+                startDestination = if (Firebase.auth.currentUser != null) Route.Shelf else Route.Login,
             ) {
                 composable<Route.Login> {
                     LoginScreen(
@@ -67,7 +69,7 @@ fun NavigationGraph() {
                         onLoginSuccess = { navController.navigate(Route.Feed) }
                     )
                 }
-                mainGraph(navController, searchViewModel, authViewModel)
+                mainGraph(navController, searchViewModel, authViewModel, shelfViewModel)
                 mediaGraph(detailViewModel, navController)
             }
         }
@@ -97,6 +99,7 @@ fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
     searchViewModel: SearchViewModel,
     authViewModel: AuthViewModel,
+    shelfViewModel: ShelfViewModel,
 ) {
     composable<Route.Feed> {
         FeedScreen(
@@ -116,7 +119,14 @@ fun NavGraphBuilder.mainGraph(
 
     composable<Route.Shelf> {
         ShelfScreen(
-            goToShelf = { mediaType -> navController.navigate(Route.ShelfList(mediaType.name)) }
+            viewModel = shelfViewModel,
+            onClickMore = { mediaType ->
+                // TODO navigate to shelf list
+                //navController.navigate()
+            },
+            onClickItem = { item ->
+                navController.navigate(Detail(item))
+            }
         )
     }
 }

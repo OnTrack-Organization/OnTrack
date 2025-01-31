@@ -7,6 +7,7 @@ data class User(
     val name: String? = null,
     val username: String? = null,
     val email: String? = null,
+    val imageUrl: String? = null,
 )
 
 @Serializable
@@ -15,4 +16,5 @@ data class UserEntity(
     val name: String? = null,
     val username: String? = null,
     val email: String? = null,
+    val imageUrl: String? = null,
 )
