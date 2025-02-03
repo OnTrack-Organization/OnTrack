@@ -12,9 +12,9 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.navigation.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.track_status_removed
-import ontrack.composeapp.generated.resources.track_status_removed_undo
-import ontrack.composeapp.generated.resources.track_status_saved
+import ontrack.composeapp.generated.resources.tracking_removed
+import ontrack.composeapp.generated.resources.tracking_removed_undo
+import ontrack.composeapp.generated.resources.tracking_saved
 import org.jetbrains.compose.resources.getString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,29 +42,32 @@ fun DetailScreen(
         }
 
         DetailResultState.Success -> {
-            SuccessContent(
-                media = uiState.selectedMedia,
-                onSaveTrack = {
-                    viewModel.saveTrack(it)
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(getString(Res.string.track_status_saved))
-                    }
-                },
-                onRemoveTrack = {
-                    viewModel.removeTrack()
-                    coroutineScope.launch {
-                        val result = snackbarHostState.showSnackbar(
-                            message = getString(Res.string.track_status_removed),
-                            actionLabel = getString(Res.string.track_status_removed_undo),
-                            duration = SnackbarDuration.Short,
-                        )
-                        if (result == SnackbarResult.ActionPerformed) {
-                            viewModel.undoRemoveTrack()
+            uiState.selectedMedia?.let {
+                SuccessContent(
+                    media = it,
+                    tracking = uiState.selectedTracking,
+                    onSaveTracking = {
+                        viewModel.saveTracking(it)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
                         }
-                    }
-                },
-                onClickItem = onClickItem,
-            )
+                    },
+                    onRemoveTracking = {
+                        viewModel.removeTracking()
+                        coroutineScope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = getString(Res.string.tracking_removed),
+                                actionLabel = getString(Res.string.tracking_removed_undo),
+                                duration = SnackbarDuration.Short,
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                viewModel.undoRemoveTracking()
+                            }
+                        }
+                    },
+                    onClickItem = onClickItem,
+                )
+            }
         }
     }
 }

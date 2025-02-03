@@ -96,17 +96,19 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
-                    items(items = uiState.searchResults, key = { it.id }) {
+                    items(items = uiState.searchResults, key = { it.id }) { media ->
+                        val tracking = uiState.trackings.find { it.mediaId == media.id }
+
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             MediaPoster(
                                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                title = it.title,
-                                coverUrl = it.coverUrl,
-                                trackStatusIcon = it.trackStatus?.statusType?.getStatusIcon(true),
-                                onClick = { onClickItem(it) },
+                                title = media.title,
+                                coverUrl = media.coverUrl,
+                                trackStatusIcon = tracking?.status?.getStatusIcon(true),
+                                onClick = { onClickItem(media) },
                             )
                         }
                     }

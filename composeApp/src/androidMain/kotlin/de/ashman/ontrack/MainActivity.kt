@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.mmk.kmpauth.google.GoogleAuthCredentials
-import com.mmk.kmpauth.google.GoogleAuthProvider
 import de.ashman.ontrack.di.initKoin
-import de.ashman.ontrack.navigation.NavigationGraph
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.stopKoin
 

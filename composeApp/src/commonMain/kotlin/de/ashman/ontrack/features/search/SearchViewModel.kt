@@ -13,11 +13,11 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.db.MediaService
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.addTrackStatus
+import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.toDomain
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,16 +42,14 @@ class SearchViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val mediaService: MediaService,
+    private val firestoreService: FirestoreService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState
         .onStart {
             observeSearchQuery()
-        }
-        .onEach {
-            observeUserMedia()
+            observeUserTrackings()
         }
         .stateIn(
             viewModelScope,
@@ -59,7 +57,7 @@ class SearchViewModel(
             _uiState.value,
         )
 
-    var chipRowState: LazyListState by mutableStateOf( LazyListState(0,0))
+    var chipRowState: LazyListState by mutableStateOf(LazyListState(0, 0))
     private var searchJob: Job? = null
 
     init {
@@ -179,25 +177,11 @@ class SearchViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun observeUserMedia() {
-        mediaService.getUserMediaListFlow()
-            .onEach { mediaEntityList ->
+    private fun observeUserTrackings() {
+        firestoreService.consumeLatestUserTrackings()
+            .onEach { trackings ->
                 _uiState.update {
-                    // Update search results by user media from db
-                    val enrichedSearchResults = it.searchResults.map { apiMedia ->
-                        val mediaEntity = mediaEntityList.find { it.id == apiMedia.id }
-                        if (mediaEntity != null) {
-                            apiMedia.addTrackStatus(mediaEntity.trackStatus?.toDomain())
-                        } else if (apiMedia.trackStatus != null) {
-                            // If the media is no longer in the user's media list, reset its status
-                            apiMedia.addTrackStatus(null)
-                        } else {
-                            // Keep media that hasn't been tracked
-                            apiMedia
-                        }
-                    }
-
-                    it.copy(searchResults = enrichedSearchResults)
+                    it.copy(trackings = trackings.map { it.toDomain() })
                 }
             }
             .launchIn(viewModelScope)
@@ -218,6 +202,7 @@ class SearchViewModel(
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val cachedTrending: List<Media> = emptyList(),
+    val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val searchResultState: SearchResultState = SearchResultState.Empty,

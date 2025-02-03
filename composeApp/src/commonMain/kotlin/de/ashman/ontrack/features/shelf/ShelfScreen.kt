@@ -56,27 +56,24 @@ fun ShelfScreen(
                 imageUrl = it.imageUrl,
             )
         }
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
             state = viewModel.listState,
         ) {
-            val nonEmptySections = MediaType.entries.filter { mediaType ->
-                uiState.mediaList.any { it.mediaType == mediaType }
-            }
+            MediaType.entries.forEach { mediaType ->
+                val filteredMedia = uiState.mediaList.filter { it.mediaType == mediaType }
 
-            nonEmptySections.forEachIndexed { index, mediaType ->
-                val filteredItems = uiState.mediaList.filter { it.mediaType == mediaType }
-                item(key = mediaType.name) {
-                    ShelfItem(
-                        mediaType = mediaType,
-                        items = filteredItems,
-                        onClickMore = { onClickMore(mediaType) },
-                        onClickItem = onClickItem,
-                    )
-                    /*if (index < nonEmptySections.lastIndex) {
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 32.dp))
-                    }*/
+                if (filteredMedia.isNotEmpty()) {
+                    item(key = mediaType.name) {
+                        ShelfItem(
+                            mediaType = mediaType,
+                            items = filteredMedia,
+                            onClickMore = { onClickMore(mediaType) },
+                            onClickItem = onClickItem,
+                        )
+                    }
                 }
             }
         }

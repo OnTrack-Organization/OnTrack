@@ -37,23 +37,20 @@ import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Movie
-import de.ashman.ontrack.domain.RatingStats
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.Tracking
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.features.common.RatingCardRow
-import de.ashman.ontrack.features.common.RatingUi
-import de.ashman.ontrack.features.common.ReviewCard
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.common.StickyMainContent
+import de.ashman.ontrack.features.detail.components.ReviewCard
+import de.ashman.ontrack.features.detail.components.StickyMainContent
 import de.ashman.ontrack.features.detail.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.content.BookDetailContent
 import de.ashman.ontrack.features.detail.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
-import de.ashman.ontrack.features.track.TrackBottomSheetContent
+import de.ashman.ontrack.features.track.TrackingBottomSheetContent
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
 import org.jetbrains.compose.resources.stringResource
@@ -62,95 +59,82 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SuccessContent(
     modifier: Modifier = Modifier,
-    media: Media?,
-    ratingStats: RatingStats? = null,
-    onSaveTrack: (TrackStatus?) -> Unit,
-    onRemoveTrack: () -> Unit,
+    media: Media,
+    tracking: Tracking?,
+    onSaveTracking: (Tracking) -> Unit,
+    onRemoveTracking: () -> Unit,
     onClickItem: (Media) -> Unit,
 ) {
-    media?.let {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
 
-        val listState = rememberLazyListState()
-        val transition = updateTransition(listState.firstVisibleItemIndex != 0, label = "Image Size Transition")
+    val listState = rememberLazyListState()
+    val transition = updateTransition(listState.firstVisibleItemIndex != 0, label = "Image Size Transition")
 
-        val size by transition.animateDp { isScrolling ->
-            if (isScrolling) SMALL_POSTER_HEIGHT else DEFAULT_POSTER_HEIGHT
-        }
+    val size by transition.animateDp { isScrolling ->
+        if (isScrolling) SMALL_POSTER_HEIGHT else DEFAULT_POSTER_HEIGHT
+    }
 
-        Column(
-            modifier = modifier.fillMaxSize(),
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        StickyMainContent(
+            imageModifier = Modifier.height(size),
+            media = media,
+            status = tracking?.status,
+            onAddTracking = { showBottomSheet = true },
+            onRemoveTracking = onRemoveTracking,
+        )
+
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            StickyMainContent(
-                imageModifier = Modifier.height(size),
-                media = media,
-                trackStatus = media.trackStatus?.statusType,
-                onClickTrack = { showBottomSheet = true },
-                onClickRemove = onRemoveTrack,
-            )
-
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                // TODO fix scrolling bug
-                item {
+            // TODO fix scrolling bug
+            item {
+                Column() {
                     Text(media.id)
+                    tracking?.let { Text(tracking.id) }
                 }
+            }
 
+            item {
+                //RatingCardRow()
+            }
+
+            tracking?.let {
                 item {
-                    val onTrackRating = RatingUi.OnTrack(totalRatings = ratingStats?.totalAppRatings, averageRating = ratingStats?.averageAppRating)
-
-                    val apiRating = when (media) {
-                        is Movie -> RatingUi.Movie(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                        is Show -> RatingUi.Show(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                        is Book -> RatingUi.Book(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                        is Album -> RatingUi.Album(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                        is Videogame -> RatingUi.Videogame(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                        is Boardgame -> RatingUi.Boardgame(media.ratingStats?.averageApiRating, media.ratingStats?.totalApiRatings)
-                    }
-
-                    RatingCardRow(
-                        onTrackRating = onTrackRating,
-                        apiRating = apiRating
-                    )
+                    ReviewCard(tracking = it)
                 }
+            }
 
-
-                media.trackStatus?.let {
-                    item {
-                        ReviewCard(
-                            trackStatus = it,
-                        )
-                    }
-                }
-
-                when (media.mediaType) {
-                    MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
-                    MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
-                    MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
-                    MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
-                    MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
-                    MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
-                }
+            when (media.mediaType) {
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
             }
         }
+    }
 
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState,
-            ) {
-                TrackBottomSheetContent(
-                    media = media,
-                    onSaveTrack = {
-                        onSaveTrack(it)
-                        showBottomSheet = false
-                    }
-                )
-            }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState,
+        ) {
+            TrackingBottomSheetContent(
+                mediaId = media.id,
+                mediaType = media.mediaType,
+                mediaTitle = media.title,
+                tracking = tracking,
+                onSaveTracking = {
+                    onSaveTracking(it)
+                    showBottomSheet = false
+                }
+            )
         }
     }
 }

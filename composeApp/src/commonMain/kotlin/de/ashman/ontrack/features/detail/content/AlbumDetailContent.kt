@@ -3,9 +3,9 @@ package de.ashman.ontrack.features.detail.content
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.features.common.CreatorCard
-import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
+import de.ashman.ontrack.features.detail.components.CreatorCard
+import de.ashman.ontrack.features.detail.components.MediaDescription
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_artist
 import ontrack.composeapp.generated.resources.detail_artist_albums
@@ -20,7 +20,7 @@ fun LazyListScope.AlbumDetailContent(
 ) {
     item {
         MediaDescription(
-            title = album.tracks?.size?.let { pluralStringResource(Res.plurals.detail_tracks, it, it) },
+            title = album.albumTracks?.size?.let { pluralStringResource(Res.plurals.detail_tracks, it, it) },
             description = album.description,
         )
     }

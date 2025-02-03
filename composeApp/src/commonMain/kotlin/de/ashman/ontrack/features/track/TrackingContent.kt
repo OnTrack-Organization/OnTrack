@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatusType
+import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
@@ -33,13 +33,12 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun TrackStatusContent(
+fun TrackingContent(
     mediaType: MediaType,
     mediaTitle: String,
-    selectedStatus: TrackStatusType?,
-    onSelectStatus: (TrackStatusType) -> Unit,
+    selectedStatus: TrackStatus?,
+    onSelectStatus: (TrackStatus) -> Unit,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Text(
         text = stringResource(Res.string.track_title, mediaTitle),
@@ -49,7 +48,7 @@ fun TrackStatusContent(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TrackStatusType.entries.forEach { status ->
+        TrackStatus.entries.forEach { status ->
             val isSelected = selectedStatus == status
 
             TrackStatusButton(
@@ -63,8 +62,8 @@ fun TrackStatusContent(
     }
 
     OnTrackButton(
-        text = if (selectedStatus == TrackStatusType.CATALOG || selectedStatus == TrackStatusType.CONSUMING) Res.string.save_button else Res.string.continue_button,
-        icon = if (selectedStatus == TrackStatusType.CATALOG || selectedStatus == TrackStatusType.CONSUMING) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
+        text = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Res.string.save_button else Res.string.continue_button,
+        icon = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
         onClick = onContinue,
     )
 }

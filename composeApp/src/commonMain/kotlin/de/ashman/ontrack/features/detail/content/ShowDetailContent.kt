@@ -4,10 +4,10 @@ import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.api.utils.getLivingDates
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.features.common.CreatorCard
-import de.ashman.ontrack.features.common.MediaChips
-import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
+import de.ashman.ontrack.features.detail.components.CreatorCard
+import de.ashman.ontrack.features.detail.components.MediaChips
+import de.ashman.ontrack.features.detail.components.MediaDescription
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_director

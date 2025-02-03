@@ -1,12 +1,13 @@
 package de.ashman.ontrack.authentication.user
 
+import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.auth.FirebaseUser
 
 fun FirebaseUser.toEntity() =
     UserEntity(
         id = uid,
         email = email,
-        name = displayName,
+        displayName = displayName,
         // TODO different way
         username = "@${displayName?.lowercase()}",
         imageUrl = photoURL,
@@ -16,7 +17,9 @@ fun UserEntity.toDomain() =
     User(
         id = id,
         email = email,
-        name = name,
+        name = displayName,
         username = username,
         imageUrl = imageUrl,
+        friends = friends,
+        //trackings = currentTrackings,
     )

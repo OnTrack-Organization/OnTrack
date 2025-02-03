@@ -9,40 +9,38 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.user.User
 import de.ashman.ontrack.authentication.user.toDomain
-import de.ashman.ontrack.db.MediaService
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.toDomain
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShelfViewModel(
-    private val mediaService: MediaService,
+    private val firestoreService: FirestoreService,
     private val authService: AuthService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
         .onStart {
-            observeUser()
-        }.onEach {
-            observeMediaList()
+            observeCurrentUser()
+            observeUserMedia()
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
 
-    var listState: LazyListState by mutableStateOf( LazyListState(0,0))
+    var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
     // TODO handle other users, not just logged in one
-    private fun observeUser() {
+    private fun observeCurrentUser() {
         val userId = Firebase.auth.currentUser?.uid.orEmpty()
 
         viewModelScope.launch {
@@ -53,11 +51,15 @@ class ShelfViewModel(
         }
     }
 
-    private fun observeMediaList() {
+    private fun observeUserMedia() {
         viewModelScope.launch {
-            mediaService.getUserMediaListFlow().collect { mediaList ->
-                _uiState.update { it.copy(mediaList = mediaList.map { it.toDomain() }) }
-            }
+            firestoreService.consumeLatestUserTrackings()
+                .collect { trackings ->
+                    val mediaList = trackings.mapNotNull {
+                        firestoreService.getMediaById(it.mediaId)?.toDomain()
+                    }
+                    _uiState.update { it.copy(mediaList = mediaList) }
+                }
         }
     }
 }

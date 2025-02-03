@@ -28,7 +28,10 @@ import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
+import de.ashman.ontrack.features.shelflist.ShelfListScreen
+import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.Route.Detail
+import de.ashman.ontrack.navigation.Route.ShelfList
 import de.ashman.ontrack.util.getMediaTypeUi
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -45,6 +48,7 @@ fun NavigationGraph() {
     val searchViewModel: SearchViewModel = koinInject()
     val detailViewModel: DetailViewModel = koinInject()
     val shelfViewModel: ShelfViewModel = koinInject()
+    val shelfListViewModel: ShelfListViewModel = koinInject()
     val authViewModel: AuthViewModel = koinInject()
 
     val searchUiState by searchViewModel.uiState.collectAsState()
@@ -70,7 +74,7 @@ fun NavigationGraph() {
                     )
                 }
                 mainGraph(navController, searchViewModel, authViewModel, shelfViewModel)
-                mediaGraph(detailViewModel, navController)
+                mediaGraph(detailViewModel, shelfListViewModel, navController)
             }
         }
     }
@@ -78,6 +82,7 @@ fun NavigationGraph() {
 
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
+    shelfListViewModel: ShelfListViewModel,
     navController: NavHostController,
 ) {
     composable<Detail>(
@@ -88,6 +93,18 @@ fun NavGraphBuilder.mediaGraph(
         DetailScreen(
             media = detail.media,
             viewModel = detailViewModel,
+            onClickItem = { item ->
+                navController.navigate(Detail(item))
+            },
+        )
+    }
+
+    composable<ShelfList> { backStackEntry ->
+        val shelfList: ShelfList = backStackEntry.toRoute()
+
+        ShelfListScreen(
+            viewModel = shelfListViewModel,
+            mediaType = shelfList.mediaType,
             onClickItem = { item ->
                 navController.navigate(Detail(item))
             },
@@ -121,8 +138,7 @@ fun NavGraphBuilder.mainGraph(
         ShelfScreen(
             viewModel = shelfViewModel,
             onClickMore = { mediaType ->
-                // TODO navigate to shelf list
-                //navController.navigate()
+                navController.navigate(ShelfList(mediaType))
             },
             onClickItem = { item ->
                 navController.navigate(Detail(item))

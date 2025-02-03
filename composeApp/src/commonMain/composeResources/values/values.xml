@@ -42,9 +42,9 @@
     <string name="review_title_label">Write a review title...</string>
     <string name="review_description_label">Write a review...</string>
 
-    <string name="track_status_saved">Added media to list</string>
-    <string name="track_status_removed">Removed media from list</string>
-    <string name="track_status_removed_undo">Undo</string>
+    <string name="tracking_saved">Added media to list</string>
+    <string name="tracking_removed">Removed media from list</string>
+    <string name="tracking_removed_undo">Undo</string>
 
     <plurals name="movie">
         <item quantity="one">Movie</item>

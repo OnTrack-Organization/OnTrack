@@ -11,11 +11,14 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthServiceImpl
 import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.db.MediaService
-import de.ashman.ontrack.db.MediaServiceImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
+import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.FirestoreServiceImpl
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.firestore.firestore
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -197,7 +200,6 @@ val appModule = module {
 
     // SERVICES
     single<AuthService> { AuthServiceImpl() }
-    single<MediaService> { MediaServiceImpl() }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
@@ -214,6 +216,10 @@ val appModule = module {
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
+    viewModelDefinition { ShelfListViewModel(get()) }
+
+    // TEST
+    single<FirestoreService> { FirestoreServiceImpl(Firebase.firestore) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

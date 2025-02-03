@@ -3,9 +3,9 @@ package de.ashman.ontrack.features.detail.content
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Videogame
-import de.ashman.ontrack.features.common.MediaChips
-import de.ashman.ontrack.features.common.MediaDescription
 import de.ashman.ontrack.features.common.MediaPosterRow
+import de.ashman.ontrack.features.detail.components.MediaChips
+import de.ashman.ontrack.features.detail.components.MediaDescription
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_franchise

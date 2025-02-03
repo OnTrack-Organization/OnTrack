@@ -8,7 +8,7 @@ import de.ashman.ontrack.api.utils.getYear
 import de.ashman.ontrack.api.utils.toNumberedTracks
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Artist
-import de.ashman.ontrack.domain.Track
+import de.ashman.ontrack.domain.AlbumTrack
 
 fun AlbumDto.toDomain(): Album =
     Album(
@@ -22,11 +22,11 @@ fun AlbumDto.toDomain(): Album =
         popularity = popularity,
         spotifyUrl = externalUrls.spotify,
         totalTracks = totalTracks,
-        tracks = tracks?.items?.map { it.toDomain() } ?: emptyList(),
+        albumTracks = tracks?.items?.map { it.toDomain() } ?: emptyList(),
     )
 
-fun TrackDto.toDomain(): Track =
-    Track(
+fun TrackDto.toDomain(): AlbumTrack =
+    AlbumTrack(
         id = id,
         artists = artists.map { it.name },
         durationMs = durationMs,
