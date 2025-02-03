@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,9 +51,15 @@ import de.ashman.ontrack.features.detail.content.BookDetailContent
 import de.ashman.ontrack.features.detail.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
+import de.ashman.ontrack.features.track.CurrentBottomSheetContent
 import de.ashman.ontrack.features.track.TrackingBottomSheetContent
+import de.ashman.ontrack.navigation.LocalSnackbarHostState
+import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
+import ontrack.composeapp.generated.resources.tracking_deleted
+import ontrack.composeapp.generated.resources.tracking_saved
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,11 +69,15 @@ fun SuccessContent(
     media: Media,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
-    onRemoveTracking: () -> Unit,
+    onDeleteTrackings: () -> Unit,
     onClickItem: (Media) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
+    var currentBottomSheet by remember { mutableStateOf(CurrentBottomSheetContent.TRACKING) }
+
+    val snackbarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
     val transition = updateTransition(listState.firstVisibleItemIndex != 0, label = "Image Size Transition")
@@ -82,8 +93,14 @@ fun SuccessContent(
             imageModifier = Modifier.height(size),
             media = media,
             status = tracking?.status,
-            onAddTracking = { showBottomSheet = true },
-            onRemoveTracking = onRemoveTracking,
+            onClickAddTracking = {
+                currentBottomSheet = CurrentBottomSheetContent.TRACKING
+                showBottomSheet = true
+            },
+            onClickRemoveTracking = {
+                currentBottomSheet = CurrentBottomSheetContent.DELETE
+                showBottomSheet = true
+            },
         )
 
         LazyColumn(
@@ -126,6 +143,7 @@ fun SuccessContent(
             sheetState = sheetState,
         ) {
             TrackingBottomSheetContent(
+                currentContent = currentBottomSheet,
                 mediaId = media.id,
                 mediaType = media.mediaType,
                 mediaTitle = media.title,
@@ -133,6 +151,22 @@ fun SuccessContent(
                 onSaveTracking = {
                     onSaveTracking(it)
                     showBottomSheet = false
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
+                    }
+                },
+                onDeleteTrackings = {
+                    onDeleteTrackings()
+                    showBottomSheet = false
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(getString(Res.string.tracking_deleted))
+                    }
+                },
+                onCancel = {
+                    showBottomSheet = false
+                },
+                goToReview = {
+                    currentBottomSheet = CurrentBottomSheetContent.REVIEW
                 }
             )
         }

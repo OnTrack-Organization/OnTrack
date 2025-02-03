@@ -45,8 +45,6 @@ class DetailViewModel(
             _uiState.value,
         )
 
-    private var lastRemovedTracking: Tracking? = null
-
     init {
         Logger.d { "DetailViewModel init" }
     }
@@ -95,21 +93,12 @@ class DetailViewModel(
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
-    fun removeTracking() = viewModelScope.launch {
+    fun deleteTrackings() = viewModelScope.launch {
         val selectedTracking = _uiState.value.selectedTracking
 
         selectedTracking?.let {
-            lastRemovedTracking = it
             firestoreService.deleteTrackingsByMediaId(it.mediaId)
             _uiState.update { it.copy(selectedTracking = null) }
-        }
-    }
-
-    fun undoRemoveTracking() = viewModelScope.launch {
-        lastRemovedTracking?.let { tracking ->
-            val trackingEntity = tracking.toEntity()
-            firestoreService.saveTracking(trackingEntity)
-            _uiState.update { it.copy(selectedTracking = tracking) }
         }
     }
 

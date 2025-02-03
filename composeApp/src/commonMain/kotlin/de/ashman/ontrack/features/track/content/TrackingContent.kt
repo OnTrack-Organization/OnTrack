@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.track
+package de.ashman.ontrack.features.track.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
+import de.ashman.ontrack.features.track.getLabel
+import de.ashman.ontrack.features.track.getStatusIcon
+import de.ashman.ontrack.features.track.getSublabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
 import ontrack.composeapp.generated.resources.save_button

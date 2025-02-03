@@ -27,9 +27,13 @@
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
     <string name="save_button">Save</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="delete_button">Delete</string>
 
     <string name="review_title">Review of "%1$s"</string>
     <string name="track_title">Track status of "%1$s"</string>
+    <string name="delete_title">Delete trackings?</string>
+    <string name="delete_description">Are you sure you want to delete the trackings of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
 
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>
@@ -42,9 +46,8 @@
     <string name="review_title_label">Write a review title...</string>
     <string name="review_description_label">Write a review...</string>
 
-    <string name="tracking_saved">Added media to list</string>
-    <string name="tracking_removed">Removed media from list</string>
-    <string name="tracking_removed_undo">Undo</string>
+    <string name="tracking_saved">Saved media tracking</string>
+    <string name="tracking_deleted">Deleted media tracking</string>
 
     <plurals name="movie">
         <item quantity="one">Movie</item>

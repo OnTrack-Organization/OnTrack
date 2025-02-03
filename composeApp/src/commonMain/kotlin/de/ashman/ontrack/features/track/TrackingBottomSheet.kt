@@ -17,6 +17,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.features.track.content.DeleteContent
+import de.ashman.ontrack.features.track.content.ReviewContent
+import de.ashman.ontrack.features.track.content.TrackingContent
 import kotlinx.datetime.Clock.System
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -28,19 +31,23 @@ import kotlin.uuid.Uuid
 enum class CurrentBottomSheetContent {
     TRACKING,
     REVIEW,
+    DELETE
 }
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun TrackingBottomSheetContent(
+    currentContent: CurrentBottomSheetContent,
     mediaId: String,
     mediaType: MediaType,
     mediaTitle: String,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
+    onDeleteTrackings: () -> Unit,
+    onCancel: () -> Unit,
+    goToReview: () -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
-    var currentContent by remember { mutableStateOf(CurrentBottomSheetContent.TRACKING) }
     // TODO this could be better
     var tracking by remember {
         mutableStateOf(
@@ -84,7 +91,7 @@ fun TrackingBottomSheetContent(
                             onSaveTracking(it)
                         }
                     } else {
-                        currentContent = CurrentBottomSheetContent.REVIEW
+                        goToReview()
                     }
                 },
             )
@@ -98,6 +105,11 @@ fun TrackingBottomSheetContent(
                 onReviewDescriptionChange = { tracking = tracking.copy(reviewDescription = it) },
                 onRatingChange = { tracking = tracking.copy(rating = it) },
                 onSave = { onSaveTracking(tracking) },
+            )
+
+            CurrentBottomSheetContent.DELETE -> DeleteContent(
+                onDelete = onDeleteTrackings,
+                onCancel = onCancel,
             )
         }
     }

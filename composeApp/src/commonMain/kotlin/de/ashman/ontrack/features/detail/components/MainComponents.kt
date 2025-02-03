@@ -46,8 +46,8 @@ fun StickyMainContent(
     imageModifier: Modifier = Modifier,
     media: Media,
     status: TrackStatus? = null,
-    onAddTracking: () -> Unit,
-    onRemoveTracking: () -> Unit,
+    onClickAddTracking: () -> Unit,
+    onClickRemoveTracking: () -> Unit,
 ) {
     // TODO ugly, so change
     val mainInfoItems by remember(media) {
@@ -82,13 +82,12 @@ fun StickyMainContent(
                 modifier = Modifier.weight(1f),
                 text = if (status != null) status.getLabel(media.mediaType) else Res.string.track_button,
                 icon = if (status != null) status.getStatusIcon(true) else Icons.Default.Add,
-                onClick = onAddTracking,
+                onClick = onClickAddTracking,
             )
-            // TODO open warning bottom sheet
             if (status != null) {
                 OnTrackIconButton(
                     icon = Icons.Outlined.Delete,
-                    onClick = onRemoveTracking
+                    onClick = onClickRemoveTracking
                 )
             }
         }

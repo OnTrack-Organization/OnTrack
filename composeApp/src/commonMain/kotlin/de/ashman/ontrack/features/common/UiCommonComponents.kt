@@ -10,6 +10,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -53,6 +54,27 @@ fun OnTrackButton(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
+    }
+}
+
+@Composable
+fun OnTrackOutlinedButton(
+    modifier: Modifier = Modifier,
+    text: StringResource,
+    icon: ImageVector? = null,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        modifier = modifier.fillMaxWidth().height(48.dp),
+        onClick = onClick,
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        icon?.let { Icon(modifier = Modifier.size(24.dp), imageVector = icon, contentDescription = icon.name) }
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = stringResource(text),
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
 }
 
