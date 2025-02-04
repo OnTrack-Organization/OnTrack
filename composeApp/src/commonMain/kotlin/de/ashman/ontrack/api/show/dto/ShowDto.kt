@@ -8,9 +8,13 @@ data class ShowDto(
     val id: Int,
     val name: String,
     val posterPath: String? = null,
+    val overview: String? = null,
+    val firstAirDate: String? = null,
+    val voteAverage: Double? = null,
+    val voteCount: Int? = null,
+
     val backdropPath: String? = null,
     val episodeRunTime: List<Int>? = null,
-    val firstAirDate: String? = null,
     val genres: List<GenreDto>? = null,
     val languages: List<String>? = null,
     val numberOfEpisodes: Int? = null,
@@ -18,12 +22,9 @@ data class ShowDto(
     val originCountry: List<String>? = null,
     val originalLanguage: String? = null,
     val originalName: String? = null,
-    val overview: String? = null,
     val popularity: Double? = null,
     val seasons: List<SeasonDto>? = null,
     val status: String? = null,
-    val voteAverage: Double? = null,
-    val voteCount: Int? = null,
     val credits: CreditsDto? = null,
 )
 

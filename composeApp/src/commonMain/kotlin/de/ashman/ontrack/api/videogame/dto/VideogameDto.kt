@@ -6,16 +6,17 @@ import kotlinx.serialization.Serializable
 data class VideogameDto(
     val id: Int? = null,
     val cover: CoverDto? = null,
+    val name: String? = null,
+    val summary: String? = null,
     val firstReleaseDate: Long? = null,
+    val totalRating: Double? = null,
+    val totalRatingCount: Int? = null,
+
     val franchises: List<Int>? = null,
     val genres: List<GenreDto>? = null,
     val involvedCompanies: List<InvolvedCompanyDto>? = null,
-    val name: String? = null,
     val platforms: List<PlatformDto>? = null,
-    val totalRating: Double? = null,
-    val totalRatingCount: Int? = null,
     val similarGames: List<VideogameDto>? = null,
-    val summary: String? = null,
 )
 
 @Serializable

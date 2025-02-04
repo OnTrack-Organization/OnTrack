@@ -23,8 +23,8 @@ fun VideogameDto.toDomain(): Videogame =
         involvedCompanies = involvedCompanies?.map { it.company.name },
         title = name.orEmpty(),
         platforms = platforms?.map { it.toDomain() },
-        totalRating = totalRating,
-        totalRatingCount = totalRatingCount,
+        apiRating = totalRating,
+        apiRatingCount = totalRatingCount,
         similarGames = similarGames?.map { it.toDomain() },
     )
 

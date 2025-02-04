@@ -5,6 +5,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     return try {
@@ -53,4 +55,10 @@ fun String.formatCreatorDate(): String? {
         }
     }
     return null
+}
+
+fun Double.roundDecimals(decimals: Int): String {
+    val integerDigits = this.toInt()
+    val doubleDigits = ((this - integerDigits) * 10f.pow(decimals)).roundToInt()
+    return "${integerDigits}.${doubleDigits}"
 }

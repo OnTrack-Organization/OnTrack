@@ -18,11 +18,14 @@ data class Boardgame(
     override val coverUrl: String? = null,
     override val releaseYear: String? = null,
     override val description: String? = null,
+    override val apiRating: Double? = null,
+    override val apiRatingCount: Int? = null,
     val boardgameType: String? = null,
     val minPlayers: Int? = null,
     val maxPlayers: Int? = null,
     val playingTime: Int? = null,
-    val ratings: Ratings? = null,
+    val weight: Double? = null,
+    val weightCount: Int? = null,
     val franchise: List<Boardgame>? = null,
     val designer: BoardgameDesigner? = null,
 ) : Media() {
@@ -55,13 +58,4 @@ data class BoardgameDesigner(
     val name: String,
     val imageUrl: String? = null,
     val bio: String? = null,
-) : CommonParcelable
-
-@CommonParcelize
-@Serializable
-data class Ratings(
-    val usersRated: Int?,
-    val average: Double?,
-    val numWeights: Int?,
-    val averageWeight: Double?,
 ) : CommonParcelable

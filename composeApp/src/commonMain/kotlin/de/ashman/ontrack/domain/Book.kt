@@ -15,12 +15,12 @@ data class Book(
     override val coverUrl: String? = null,
     override val releaseYear: String? = null,
     override val description: String? = null,
+    override val apiRating: Double? = null,
+    override val apiRatingCount: Int? = null,
     val author: Author? = null,
     val numberOfPagesMedian: Int? = null,
     val publisher: List<String>? = null,
     val genres: List<String>? = null,
-    val ratingsCount: Int? = null,
-    val ratingsAverage: Double? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

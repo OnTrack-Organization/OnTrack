@@ -2,12 +2,10 @@ package de.ashman.ontrack.api.boardgame
 
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
-import de.ashman.ontrack.api.boardgame.dto.StatisticsDto
 import de.ashman.ontrack.api.utils.decodeHtmlManually
 import de.ashman.ontrack.api.utils.nonZeroToInt
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.BoardgameDesigner
-import de.ashman.ontrack.domain.Ratings
 
 fun BoardgameDto.toDomain(): Boardgame =
     Boardgame(
@@ -20,7 +18,10 @@ fun BoardgameDto.toDomain(): Boardgame =
         minPlayers = minplayers?.value?.nonZeroToInt(),
         maxPlayers = maxplayers?.value?.nonZeroToInt(),
         playingTime = playingtime?.value?.nonZeroToInt(),
-        ratings = statistics?.ratings?.toDomain(),
+        weight = statistics?.ratings?.averageWeight?.value,
+        weightCount = statistics?.ratings?.numWeights?.value,
+        apiRating = statistics?.ratings?.average?.value,
+        apiRatingCount = statistics?.ratings?.usersRated?.value,
         franchise = links?.mapNotNull { it.toBoardgameDomain() },
     )
 
@@ -37,12 +38,6 @@ fun LinkDto.toBoardgameDomain(): Boardgame =
         title = value.orEmpty(),
         coverUrl = "",
         description = "",
-    )
-
-fun StatisticsDto.RatingsDto.toDomain(): Ratings =
-    Ratings(
-        usersRated = usersRated.value,
-        average = average.value,
-        numWeights = numWeights.value,
-        averageWeight = averageWeight.value
+        apiRating = null,
+        apiRatingCount = null,
     )

@@ -43,8 +43,10 @@ import de.ashman.ontrack.domain.Tracking
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.ReviewCard
 import de.ashman.ontrack.features.detail.components.StickyMainContent
+import de.ashman.ontrack.features.detail.components.getRatingType
 import de.ashman.ontrack.features.detail.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.content.BookDetailContent
@@ -115,7 +117,11 @@ fun SuccessContent(
         }
 
         item {
-            //RatingCardRow()
+            RatingCardRow(
+                ratingType = media.mediaType.getRatingType(),
+                rating = media.apiRating,
+                ratingCount = media.apiRatingCount
+            )
         }
 
         tracking?.let {

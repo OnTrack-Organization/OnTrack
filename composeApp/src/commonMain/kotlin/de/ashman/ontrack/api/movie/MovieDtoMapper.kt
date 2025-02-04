@@ -20,8 +20,8 @@ fun MovieDto.toDomain(): Movie =
         genres = genres?.takeIf { it.isNotEmpty() }?.map { it.name },
         popularity = popularity,
         runtime = runtime?.takeIf { it > 0 },
-        voteAverage = voteAverage,
-        voteCount = voteCount,
+        apiRating = voteAverage,
+        apiRatingCount = voteCount,
     )
 
 fun PersonDetailsDto.toDomain(): Director =

@@ -19,8 +19,8 @@ fun ShowDto.toDomain(): Show =
         numberOfSeasons = numberOfSeasons?.takeIf { it > 0 },
         popularity = popularity,
         seasons = seasons?.map { it.toDomain() },
-        voteAverage = voteAverage,
-        voteCount = voteCount,
+        apiRating = voteAverage,
+        apiRatingCount = voteCount,
     )
 
 fun SeasonDto.toDomain(): Season =

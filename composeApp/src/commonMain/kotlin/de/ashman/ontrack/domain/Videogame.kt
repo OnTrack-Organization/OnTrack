@@ -12,12 +12,12 @@ data class Videogame(
     override val coverUrl: String? = null,
     override val releaseYear: String? = null,
     override val description: String? = null,
+    override val apiRating: Double? = null,
+    override val apiRatingCount: Int? = null,
     val franchises: List<Franchise>? = null,
     val genres: List<String>? = null,
     val involvedCompanies: List<String>? = null,
     val platforms: List<Platform>? = null,
-    val totalRating: Double? = null,
-    val totalRatingCount: Int? = null,
     val similarGames: List<Videogame>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {

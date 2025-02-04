@@ -20,8 +20,8 @@ fun BookDto.toDomain(): Book =
         releaseYear = firstPublishYear.toString(),
         numberOfPagesMedian = numberOfPagesMedian,
         publisher = publisher,
-        ratingsAverage = ratingsAverage,
-        ratingsCount = ratingsCount,
+        apiRating = ratingsAverage,
+        apiRatingCount = ratingsCount,
         genres = subject?.filterGenres(),
         author = Author(
             id = authorKey.first().cleanupAuthorKey(),
@@ -34,6 +34,8 @@ fun BookWorksResponse.toDomain(): Book =
         title = title,
         coverUrl = covers?.firstOrNull()?.getOpenLibraryCoverUrl().orEmpty(),
         author = authors?.first()?.author?.toDomain() ?: Author(id = ""),
+        apiRating = null,
+        apiRatingCount = null,
     )
 
 fun AuthorDto.toDomain(): Author =

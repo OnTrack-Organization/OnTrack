@@ -13,14 +13,12 @@ data class UserEntity(
     val email: String?,
     val imageUrl: String? = null,
     val friends: List<String> = emptyList(),
-    //val currentTrackings: List<String> = emptyList(),
     val createdAt: Long = System.now().toEpochMilliseconds(),
 )
 
 @Serializable
 data class TrackingEntity(
     val id: String,
-    //val userId: String,
     val mediaId: String,
     val status: TrackStatus? = null,
     // TODO change to double later
