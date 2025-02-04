@@ -18,7 +18,9 @@ fun FeedScreen(
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.user != null) {
-        Column {
+        Column(
+            modifier = modifier,
+        ) {
             Text("Welcome, ${uiState.user?.name}")
 
             Button(

@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,9 +40,8 @@ class ShelfListViewModel(
 
                 val mediaList = trackings
                     .filter { it.status == _uiState.value.selectedStatus }
-                    .mapNotNull {
-                        firestoreService.getMediaById(it.mediaId)?.toDomain()
-                    }
+                    .mapNotNull { firestoreService.getMediaById(it.mediaId)?.toDomain() }
+                    .filter { it.mediaType == _uiState.value.selectedMediaType }
 
                 _uiState.update { it.copy(mediaList = mediaList) }
             }

@@ -53,10 +53,10 @@ class FirestoreServiceImpl(
         trackingRef.set(tracking)
 
         // Update the global media rating
-        updateRating(tracking)
+        //incrementRating(tracking)
     }
 
-    override suspend fun deleteTrackingsByMediaId(mediaId: String) {
+    override suspend fun deleteTrackingsByMediaId(mediaId: String, currentRating: Int?) {
         val documents = userTrackingCollection(currentUserId)
             .where { "mediaId" equalTo mediaId }
             .get()
@@ -65,6 +65,8 @@ class FirestoreServiceImpl(
         documents.forEach {
             it.reference.delete()
         }
+
+        //decrementRating(mediaId, currentRating)
     }
 
     override fun consumeLatestUserTrackings(): Flow<List<TrackingEntity>> {
@@ -89,31 +91,57 @@ class FirestoreServiceImpl(
     }
 
     // TODO add a working rating update
-    private suspend fun updateRating(tracking: TrackingEntity) {
-        // Check if the user has already tracked this media
-        val userTrackingDoc = userTrackingCollection(currentUserId)
+    /*private suspend fun incrementRating(tracking: TrackingEntity) {
+        val userTrackings = userTrackingCollection(currentUserId)
             .where { "mediaId" equalTo tracking.mediaId }
             .get()
+            .documents
+            .map { it.data<TrackingEntity>() }
 
-        val existingTracking = userTrackingDoc.documents.firstOrNull()?.data<TrackingEntity>()
-        if (existingTracking != null && existingTracking.rating == tracking.rating) {
-            // Rating hasn't changed, no need to update
-            return
+        val mediaRef = mediaCollection.document(tracking.mediaId)
+        val media = mediaRef.get().data<MediaEntity>()
+
+        // Check if this is the first tracking for this media by the user
+        val isFirstTracking = userTrackings.size == 1
+
+        // Check if this is the first rating for this media by the user
+        val hasExistingRating = userTrackings.any { it.rating != null && it.id != tracking.id }
+        val isFirstRating = tracking.rating != null && !hasExistingRating
+
+        val newTrackedCount = if (isFirstTracking) media.trackedCount + 1 else media.trackedCount
+        val newRatingCount = if (isFirstRating) media.ratingCount + 1 else media.ratingCount
+
+        val newAverageRating = if (tracking.rating != null) {
+            val totalRating = (media.averageRating * media.ratingCount) + tracking.rating
+            totalRating / newRatingCount
+        } else {
+            media.averageRating
         }
 
-        val mediaDoc = mediaCollection.document(tracking.mediaId).get()
-        val media = mediaDoc.data<MediaEntity>()
-
-        val newTrackedCount = media.trackedCount + if (tracking.rating != null) 1 else 0
-        val newSum = media.averageRating * media.ratingCount.toDouble().plus(tracking.rating ?: 0)
-        val newAverageRating = if (newTrackedCount > 0) newSum / newTrackedCount else 0.0
-
-        val updatedMedia = media.copy(
-            trackedCount = newTrackedCount,
-            averageRating = newAverageRating,
+        mediaRef.update(
+            "trackedCount" to newTrackedCount,
+            "ratingCount" to newRatingCount,
+            "averageRating" to newAverageRating
         )
-
-        mediaCollection.document(tracking.mediaId).set(updatedMedia, merge = true)
     }
+
+    private suspend fun decrementRating(mediaId: String, removedRating: Int?) {
+        val mediaRef = mediaCollection.document(mediaId)
+        val media = mediaRef.get().data<MediaEntity>()
+
+        val newTrackedCount = (media.trackedCount - 1).coerceAtLeast(0)
+        val newRatingCount = (media.ratingCount - 1).coerceAtLeast(0)
+        val newAverageRating = if (removedRating != null && media.ratingCount > 1) {
+            ((media.averageRating * media.ratingCount) - removedRating) / newRatingCount
+        } else {
+            0.0
+        }
+
+        mediaRef.update(
+            "trackedCount" to newTrackedCount,
+            "ratingCount" to newRatingCount,
+            "averageRating" to newAverageRating,
+        )
+    }*/
 
 }

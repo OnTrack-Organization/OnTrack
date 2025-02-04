@@ -44,6 +44,6 @@ sealed class BottomNavItem(
     )
 
     companion object {
-        val items: List<BottomNavItem> = listOf(FeedNav, SearchNav, ShelfNav)
+        val items: Set<BottomNavItem> = setOf(FeedNav, SearchNav, ShelfNav)
     }
 }

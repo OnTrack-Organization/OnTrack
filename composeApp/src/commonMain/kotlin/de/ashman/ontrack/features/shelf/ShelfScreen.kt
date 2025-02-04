@@ -45,10 +45,13 @@ fun ShelfScreen(
     viewModel: ShelfViewModel,
     onClickMore: (MediaType) -> Unit,
     onClickItem: (Media) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         uiState.user?.let {
             ProfileRow(
                 name = it.name,

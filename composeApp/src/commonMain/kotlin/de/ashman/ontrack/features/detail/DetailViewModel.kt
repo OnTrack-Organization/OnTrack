@@ -85,7 +85,7 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        saveNewMedia()
+        saveOrUpdateMedia()
 
         val trackingEntity = tracking.toEntity()
         firestoreService.saveTracking(trackingEntity)
@@ -97,7 +97,7 @@ class DetailViewModel(
         val selectedTracking = _uiState.value.selectedTracking
 
         selectedTracking?.let {
-            firestoreService.deleteTrackingsByMediaId(it.mediaId)
+            firestoreService.deleteTrackingsByMediaId(it.mediaId, selectedTracking.rating)
             _uiState.update { it.copy(selectedTracking = null) }
         }
     }
@@ -109,7 +109,7 @@ class DetailViewModel(
             }
     }
 
-    private suspend fun saveNewMedia() {
+    private suspend fun saveOrUpdateMedia() {
         val selectedMedia = _uiState.value.selectedMedia
         selectedMedia?.let {
             firestoreService.saveMedia(it.toEntity())

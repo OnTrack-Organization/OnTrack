@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -53,7 +53,6 @@ import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
 import de.ashman.ontrack.features.track.CurrentBottomSheetContent
 import de.ashman.ontrack.features.track.TrackingBottomSheetContent
-import de.ashman.ontrack.navigation.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.network_error
@@ -65,7 +64,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuccessContent(
-    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     media: Media,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
@@ -75,8 +74,6 @@ fun SuccessContent(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var currentBottomSheet by remember { mutableStateOf(CurrentBottomSheetContent.TRACKING) }
-
-    val snackbarHostState = LocalSnackbarHostState.current
     val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
@@ -86,54 +83,50 @@ fun SuccessContent(
         if (isScrolling) SMALL_POSTER_HEIGHT else DEFAULT_POSTER_HEIGHT
     }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
+    StickyMainContent(
+        imageModifier = Modifier.height(size),
+        media = media,
+        status = tracking?.status,
+        onClickAddTracking = {
+            currentBottomSheet = CurrentBottomSheetContent.TRACKING
+            showBottomSheet = true
+        },
+        onClickRemoveTracking = {
+            currentBottomSheet = CurrentBottomSheetContent.DELETE
+            showBottomSheet = true
+        },
+    )
+
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        StickyMainContent(
-            imageModifier = Modifier.height(size),
-            media = media,
-            status = tracking?.status,
-            onClickAddTracking = {
-                currentBottomSheet = CurrentBottomSheetContent.TRACKING
-                showBottomSheet = true
-            },
-            onClickRemoveTracking = {
-                currentBottomSheet = CurrentBottomSheetContent.DELETE
-                showBottomSheet = true
-            },
-        )
+        // TODO fix scrolling bug
+        item {
+            Column() {
+                Text(media.id)
+                tracking?.let { Text(tracking.id) }
+            }
+        }
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            // TODO fix scrolling bug
+        item {
+            //RatingCardRow()
+        }
+
+        tracking?.let {
             item {
-                Column() {
-                    Text(media.id)
-                    tracking?.let { Text(tracking.id) }
-                }
+                ReviewCard(tracking = it)
             }
+        }
 
-            item {
-                //RatingCardRow()
-            }
-
-            tracking?.let {
-                item {
-                    ReviewCard(tracking = it)
-                }
-            }
-
-            when (media.mediaType) {
-                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
-                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
-                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
-                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
-                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
-                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
-            }
+        when (media.mediaType) {
+            MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
+            MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+            MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
+            MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+            MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+            MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
         }
     }
 

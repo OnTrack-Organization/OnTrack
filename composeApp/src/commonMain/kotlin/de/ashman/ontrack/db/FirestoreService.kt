@@ -17,7 +17,7 @@ interface FirestoreService {
 
     // TRACKING
     suspend fun saveTracking(tracking: TrackingEntity)
-    suspend fun deleteTrackingsByMediaId(mediaId: String)
+    suspend fun deleteTrackingsByMediaId(mediaId: String, currentRating: Int?)
     fun consumeLatestUserTrackings(): Flow<List<TrackingEntity>>
     fun consumeLatestUserTracking(mediaId: String): Flow<TrackingEntity?>
 }
