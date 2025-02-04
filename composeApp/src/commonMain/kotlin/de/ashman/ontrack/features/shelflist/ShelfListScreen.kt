@@ -96,10 +96,10 @@ fun ShelfListScreen(
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 92.dp),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(uiState.mediaList) {
+                items(uiState.mediaList, key = { it.id }) {
                     MediaPoster(
                         coverUrl = it.coverUrl,
                         onClick = { onClickItem(it) },

@@ -67,6 +67,7 @@ fun SuccessContent(
     snackbarHostState: SnackbarHostState,
     media: Media,
     tracking: Tracking?,
+    searchDuration: Long,
     onSaveTracking: (Tracking) -> Unit,
     onDeleteTrackings: () -> Unit,
     onClickItem: (Media) -> Unit,
@@ -107,6 +108,9 @@ fun SuccessContent(
             Column() {
                 Text(media.id)
                 tracking?.let { Text(tracking.id) }
+                Text(
+                    text = "Search took ${searchDuration}ms"
+                )
             }
         }
 

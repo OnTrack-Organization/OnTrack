@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.measureTime
 
 class DetailViewModel(
     private val movieRepository: MovieRepository,
@@ -50,38 +51,42 @@ class DetailViewModel(
     }
 
     fun fetchDetails(media: Media) = viewModelScope.launch {
-        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+        val duration = measureTime {
+            _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        observeLatestTracking(media.id)
+            observeLatestTracking(media.id)
 
-        val repository = when (media) {
-            is Movie -> movieRepository
-            is Show -> showRepository
-            is Book -> bookRepository
-            is Videogame -> videogameRepository
-            is Boardgame -> boardgameRepository
-            is Album -> albumRepository
+            val repository = when (media) {
+                is Movie -> movieRepository
+                is Show -> showRepository
+                is Book -> bookRepository
+                is Videogame -> videogameRepository
+                is Boardgame -> boardgameRepository
+                is Album -> albumRepository
+            }
+
+            repository.fetchDetails(media).fold(
+                onSuccess = { result ->
+                    _uiState.update {
+                        it.copy(
+                            resultState = DetailResultState.Success,
+                            selectedMedia = result,
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    _uiState.update {
+                        it.copy(
+                            resultState = DetailResultState.Error,
+                            errorMessage = "Failed to fetch details: ${exception.message}"
+                        )
+                    }
+                    Logger.e { _uiState.value.errorMessage.toString() }
+                }
+            )
         }
 
-        repository.fetchDetails(media).fold(
-            onSuccess = { result ->
-                _uiState.update {
-                    it.copy(
-                        resultState = DetailResultState.Success,
-                        selectedMedia = result,
-                    )
-                }
-            },
-            onFailure = { exception ->
-                _uiState.update {
-                    it.copy(
-                        resultState = DetailResultState.Error,
-                        errorMessage = "Failed to fetch details: ${exception.message}"
-                    )
-                }
-                Logger.e { _uiState.value.errorMessage.toString() }
-            }
-        )
+        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
@@ -122,6 +127,7 @@ data class DetailUiState(
     val selectedTracking: Tracking? = null,
     val resultState: DetailResultState = DetailResultState.Loading,
     val errorMessage: String? = null,
+    val searchDuration: Long = 0L,
 )
 
 enum class DetailResultState {

@@ -90,6 +90,7 @@ fun DetailScreen(
                             snackbarHostState = snackbarHostState,
                             media = it,
                             tracking = uiState.selectedTracking,
+                            searchDuration = uiState.searchDuration,
                             onSaveTracking = viewModel::saveTracking,
                             onDeleteTrackings = viewModel::deleteTrackings,
                             onClickItem = onClickItem,
