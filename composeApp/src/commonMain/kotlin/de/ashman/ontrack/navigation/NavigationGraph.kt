@@ -42,7 +42,12 @@ fun NavigationGraph(
 ) {
     MainScaffold(
         navController = navController,
-        onBottomNavigation = { route -> navController.navigate(route) },
+        onBottomNavigation = { route ->
+            navController.navigate(route) {
+                // Clear backstack so that pressing back in main screens closes the app
+                popUpTo(0) {}
+            }
+        },
     ) { padding ->
         NavHost(
             navController = navController,
@@ -75,7 +80,11 @@ fun NavGraphBuilder.loginGraph(
     composable<Route.Login> {
         LoginScreen(
             authViewModel = authViewModel,
-            onLoginSuccess = { navController.navigate(Route.Feed) }
+            onLoginSuccess = {
+                navController.navigate(Route.Feed) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            }
         )
     }
 }
@@ -126,8 +135,17 @@ fun NavGraphBuilder.mediaGraph(
         DetailScreen(
             media = detail.media,
             viewModel = detailViewModel,
-            onClickItem = { item -> navController.navigate(Detail(item)) },
-            onBack = { navController.popBackStack() },
+            onClickItem = { item ->
+                // Remove all the Detail Navigations from graph before navigating
+                navController.navigate(Detail(item)) {
+                    popUpTo<Detail> {
+                        inclusive = true
+                    }
+                }
+            },
+            onBack = {
+                navController.popBackStack()
+            },
         )
     }
 
