@@ -12,11 +12,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.authentication.LoginScreen
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
+import de.ashman.ontrack.features.init.intro.IntroScreen
+import de.ashman.ontrack.features.init.login.LoginScreen
+import de.ashman.ontrack.features.init.start.StartScreen
+import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfScreen
@@ -34,6 +37,7 @@ import kotlin.reflect.typeOf
 @Composable
 fun NavigationGraph(
     navController: NavHostController = rememberNavController(),
+    startViewModel: StartViewModel = koinInject(),
     authViewModel: AuthViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
@@ -51,9 +55,10 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (Firebase.auth.currentUser != null) Route.Shelf else Route.Login,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Start,
         ) {
-            loginGraph(
+            initGraph(
+                startViewModel = startViewModel,
                 authViewModel = authViewModel,
                 navController = navController
             )
@@ -73,13 +78,28 @@ fun NavigationGraph(
     }
 }
 
-fun NavGraphBuilder.loginGraph(
+fun NavGraphBuilder.initGraph(
+    startViewModel: StartViewModel,
     authViewModel: AuthViewModel,
     navController: NavHostController,
 ) {
+    composable<Route.Start> {
+        StartScreen(
+            viewModel = startViewModel,
+            onGoToIntro = { navController.navigate(Route.Intro) },
+            onGoToLogin = { navController.navigate(Route.Login) },
+        )
+    }
+
+    composable<Route.Intro> {
+        IntroScreen(
+            onGoToLogin = { navController.navigate(Route.Login) },
+        )
+    }
+
     composable<Route.Login> {
         LoginScreen(
-            authViewModel = authViewModel,
+            viewModel = authViewModel,
             onLoginSuccess = {
                 navController.navigate(Route.Feed) {
                     popUpTo(Route.Login) { inclusive = true }
@@ -99,8 +119,8 @@ fun NavGraphBuilder.mainGraph(
     composable<Route.Feed> {
         FeedScreen(
             modifier = modifier,
-            authViewModel = authViewModel,
-            onClickLogout = { navController.navigate(Route.Login) },
+            viewModel = authViewModel,
+            onClickLogout = { navController.navigate(Route.Start) },
         )
     }
 

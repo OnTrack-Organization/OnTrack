@@ -16,21 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.api.ApiType
 import de.ashman.ontrack.api.utils.roundDecimals
-import de.ashman.ontrack.domain.MediaType
-import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.bgg
-import ontrack.composeapp.generated.resources.igdb
-import ontrack.composeapp.generated.resources.on_track_icon_v1
-import ontrack.composeapp.generated.resources.openlib
-import ontrack.composeapp.generated.resources.spotify
-import ontrack.composeapp.generated.resources.tmdb
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun RatingCardRow(
-    ratingType: RatingType,
+    apiType: ApiType,
     rating: Double?,
     ratingCount: Int?,
 ) {
@@ -40,18 +33,18 @@ fun RatingCardRow(
     ) {
         RatingCard(
             modifier = Modifier.weight(1f),
-            icon = RatingType.OnTrack.icon,
+            icon = ApiType.OnTrack.icon,
             rating = 0.0,
             ratingCount = 0,
-            maxRating = RatingType.OnTrack.maxRating,
+            maxRating = ApiType.OnTrack.maxRating,
         )
 
         RatingCard(
             modifier = Modifier.weight(1f),
-            icon = ratingType.icon,
+            icon = apiType.icon,
             rating = rating,
             ratingCount = ratingCount,
-            maxRating = ratingType.maxRating,
+            maxRating = apiType.maxRating,
         )
     }
 }
@@ -103,50 +96,5 @@ fun RatingCard(
                 }
             }
         }
-    }
-}
-
-enum class RatingType(
-    val icon: DrawableResource,
-    val maxRating: Int,
-) {
-    OnTrack(
-        icon = Res.drawable.on_track_icon_v1,
-        maxRating = 5,
-    ),
-    Movie(
-        icon = Res.drawable.tmdb,
-        maxRating = 10,
-    ),
-    Show(
-        icon = Res.drawable.tmdb,
-        maxRating = 10,
-    ),
-    Book(
-        icon = Res.drawable.openlib,
-        maxRating = 5,
-    ),
-    Album(
-        icon = Res.drawable.spotify,
-        maxRating = 100,
-    ),
-    Videogame(
-        icon = Res.drawable.igdb,
-        maxRating = 100,
-    ),
-    Boardgame(
-        icon = Res.drawable.bgg,
-        maxRating = 10,
-    )
-}
-
-fun MediaType.getRatingType(): RatingType {
-    return when (this) {
-        MediaType.MOVIE -> return RatingType.Movie
-        MediaType.SHOW -> return RatingType.Show
-        MediaType.BOOK -> return RatingType.Book
-        MediaType.ALBUM -> return RatingType.Album
-        MediaType.VIDEOGAME -> return RatingType.Videogame
-        MediaType.BOARDGAME -> return RatingType.Boardgame
     }
 }

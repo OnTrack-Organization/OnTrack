@@ -6,6 +6,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Route {
+    // INIT
+    @Serializable
+    data object Start : Route()
+
+    @Serializable
+    data object Intro : Route()
+
     @Serializable
     data object Login : Route()
 

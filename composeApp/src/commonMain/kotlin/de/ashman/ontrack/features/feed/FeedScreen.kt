@@ -11,11 +11,11 @@ import de.ashman.ontrack.authentication.AuthViewModel
 
 @Composable
 fun FeedScreen(
-    authViewModel: AuthViewModel,
+    viewModel: AuthViewModel,
     onClickLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.user != null) {
         Column(
@@ -25,7 +25,7 @@ fun FeedScreen(
 
             Button(
                 onClick = {
-                    authViewModel.signOut()
+                    viewModel.signOut()
                     onClickLogout()
                 }) {
                 Text("Logout")
@@ -33,7 +33,7 @@ fun FeedScreen(
 
             Button(
                 onClick = {
-                    authViewModel.deleteAccount()
+                    viewModel.deleteAccount()
                     onClickLogout()
                 }) {
                 Text("Delete account")

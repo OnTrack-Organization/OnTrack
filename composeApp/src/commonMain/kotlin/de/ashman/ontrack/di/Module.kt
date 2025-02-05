@@ -11,12 +11,13 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthServiceImpl
 import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.FirestoreServiceImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.FirestoreServiceImpl
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import io.ktor.client.HttpClient
@@ -212,6 +213,7 @@ val appModule = module {
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
     // VIEWMODEL
+    viewModelDefinition { StartViewModel(get()) }
     viewModelDefinition { AuthViewModel(get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }

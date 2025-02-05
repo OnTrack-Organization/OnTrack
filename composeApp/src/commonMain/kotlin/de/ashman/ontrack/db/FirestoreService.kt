@@ -9,6 +9,7 @@ interface FirestoreService {
     // MEDIA
     suspend fun saveMedia(media: MediaEntity)
     suspend fun getMediaById(id: String): MediaEntity?
+    suspend fun getRandomCoverForEveryMediaType(): List<String>
 
     // USER
     suspend fun getUserById(userId: String): UserEntity?

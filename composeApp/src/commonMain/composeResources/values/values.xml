@@ -1,12 +1,25 @@
 <resources>
-    <!-- START -->
     <string name="app_name">OnTrack</string>
-    <string name="welcome">Welcome to OnTrack!</string>
-    <string name="google_login">Continue with Google</string>
-
     <string name="feed_nav_title">Feed</string>
     <string name="search_nav_title">Search</string>
     <string name="shelf_nav_title">Shelf</string>
+
+    <!-- START -->
+    <string name="intro_button">Introduction</string>
+    <string name="login_button">Login</string>
+    <string name="api_powered_by">Powered by these sexy APIs</string>
+
+    <!-- LOGIN -->
+    <string name="join_title">Join OnTrack</string>
+    <string name="google_login_button">Continue with Google</string>
+
+    <!-- INTRO -->
+    <string name="intro_first_page_title">Track all of your media - in one place</string>
+    <string name="intro_second_page_title">Share your shelf with the world</string>
+    <string name="intro_third_page_title">Keep on track with your friends feed</string>
+    <string name="intro_first_page_description">Movies, shows, books, videogames, boardgames and albums. Track all of it in one central place.</string>
+    <string name="intro_second_page_description">Keep track of your shelf and share it with the world, or just your friends.</string>
+    <string name="intro_third_page_description">Never miss what your friends are into right now, you're gonna have something to talk about at the next party.</string>
 
     <!-- SEARCH -->
     <string name="search_placeholder_movies">Search for movies...</string>

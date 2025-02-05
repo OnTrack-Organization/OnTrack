@@ -46,7 +46,7 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.ReviewCard
 import de.ashman.ontrack.features.detail.components.StickyMainContent
-import de.ashman.ontrack.features.detail.components.getRatingType
+import de.ashman.ontrack.api.getRatingType
 import de.ashman.ontrack.features.detail.content.AlbumDetailContent
 import de.ashman.ontrack.features.detail.content.BoardgameDetailContent
 import de.ashman.ontrack.features.detail.content.BookDetailContent
@@ -118,7 +118,7 @@ fun SuccessContent(
 
         item {
             RatingCardRow(
-                ratingType = media.mediaType.getRatingType(),
+                apiType = media.mediaType.getRatingType(),
                 rating = media.apiRating,
                 ratingCount = media.apiRatingCount
             )

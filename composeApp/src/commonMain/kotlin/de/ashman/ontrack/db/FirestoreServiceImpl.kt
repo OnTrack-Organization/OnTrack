@@ -3,6 +3,7 @@ package de.ashman.ontrack.db
 import de.ashman.ontrack.db.entity.MediaEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.UserEntity
+import de.ashman.ontrack.domain.MediaType
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.*
@@ -28,6 +29,25 @@ class FirestoreServiceImpl(
 
     override suspend fun getMediaById(id: String): MediaEntity? {
         return mediaCollection.document(id).get().data()
+    }
+
+    override suspend fun getRandomCoverForEveryMediaType(): List<String> {
+        val coverUrls = mutableListOf<String>()
+
+        for (mediaType in MediaType.entries) {
+            val query = mediaCollection
+                .where { "type" equalTo mediaType.name }
+                .limit(1)
+
+            val snapshot: QuerySnapshot = query.get()
+
+            snapshot.documents.firstOrNull()?.let {
+                val coverUrl = it.data<MediaEntity>().coverUrl
+                coverUrl?.let { url -> coverUrls.add(url) }
+            }
+        }
+
+        return coverUrls
     }
 
     // USER
