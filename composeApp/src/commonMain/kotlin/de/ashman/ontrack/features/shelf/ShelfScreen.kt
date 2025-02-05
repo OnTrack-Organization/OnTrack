@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +62,8 @@ fun ShelfScreen(
             )
         }
 
+        HorizontalDivider()
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
@@ -91,59 +95,63 @@ fun ProfileRow(
 ) {
     val painter = rememberAsyncImagePainter(imageUrl)
 
-    Row(
-        modifier = Modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Surface(
-            modifier = Modifier.size(54.dp),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val state = painter.state.collectAsState().value
+            Surface(
+                modifier = Modifier.size(54.dp),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ) {
+                val state = painter.state.collectAsState().value
 
-            when (state) {
-                is AsyncImagePainter.State.Loading -> {
-                    CircularProgressIndicator()
+                when (state) {
+                    is AsyncImagePainter.State.Loading -> {
+                        CircularProgressIndicator()
+                    }
+
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            painter = painter,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Account Image",
+                        )
+                    }
+
+                    is AsyncImagePainter.State.Error -> {
+                        Icon(
+                            modifier = Modifier.padding(8.dp),
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "No Image",
+                        )
+                    }
+
+                    else -> {}
                 }
+            }
 
-                is AsyncImagePainter.State.Success -> {
-                    Image(
-                        painter = painter,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Account Image",
+            Column(
+                verticalArrangement = Arrangement.Center,
+            ) {
+                name?.let {
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
-
-                is AsyncImagePainter.State.Error -> {
-                    Icon(
-                        modifier = Modifier.padding(8.dp),
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "No Image",
+                accountName?.let {
+                    Text(
+                        text = accountName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-
-                else -> {}
-            }
-        }
-
-        Column(
-            verticalArrangement = Arrangement.Center,
-        ) {
-            name?.let {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            accountName?.let {
-                Text(
-                    text = accountName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
         }
     }
@@ -159,12 +167,12 @@ fun ShelfItem(
     items?.let {
         Column {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(start = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(24.dp),
                     imageVector = mediaType.getMediaTypeUi().icon,
                     contentDescription = "Media Icon",
                 )
@@ -187,7 +195,7 @@ fun ShelfItem(
             }
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
             ) {
                 items(items.take(10)) { item ->
                     MediaPoster(
