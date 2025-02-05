@@ -55,7 +55,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Intro,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -100,8 +100,8 @@ fun NavGraphBuilder.initGraph(
     composable<Route.Login> {
         LoginScreen(
             viewModel = authViewModel,
-            onLoginSuccess = {
-                navController.navigate(Route.Feed) {
+            onNavigateAfterLogin = {
+                navController.navigate(Route.Search) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
             }
