@@ -3,9 +3,11 @@ package de.ashman.ontrack.api.book
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.book.dto.AuthorDto
 import de.ashman.ontrack.api.book.dto.AuthorWorksResponse
+import de.ashman.ontrack.api.book.dto.BookRatingsResponse
 import de.ashman.ontrack.api.book.dto.BookSearchResponse
 import de.ashman.ontrack.api.book.dto.BookTrendingResponse
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
+import de.ashman.ontrack.api.book.dto.RatingSummary
 import de.ashman.ontrack.api.utils.cleanupDescription
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
@@ -38,10 +40,13 @@ class BookRepository(
 
         val description = fetchDescription(book.id)
         val author = fetchAuthorWithBooks(book.author?.id)
+        val ratings = fetchRatings(book.id)
 
         book.copy(
             description = description,
             author = author ?: book.author,
+            apiRating = ratings.average,
+            apiRatingCount = ratings.count
         )
     }
 
@@ -74,5 +79,10 @@ class BookRepository(
         val booksCount = authorWorksResponse.size
 
         return authorDto.toDomain().copy(books = books, booksCount = booksCount)
+    }
+
+    private suspend fun fetchRatings(bookId: String): RatingSummary {
+        val response: BookRatingsResponse = httpClient.get("works/$bookId/ratings.json").body()
+        return response.summary
     }
 }

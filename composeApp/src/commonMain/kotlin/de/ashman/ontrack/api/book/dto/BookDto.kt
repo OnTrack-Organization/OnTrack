@@ -9,9 +9,6 @@ data class BookDto(
     val coverI: Int? = null,
     val description: String? = null,
     val firstPublishYear: Int? = null,
-    val ratingsAverage: Double? = null,
-    val ratingsCount: Int? = null,
-
     val authorKey: List<String>,
     val authorName: List<String>? = null,
     val firstSentence: List<String>? = null,

@@ -2,8 +2,8 @@ package de.ashman.ontrack.features.detail.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,10 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.utils.roundDecimals
 import de.ashman.ontrack.domain.MediaType
@@ -81,27 +78,30 @@ fun RatingCard(
                 painter = painterResource(icon),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(32.dp)
                     .clip(MaterialTheme.shapes.small),
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
-
-            Text(
-                text = buildAnnotatedString {
-                    rating?.let {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)) {
-                            append("${rating.roundDecimals(1)} / $maxRating")
-                        }
-                    }
-                    ratingCount?.let {
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
-                            append(" ($ratingCount)")
-                        }
-                    }
-                },
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                rating?.let {
+                    Text(
+                        text = "${rating.roundDecimals(1)} / $maxRating",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                ratingCount?.let {
+                    Text(
+                        text = "($ratingCount)",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
         }
     }
 }
