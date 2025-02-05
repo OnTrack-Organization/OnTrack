@@ -111,14 +111,24 @@ fun AutoScrollPoster(
     modifier: Modifier = Modifier,
     itemCovers: List<String>,
 ) {
-    // TODO fix endless scroll animation
     val itemTypes = MediaType.entries.map { it.getMediaTypeUi() }
-    val pagerState = rememberPagerState(initialPage = 0) { itemCovers.size }
+    val realPageCount = itemCovers.size
+    val infiniteMultiplier = 1000
+    val pageCount = realPageCount * infiniteMultiplier
+    val initialPage = pageCount / 2
+
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        initialPageOffsetFraction = 0f,
+        pageCount = { pageCount }
+    )
 
     HorizontalPager(
         state = pagerState,
         userScrollEnabled = false,
+        modifier = modifier
     ) { index ->
+        val realIndex = index % realPageCount
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
@@ -133,18 +143,18 @@ fun AutoScrollPoster(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = itemTypes[index].icon,
+                        imageVector = itemTypes[realIndex].icon,
                         contentDescription = "Media Icon",
                     )
                     Text(
-                        text = pluralStringResource(itemTypes[index].title, 2),
+                        text = pluralStringResource(itemTypes[realIndex].title, 2),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
                 }
                 MediaPoster(
                     modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                    coverUrl = itemCovers[index],
+                    coverUrl = itemCovers[realIndex],
                 )
             }
         }
@@ -153,17 +163,18 @@ fun AutoScrollPoster(
     LaunchedEffect(Unit) {
         while (true) {
             delay(2000)
-            val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
+            val nextPage = pagerState.currentPage + 1
             pagerState.animateScrollToPage(
                 page = nextPage,
                 animationSpec = tween(
-                    durationMillis = 500,
+                    durationMillis = 400,
                     easing = FastOutLinearInEasing
                 )
             )
         }
     }
 }
+
 
 @Composable
 fun ApiContributions() {

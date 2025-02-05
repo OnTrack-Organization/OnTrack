@@ -55,7 +55,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Start,
+            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Intro,
         ) {
             initGraph(
                 startViewModel = startViewModel,
