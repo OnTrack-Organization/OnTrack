@@ -126,6 +126,7 @@ data class DetailUiState(
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
     val resultState: DetailResultState = DetailResultState.Loading,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val searchDuration: Long = 0L,
 )

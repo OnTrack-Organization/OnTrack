@@ -13,13 +13,14 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Tracking
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -197,6 +198,14 @@ class SearchViewModel(
         searchJob?.cancel()
         searchJob = if (_uiState.value.query.isBlank()) getTrending() else search(_uiState.value.query)
     }
+
+    fun refresh() = viewModelScope.launch {
+        _uiState.update { it.copy(isRefreshing = true) }
+        searchJob?.cancel()
+        searchJob = if (_uiState.value.query.isBlank()) getTrending() else search(_uiState.value.query)
+        delay(300L)
+        _uiState.update { it.copy(isRefreshing = false) }
+    }
 }
 
 data class SearchUiState(
@@ -207,6 +216,7 @@ data class SearchUiState(
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val searchResultState: SearchResultState = SearchResultState.Empty,
     val searchDuration: Long = 0L,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
 )
 

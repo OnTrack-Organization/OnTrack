@@ -34,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.features.detail.components.ErrorContent
+import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.detail.components.StickyMainContent
 import de.ashman.ontrack.features.tracking.CurrentBottomSheetContent
 import de.ashman.ontrack.features.tracking.TrackingBottomSheetContent
@@ -115,20 +117,15 @@ fun DetailScreen(
                 },
             )
 
-            when (uiState.resultState) {
-                DetailResultState.Loading -> {
-                    LoadingContent()
-                }
 
-                DetailResultState.Error -> {
-                    ErrorContent(
-                        text = media.mediaType.getMediaTypeUi().error
-                    )
-                }
+            when (uiState.resultState) {
+                DetailResultState.Loading -> LoadingContent()
+
+                DetailResultState.Error -> ErrorContent(text = media.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
                     uiState.selectedMedia?.let {
-                        SuccessContent(
+                        DetailContent(
                             media = it,
                             tracking = uiState.selectedTracking,
                             searchDuration = uiState.searchDuration,

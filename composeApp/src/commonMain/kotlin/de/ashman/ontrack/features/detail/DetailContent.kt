@@ -2,25 +2,13 @@ package de.ashman.ontrack.features.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WifiOff
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.getRatingType
 import de.ashman.ontrack.domain.Album
@@ -40,12 +28,10 @@ import de.ashman.ontrack.features.detail.content.BookDetailContent
 import de.ashman.ontrack.features.detail.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuccessContent(
+fun DetailContent(
     media: Media,
     tracking: Tracking?,
     searchDuration: Long,
@@ -90,46 +76,5 @@ fun SuccessContent(
             MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
             MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
         }
-    }
-
-
-}
-
-@Composable
-fun LoadingContent(
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(modifier = Modifier.scale(1.5f))
-    }
-}
-
-@Composable
-fun ErrorContent(
-    modifier: Modifier = Modifier,
-    text: StringResource,
-) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            modifier = Modifier.size(64.dp),
-            imageVector = Icons.Default.WifiOff,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentDescription = "Error Icon"
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = stringResource(text),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
     }
 }

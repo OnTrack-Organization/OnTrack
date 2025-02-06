@@ -4,19 +4,18 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AssistChipDefaults
@@ -28,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,8 +41,9 @@ import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.keyboardAsState
-import de.ashman.ontrack.features.detail.ErrorContent
-import de.ashman.ontrack.features.detail.LoadingContent
+import de.ashman.ontrack.features.detail.components.EmptyContent
+import de.ashman.ontrack.features.detail.components.ErrorContent
+import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
@@ -85,72 +86,50 @@ fun SearchScreen(
             )
         }
 
-        Column(
-            modifier = Modifier.fillMaxHeight(0.5f)
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxHeight(),
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::refresh,
         ) {
-            when (uiState.searchResultState) {
-                SearchResultState.Empty -> EmptyContent(uiState.selectedMediaType)
+            LazyColumn(
+                modifier = Modifier.fillMaxHeight(0.5f),
+            ) {
+                item {
+                    when (uiState.searchResultState) {
+                        SearchResultState.Empty -> EmptyContent(uiState.selectedMediaType)
 
-                SearchResultState.Loading -> LoadingContent()
+                        SearchResultState.Loading -> LoadingContent()
 
-                SearchResultState.Error -> ErrorContent(
-                    text = uiState.selectedMediaType.getMediaTypeUi().error
-                )
+                        SearchResultState.Error -> ErrorContent(
+                            text = uiState.selectedMediaType.getMediaTypeUi().error
+                        )
 
-                SearchResultState.Success ->
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                    ) {
-                        items(items = uiState.searchResults, key = { it.id }) { media ->
-                            val tracking = uiState.trackings.find { it.mediaId == media.id }
-
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
+                        SearchResultState.Success ->
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp),
                             ) {
-                                MediaPoster(
-                                    modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                    title = media.title,
-                                    coverUrl = media.coverUrl,
-                                    trackStatusIcon = tracking?.status?.getStatusIcon(true),
-                                    onClick = { onClickItem(media) },
-                                )
+                                items(items = uiState.searchResults, key = { it.id }) { media ->
+                                    val tracking = uiState.trackings.find { it.mediaId == media.id }
+
+                                    MediaPoster(
+                                        modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
+                                        title = media.title,
+                                        coverUrl = media.coverUrl,
+                                        trackStatusIcon = tracking?.status?.getStatusIcon(true),
+                                        onClick = { onClickItem(media) },
+                                    )
+                                }
                             }
-                        }
                     }
+                }
             }
         }
-
         Text(
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.End),
             text = "Search took ${uiState.searchDuration}ms"
-        )
-    }
-}
-
-@Composable
-fun EmptyContent(
-    mediaType: MediaType
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            modifier = Modifier.size(100.dp),
-            imageVector = Icons.Default.HideSource,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentDescription = "No Results Icon"
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = stringResource(mediaType.getMediaTypeUi().emptySearch),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
