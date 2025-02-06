@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,21 +56,21 @@ fun IntroScreen(
             )
         }
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(contentPadding).padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
             HorizontalPager(
-                modifier = Modifier.weight(1f),
-                state = pagerState
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
+                contentPadding = PaddingValues(horizontal = 32.dp),
+                pageSpacing = 32.dp,
+                pageSize = PageSize.Fill
             ) { index ->
                 IntroContent(
                     introPage = pages[index]
                 )
             }
-        }
-    }
+    }}
 }
 
 @Composable
