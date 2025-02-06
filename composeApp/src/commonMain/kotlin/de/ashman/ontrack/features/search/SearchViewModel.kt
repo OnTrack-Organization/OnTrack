@@ -18,6 +18,8 @@ import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Tracking
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -179,7 +181,7 @@ class SearchViewModel(
     }
 
     private fun observeUserTrackings() {
-        firestoreService.consumeLatestUserTrackings()
+        firestoreService.consumeLatestUserTrackings(userId = Firebase.auth.currentUser?.uid ?: return)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

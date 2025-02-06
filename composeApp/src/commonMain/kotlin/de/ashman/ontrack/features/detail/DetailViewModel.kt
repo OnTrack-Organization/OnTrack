@@ -102,7 +102,7 @@ class DetailViewModel(
         val selectedTracking = _uiState.value.selectedTracking
 
         selectedTracking?.let {
-            firestoreService.deleteTrackingsByMediaId(it.mediaId, selectedTracking.rating)
+            firestoreService.deleteTrackingsByMediaId(it.mediaId)
             _uiState.update { it.copy(selectedTracking = null) }
         }
     }

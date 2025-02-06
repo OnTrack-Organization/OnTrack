@@ -36,4 +36,9 @@ sealed class Route {
     data class Detail(
         val media: Media,
     ) : Route()
+
+    @Serializable
+    data class OtherShelf(
+        val userId: String,
+    ) : Route()
 }

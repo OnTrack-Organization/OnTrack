@@ -1,22 +1,18 @@
 package de.ashman.ontrack.db
 
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.entity.MediaEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.UserEntity
 import de.ashman.ontrack.domain.MediaType
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FirestoreServiceImpl(
-    firestore: FirebaseFirestore
+    firestore: FirebaseFirestore,
+    private val authService: AuthService,
 ) : FirestoreService {
-
-    private val currentUserId: String
-        get() = Firebase.auth.currentUser?.uid.orEmpty()
-
     private val mediaCollection = firestore.collection("media")
     private val userCollection = firestore.collection("users")
 
@@ -56,28 +52,28 @@ class FirestoreServiceImpl(
     }
 
     override suspend fun addFriend(friendId: String) {
-        userCollection.document(currentUserId).update(
+        userCollection.document(authService.currentUserId).update(
             "friends" to FieldValue.arrayUnion(friendId)
         )
     }
 
     override suspend fun removeFriend(friendId: String) {
-        userCollection.document(currentUserId).update(
+        userCollection.document(authService.currentUserId).update(
             "friends" to FieldValue.arrayRemove(friendId)
         )
     }
 
     // TRACKING
     override suspend fun saveTracking(tracking: TrackingEntity) {
-        val trackingRef = userTrackingCollection(currentUserId).document(tracking.id)
+        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.id)
         trackingRef.set(tracking)
 
         // Update the global media rating
         //incrementRating(tracking)
     }
 
-    override suspend fun deleteTrackingsByMediaId(mediaId: String, currentRating: Int?) {
-        val documents = userTrackingCollection(currentUserId)
+    override suspend fun deleteTrackingsByMediaId(mediaId: String) {
+        val documents = userTrackingCollection(authService.currentUserId)
             .where { "mediaId" equalTo mediaId }
             .get()
             .documents
@@ -85,12 +81,10 @@ class FirestoreServiceImpl(
         documents.forEach {
             it.reference.delete()
         }
-
-        //decrementRating(mediaId, currentRating)
     }
 
-    override fun consumeLatestUserTrackings(): Flow<List<TrackingEntity>> {
-        return userTrackingCollection(currentUserId)
+    override fun consumeLatestUserTrackings(userId: String): Flow<List<TrackingEntity>> {
+        return userTrackingCollection(userId)
             .orderBy("updatedAt", Direction.DESCENDING)
             .snapshots
             .map { snapshot ->
@@ -102,7 +96,7 @@ class FirestoreServiceImpl(
     }
 
     override fun consumeLatestUserTracking(mediaId: String): Flow<TrackingEntity?> {
-        return userTrackingCollection(currentUserId)
+        return userTrackingCollection(authService.currentUserId)
             .where { "mediaId" equalTo mediaId }
             .orderBy("updatedAt", Direction.DESCENDING)
             .limit(1)

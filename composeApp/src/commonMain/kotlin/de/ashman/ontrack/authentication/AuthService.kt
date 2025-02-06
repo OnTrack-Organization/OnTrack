@@ -3,11 +3,14 @@ package de.ashman.ontrack.authentication
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface AuthService {
+    val currentUserId: String
+
     suspend fun signUpUser(user: UserEntity)
     suspend fun deleteUser(userId: String)
     suspend fun getUserFlow(userId: String): Flow<UserEntity?>
@@ -15,6 +18,9 @@ interface AuthService {
 
 class AuthServiceImpl : AuthService {
     private val userRef = "users"
+
+    override val currentUserId: String
+        get() = Firebase.auth.currentUser?.uid.orEmpty()
 
     override suspend fun signUpUser(user: UserEntity) {
         Firebase.firestore

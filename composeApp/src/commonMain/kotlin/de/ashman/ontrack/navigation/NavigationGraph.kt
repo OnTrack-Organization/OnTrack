@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthViewModel
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.detail.DetailScreen
@@ -22,14 +23,14 @@ import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
+import de.ashman.ontrack.features.shelf.OtherUserShelf
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.Route.Detail
+import de.ashman.ontrack.navigation.Route.OtherShelf
 import de.ashman.ontrack.navigation.Route.ShelfList
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
 import kotlin.reflect.typeOf
 
@@ -43,6 +44,7 @@ fun NavigationGraph(
     detailViewModel: DetailViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
     shelfListViewModel: ShelfListViewModel = koinInject(),
+    authService: AuthService = koinInject(),
 ) {
     MainScaffold(
         navController = navController,
@@ -55,7 +57,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (Firebase.auth.currentUser != null) Route.Search else Route.Start,
+            startDestination = if (authService.currentUserId != null) Route.Shelf else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -67,11 +69,13 @@ fun NavigationGraph(
                 navController = navController,
                 searchViewModel = searchViewModel,
                 authViewModel = authViewModel,
-                shelfViewModel = shelfViewModel
+                shelfViewModel = shelfViewModel,
+                authService = authService,
             )
             mediaGraph(
                 detailViewModel = detailViewModel,
                 shelfListViewModel = shelfListViewModel,
+                shelfViewModel = shelfViewModel,
                 navController = navController
             )
         }
@@ -115,6 +119,7 @@ fun NavGraphBuilder.mainGraph(
     searchViewModel: SearchViewModel,
     authViewModel: AuthViewModel,
     shelfViewModel: ShelfViewModel,
+    authService: AuthService,
 ) {
     composable<Route.Feed> {
         FeedScreen(
@@ -136,8 +141,9 @@ fun NavGraphBuilder.mainGraph(
         ShelfScreen(
             modifier = modifier,
             viewModel = shelfViewModel,
+            userId = authService.currentUserId,
             onClickMore = { mediaType -> navController.navigate(ShelfList(mediaType)) },
-            onClickItem = { item -> navController.navigate(Detail(item)) }
+            onClickItem = { item -> navController.navigate(Detail(item)) },
         )
     }
 }
@@ -145,6 +151,7 @@ fun NavGraphBuilder.mainGraph(
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
     shelfListViewModel: ShelfListViewModel,
+    shelfViewModel: ShelfViewModel,
     navController: NavHostController,
 ) {
     composable<Detail>(
@@ -175,6 +182,19 @@ fun NavGraphBuilder.mediaGraph(
         ShelfListScreen(
             viewModel = shelfListViewModel,
             mediaType = shelfList.mediaType,
+            onClickItem = { item -> navController.navigate(Detail(item)) },
+            onBack = { navController.popBackStack() },
+        )
+    }
+
+    // TODO other users shelf. use the same vm or another one? also pass the user id when navigating there
+    composable<OtherShelf> { backStackEntry ->
+        val otherShelf: OtherShelf = backStackEntry.toRoute()
+
+        OtherUserShelf(
+            viewModel = shelfViewModel,
+            userId = otherShelf.userId,
+            onClickMore = { mediaType -> navController.navigate(ShelfList(mediaType)) },
             onClickItem = { item -> navController.navigate(Detail(item)) },
             onBack = { navController.popBackStack() },
         )

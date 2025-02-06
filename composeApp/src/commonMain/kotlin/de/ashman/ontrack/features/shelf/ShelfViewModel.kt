@@ -9,15 +9,12 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.user.User
 import de.ashman.ontrack.authentication.user.toDomain
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
+import de.ashman.ontrack.domain.Media
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,10 +25,7 @@ class ShelfViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
-        .onStart {
-            observeCurrentUser()
-            observeUserMedia()
-        }.stateIn(
+        .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
@@ -39,10 +33,7 @@ class ShelfViewModel(
 
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
-    // TODO handle other users, not just logged in one
-    private fun observeCurrentUser() {
-        val userId = Firebase.auth.currentUser?.uid.orEmpty()
-
+    fun observeUser(userId: String) {
         viewModelScope.launch {
             authService.getUserFlow(userId)
                 .collect { user ->
@@ -51,9 +42,9 @@ class ShelfViewModel(
         }
     }
 
-    private fun observeUserMedia() {
+    fun observeUserMedia(userId: String) {
         viewModelScope.launch {
-            firestoreService.consumeLatestUserTrackings()
+            firestoreService.consumeLatestUserTrackings(userId = userId)
                 .collect { trackings ->
                     val mediaList = trackings.mapNotNull {
                         firestoreService.getMediaById(it.mediaId)?.toDomain()

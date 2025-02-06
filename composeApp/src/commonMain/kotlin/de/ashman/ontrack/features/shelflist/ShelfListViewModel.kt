@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.Media
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 
 class ShelfListViewModel(
     private val firestoreService: FirestoreService,
+    private val authService: AuthService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfListUiState())
     val uiState: StateFlow<ShelfListUiState> = _uiState
@@ -36,7 +38,7 @@ class ShelfListViewModel(
 
     private fun observeUserTrackings() {
         viewModelScope.launch {
-            firestoreService.consumeLatestUserTrackings().collect { trackings ->
+            firestoreService.consumeLatestUserTrackings(authService.currentUserId).collect { trackings ->
 
                 val mediaList = trackings
                     .filter { it.status == _uiState.value.selectedStatus }

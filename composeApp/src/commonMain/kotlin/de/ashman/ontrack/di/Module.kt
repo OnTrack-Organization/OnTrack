@@ -218,10 +218,10 @@ val appModule = module {
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
-    viewModelDefinition { ShelfListViewModel(get()) }
+    viewModelDefinition { ShelfListViewModel(get(), get()) }
 
     // TEST
-    single<FirestoreService> { FirestoreServiceImpl(Firebase.firestore) }
+    single<FirestoreService> { FirestoreServiceImpl(Firebase.firestore, get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
