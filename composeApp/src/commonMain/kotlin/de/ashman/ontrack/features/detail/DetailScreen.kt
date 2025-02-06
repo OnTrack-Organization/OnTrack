@@ -149,14 +149,14 @@ fun DetailScreen(
                     mediaTitle = media.title,
                     tracking = uiState.selectedTracking,
                     onSaveTracking = {
-                        viewModel::saveTracking
+                        viewModel.saveTracking(it)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
                         }
                     },
                     onDeleteTrackings = {
-                        viewModel::deleteTrackings
+                        viewModel.deleteTrackings()
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_deleted))

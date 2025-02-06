@@ -65,7 +65,8 @@ class FirestoreServiceImpl(
 
     // TRACKING
     override suspend fun saveTracking(tracking: TrackingEntity) {
-        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.id)
+        val trackingRef = userTrackingCollection(authService.currentUserId)
+            .document(tracking.id)
         trackingRef.set(tracking)
 
         // Update the global media rating
