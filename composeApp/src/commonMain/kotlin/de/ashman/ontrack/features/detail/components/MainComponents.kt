@@ -1,5 +1,7 @@
 package de.ashman.ontrack.features.detail.components
 
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +14,10 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,22 +34,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackIconButton
-import de.ashman.ontrack.features.track.getLabel
-import de.ashman.ontrack.features.track.getStatusIcon
+import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.tracking.getLabel
+import de.ashman.ontrack.features.tracking.getStatusIcon
 import kotlinx.coroutines.runBlocking
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.not_available
+import ontrack.composeapp.generated.resources.no_title
 import ontrack.composeapp.generated.resources.track_button
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StickyMainContent(
     imageModifier: Modifier = Modifier,
     media: Media,
     status: TrackStatus? = null,
+    scrollBehavior: TopAppBarScrollBehavior,
     onClickAddTracking: () -> Unit,
     onClickRemoveTracking: () -> Unit,
 ) {
@@ -54,13 +62,18 @@ fun StickyMainContent(
         mutableStateOf(runBlocking { media.getMainInfoItems() })
     }
 
+    val transition = updateTransition(targetState = scrollBehavior.state.contentOffset < 0, label = "Image Size Transition")
+    val size by transition.animateDp { isScrolledDown ->
+        if (isScrolledDown) SMALL_POSTER_HEIGHT else DEFAULT_POSTER_HEIGHT
+    }
+
     Column(
         modifier = Modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         MediaPoster(
-            modifier = imageModifier,
+            modifier = imageModifier.height(size),
             coverUrl = media.coverUrl,
         )
 
@@ -139,7 +152,7 @@ fun MediaTitle(
     title?.let {
         Text(
             modifier = modifier,
-            text = if (title.isBlank()) stringResource(Res.string.not_available) else title,
+            text = if (title.isBlank()) stringResource(Res.string.no_title) else title,
             style = textStyle.copy(
                 hyphens = Hyphens.Auto,
                 lineBreak = LineBreak.Heading,

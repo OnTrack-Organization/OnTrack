@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.track.content
+package de.ashman.ontrack.features.tracking.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
-import de.ashman.ontrack.features.track.getLabel
-import de.ashman.ontrack.features.track.getStatusIcon
-import de.ashman.ontrack.features.track.getSublabel
+import de.ashman.ontrack.features.tracking.getLabel
+import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.tracking.getSublabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
 import ontrack.composeapp.generated.resources.save_button
@@ -65,6 +65,7 @@ fun TrackingContent(
     }
 
     OnTrackButton(
+        enabled = selectedStatus != null,
         text = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Res.string.save_button else Res.string.continue_button,
         icon = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
         onClick = onContinue,

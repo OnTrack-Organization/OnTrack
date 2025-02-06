@@ -149,8 +149,13 @@
     <string name="album_status_dropped_label">Dropped</string>
     <string name="album_status_dropped_sublabel">Stopped listening</string>
 
-    <string name="network_error">Network error</string>
-    <string name="not_available">N/A</string>
+    <string name="no_title">No title found</string>
+    <string name="movie_network_error">This movie has been delayed… by bad internet.</string>
+    <string name="show_network_error">The next episode is buffering… forever.</string>
+    <string name="book_network_error">This book is still being written - try again later.</string>
+    <string name="videogame_network_error">Quest failed: No internet detected.</string>
+    <string name="boardgame_network_error">Rulebook says: Try again later.</string>
+    <string name="album_network_error">Lost connection… now it’s just silence.</string>
 
     <!-- DETAIL -->
     <string name="detail_description">Description</string>

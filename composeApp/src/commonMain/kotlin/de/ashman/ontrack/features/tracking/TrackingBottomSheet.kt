@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.track
+package de.ashman.ontrack.features.tracking
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Tracking
-import de.ashman.ontrack.features.track.content.DeleteContent
-import de.ashman.ontrack.features.track.content.ReviewContent
-import de.ashman.ontrack.features.track.content.TrackingContent
+import de.ashman.ontrack.features.tracking.content.DeleteContent
+import de.ashman.ontrack.features.tracking.content.ReviewContent
+import de.ashman.ontrack.features.tracking.content.TrackingContent
 import kotlinx.datetime.Clock.System
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

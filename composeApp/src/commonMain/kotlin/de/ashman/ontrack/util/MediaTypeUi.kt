@@ -11,9 +11,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import de.ashman.ontrack.domain.MediaType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album
+import ontrack.composeapp.generated.resources.album_network_error
 import ontrack.composeapp.generated.resources.boardgame
+import ontrack.composeapp.generated.resources.boardgame_network_error
 import ontrack.composeapp.generated.resources.book
+import ontrack.composeapp.generated.resources.book_network_error
 import ontrack.composeapp.generated.resources.movie
+import ontrack.composeapp.generated.resources.movie_network_error
 import ontrack.composeapp.generated.resources.playingcards
 import ontrack.composeapp.generated.resources.search_empty_albums
 import ontrack.composeapp.generated.resources.search_empty_boardgames
@@ -28,7 +32,9 @@ import ontrack.composeapp.generated.resources.search_placeholder_movies
 import ontrack.composeapp.generated.resources.search_placeholder_shows
 import ontrack.composeapp.generated.resources.search_placeholder_videogames
 import ontrack.composeapp.generated.resources.show
+import ontrack.composeapp.generated.resources.show_network_error
 import ontrack.composeapp.generated.resources.videogame
+import ontrack.composeapp.generated.resources.videogame_network_error
 import org.jetbrains.compose.resources.PluralStringResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -38,6 +44,7 @@ data class MediaTypeUi(
     val title: PluralStringResource,
     val searchPlaceholder: StringResource,
     val emptySearch: StringResource,
+    val error: StringResource,
 )
 
 @Composable
@@ -48,6 +55,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.movie,
             searchPlaceholder = Res.string.search_placeholder_movies,
             emptySearch = Res.string.search_empty_movies,
+            error = Res.string.movie_network_error,
         )
 
         MediaType.SHOW -> MediaTypeUi(
@@ -55,6 +63,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.show,
             searchPlaceholder = Res.string.search_placeholder_shows,
             emptySearch = Res.string.search_empty_shows,
+            error = Res.string.show_network_error,
         )
 
         MediaType.BOOK -> MediaTypeUi(
@@ -62,6 +71,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.book,
             searchPlaceholder = Res.string.search_placeholder_books,
             emptySearch = Res.string.search_empty_books,
+            error = Res.string.book_network_error,
         )
 
         MediaType.VIDEOGAME -> MediaTypeUi(
@@ -69,6 +79,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.videogame,
             searchPlaceholder = Res.string.search_placeholder_videogames,
             emptySearch = Res.string.search_empty_videogames,
+            error = Res.string.videogame_network_error,
         )
 
         MediaType.BOARDGAME -> MediaTypeUi(
@@ -76,6 +87,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.boardgame,
             searchPlaceholder = Res.string.search_placeholder_boardgames,
             emptySearch = Res.string.search_empty_boardgames,
+            error = Res.string.boardgame_network_error,
         )
 
         MediaType.ALBUM -> MediaTypeUi(
@@ -83,6 +95,7 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             title = Res.plurals.album,
             searchPlaceholder = Res.string.search_placeholder_albums,
             emptySearch = Res.string.search_empty_albums,
+            error = Res.string.album_network_error,
         )
     }
 }

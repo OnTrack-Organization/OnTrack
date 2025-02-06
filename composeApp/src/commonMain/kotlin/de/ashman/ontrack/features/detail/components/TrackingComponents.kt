@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MAX_RATING
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.domain.Tracking
-import de.ashman.ontrack.features.track.getStatusIcon
+import de.ashman.ontrack.features.tracking.getStatusIcon
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime

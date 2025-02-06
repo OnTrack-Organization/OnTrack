@@ -16,12 +16,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -34,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -44,7 +41,9 @@ import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.keyboardAsState
-import de.ashman.ontrack.features.track.getStatusIcon
+import de.ashman.ontrack.features.detail.ErrorContent
+import de.ashman.ontrack.features.detail.LoadingContent
+import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -86,33 +85,41 @@ fun SearchScreen(
             )
         }
 
-        when (uiState.searchResultState) {
-            SearchResultState.Empty -> EmptySearch(uiState.selectedMediaType)
-            SearchResultState.Loading -> LoadingSearch()
-            SearchResultState.Error -> ErrorSearch()
-            SearchResultState.Success ->
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                ) {
-                    items(items = uiState.searchResults, key = { it.id }) { media ->
-                        val tracking = uiState.trackings.find { it.mediaId == media.id }
+        Column(
+            modifier = Modifier.fillMaxHeight(0.5f)
+        ) {
+            when (uiState.searchResultState) {
+                SearchResultState.Empty -> EmptyContent(uiState.selectedMediaType)
 
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            MediaPoster(
-                                modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                title = media.title,
-                                coverUrl = media.coverUrl,
-                                trackStatusIcon = tracking?.status?.getStatusIcon(true),
-                                onClick = { onClickItem(media) },
-                            )
+                SearchResultState.Loading -> LoadingContent()
+
+                SearchResultState.Error -> ErrorContent(
+                    text = uiState.selectedMediaType.getMediaTypeUi().error
+                )
+
+                SearchResultState.Success ->
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                    ) {
+                        items(items = uiState.searchResults, key = { it.id }) { media ->
+                            val tracking = uiState.trackings.find { it.mediaId == media.id }
+
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                MediaPoster(
+                                    modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
+                                    title = media.title,
+                                    coverUrl = media.coverUrl,
+                                    trackStatusIcon = tracking?.status?.getStatusIcon(true),
+                                    onClick = { onClickItem(media) },
+                                )
+                            }
                         }
                     }
-                }
+            }
         }
 
         Text(
@@ -125,18 +132,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun LoadingSearch() {
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(modifier = Modifier.scale(1.5f))
-    }
-}
-
-@Composable
-fun EmptySearch(
+fun EmptyContent(
     mediaType: MediaType
 ) {
     Column(
@@ -153,28 +149,6 @@ fun EmptySearch(
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = stringResource(mediaType.getMediaTypeUi().emptySearch),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
-@Composable
-fun ErrorSearch() {
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            modifier = Modifier.size(100.dp),
-            imageVector = Icons.Default.Error,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentDescription = "Error Icon"
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = "Network error",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

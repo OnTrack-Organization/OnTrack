@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -12,16 +13,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -29,7 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.features.detail.components.StickyMainContent
+import de.ashman.ontrack.features.tracking.CurrentBottomSheetContent
+import de.ashman.ontrack.features.tracking.TrackingBottomSheetContent
 import de.ashman.ontrack.util.getMediaTypeUi
+import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.tracking_deleted
+import ontrack.composeapp.generated.resources.tracking_saved
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,8 +54,15 @@ fun DetailScreen(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state = TopAppBarState(-Float.MAX_VALUE, 0F, 0F))
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var currentBottomSheet by remember { mutableStateOf(CurrentBottomSheetContent.TRACKING) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val listState = rememberLazyListState()
 
     LaunchedEffect(media.id) {
         viewModel.fetchDetails(media)
@@ -81,28 +101,77 @@ fun DetailScreen(
         Column(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
+            StickyMainContent(
+                media = media,
+                status = uiState.selectedTracking?.status,
+                scrollBehavior = scrollBehavior,
+                onClickAddTracking = {
+                    currentBottomSheet = CurrentBottomSheetContent.TRACKING
+                    showBottomSheet = true
+                },
+                onClickRemoveTracking = {
+                    currentBottomSheet = CurrentBottomSheetContent.DELETE
+                    showBottomSheet = true
+                },
+            )
+
             when (uiState.resultState) {
                 DetailResultState.Loading -> {
                     LoadingContent()
                 }
 
                 DetailResultState.Error -> {
-                    ErrorContent()
+                    ErrorContent(
+                        text = media.mediaType.getMediaTypeUi().error
+                    )
                 }
 
                 DetailResultState.Success -> {
                     uiState.selectedMedia?.let {
                         SuccessContent(
-                            snackbarHostState = snackbarHostState,
                             media = it,
                             tracking = uiState.selectedTracking,
                             searchDuration = uiState.searchDuration,
-                            onSaveTracking = viewModel::saveTracking,
-                            onDeleteTrackings = viewModel::deleteTrackings,
-                            onClickItem = onClickItem,
+                            listState = listState,
+                            onClickItem = onClickItem
                         )
                     }
                 }
+            }
+        }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
+            ) {
+                TrackingBottomSheetContent(
+                    currentContent = currentBottomSheet,
+                    mediaId = media.id,
+                    mediaType = media.mediaType,
+                    mediaTitle = media.title,
+                    tracking = uiState.selectedTracking,
+                    onSaveTracking = {
+                        viewModel::saveTracking
+                        showBottomSheet = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
+                        }
+                    },
+                    onDeleteTrackings = {
+                        viewModel::deleteTrackings
+                        showBottomSheet = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(getString(Res.string.tracking_deleted))
+                        }
+                    },
+                    onCancel = {
+                        showBottomSheet = false
+                    },
+                    goToReview = {
+                        currentBottomSheet = CurrentBottomSheetContent.REVIEW
+                    }
+                )
             }
         }
     }

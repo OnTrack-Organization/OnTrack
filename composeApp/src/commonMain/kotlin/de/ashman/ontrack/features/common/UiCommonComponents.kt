@@ -28,13 +28,14 @@ fun OnTrackButton(
     text: StringResource,
     icon: ImageVector? = null,
     isLoading: Boolean = false,
+    enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier.fillMaxWidth().height(48.dp),
         onClick = onClick,
-        enabled = !isLoading,
+        enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
         ),

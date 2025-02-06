@@ -37,8 +37,8 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
-import de.ashman.ontrack.features.track.getLabel
-import de.ashman.ontrack.features.track.getStatusIcon
+import de.ashman.ontrack.features.tracking.getLabel
+import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
