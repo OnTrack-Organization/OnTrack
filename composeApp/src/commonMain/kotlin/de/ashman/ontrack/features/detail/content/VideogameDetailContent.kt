@@ -1,7 +1,6 @@
 package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Videogame
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.MediaChips
@@ -16,7 +15,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.VideogameDetailContent(
     videogame: Videogame,
-    onClickItem: (Media) -> Unit = { },
+    onClickItem: (String) -> Unit,
 ) {
     item {
         MediaDescription(

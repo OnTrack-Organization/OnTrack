@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.tracking.getLabel
 import de.ashman.ontrack.features.tracking.getStatusIcon
@@ -38,15 +38,17 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TrackingContent(
     mediaType: MediaType,
-    mediaTitle: String,
+    mediaTitle: String?,
     selectedStatus: TrackStatus?,
     onSelectStatus: (TrackStatus) -> Unit,
     onContinue: () -> Unit,
 ) {
-    Text(
-        text = stringResource(Res.string.track_title, mediaTitle),
-        style = MaterialTheme.typography.titleMedium,
-    )
+    mediaTitle?.let {
+        Text(
+            text = stringResource(Res.string.track_title, it),
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.MAX_RATING
+import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.tracking.getRatingLabel
@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ReviewContent(
-    mediaTitle: String,
+    mediaTitle: String?,
     rating: Int?,
     reviewTitle: String?,
     reviewDescription: String?,
@@ -42,10 +42,12 @@ fun ReviewContent(
     onReviewDescriptionChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    Text(
-        text = stringResource(Res.string.review_title, mediaTitle),
-        style = MaterialTheme.typography.titleMedium,
-    )
+    mediaTitle?.let {
+        Text(
+            text = stringResource(Res.string.review_title, it),
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
 
     SelectableStarRatingBar(
         rating = rating,

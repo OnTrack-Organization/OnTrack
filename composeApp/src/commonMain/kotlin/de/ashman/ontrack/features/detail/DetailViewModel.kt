@@ -12,14 +12,9 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.db.toEntity
-import de.ashman.ontrack.domain.Album
-import de.ashman.ontrack.domain.Boardgame
-import de.ashman.ontrack.domain.Book
 import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.Movie
-import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.domain.Tracking
-import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,22 +45,23 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun fetchDetails(media: Media) = viewModelScope.launch {
+    fun fetchDetails(tracking: Tracking) = viewModelScope.launch {
+        //_uiState.update { it.copy(selectedTracking = tracking) }
+        observeLatestTracking(tracking.mediaId)
+
         val duration = measureTime {
             _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-            observeLatestTracking(media.id)
-
-            val repository = when (media) {
-                is Movie -> movieRepository
-                is Show -> showRepository
-                is Book -> bookRepository
-                is Videogame -> videogameRepository
-                is Boardgame -> boardgameRepository
-                is Album -> albumRepository
+            val repository = when (tracking.mediaType) {
+                MediaType.MOVIE -> movieRepository
+                MediaType.SHOW -> showRepository
+                MediaType.BOOK -> bookRepository
+                MediaType.VIDEOGAME -> videogameRepository
+                MediaType.BOARDGAME -> boardgameRepository
+                MediaType.ALBUM -> albumRepository
             }
 
-            repository.fetchDetails(media).fold(
+            repository.fetchDetails(tracking.mediaId).fold(
                 onSuccess = { result ->
                     _uiState.update {
                         it.copy(
@@ -90,8 +86,6 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        saveOrUpdateMedia()
-
         val trackingEntity = tracking.toEntity()
         firestoreService.saveTracking(trackingEntity)
 
@@ -108,17 +102,10 @@ class DetailViewModel(
     }
 
     fun observeLatestTracking(mediaId: String) = viewModelScope.launch {
-        firestoreService.consumeLatestUserTracking(mediaId)
+        firestoreService.fetchTracking(mediaId)
             .collect { trackingEntity ->
                 _uiState.update { it.copy(selectedTracking = trackingEntity?.toDomain()) }
             }
-    }
-
-    private suspend fun saveOrUpdateMedia() {
-        val selectedMedia = _uiState.value.selectedMedia
-        selectedMedia?.let {
-            firestoreService.saveMedia(it.toEntity())
-        }
     }
 }
 

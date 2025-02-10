@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -121,7 +121,7 @@ fun TrackOverlay(
     ) {
         trackStatusRating?.let {
             Box(
-                modifier = Modifier.size(36.dp).alpha(0.8F),
+                modifier = Modifier.size(36.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -141,6 +141,7 @@ fun TrackOverlay(
                 imageVector = trackStatusIcon,
                 contentDescription = trackStatusIcon.name,
                 modifier = Modifier.size(32.dp),
+                tint = Color.White,
             )
         }
     }
@@ -150,7 +151,7 @@ fun TrackOverlay(
 fun MediaPosterRow(
     title: String,
     items: List<Any>?,
-    onClickItem: (Media) -> Unit = { },
+    onClickItem: (String) -> Unit = { },
 ) {
     items?.let {
         Column(
@@ -167,24 +168,23 @@ fun MediaPosterRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
             ) {
                 items(items) { item ->
-                    // TODO different
                     when (item) {
-                        is Franchise -> {
-                            MediaPoster(
-                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                                title = item.name,
-                                coverUrl = item.imageUrl,
-                                textStyle = MaterialTheme.typography.titleSmall,
-                            )
-                        }
-
                         is Media -> {
                             MediaPoster(
                                 modifier = Modifier.height(SMALL_POSTER_HEIGHT),
                                 title = item.title,
                                 coverUrl = item.coverUrl,
                                 textStyle = MaterialTheme.typography.titleSmall,
-                                onClick = { onClickItem(item) }
+                                onClick = { onClickItem(item.id) },
+                            )
+                        }
+
+                        is Franchise -> {
+                            MediaPoster(
+                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                                title = item.name,
+                                coverUrl = item.imageUrl,
+                                textStyle = MaterialTheme.typography.titleSmall,
                             )
                         }
 

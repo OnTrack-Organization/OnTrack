@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,12 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -53,7 +56,7 @@ fun ShelfScreen(
     viewModel: ShelfViewModel,
     userId: String,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (Media) -> Unit,
+    onClickItem: (Tracking) -> Unit,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +65,7 @@ fun ShelfScreen(
 
     LaunchedEffect(userId) {
         viewModel.observeUser(userId)
-        viewModel.observeUserMedia(userId)
+        viewModel.observeUserTrackings(userId)
     }
 
     Scaffold(
@@ -94,7 +97,12 @@ fun ShelfScreen(
             )
         }) { contentPadding ->
         Column(
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier.padding(
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                top = contentPadding.calculateTopPadding(),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
+                bottom = 0.dp,
+            )
         ) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -102,13 +110,13 @@ fun ShelfScreen(
                 state = viewModel.listState,
             ) {
                 MediaType.entries.forEach { mediaType ->
-                    val filteredMedia = uiState.mediaList.filter { it.mediaType == mediaType }
+                    val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
 
-                    if (filteredMedia.isNotEmpty()) {
+                    if (filteredTrackings.isNotEmpty()) {
                         item(key = mediaType.name) {
                             ShelfItem(
                                 mediaType = mediaType,
-                                items = filteredMedia,
+                                items = filteredTrackings,
                                 onClickMore = { onClickMore(mediaType) },
                                 onClickItem = onClickItem,
                             )
@@ -182,9 +190,9 @@ fun AccountComponent(
 @Composable
 fun ShelfItem(
     mediaType: MediaType,
-    items: List<Media>?,
+    items: List<Tracking>?,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (Media) -> Unit,
+    onClickItem: (Tracking) -> Unit,
 ) {
     items?.let {
         Column {
@@ -222,7 +230,7 @@ fun ShelfItem(
                 items(items.take(5)) { item ->
                     MediaPoster(
                         modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                        coverUrl = item.coverUrl,
+                        coverUrl = item.mediaCoverUrl,
                         onClick = { onClickItem(item) },
                     )
                 }

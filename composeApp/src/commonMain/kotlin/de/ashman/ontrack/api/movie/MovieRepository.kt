@@ -7,7 +7,6 @@ import de.ashman.ontrack.api.movie.dto.MovieResponseDto
 import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.MovieCollection
 import io.ktor.client.HttpClient
@@ -27,9 +26,9 @@ class MovieRepository(
         response.movies.map { it.toDomain() }
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Movie> = safeApiCall {
+    override suspend fun fetchDetails(mediaId: String): Result<Movie> = safeApiCall {
         val castAppend = "?append_to_response=credits"
-        val response: MovieDto = httpClient.get("movie/${media.id}$castAppend").body()
+        val response: MovieDto = httpClient.get("movie/${mediaId}$castAppend").body()
 
         // TODO maybe do director and producer or similar
         val director = response.credits?.crew?.firstOrNull { it.job == "Director" }
@@ -38,7 +37,7 @@ class MovieRepository(
             directorResponse.toDomain()
         }
         val collection = fetchMovieCollection(response.belongsToCollection?.id)
-        val similar = fetchSimilar(media.id)
+        val similar = fetchSimilar(mediaId)
 
         response.toDomain().copy(similarMovies = similar, director = directorDetails, collection = collection)
     }

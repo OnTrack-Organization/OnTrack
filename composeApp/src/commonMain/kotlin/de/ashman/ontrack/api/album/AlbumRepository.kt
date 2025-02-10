@@ -10,7 +10,6 @@ import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.domain.Artist
-import de.ashman.ontrack.domain.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -41,8 +40,8 @@ class AlbumRepository(
         }.albums.toDomain()
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Album> = safeApiCall {
-        val album = requestWithToken<AlbumDto>("albums/${media.id}").toDomain()
+    override suspend fun fetchDetails(mediaId: String): Result<Album> = safeApiCall {
+        val album = requestWithToken<AlbumDto>("albums/${mediaId}").toDomain()
         album.copy(mainArtist = fetchArtist(album.mainArtist?.id))
     }
 

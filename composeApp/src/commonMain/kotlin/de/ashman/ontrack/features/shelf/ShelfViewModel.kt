@@ -11,10 +11,12 @@ import de.ashman.ontrack.authentication.user.User
 import de.ashman.ontrack.authentication.user.toDomain
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
-import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,20 +44,18 @@ class ShelfViewModel(
         }
     }
 
-    fun observeUserMedia(userId: String) {
-        viewModelScope.launch {
-            firestoreService.consumeLatestUserTrackings(userId = userId)
-                .collect { trackings ->
-                    val mediaList = trackings.mapNotNull {
-                        firestoreService.getMediaById(it.mediaId)?.toDomain()
-                    }
-                    _uiState.update { it.copy(mediaList = mediaList) }
+    fun observeUserTrackings(userId: String) {
+        firestoreService.fetchTrackings(userId)
+            .onEach { trackings ->
+                _uiState.update {
+                    it.copy(trackings = trackings.map { it.toDomain() })
                 }
-        }
+            }
+            .launchIn(viewModelScope)
     }
 }
 
 data class ShelfUiState(
     val user: User? = null,
-    val mediaList: List<Media> = emptyList(),
+    val trackings: List<Tracking> = emptyList(),
 )

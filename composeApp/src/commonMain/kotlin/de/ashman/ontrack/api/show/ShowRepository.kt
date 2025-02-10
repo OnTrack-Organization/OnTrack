@@ -7,7 +7,6 @@ import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Show
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -26,12 +25,12 @@ class ShowRepository(
         response.shows.map { it.toDomain() }
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Show> = safeApiCall {
+    override suspend fun fetchDetails(mediaId: String): Result<Show> = safeApiCall {
         val castAppend = "?append_to_response=credits"
-        val response: ShowDto = httpClient.get("tv/${media.id}$castAppend").body()
+        val response: ShowDto = httpClient.get("tv/${mediaId}$castAppend").body()
 
         val director = response.credits?.crew?.firstOrNull { it.job == "Director" }
-        val similar = fetchSimilar(media.id)
+        val similar = fetchSimilar(mediaId)
 
         val directorDetails = director?.id?.let {
             val directorResponse: PersonDetailsDto = httpClient.get("person/$it").body()

@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
@@ -59,7 +59,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId != null) Route.Feed else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -70,6 +70,7 @@ fun NavigationGraph(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 navController = navController,
                 feedViewModel = feedViewModel,
+                authViewModel = authViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
                 authService = authService,
@@ -122,15 +123,18 @@ fun NavGraphBuilder.mainGraph(
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
+    authViewModel: AuthViewModel,
 ) {
     composable<Route.Feed> {
         FeedScreen(
             modifier = modifier,
             viewModel = feedViewModel,
+            authViewModel = authViewModel,
             onFriendsClick = {
                 // TODO Maybe change not to route, but bottom sheet content?
                 //navController.navigate(Route.Friends)
             },
+            onLogoutClick = { navController.navigate(Route.Start) },
         )
     }
 
@@ -138,7 +142,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
-            onClickItem = { item -> navController.navigate(Detail(item)) }
+            onClickItem = { tracking -> navController.navigate(Detail(tracking)) }
         )
     }
 
@@ -147,8 +151,8 @@ fun NavGraphBuilder.mainGraph(
             modifier = modifier,
             viewModel = shelfViewModel,
             userId = authService.currentUserId,
-            onClickMore = { mediaType -> navController.navigate(ShelfList(mediaType)) },
-            onClickItem = { item -> navController.navigate(Detail(item)) },
+            onClickMore = { mediaType -> navController.navigate(ShelfList(authService.currentUserId, mediaType)) },
+            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
         )
     }
 }
@@ -160,20 +164,23 @@ fun NavGraphBuilder.mediaGraph(
     navController: NavHostController,
 ) {
     composable<Detail>(
-        typeMap = mapOf(typeOf<Media>() to CustomNavType.MediaNavType)
+        typeMap = mapOf(
+            typeOf<Tracking>() to CustomNavType.TrackingNavType,
+        )
     ) { backStackEntry ->
         val detail: Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            media = detail.media,
+            tracking = detail.tracking,
             viewModel = detailViewModel,
-            onClickItem = { item ->
+            onClickItem = { tracking ->
                 // Remove all the Detail Navigations from graph before navigating
-                navController.navigate(Detail(item)) {
+                // TODO ADD IN LATER IF I KNOW HOW
+                /*navController.navigate(Detail(tracking)) {
                     popUpTo<Detail> {
                         inclusive = true
                     }
-                }
+                }*/
             },
             onBack = {
                 navController.popBackStack()
@@ -186,21 +193,24 @@ fun NavGraphBuilder.mediaGraph(
 
         ShelfListScreen(
             viewModel = shelfListViewModel,
+            userId = shelfList.userId,
             mediaType = shelfList.mediaType,
-            onClickItem = { item -> navController.navigate(Detail(item)) },
-            onBack = { navController.popBackStack() },
+            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
+            onBack = {
+                shelfListViewModel.reset()
+                navController.popBackStack()
+            },
         )
     }
 
-    // TODO other users shelf. use the same vm or another one? also pass the user id when navigating there
     composable<OtherShelf> { backStackEntry ->
         val otherShelf: OtherShelf = backStackEntry.toRoute()
 
         OtherUserShelf(
             viewModel = shelfViewModel,
             userId = otherShelf.userId,
-            onClickMore = { mediaType -> navController.navigate(ShelfList(mediaType)) },
-            onClickItem = { item -> navController.navigate(Detail(item)) },
+            onClickMore = { mediaType -> navController.navigate(ShelfList(otherShelf.userId, mediaType)) },
+            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
             onBack = { navController.popBackStack() },
         )
     }

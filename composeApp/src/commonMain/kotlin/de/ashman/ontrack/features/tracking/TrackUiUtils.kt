@@ -12,7 +12,7 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album_status_catalog_label
 import ontrack.composeapp.generated.resources.album_status_catalog_sublabel
@@ -71,6 +71,12 @@ import ontrack.composeapp.generated.resources.videogame_status_dropped_label
 import ontrack.composeapp.generated.resources.videogame_status_dropped_sublabel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
+enum class CurrentBottomSheetContent {
+    TRACKING,
+    REVIEW,
+    DELETE
+}
 
 @Composable
 fun TrackStatus.getLabel(mediaType: MediaType): StringResource {

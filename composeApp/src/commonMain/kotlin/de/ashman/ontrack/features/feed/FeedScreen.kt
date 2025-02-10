@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.authentication.AuthViewModel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_nav_title
 import org.jetbrains.compose.resources.stringResource
@@ -39,7 +41,9 @@ import org.jetbrains.compose.resources.stringResource
 fun FeedScreen(
     modifier: Modifier,
     viewModel: FeedViewModel,
+    authViewModel: AuthViewModel,
     onFriendsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -70,6 +74,19 @@ fun FeedScreen(
                         Icon(
                             imageVector = Icons.Default.Group,
                             contentDescription = "Friends",
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            authViewModel.signOut()
+                            onLogoutClick()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.Logout,
+                            contentDescription = null,
                         )
                     }
                 },

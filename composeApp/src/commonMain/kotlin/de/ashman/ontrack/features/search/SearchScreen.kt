@@ -36,8 +36,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.keyboardAsState
@@ -46,6 +46,8 @@ import de.ashman.ontrack.features.detail.components.ErrorContent
 import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -54,7 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    onClickItem: (Media) -> Unit = { },
+    onClickItem: (Tracking) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -117,7 +119,19 @@ fun SearchScreen(
                                         title = media.title,
                                         coverUrl = media.coverUrl,
                                         trackStatusIcon = tracking?.status?.getStatusIcon(true),
-                                        onClick = { onClickItem(media) },
+                                        onClick = {
+                                            onClickItem(
+                                                tracking ?: Tracking(
+                                                    mediaId = media.id,
+                                                    mediaType = media.mediaType,
+                                                    mediaTitle = media.title,
+                                                    mediaCoverUrl = media.coverUrl,
+                                                    userId = Firebase.auth.currentUser?.uid,
+                                                    userImageUrl = Firebase.auth.currentUser?.photoURL,
+                                                    username = Firebase.auth.currentUser?.displayName,
+                                                )
+                                            )
+                                        },
                                     )
                                 }
                             }

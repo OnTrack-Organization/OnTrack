@@ -10,7 +10,6 @@ import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.Boardgame
 import de.ashman.ontrack.domain.BoardgameDesigner
-import de.ashman.ontrack.domain.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -39,9 +38,9 @@ class BoardgameRepository(
         convertXmlToResponse(detailedResponse).boardgames.map { it.toDomain() }
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Boardgame> = safeApiCall {
+    override suspend fun fetchDetails(mediaId: String): Result<Boardgame> = safeApiCall {
         val response: String = httpClient.get("thing") {
-            parameter("id", media.id)
+            parameter("id", mediaId)
             parameter("stats", 1)
         }.body()
 

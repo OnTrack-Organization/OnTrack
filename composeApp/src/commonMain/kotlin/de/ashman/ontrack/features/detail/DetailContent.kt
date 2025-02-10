@@ -1,13 +1,11 @@
 package de.ashman.ontrack.features.detail
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,8 +17,8 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Movie
 import de.ashman.ontrack.domain.Show
-import de.ashman.ontrack.domain.Tracking
 import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.ReviewCard
 import de.ashman.ontrack.features.detail.content.AlbumDetailContent
@@ -35,26 +33,14 @@ import de.ashman.ontrack.features.detail.content.VideogameDetailContent
 fun DetailContent(
     media: Media,
     tracking: Tracking?,
-    searchDuration: Long,
     listState: LazyListState,
-    onClickItem: (Media) -> Unit,
+    onClickItem: (String) -> Unit,
 ) {
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // TODO fix scrolling bug
-        item {
-            Column() {
-                Text(media.id)
-                tracking?.let { Text(tracking.id) }
-                Text(
-                    text = "Search took ${searchDuration}ms"
-                )
-            }
-        }
-
         item {
             RatingCardRow(
                 apiType = media.mediaType.getRatingType(),

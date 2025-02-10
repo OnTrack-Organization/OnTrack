@@ -3,7 +3,6 @@ package de.ashman.ontrack.features.detail.content
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.api.utils.getLivingDates
 import de.ashman.ontrack.domain.Book
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaChips
@@ -17,7 +16,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BookDetailContent(
     book: Book,
-    onClickItem: (Media) -> Unit = { },
+    onClickItem: (String) -> Unit,
 ) {
     item {
         MediaDescription(

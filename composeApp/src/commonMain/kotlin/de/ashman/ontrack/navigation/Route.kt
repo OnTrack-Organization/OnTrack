@@ -1,7 +1,7 @@
 package de.ashman.ontrack.navigation
 
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,12 +29,13 @@ sealed class Route {
     // OTHER
     @Serializable
     data class ShelfList(
+        val userId: String,
         val mediaType: MediaType,
     ) : Route()
 
     @Serializable
     data class Detail(
-        val media: Media,
+        val tracking: Tracking,
     ) : Route()
 
     @Serializable

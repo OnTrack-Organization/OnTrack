@@ -15,11 +15,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatus
-import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.tracking.content.DeleteContent
 import de.ashman.ontrack.features.tracking.content.ReviewContent
 import de.ashman.ontrack.features.tracking.content.TrackingContent
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.datetime.Clock.System
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -27,20 +29,14 @@ import kotlin.uuid.Uuid
 // TODO add back handling
 // Back Handling is being worked on rn
 // https://youtrack.jetbrains.com/issue/CMP-4419
-
-enum class CurrentBottomSheetContent {
-    TRACKING,
-    REVIEW,
-    DELETE
-}
-
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun TrackingBottomSheetContent(
     currentContent: CurrentBottomSheetContent,
     mediaId: String,
     mediaType: MediaType,
-    mediaTitle: String,
+    mediaTitle: String?,
+    mediaCoverUrl: String?,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
     onDeleteTrackings: () -> Unit,
@@ -53,19 +49,22 @@ fun TrackingBottomSheetContent(
         mutableStateOf(
             tracking?.copy(
                 id = Uuid.random().toString(),
-                timestamp = System.now().toEpochMilliseconds()
+                timestamp = System.now().toEpochMilliseconds(),
             )
                 ?: Tracking(
-                    mediaId = mediaId,
                     id = Uuid.random().toString(),
-                    timestamp = System.now().toEpochMilliseconds(),
-                    // TODO SET LATER AND FIX IT
+                    mediaId = mediaId,
                     mediaType = mediaType,
-                    mediaImageUrl = "",
                     mediaTitle = mediaTitle,
-                    userId = "",
-                    username = "",
-                    userImageUrl = "",
+                    mediaCoverUrl = mediaCoverUrl,
+                    userId = Firebase.auth.currentUser?.uid,
+                    username = Firebase.auth.currentUser?.displayName,
+                    userImageUrl = Firebase.auth.currentUser?.photoURL,
+                    status = null,
+                    rating = null,
+                    reviewTitle = null,
+                    reviewDescription = null,
+                    timestamp = System.now().toEpochMilliseconds(),
                 )
         )
     }

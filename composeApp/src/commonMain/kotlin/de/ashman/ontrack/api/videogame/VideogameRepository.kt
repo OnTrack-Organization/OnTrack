@@ -8,7 +8,6 @@ import de.ashman.ontrack.api.videogame.dto.PopularityDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.Franchise
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Videogame
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -47,13 +46,13 @@ class VideogameRepository(
         response.map { it.toDomain() }
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Videogame> = safeApiCall {
+    override suspend fun fetchDetails(mediaId: String): Result<Videogame> = safeApiCall {
         val response: List<VideogameDto> = httpClient.post(buildRequestWithToken {
             url("games")
             setBody(
                 """
                     fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
-                    where id = ${media.id};
+                    where id = ${mediaId};
                 """
             )
         }).body()

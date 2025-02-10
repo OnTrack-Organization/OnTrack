@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatus
-import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.detail.components.ReviewCardContent
@@ -82,7 +82,7 @@ fun FeedCard(
             FeedCardContent(
                 mediaType = tracking.mediaType,
                 mediaTitle = tracking.mediaTitle,
-                mediaCoverUrl = tracking.mediaImageUrl,
+                mediaCoverUrl = tracking.mediaCoverUrl,
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
@@ -101,8 +101,8 @@ fun FeedCard(
 
 @Composable
 fun FeedCardHeader(
-    userImageUrl: String,
-    username: String,
+    userImageUrl: String?,
+    username: String?,
     timestamp: String,
     onShowTrackingHistory: () -> Unit,
 ) {
@@ -148,11 +148,13 @@ fun FeedCardHeader(
                 }
             }
             Column {
-                Text(
-                    text = username,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                )
+                username?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
                 Text(
                     text = timestamp,
                     style = MaterialTheme.typography.labelSmall,
@@ -174,7 +176,7 @@ fun FeedCardHeader(
 @Composable
 fun FeedCardContent(
     mediaType: MediaType,
-    mediaTitle: String,
+    mediaTitle: String?,
     mediaCoverUrl: String?,
     trackStatus: TrackStatus?,
     reviewRating: Int?,
@@ -199,11 +201,13 @@ fun FeedCardContent(
                     imageVector = mediaType.getMediaTypeUi().icon,
                     contentDescription = null,
                 )
-                Text(
-                    text = mediaTitle,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                )
+                mediaTitle?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
 
             ReviewCardContent(

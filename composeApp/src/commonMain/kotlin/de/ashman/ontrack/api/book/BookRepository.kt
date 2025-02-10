@@ -14,7 +14,6 @@ import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.di.SMALL_FETCH_LIMIT
 import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
-import de.ashman.ontrack.domain.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -35,8 +34,9 @@ class BookRepository(
         response.books.map { it.toDomain() }
     }
 
-    override suspend fun fetchDetails(media: Media): Result<Book> = safeApiCall {
-        val book = media as Book
+    override suspend fun fetchDetails(mediaId: String): Result<Book> = safeApiCall {
+        val bookResponse: BookWorksResponse = httpClient.get("/works/$mediaId.json").body()
+        val book = bookResponse.toDomain()
 
         val description = fetchDescription(book.id)
         val author = fetchAuthorWithBooks(book.author?.id)

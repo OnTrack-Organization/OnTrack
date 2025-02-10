@@ -33,9 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.tracking.getLabel
 import de.ashman.ontrack.features.tracking.getStatusIcon
@@ -47,14 +47,16 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ShelfListScreen(
     viewModel: ShelfListViewModel,
+    userId: String,
     mediaType: MediaType,
-    onClickItem: (Media) -> Unit,
+    onClickItem: (Tracking) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(mediaType) {
         viewModel.updateSelectedMediaType(mediaType)
+        viewModel.observeUserTrackings(userId)
     }
 
     Scaffold(
@@ -105,9 +107,9 @@ fun ShelfListScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(uiState.mediaList, key = { it.id }) {
+                items(uiState.filteredTrackings, key = { it.id }) {
                     MediaPoster(
-                        coverUrl = it.coverUrl,
+                        coverUrl = it.mediaCoverUrl,
                         onClick = { onClickItem(it) },
                     )
                 }

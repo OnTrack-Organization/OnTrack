@@ -214,13 +214,13 @@ val appModule = module {
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
     // VIEWMODEL
-    viewModelDefinition { StartViewModel(get()) }
+    viewModelDefinition { StartViewModel() }
     viewModelDefinition { AuthViewModel(get()) }
     viewModelDefinition { FeedViewModel(get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
-    viewModelDefinition { ShelfListViewModel(get(), get()) }
+    viewModelDefinition { ShelfListViewModel(get()) }
 
     // TEST
     single<FirestoreService> { FirestoreServiceImpl(Firebase.firestore, get()) }

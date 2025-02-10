@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
-import de.ashman.ontrack.domain.TrackingComment
+import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import kotlinx.coroutines.launch

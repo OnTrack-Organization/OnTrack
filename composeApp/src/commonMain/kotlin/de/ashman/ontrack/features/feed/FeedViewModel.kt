@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
-import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,22 +40,24 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        if (isLikedByCurrentUser(tracking)) {
-            firestoreService.unlikeTracking(tracking.userId, tracking.id)
-        } else {
-            firestoreService.likeTracking(tracking.userId, tracking.id)
+        tracking.userId?.let {
+            if (isLikedByCurrentUser(tracking)) {
+                firestoreService.unlikeTracking(it, tracking.id)
+            } else {
+                firestoreService.likeTracking(it, tracking.id)
+            }
         }
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let {
-            firestoreService.addComment(friendId = it.userId, trackingId = it.id, comment = comment)
+            firestoreService.addComment(friendId = it.userId.orEmpty(), trackingId = it.id, comment = comment)
         }
     }
 
     fun deleteComment(commentId: String) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let {
-            firestoreService.deleteComment(friendId = it.userId, trackingId = it.id, commentId = commentId)
+            firestoreService.deleteComment(friendId = it.userId.orEmpty(), trackingId = it.id, commentId = commentId)
         }
     }
 

@@ -33,7 +33,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.domain.Media
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.detail.components.ErrorContent
 import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.detail.components.StickyMainContent
@@ -50,9 +50,9 @@ import org.jetbrains.compose.resources.pluralStringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    media: Media,
+    tracking: Tracking,
     viewModel: DetailViewModel,
-    onClickItem: (Media) -> Unit,
+    onClickItem: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,8 +66,8 @@ fun DetailScreen(
 
     val listState = rememberLazyListState()
 
-    LaunchedEffect(media.id) {
-        viewModel.fetchDetails(media)
+    LaunchedEffect(tracking.mediaId) {
+        viewModel.fetchDetails(tracking)
     }
 
     Scaffold(
@@ -81,11 +81,11 @@ fun DetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = media.mediaType.getMediaTypeUi().icon,
+                            imageVector = tracking.mediaType.getMediaTypeUi().icon,
                             contentDescription = "Media Type Icon"
                         )
                         Text(
-                            text = pluralStringResource(media.mediaType.getMediaTypeUi().title, 1),
+                            text = pluralStringResource(tracking.mediaType.getMediaTypeUi().title, 1),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                         )
@@ -104,7 +104,10 @@ fun DetailScreen(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
             StickyMainContent(
-                media = media,
+                imageModifier = Modifier.padding(horizontal = 16.dp),
+                mediaType = tracking.mediaType,
+                mediaTitle = tracking.mediaTitle,
+                mediaCoverUrl = tracking.mediaCoverUrl,
                 status = uiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
@@ -121,16 +124,15 @@ fun DetailScreen(
             when (uiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()
 
-                DetailResultState.Error -> ErrorContent(text = media.mediaType.getMediaTypeUi().error)
+                DetailResultState.Error -> ErrorContent(text = tracking.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
                     uiState.selectedMedia?.let {
                         DetailContent(
                             media = it,
                             tracking = uiState.selectedTracking,
-                            searchDuration = uiState.searchDuration,
                             listState = listState,
-                            onClickItem = onClickItem
+                            onClickItem = onClickItem,
                         )
                     }
                 }
@@ -144,10 +146,11 @@ fun DetailScreen(
             ) {
                 TrackingBottomSheetContent(
                     currentContent = currentBottomSheet,
-                    mediaId = media.id,
-                    mediaType = media.mediaType,
-                    mediaTitle = media.title,
-                    tracking = uiState.selectedTracking,
+                    mediaId = tracking.mediaId,
+                    mediaType = tracking.mediaType,
+                    mediaTitle = tracking.mediaTitle,
+                    mediaCoverUrl = tracking.mediaCoverUrl,
+                    tracking = tracking,
                     onSaveTracking = {
                         viewModel.saveTracking(it)
                         showBottomSheet = false

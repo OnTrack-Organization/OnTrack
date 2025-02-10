@@ -2,33 +2,18 @@ package de.ashman.ontrack.features.init.start
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.FirestoreService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-class StartViewModel(
-    private val firestoreService: FirestoreService,
-) : ViewModel() {
+class StartViewModel() : ViewModel() {
     private val _uiState = MutableStateFlow(StartState())
     val uiState = _uiState
-        .onStart {
-            //fetchRandomItemCovers()
-        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
-
-    // Maybe use this, but not for now
-    private fun fetchRandomItemCovers() = viewModelScope.launch {
-        val randomCoverUrls = firestoreService.getRandomCoverForEveryMediaType()
-        _uiState.update { it.copy(itemCovers = randomCoverUrls) }
-    }
 }
 
 data class StartState(

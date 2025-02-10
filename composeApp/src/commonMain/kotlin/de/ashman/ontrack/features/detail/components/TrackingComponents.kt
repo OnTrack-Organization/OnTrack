@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.MAX_RATING
-import de.ashman.ontrack.domain.TrackStatus
-import de.ashman.ontrack.domain.Tracking
+import de.ashman.ontrack.domain.tracking.MAX_RATING
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
@@ -47,7 +47,7 @@ fun ReviewCard(
             onClick = { expanded = !expanded }
         ) {
             ReviewCardContent(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
@@ -86,7 +86,10 @@ fun ReviewCardContent(
                 )
             }
 
-            MiniStarRatingBar(rating = reviewRating)
+            MiniStarRatingBar(
+                modifier = Modifier.weight(1f),
+                rating = reviewRating
+            )
 
             timestamp?.let {
                 Text(
@@ -95,9 +98,9 @@ fun ReviewCardContent(
                 )
             }
 
-           /* if (hasOverflow) {
-                Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
-            }*/
+            /* if (hasOverflow) {
+                 Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+             }*/
         }
 
         if (!reviewTitle.isNullOrBlank()) {
@@ -126,9 +129,12 @@ fun ReviewCardContent(
 
 @Composable
 fun MiniStarRatingBar(
+    modifier: Modifier = Modifier,
     rating: Int?,
 ) {
-    Row {
+    Row(
+        modifier = modifier
+    ) {
         for (i in 1..MAX_RATING) {
             Icon(
                 imageVector = Icons.Filled.Star,
@@ -136,7 +142,7 @@ fun MiniStarRatingBar(
                 tint = if (rating != null && i <= rating) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 },
             )
         }

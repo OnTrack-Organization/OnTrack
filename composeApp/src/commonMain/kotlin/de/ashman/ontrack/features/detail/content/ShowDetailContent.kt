@@ -2,7 +2,6 @@ package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.api.utils.getLivingDates
-import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Show
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
@@ -19,7 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.ShowDetailContent(
     show: Show,
-    onClickItem: (Media) -> Unit = { },
+    onClickItem: (String) -> Unit,
 ) {
     item {
         MediaDescription(

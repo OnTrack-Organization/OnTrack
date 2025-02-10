@@ -21,8 +21,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -32,8 +30,8 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.TrackStatus
+import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
@@ -41,7 +39,6 @@ import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.tracking.getLabel
 import de.ashman.ontrack.features.tracking.getStatusIcon
-import kotlinx.coroutines.runBlocking
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.no_title
 import ontrack.composeapp.generated.resources.track_button
@@ -51,16 +48,18 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun StickyMainContent(
     imageModifier: Modifier = Modifier,
-    media: Media,
+    mediaType: MediaType,
+    mediaTitle: String? = null,
+    mediaCoverUrl: String? = null,
     status: TrackStatus? = null,
     scrollBehavior: TopAppBarScrollBehavior,
     onClickAddTracking: () -> Unit,
     onClickRemoveTracking: () -> Unit,
 ) {
-    // TODO ugly, so change
-    val mainInfoItems by remember(media) {
+    // TODO FIX THIS
+    /*val mainInfoItems by remember(media) {
         mutableStateOf(runBlocking { media.getMainInfoItems() })
-    }
+    }*/
 
     val transition = updateTransition(targetState = scrollBehavior.state.contentOffset < 0, label = "Image Size Transition")
     val size by transition.animateDp { isScrolledDown ->
@@ -74,17 +73,17 @@ fun StickyMainContent(
     ) {
         MediaPoster(
             modifier = imageModifier.height(size),
-            coverUrl = media.coverUrl,
+            coverUrl = mediaCoverUrl,
         )
 
         Column {
             MediaTitle(
-                title = media.title,
+                title = mediaTitle,
                 textStyle = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             )
 
-            MainInfo(mainInfoItems = mainInfoItems)
+            //MainInfo(mainInfoItems = mainInfoItems)
         }
 
         Row(
@@ -93,7 +92,7 @@ fun StickyMainContent(
         ) {
             OnTrackButton(
                 modifier = Modifier.weight(1f),
-                text = if (status != null) status.getLabel(media.mediaType) else Res.string.track_button,
+                text = if (status != null) status.getLabel(mediaType) else Res.string.track_button,
                 icon = if (status != null) status.getStatusIcon(true) else Icons.Default.Add,
                 onClick = onClickAddTracking,
             )
