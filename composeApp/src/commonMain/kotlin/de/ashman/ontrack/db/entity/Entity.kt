@@ -26,8 +26,7 @@ data class TrackingEntity(
     val mediaCoverUrl: String?,
 
     val status: TrackStatus?,
-    // TODO change to double later
-    val rating: Int?,
+    val rating: Double?,
     val reviewTitle: String?,
     val reviewDescription: String?,
 

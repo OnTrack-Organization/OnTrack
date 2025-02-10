@@ -54,24 +54,6 @@ class FirestoreServiceImpl(
         }
     }
 
-    /*override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> = flow {
-        val collection = userTrackingCollection(userId)
-            .orderBy("timestamp", Direction.DESCENDING)
-
-        val snapshot = try {
-            collection.get(Source.CACHE)
-        } catch (_: Exception) {
-            collection.get()
-        }
-
-        val trackings = snapshot.documents
-            .map { it.data<TrackingEntity>() }
-            .groupBy { it.mediaId }
-            .map { it.value.first() }
-
-        emit(trackings)
-    }*/
-
     override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> {
         return userTrackingCollection(userId)
             .orderBy("timestamp", Direction.DESCENDING)
@@ -84,7 +66,6 @@ class FirestoreServiceImpl(
             }
     }
 
-    // TODO probably not needed if above is implemented correctly
     override fun fetchTracking(mediaId: String): Flow<TrackingEntity?> {
         return userTrackingCollection(authService.currentUserId)
             .where { "mediaId" equalTo mediaId }
@@ -104,7 +85,7 @@ class FirestoreServiceImpl(
                 mediaId = "1",
                 mediaTitle = "Bestes Buch was jemals geschrieben wurde so guuuuuuuut",
                 status = TrackStatus.CONSUMING,
-                rating = 2,
+                rating = 5.0,
                 reviewTitle = "Test Title mit langem namen und so ja geil",
                 reviewDescription = "Wow was ein guter titel , so viel spaß hat es gemacht zu lesen und ich mag es sehr und ja tschüss. Achso hier ist noch mehr text für dich",
                 timestamp = System.now().toEpochMilliseconds(),
@@ -202,7 +183,7 @@ class FirestoreServiceImpl(
                 mediaId = "1",
                 mediaTitle = "Bestes Buch was jemals geschrieben wurde so guuuuuuuut",
                 status = TrackStatus.CONSUMING,
-                rating = 2,
+                rating = 1.0,
                 reviewTitle = "Test Title mit langem namen und so ja geil",
                 reviewDescription = "Wow was ein guter titel , so viel spaß hat es gemacht zu lesen und ich mag es sehr und ja tschüss. Achso hier ist noch mehr text für dich",
                 timestamp = System.now().toEpochMilliseconds(),

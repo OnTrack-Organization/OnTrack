@@ -3,6 +3,8 @@ package de.ashman.ontrack.domain.tracking
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
@@ -20,14 +22,13 @@ data class Tracking(
     val mediaCoverUrl: String? = null,
 
     val status: TrackStatus? = null,
-    // TODO change to double later
-    val rating: Int? = null,
+    val rating: Double? = null,
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
 
-    val userId: String? = null,
-    val username: String? = null,
-    val userImageUrl: String? = null,
+    val userId: String? = Firebase.auth.currentUser?.uid,
+    val username: String? = Firebase.auth.currentUser?.displayName,
+    val userImageUrl: String? = Firebase.auth.currentUser?.photoURL,
 
     val likedBy: List<String> = listOf(),
     val comments: List<TrackingComment> = listOf(),

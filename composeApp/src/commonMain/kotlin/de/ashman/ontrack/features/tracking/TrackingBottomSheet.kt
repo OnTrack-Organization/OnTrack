@@ -20,8 +20,6 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.tracking.content.DeleteContent
 import de.ashman.ontrack.features.tracking.content.ReviewContent
 import de.ashman.ontrack.features.tracking.content.TrackingContent
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlinx.datetime.Clock.System
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -44,28 +42,18 @@ fun TrackingBottomSheetContent(
     goToReview: () -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
-    // TODO this could be better
+    // Copy previous tracking with new id and timestamp or create new tracking with filled media data
     var tracking by remember {
         mutableStateOf(
             tracking?.copy(
                 id = Uuid.random().toString(),
                 timestamp = System.now().toEpochMilliseconds(),
+            ) ?: Tracking(
+                mediaId = mediaId,
+                mediaType = mediaType,
+                mediaTitle = mediaTitle,
+                mediaCoverUrl = mediaCoverUrl,
             )
-                ?: Tracking(
-                    id = Uuid.random().toString(),
-                    mediaId = mediaId,
-                    mediaType = mediaType,
-                    mediaTitle = mediaTitle,
-                    mediaCoverUrl = mediaCoverUrl,
-                    userId = Firebase.auth.currentUser?.uid,
-                    username = Firebase.auth.currentUser?.displayName,
-                    userImageUrl = Firebase.auth.currentUser?.photoURL,
-                    status = null,
-                    rating = null,
-                    reviewTitle = null,
-                    reviewDescription = null,
-                    timestamp = System.now().toEpochMilliseconds(),
-                )
         )
     }
 

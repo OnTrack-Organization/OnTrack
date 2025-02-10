@@ -64,7 +64,7 @@ fun ReviewCardContent(
     modifier: Modifier = Modifier,
     reviewTitle: String?,
     reviewDescription: String?,
-    reviewRating: Int?,
+    reviewRating: Double?,
     timestamp: Long? = null,
     trackStatus: TrackStatus?,
     expanded: Boolean,
@@ -130,7 +130,7 @@ fun ReviewCardContent(
 @Composable
 fun MiniStarRatingBar(
     modifier: Modifier = Modifier,
-    rating: Int?,
+    rating: Double?,
 ) {
     Row(
         modifier = modifier

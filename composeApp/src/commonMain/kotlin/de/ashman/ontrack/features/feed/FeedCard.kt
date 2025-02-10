@@ -179,7 +179,7 @@ fun FeedCardContent(
     mediaTitle: String?,
     mediaCoverUrl: String?,
     trackStatus: TrackStatus?,
-    reviewRating: Int?,
+    reviewRating: Double?,
     reviewTitle: String?,
     reviewDescription: String?,
     expanded: Boolean,

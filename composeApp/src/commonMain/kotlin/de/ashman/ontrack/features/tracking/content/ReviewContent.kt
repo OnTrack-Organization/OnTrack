@@ -34,10 +34,10 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ReviewContent(
     mediaTitle: String?,
-    rating: Int?,
+    rating: Double?,
     reviewTitle: String?,
     reviewDescription: String?,
-    onRatingChange: (Int) -> Unit,
+    onRatingChange: (Double) -> Unit,
     onReviewTitleChange: (String) -> Unit,
     onReviewDescriptionChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -76,8 +76,8 @@ fun ReviewContent(
 
 @Composable
 fun SelectableStarRatingBar(
-    rating: Int?,
-    onRatingChange: (Int) -> Unit,
+    rating: Double?,
+    onRatingChange: (Double) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -95,9 +95,10 @@ fun SelectableStarRatingBar(
                     contentDescription = null,
                     tint = if (rating != null && i <= rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(62.dp)
+                        .size(64.dp)
                         .clickable(
-                            onClick = { onRatingChange(i) },
+                            // TODO make this be able to have half stars
+                            onClick = { onRatingChange(i.toDouble()) },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         )
