@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.detail
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,7 +65,10 @@ fun DetailContent(
 
         tracking?.let {
             item {
-                ReviewCard(tracking = it)
+                ReviewCard(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    tracking = it,
+                )
             }
         }
 

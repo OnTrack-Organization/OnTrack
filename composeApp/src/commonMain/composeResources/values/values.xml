@@ -23,6 +23,17 @@
     <string name="intro_second_page_description">Keep track of your shelf and share it with the world, or just your friends.</string>
     <string name="intro_third_page_description">Never miss what your friends are into right now, you're gonna have something to talk about at the next party.</string>
 
+    <!-- FEED -->
+    <string name="feed_comments">Comments</string>
+    <string name="feed_comments_placeholder">Write a comment…</string>
+    <string name="feed_likes_count">%1$s Likes</string>
+    <string name="feed_comments_count">%1$s Comments</string>
+
+    <string name="feed_delete_comment_title">Delete comment?</string>
+    <string name="feed_delete_comment_description">Are you sure you want to delete this comment?</string>
+    <string name="feed_delete_comment_confirm">Delete</string>
+    <string name="feed_delete_comment_cancel">Cancel</string>
+
     <!-- SEARCH -->
     <string name="search_placeholder_movies">Search for movies...</string>
     <string name="search_placeholder_shows">Search for shows...</string>

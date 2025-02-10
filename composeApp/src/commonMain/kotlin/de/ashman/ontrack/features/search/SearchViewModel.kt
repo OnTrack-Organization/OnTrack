@@ -13,13 +13,11 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.Tracking
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,7 +33,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.collections.map
 import kotlin.time.measureTime
 
 class SearchViewModel(
@@ -46,6 +43,8 @@ class SearchViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val firestoreService: FirestoreService,
+    private val authService: AuthService,
+
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -181,13 +180,14 @@ class SearchViewModel(
     }
 
     private fun observeUserTrackings() {
-        firestoreService.consumeLatestUserTrackings(userId = Firebase.auth.currentUser?.uid ?: return)
+        // TODO add in later again
+        /*firestoreService.consumeLatestUserTrackings(userId = authService.currentUserId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })
                 }
             }
-            .launchIn(viewModelScope)
+            .launchIn(viewModelScope)*/
     }
 
     fun onQueryChanged(query: String) {

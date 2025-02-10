@@ -19,13 +19,26 @@ data class UserEntity(
 @Serializable
 data class TrackingEntity(
     val id: String,
+
+    val mediaType: MediaType,
+    val mediaImageUrl: String,
+    val mediaTitle: String,
     val mediaId: String,
+
     val status: TrackStatus? = null,
     // TODO change to double later
     val rating: Int? = null,
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
+
     val updatedAt: Long,
+
+    val userId: String,
+    val username: String,
+    val userImageUrl: String,
+
+    val likedBy: List<String> = listOf(),
+    val comments: List<TrackingCommentEntity> = listOf(),
 )
 
 @Serializable
@@ -38,4 +51,15 @@ data class MediaEntity(
     val averageRating: Double = 0.0,
     val ratingCount: Int = 0,
     val updatedAt: Long = System.now().toEpochMilliseconds(),
+)
+
+@Serializable
+data class TrackingCommentEntity(
+    val id: String,
+    val userId: String,
+    val userImageUrl: String,
+    val username: String,
+
+    val comment: String,
+    val timestamp: Long,
 )

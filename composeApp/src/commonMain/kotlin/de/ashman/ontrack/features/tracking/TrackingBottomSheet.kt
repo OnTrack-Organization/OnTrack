@@ -58,7 +58,14 @@ fun TrackingBottomSheetContent(
                 ?: Tracking(
                     mediaId = mediaId,
                     id = Uuid.random().toString(),
-                    timestamp = System.now().toEpochMilliseconds()
+                    timestamp = System.now().toEpochMilliseconds(),
+                    // TODO SET LATER AND FIX IT
+                    mediaType = mediaType,
+                    mediaImageUrl = "",
+                    mediaTitle = mediaTitle,
+                    userId = "",
+                    username = "",
+                    userImageUrl = "",
                 )
         )
     }

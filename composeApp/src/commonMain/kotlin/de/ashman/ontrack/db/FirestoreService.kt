@@ -21,4 +21,11 @@ interface FirestoreService {
     suspend fun deleteTrackingsByMediaId(mediaId: String)
     fun consumeLatestUserTrackings(userId: String): Flow<List<TrackingEntity>>
     fun consumeLatestUserTracking(mediaId: String): Flow<TrackingEntity?>
+
+    // FEED
+    suspend fun getTrackingFeed(): List<TrackingEntity>
+    suspend fun likeTracking(friendId: String, trackingId: String)
+    suspend fun unlikeTracking(friendId: String, trackingId: String)
+    suspend fun addComment(friendId: String, trackingId: String, comment: String)
+    suspend fun deleteComment(friendId: String, trackingId: String, commentId: String)
 }

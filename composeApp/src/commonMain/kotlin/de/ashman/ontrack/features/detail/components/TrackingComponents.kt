@@ -3,12 +3,9 @@ package de.ashman.ontrack.features.detail.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,70 +32,94 @@ import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun ReviewCard(
+    modifier: Modifier = Modifier,
     tracking: Tracking,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var hasOverflow by remember { mutableStateOf(false) }
 
     if (tracking.status != TrackStatus.CATALOG && tracking.status != TrackStatus.CONSUMING) {
         Card(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = modifier,
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
             ),
             onClick = { expanded = !expanded }
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    tracking.status?.getStatusIcon(true)?.let {
-                        Icon(
-                            imageVector = it, it.name,
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
+            ReviewCardContent(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                reviewTitle = tracking.reviewTitle,
+                reviewDescription = tracking.reviewDescription,
+                reviewRating = tracking.rating,
+                timestamp = tracking.timestamp,
+                trackStatus = tracking.status,
+                expanded = expanded,
+            )
+        }
+    }
+}
 
-                    MiniStarRatingBar(rating = tracking.rating)
+@Composable
+fun ReviewCardContent(
+    modifier: Modifier = Modifier,
+    reviewTitle: String?,
+    reviewDescription: String?,
+    reviewRating: Int?,
+    timestamp: Long? = null,
+    trackStatus: TrackStatus?,
+    expanded: Boolean,
+) {
+    var hasOverflow by remember { mutableStateOf(false) }
 
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = tracking.timestamp.formatDate(),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-
-                    if (hasOverflow) {
-                        Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
-                    }
-                }
-
-                if (!tracking.reviewTitle.isNullOrBlank()) {
-                    Text(
-                        text = tracking.reviewTitle,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                    )
-                }
-
-                if (!tracking.reviewDescription.isNullOrBlank()) {
-                    Text(
-                        text = tracking.reviewDescription,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = if (expanded) Int.MAX_VALUE else 2,
-                        overflow = TextOverflow.Ellipsis,
-                        onTextLayout = {
-                            if (!expanded) hasOverflow = it.hasVisualOverflow
-                        }
-                    )
-                }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            trackStatus?.getStatusIcon(true)?.let {
+                Icon(
+                    imageVector = it, it.name,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
             }
+
+            MiniStarRatingBar(rating = reviewRating)
+
+            timestamp?.let {
+                Text(
+                    text = it.formatDate(),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+           /* if (hasOverflow) {
+                Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+            }*/
+        }
+
+        if (!reviewTitle.isNullOrBlank()) {
+            Text(
+                text = reviewTitle,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = if (expanded) Int.MAX_VALUE else 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (!reviewDescription.isNullOrBlank()) {
+            Text(
+                text = reviewDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = if (expanded) Int.MAX_VALUE else 2,
+                overflow = TextOverflow.Ellipsis,
+                onTextLayout = {
+                    if (!expanded) hasOverflow = it.hasVisualOverflow
+                }
+            )
         }
     }
 }
@@ -122,10 +143,19 @@ fun MiniStarRatingBar(
     }
 }
 
-
 fun Long.formatDate(): String {
     val instant = Instant.fromEpochMilliseconds(this)
     val dateTime = instant.toLocalDateTime(currentSystemDefault())
 
     return "${dateTime.dayOfMonth.toString().padStart(2, '0')}.${dateTime.monthNumber.toString().padStart(2, '0')}.${dateTime.year}"
+}
+
+fun Long.formatDateTime(): String {
+    val instant = Instant.fromEpochMilliseconds(this)
+    val dateTime = instant.toLocalDateTime(currentSystemDefault())
+
+    val date = "${dateTime.dayOfMonth.toString().padStart(2, '0')}.${dateTime.monthNumber.toString().padStart(2, '0')}.${dateTime.year}"
+    val time = "${dateTime.hour.toString().padStart(2, '0')}:${dateTime.minute.toString().padStart(2, '0')}"
+
+    return "$date, $time"
 }

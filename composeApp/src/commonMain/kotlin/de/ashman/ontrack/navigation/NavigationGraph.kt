@@ -17,6 +17,7 @@ import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
+import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
 import de.ashman.ontrack.features.init.start.StartScreen
@@ -40,6 +41,7 @@ fun NavigationGraph(
     navController: NavHostController = rememberNavController(),
     startViewModel: StartViewModel = koinInject(),
     authViewModel: AuthViewModel = koinInject(),
+    feedViewModel: FeedViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
@@ -57,7 +59,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId != null) Route.Shelf else Route.Start,
+            startDestination = if (authService.currentUserId != null) Route.Feed else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -67,8 +69,8 @@ fun NavigationGraph(
             mainGraph(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 navController = navController,
+                feedViewModel = feedViewModel,
                 searchViewModel = searchViewModel,
-                authViewModel = authViewModel,
                 shelfViewModel = shelfViewModel,
                 authService = authService,
             )
@@ -116,16 +118,19 @@ fun NavGraphBuilder.initGraph(
 fun NavGraphBuilder.mainGraph(
     modifier: Modifier,
     navController: NavHostController,
+    feedViewModel: FeedViewModel,
     searchViewModel: SearchViewModel,
-    authViewModel: AuthViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
 ) {
     composable<Route.Feed> {
         FeedScreen(
             modifier = modifier,
-            viewModel = authViewModel,
-            onClickLogout = { navController.navigate(Route.Start) },
+            viewModel = feedViewModel,
+            onFriendsClick = {
+                // TODO Maybe change not to route, but bottom sheet content?
+                //navController.navigate(Route.Friends)
+            },
         )
     }
 

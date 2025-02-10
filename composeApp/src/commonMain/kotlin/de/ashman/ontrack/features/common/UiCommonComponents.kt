@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -83,6 +84,7 @@ fun OnTrackOutlinedButton(
 fun OnTrackIconButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     Button(
@@ -90,6 +92,7 @@ fun OnTrackIconButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
         contentPadding = PaddingValues(0.dp),
+        enabled = enabled,
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
@@ -118,4 +121,32 @@ fun OnTrackTextField(
             unfocusedIndicatorColor = Color.Transparent,
         )
     )
+}
+
+// TODO maybe create my own
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OnTrackCommentTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    value: String?,
+    onValueChange: (String) -> Unit,
+) {
+   /* BasicTextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value.orEmpty(),
+        onValueChange = onValueChange,
+        decorationBox = {
+            TextFieldDefaults.DecorationBox(
+                value = value.orEmpty(),
+                visualTransformation = { value },
+                innerTextField = it,
+                placeholder = { Text(placeholder) },
+                singleLine = true,
+                enabled = true,
+                interactionSource = MutableInteractionSource(),
+                contentPadding = PaddingValues(0.dp),
+            )
+        }
+    )*/
 }
