@@ -65,10 +65,11 @@ fun ErrorContent(
 
 @Composable
 fun EmptyContent(
+    modifier: Modifier = Modifier,
     mediaType: MediaType
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

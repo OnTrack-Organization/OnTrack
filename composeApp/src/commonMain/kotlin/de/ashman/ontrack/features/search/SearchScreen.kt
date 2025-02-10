@@ -2,14 +2,16 @@ package de.ashman.ontrack.features.search
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -88,65 +89,71 @@ fun SearchScreen(
             )
         }
 
-        PullToRefreshBox(
-            modifier = Modifier.fillMaxHeight(),
-            isRefreshing = uiState.isRefreshing,
-            onRefresh = viewModel::refresh,
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight(0.5f),
-            ) {
-                item {
-                    when (uiState.searchResultState) {
-                        SearchResultState.Empty -> EmptyContent(uiState.selectedMediaType)
+        Column(Modifier.fillMaxSize()) {
+            BoxWithConstraints {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(maxHeight / 2),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    item {
+                        when (uiState.searchResultState) {
+                            SearchResultState.Empty -> EmptyContent(
+                                modifier = Modifier.wrapContentSize(),
+                                uiState.selectedMediaType,
+                            )
 
-                        SearchResultState.Loading -> LoadingContent()
+                            SearchResultState.Loading -> LoadingContent(
+                                modifier = Modifier.wrapContentSize()
+                            )
 
-                        SearchResultState.Error -> ErrorContent(
-                            text = uiState.selectedMediaType.getMediaTypeUi().error
-                        )
+                            SearchResultState.Error -> ErrorContent(
+                                text = uiState.selectedMediaType.getMediaTypeUi().error,
+                                modifier = Modifier.wrapContentSize()
+                            )
 
-                        SearchResultState.Success ->
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(horizontal = 16.dp),
-                            ) {
-                                items(items = uiState.searchResults, key = { it.id }) { media ->
-                                    val tracking = uiState.trackings.find { it.mediaId == media.id }
+                            SearchResultState.Success -> {}
+                        }
+                    }
+                }
 
-                                    MediaPoster(
-                                        modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                        title = media.title,
-                                        coverUrl = media.coverUrl,
-                                        trackStatusIcon = tracking?.status?.getStatusIcon(true),
-                                        onClick = {
-                                            onClickItem(
-                                                tracking ?: Tracking(
-                                                    mediaId = media.id,
-                                                    mediaType = media.mediaType,
-                                                    mediaTitle = media.title,
-                                                    mediaCoverUrl = media.coverUrl,
-                                                    userId = Firebase.auth.currentUser?.uid,
-                                                    userImageUrl = Firebase.auth.currentUser?.photoURL,
-                                                    username = Firebase.auth.currentUser?.displayName,
-                                                )
-                                            )
-                                        },
+                if (uiState.searchResultState == SearchResultState.Success) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                    ) {
+                        items(items = uiState.searchResults, key = { it.id }) { media ->
+                            val tracking = uiState.trackings.find { it.mediaId == media.id }
+
+                            MediaPoster(
+                                modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
+                                title = media.title,
+                                coverUrl = media.coverUrl,
+                                trackStatusIcon = tracking?.status?.getStatusIcon(true),
+                                onClick = {
+                                    onClickItem(
+                                        tracking ?: Tracking(
+                                            mediaId = media.id,
+                                            mediaType = media.mediaType,
+                                            mediaTitle = media.title,
+                                            mediaCoverUrl = media.coverUrl,
+                                            userId = Firebase.auth.currentUser?.uid,
+                                            userImageUrl = Firebase.auth.currentUser?.photoURL,
+                                            username = Firebase.auth.currentUser?.displayName,
+                                        )
                                     )
-                                }
-                            }
+                                },
+                            )
+                        }
                     }
                 }
             }
         }
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.End),
-            text = "Search took ${uiState.searchDuration}ms"
-        )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
