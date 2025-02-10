@@ -3,12 +3,15 @@ package de.ashman.ontrack.api.book
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.book.dto.AuthorDto
 import de.ashman.ontrack.api.book.dto.AuthorWorksResponse
+import de.ashman.ontrack.api.book.dto.BookEditionsEntry
+import de.ashman.ontrack.api.book.dto.BookEditionsResponse
 import de.ashman.ontrack.api.book.dto.BookRatingsResponse
 import de.ashman.ontrack.api.book.dto.BookSearchResponse
 import de.ashman.ontrack.api.book.dto.BookTrendingResponse
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
 import de.ashman.ontrack.api.book.dto.RatingSummary
 import de.ashman.ontrack.api.utils.cleanupDescription
+import de.ashman.ontrack.api.utils.extractYear
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.di.SMALL_FETCH_LIMIT
@@ -41,17 +44,18 @@ class BookRepository(
         val description = fetchDescription(book.id)
         val author = fetchAuthorWithBooks(book.author?.id)
         val ratings = fetchRatings(book.id)
+        val editions = fetchEditions(book.id)
 
         book.copy(
             description = description,
             author = author ?: book.author,
             apiRating = ratings.average,
-            apiRatingCount = ratings.count
+            apiRatingCount = ratings.count,
+            releaseYear = editions.extractPublishYear(),
+            numberOfPages = editions.extractPageCount(),
         )
     }
 
-    // trending doesnt return all the data needed like search or details.
-    // need to call those in detailviewmodel to collect all the data
     override suspend fun fetchTrending(): Result<List<Book>> = safeApiCall {
         val response: BookTrendingResponse = httpClient.get("trending/monthly.json") {
             // add fields as soon as openlibrary allows it
@@ -85,4 +89,16 @@ class BookRepository(
         val response: BookRatingsResponse = httpClient.get("works/$bookId/ratings.json").body()
         return response.summary
     }
+
+    // Needed to get page count and publish year...
+    private suspend fun fetchEditions(bookId: String): List<BookEditionsEntry> {
+        val response: BookEditionsResponse = httpClient.get("works/$bookId/editions.json") {
+            parameter("limit", 1)
+        }.body()
+        return response.entries
+    }
+
+    private fun List<BookEditionsEntry>.extractPageCount(): Int? = this.firstNotNullOfOrNull { it.numberOfPages }
+    private fun List<BookEditionsEntry>.extractPublishYear(): String? = this.firstNotNullOfOrNull { it.publishDate?.extractYear() }
+
 }

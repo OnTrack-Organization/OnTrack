@@ -105,6 +105,7 @@ fun DetailScreen(
         ) {
             StickyMainContent(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
+                media = uiState.selectedMedia,
                 mediaType = tracking.mediaType,
                 mediaTitle = tracking.mediaTitle,
                 mediaCoverUrl = tracking.mediaCoverUrl,

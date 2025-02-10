@@ -40,3 +40,8 @@ fun List<String>.filterGenres(): List<String>? {
         .map { it.replaceFirstChar { char -> char.uppercase() } }
         .takeIf { it.isNotEmpty() }
 }
+
+fun String.extractYear(): String? {
+    val regex = """\b\d{4}\b""".toRegex()
+    return regex.find(this)?.value
+}

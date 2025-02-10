@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,8 +49,10 @@ class SearchViewModel(
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState
-        .onEach {
+        .onStart {
             observeSearchQuery()
+        }
+        .onEach {
             observeUserTrackings()
         }
         .stateIn(
@@ -154,12 +157,10 @@ class SearchViewModel(
             .onEach { query ->
                 when {
                     query.isBlank() -> {
-                        // Fetch trending if cached is empty
+                        searchJob?.cancel()
                         if (_uiState.value.cachedTrending.isEmpty()) {
-                            searchJob?.cancel()
                             searchJob = getTrending()
                         } else {
-                            // Set results to cached trending if query is empty
                             _uiState.update {
                                 it.copy(
                                     errorMessage = null,

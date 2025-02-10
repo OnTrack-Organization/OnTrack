@@ -26,7 +26,7 @@ fun getLivingDates(birthDate: String?, deathDate: String?): String? =
         .takeIf { it.isNotEmpty() }
         ?.joinToString(" - ")
 
-fun String.formatCreatorDate(): String? {
+fun String.formatDates(): String? {
     val inputFormats = listOf(
         "yyyy-MM-dd",
         "d MMMM yyyy",
@@ -49,8 +49,7 @@ fun String.formatCreatorDate(): String? {
 
             return "${date.dayOfMonth.toString().padStart(2, '0')}." +
                     "${date.monthNumber.toString().padStart(2, '0')}." +
-                    "${date.year}"
-                        .cleanupDescription()
+                    "${date.year}".cleanupDescription()
         } catch (_: Exception) {
         }
     }

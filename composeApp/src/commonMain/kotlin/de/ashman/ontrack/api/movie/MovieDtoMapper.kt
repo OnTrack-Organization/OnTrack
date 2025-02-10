@@ -3,7 +3,7 @@ package de.ashman.ontrack.api.movie
 import de.ashman.ontrack.api.movie.dto.CollectionResponseDto
 import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
-import de.ashman.ontrack.api.utils.formatCreatorDate
+import de.ashman.ontrack.api.utils.formatDates
 import de.ashman.ontrack.api.utils.getTMDBCoverUrl
 import de.ashman.ontrack.api.utils.getYear
 import de.ashman.ontrack.domain.Director
@@ -29,8 +29,8 @@ fun PersonDetailsDto.toDomain(): Director =
         id = id.toString(),
         name = name?.takeIf { it.isNotEmpty() },
         imageUrl = profile_path.getTMDBCoverUrl(),
-        birthDate = birthday?.formatCreatorDate(),
-        deathDate = deathday?.formatCreatorDate(),
+        birthDate = birthday?.formatDates(),
+        deathDate = deathday?.formatDates(),
         bio = biography?.ifBlank { null },
     )
 

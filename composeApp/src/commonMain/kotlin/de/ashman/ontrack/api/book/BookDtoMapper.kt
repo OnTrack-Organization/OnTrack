@@ -7,7 +7,7 @@ import de.ashman.ontrack.api.utils.cleanupAuthorKey
 import de.ashman.ontrack.api.utils.cleanupBookKey
 import de.ashman.ontrack.api.utils.cleanupDescription
 import de.ashman.ontrack.api.utils.filterGenres
-import de.ashman.ontrack.api.utils.formatCreatorDate
+import de.ashman.ontrack.api.utils.formatDates
 import de.ashman.ontrack.api.utils.getOpenLibraryCoverUrl
 import de.ashman.ontrack.domain.Author
 import de.ashman.ontrack.domain.Book
@@ -18,11 +18,11 @@ fun BookDto.toDomain(): Book =
         title = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
         releaseYear = firstPublishYear.toString(),
-        numberOfPagesMedian = numberOfPagesMedian,
+        numberOfPages = numberOfPagesMedian,
         publisher = publisher,
         genres = subject?.filterGenres(),
         author = Author(
-            id = authorKey.first().cleanupAuthorKey(),
+            id = authorKey?.first()?.cleanupAuthorKey().orEmpty(),
         )
     )
 
@@ -42,6 +42,6 @@ fun AuthorDto.toDomain(): Author =
         name = name,
         imageUrl = photos?.firstOrNull()?.getOpenLibraryCoverUrl(),
         bio = bio?.cleanupDescription(),
-        birthDate = birthDate?.formatCreatorDate(),
-        deathDate = deathDate?.formatCreatorDate(),
+        birthDate = birthDate?.formatDates(),
+        deathDate = deathDate?.formatDates(),
     )

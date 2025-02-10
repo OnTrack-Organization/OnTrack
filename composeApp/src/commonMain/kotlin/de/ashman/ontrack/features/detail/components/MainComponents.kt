@@ -20,7 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -30,6 +34,7 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
@@ -48,6 +53,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun StickyMainContent(
     imageModifier: Modifier = Modifier,
+    media: Media?,
     mediaType: MediaType,
     mediaTitle: String? = null,
     mediaCoverUrl: String? = null,
@@ -56,10 +62,13 @@ fun StickyMainContent(
     onClickAddTracking: () -> Unit,
     onClickRemoveTracking: () -> Unit,
 ) {
-    // TODO FIX THIS
-    /*val mainInfoItems by remember(media) {
-        mutableStateOf(runBlocking { media.getMainInfoItems() })
-    }*/
+    var mainInfoItems by remember { mutableStateOf(emptyList<String>()) }
+
+    LaunchedEffect(media) {
+        media?.let {
+            mainInfoItems = it.getMainInfoItems()
+        }
+    }
 
     val transition = updateTransition(targetState = scrollBehavior.state.contentOffset < 0, label = "Image Size Transition")
     val size by transition.animateDp { isScrolledDown ->
@@ -83,7 +92,7 @@ fun StickyMainContent(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             )
 
-            //MainInfo(mainInfoItems = mainInfoItems)
+            MainInfo(mainInfoItems = mainInfoItems)
         }
 
         Row(

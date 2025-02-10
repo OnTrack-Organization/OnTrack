@@ -18,7 +18,7 @@ data class Book(
     override val apiRating: Double? = null,
     override val apiRatingCount: Int? = null,
     val author: Author? = null,
-    val numberOfPagesMedian: Int? = null,
+    val numberOfPages: Int? = null,
     val publisher: List<String>? = null,
     val genres: List<String>? = null,
 ) : Media() {
@@ -26,7 +26,7 @@ data class Book(
         val infoItems = mutableListOf<String>()
 
         releaseYear?.let { infoItems.add(it) }
-        numberOfPagesMedian?.let { infoItems.add(getPluralString(Res.plurals.detail_pages, it, it)) }
+        numberOfPages?.let { infoItems.add(getPluralString(Res.plurals.detail_pages, it, it)) }
         author?.name?.let { infoItems.add(it) }
 
         return infoItems
