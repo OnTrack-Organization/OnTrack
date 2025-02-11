@@ -22,7 +22,6 @@ import de.ashman.ontrack.features.tracking.content.ReviewContent
 import de.ashman.ontrack.features.tracking.content.TrackingContent
 import kotlinx.datetime.Clock.System
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 // TODO add back handling
 // Back Handling is being worked on rn
@@ -37,7 +36,7 @@ fun TrackingBottomSheetContent(
     mediaCoverUrl: String?,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
-    onDeleteTrackings: () -> Unit,
+    onDeleteTracking: (String) -> Unit,
     onCancel: () -> Unit,
     goToReview: () -> Unit,
 ) {
@@ -46,7 +45,6 @@ fun TrackingBottomSheetContent(
     var tracking by remember {
         mutableStateOf(
             tracking?.copy(
-                id = Uuid.random().toString(),
                 timestamp = System.now().toEpochMilliseconds(),
             ) ?: Tracking(
                 mediaId = mediaId,
@@ -102,7 +100,7 @@ fun TrackingBottomSheetContent(
             )
 
             CurrentBottomSheetContent.DELETE -> DeleteContent(
-                onDelete = onDeleteTrackings,
+                onDelete = { onDeleteTracking(tracking.mediaId) },
                 onCancel = onCancel,
             )
         }

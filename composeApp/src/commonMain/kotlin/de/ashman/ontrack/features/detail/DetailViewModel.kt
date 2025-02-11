@@ -47,7 +47,7 @@ class DetailViewModel(
     }
 
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
-        observeLatestTracking(mediaNavItems.id)
+        observeTracking(mediaNavItems.id)
 
         val duration = measureTime {
             _uiState.update { it.copy(resultState = DetailResultState.Loading) }
@@ -92,16 +92,12 @@ class DetailViewModel(
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
-    fun deleteTrackings() = viewModelScope.launch {
-        val selectedTracking = _uiState.value.selectedTracking
-
-        selectedTracking?.let {
-            firestoreService.deleteTrackingsByMediaId(it.mediaId)
-            _uiState.update { it.copy(selectedTracking = null) }
-        }
+    fun deleteTracking(mediaId: String) = viewModelScope.launch {
+        firestoreService.deleteTracking(mediaId)
+        _uiState.update { it.copy(selectedTracking = null) }
     }
 
-    fun observeLatestTracking(mediaId: String) = viewModelScope.launch {
+    fun observeTracking(mediaId: String) = viewModelScope.launch {
         firestoreService.fetchTracking(mediaId)
             .collect { trackingEntity ->
                 _uiState.update { it.copy(selectedTracking = trackingEntity?.toDomain()) }

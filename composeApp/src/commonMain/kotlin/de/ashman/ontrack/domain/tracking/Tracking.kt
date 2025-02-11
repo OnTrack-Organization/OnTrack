@@ -32,10 +32,12 @@ data class Tracking(
 
     val likedBy: List<String> = listOf(),
     val comments: List<TrackingComment> = listOf(),
+    val history: List<TrackingHistoryEntry> = listOf(),
 
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable
 
+@Serializable
 enum class TrackStatus {
     CATALOG, CONSUMING, CONSUMED, DROPPED
 }

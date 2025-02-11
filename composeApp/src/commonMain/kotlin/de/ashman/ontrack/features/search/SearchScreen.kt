@@ -131,7 +131,14 @@ fun SearchScreen(
                                 coverUrl = media.coverUrl,
                                 trackStatusIcon = tracking?.status?.getStatusIcon(true),
                                 onClick = {
-                                    onClickItem(MediaNavigationItems(media.id, media.title, media.coverUrl, media.mediaType))
+                                    onClickItem(
+                                        MediaNavigationItems(
+                                            id = media.id,
+                                            title = media.title,
+                                            coverUrl = media.coverUrl,
+                                            mediaType = media.mediaType
+                                        )
+                                    )
                                 },
                             )
                         }

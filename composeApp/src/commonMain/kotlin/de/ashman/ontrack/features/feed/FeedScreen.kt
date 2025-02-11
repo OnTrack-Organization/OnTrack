@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Group
@@ -22,15 +23,16 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.authentication.AuthViewModel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_nav_title
@@ -45,14 +47,24 @@ fun FeedScreen(
     onFriendsClick: () -> Unit,
     onLogoutClick: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val listState = rememberLazyListState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showCommentsSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchTrackingFeed()
+    }
+
+    LaunchedEffect(uiState.feedTrackings) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { index ->
+                if (index != null && index >= uiState.feedTrackings.size - 1) {
+                    viewModel.fetchTrackingFeed()
+                }
+            }
     }
 
     // TODO maybe use BottomSheetScaffold?
@@ -97,12 +109,13 @@ fun FeedScreen(
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
             isRefreshing = uiState.feedResultState == FeedResultState.Loading,
-            onRefresh = viewModel::fetchTrackingFeed,
+            onRefresh = { viewModel.fetchTrackingFeed() },
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(16.dp),
+                state = listState,
             ) {
                 items(items = uiState.feedTrackings, key = { it.id }) {
                     FeedCard(

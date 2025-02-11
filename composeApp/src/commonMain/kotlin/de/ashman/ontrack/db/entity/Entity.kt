@@ -36,6 +36,7 @@ data class TrackingEntity(
 
     val likedBy: List<String>,
     val comments: List<TrackingCommentEntity>,
+    val history: List<TrackingHistoryEntryEntity>,
 
     val timestamp: Long,
 )
@@ -48,5 +49,11 @@ data class TrackingCommentEntity(
     val username: String,
 
     val comment: String,
+    val timestamp: Long,
+)
+
+@Serializable
+data class TrackingHistoryEntryEntity(
+    val status: TrackStatus,
     val timestamp: Long,
 )

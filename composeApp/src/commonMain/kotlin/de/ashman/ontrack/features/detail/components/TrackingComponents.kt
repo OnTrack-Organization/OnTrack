@@ -97,10 +97,6 @@ fun ReviewCardContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-
-            /* if (hasOverflow) {
-                 Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
-             }*/
         }
 
         if (!reviewTitle.isNullOrBlank()) {

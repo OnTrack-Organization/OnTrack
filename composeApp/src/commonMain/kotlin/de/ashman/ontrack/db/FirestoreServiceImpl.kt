@@ -1,15 +1,15 @@
 package de.ashman.ontrack.db
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.entity.TrackingCommentEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
+import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
 import de.ashman.ontrack.db.entity.UserEntity
-import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.tracking.TrackStatus
 import dev.gitlive.firebase.firestore.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock.System
+import kotlinx.coroutines.flow.mapNotNull
 
 class FirestoreServiceImpl(
     firestore: FirebaseFirestore,
@@ -38,243 +38,79 @@ class FirestoreServiceImpl(
 
     // TRACKING
     override suspend fun saveTracking(tracking: TrackingEntity) {
-        userTrackingCollection(authService.currentUserId)
-            .document(tracking.id)
-            .set(tracking)
-    }
+        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.mediaId)
 
-    override suspend fun deleteTrackingsByMediaId(mediaId: String) {
-        val documents = userTrackingCollection(authService.currentUserId)
-            .where { "mediaId" equalTo mediaId }
-            .get()
-            .documents
-
-        documents.forEach {
-            it.reference.delete()
+        // maybe get from viewmodel instead of here
+        val existingTracking = if (trackingRef.get().exists) {
+            trackingRef.get().data<TrackingEntity>()
+        } else {
+            null
         }
+
+        val updatedHistory = existingTracking?.let {
+            if (it.status != tracking.status && it.status != null) {
+                it.history + TrackingHistoryEntryEntity(status = it.status, timestamp = it.timestamp)
+            } else {
+                it.history
+            }
+        } ?: emptyList()
+
+        trackingRef.set(
+            data = tracking.copy(history = updatedHistory),
+            merge = true,
+        )
     }
 
-    override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> {
-        return userTrackingCollection(userId)
-            .orderBy("timestamp", Direction.DESCENDING)
-            .snapshots
-            .map { snapshot ->
-                snapshot.documents
-                    .map { it.data<TrackingEntity>() }
-                    .groupBy { it.mediaId }
-                    .map { it.value.first() }
-            }
+    override suspend fun deleteTracking(mediaId: String) {
+        userTrackingCollection(authService.currentUserId)
+            .document(mediaId)
+            .delete()
     }
 
     override fun fetchTracking(mediaId: String): Flow<TrackingEntity?> {
         return userTrackingCollection(authService.currentUserId)
-            .where { "mediaId" equalTo mediaId }
-            .orderBy("timestamp", Direction.DESCENDING)
-            .limit(1)
+            .document(mediaId)
             .snapshots
-            .map { it.documents.firstOrNull()?.data() }
+            .map { snapshot ->
+                if (!snapshot.exists) {
+                    Logger.i("Document does not exist for mediaId: $mediaId")
+                    null
+                } else {
+                    Logger.d("Document fetched for mediaId: $mediaId")
+                    snapshot.data<TrackingEntity>()
+                }
+            }
+    }
+
+    override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> {
+        return userTrackingCollection(userId)
+            .snapshots
+            .mapNotNull { snapshot ->
+                snapshot.documents.map { it.data<TrackingEntity>() }
+            }
     }
 
     // FEED
-    override suspend fun getTrackingFeed(): List<TrackingEntity> {
-        return listOf(
-            TrackingEntity(
-                id = "1",
-                mediaType = MediaType.MOVIE,
-                mediaCoverUrl = "https://image.tmdb.org/t/p/original/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
-                mediaId = "1",
-                mediaTitle = "Bestes Buch was jemals geschrieben wurde so guuuuuuuut",
-                status = TrackStatus.CONSUMING,
-                rating = 5.0,
-                reviewTitle = "Test Title mit langem namen und so ja geil",
-                reviewDescription = "Wow was ein guter titel , so viel spaß hat es gemacht zu lesen und ich mag es sehr und ja tschüss. Achso hier ist noch mehr text für dich",
-                timestamp = System.now().toEpochMilliseconds(),
-                userId = "2",
-                username = "Ashman",
-                userImageUrl = "bla",
-                likedBy = listOf(),
-                comments = listOf(
-                    TrackingCommentEntity(
-                        id = "1",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "2",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "3",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "4",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "5",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "6",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "7",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "8",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "9",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "10",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                ),
-            ),
-            TrackingEntity(
-                id = "2",
-                mediaType = MediaType.MOVIE,
-                mediaCoverUrl = "https://image.tmdb.org/t/p/original/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
-                mediaId = "1",
-                mediaTitle = "Bestes Buch was jemals geschrieben wurde so guuuuuuuut",
-                status = TrackStatus.CONSUMING,
-                rating = 1.0,
-                reviewTitle = "Test Title mit langem namen und so ja geil",
-                reviewDescription = "Wow was ein guter titel , so viel spaß hat es gemacht zu lesen und ich mag es sehr und ja tschüss. Achso hier ist noch mehr text für dich",
-                timestamp = System.now().toEpochMilliseconds(),
-                userId = "2",
-                username = "Ashman",
-                userImageUrl = "bla",
-                likedBy = listOf(),
-                comments = listOf(
-                    TrackingCommentEntity(
-                        id = "1",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "2",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "3",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "4",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "5",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "6",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "7",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "8",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "9",
-                        userId = "1",
-                        username = "Ashman",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                    TrackingCommentEntity(
-                        id = "10",
-                        userId = "1",
-                        username = "Gerrit",
-                        userImageUrl = "",
-                        comment = "Coooooool comment and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff and cool stuff",
-                        timestamp = System.now().toEpochMilliseconds(),
-                    ),
-                ),
-            )
-        )
+    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
+        val currentUserId = authService.currentUserId
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.orEmpty() + currentUserId
+
+        val allTrackings = mutableListOf<TrackingEntity>()
+
+        for (friendId in friends) {
+            var query = userTrackingCollection(friendId)
+                .orderBy("timestamp", Direction.DESCENDING)
+
+            if (lastTimestamp != null) {
+                query = query.startAfter(lastTimestamp)
+            }
+
+            val snapshot = query.get()
+            val trackings = snapshot.documents.map { it.data<TrackingEntity>() }
+            allTrackings.addAll(trackings)
+        }
+
+        emit(allTrackings.sortedByDescending { it.timestamp }.take(10))
     }
 
     override suspend fun likeTracking(friendId: String, trackingId: String) {

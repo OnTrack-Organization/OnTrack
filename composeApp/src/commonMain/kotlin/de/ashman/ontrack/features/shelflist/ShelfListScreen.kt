@@ -107,7 +107,7 @@ fun ShelfListScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(uiState.filteredTrackings, key = { it.id }) {
+                items(uiState.filteredTrackings, key = { it.mediaId }) {
                     MediaPoster(
                         coverUrl = it.mediaCoverUrl,
                         onClick = { onClickItem(MediaNavigationItems(it.id, it.mediaTitle, it.mediaCoverUrl, it.mediaType)) },

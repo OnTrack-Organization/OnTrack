@@ -159,8 +159,8 @@ fun DetailScreen(
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
                         }
                     },
-                    onDeleteTrackings = {
-                        viewModel.deleteTrackings()
+                    onDeleteTracking = {
+                        viewModel.deleteTracking(it)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_deleted))

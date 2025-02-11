@@ -26,17 +26,24 @@ class FeedViewModel(
             _uiState.value,
         )
 
+    private var lastTimestamp: Long? = null
+
     fun fetchTrackingFeed() = viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(feedResultState = FeedResultState.Loading)
-        val feedTrackings = firestoreService.getTrackingFeed()
+        _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
 
-        if (feedTrackings.isEmpty()) {
-            _uiState.value = _uiState.value.copy(feedResultState = FeedResultState.Empty)
-        } else {
-            _uiState.value = _uiState.value.copy(feedResultState = FeedResultState.Success)
+        firestoreService.getTrackingFeed(lastTimestamp).collect { feedTrackings ->
+            if (feedTrackings.isEmpty()) {
+                _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
+            } else {
+                lastTimestamp = feedTrackings.last().timestamp
+                _uiState.update { state ->
+                    state.copy(
+                        feedResultState = FeedResultState.Success,
+                        feedTrackings = feedTrackings.map { it.toDomain() }
+                    )
+                }
+            }
         }
-
-        _uiState.value = _uiState.value.copy(feedTrackings = feedTrackings.map { it.toDomain() })
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {

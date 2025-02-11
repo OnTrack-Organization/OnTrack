@@ -1,8 +1,6 @@
 package de.ashman.ontrack.features.feed
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -44,8 +44,9 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.detail.components.ReviewCardContent
+import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import de.ashman.ontrack.features.detail.components.formatDateTime
+import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
 
 @Composable
@@ -56,14 +57,7 @@ fun FeedCard(
     onShowComments: () -> Unit,
     onClickTrackingHistory: () -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     Card(
-        modifier = Modifier.clickable(
-            onClick = { expanded = !expanded },
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent,
         ),
@@ -87,7 +81,6 @@ fun FeedCard(
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
                 trackStatus = tracking.status,
-                expanded = expanded,
             )
 
             FeedCardFooter(
@@ -182,47 +175,88 @@ fun FeedCardContent(
     reviewRating: Double?,
     reviewTitle: String?,
     reviewDescription: String?,
-    expanded: Boolean,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(
-                    imageVector = mediaType.getMediaTypeUi().icon,
-                    contentDescription = null,
-                )
-                mediaTitle?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = mediaType.getMediaTypeUi().icon,
+                        contentDescription = null,
+                    )
+                    mediaTitle?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                lineBreak = LineBreak.Simple,
+                            ),
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            softWrap = true,
+                        )
+                    }
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    trackStatus?.getStatusIcon(true)?.let {
+                        Icon(
+                            imageVector = it, it.name,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    MiniStarRatingBar(
+                        rating = reviewRating
                     )
                 }
             }
 
-            ReviewCardContent(
-                reviewTitle = reviewTitle,
-                reviewDescription = reviewDescription,
-                reviewRating = reviewRating,
-                trackStatus = trackStatus,
-                expanded = expanded,
+            MediaPoster(
+                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                coverUrl = mediaCoverUrl
             )
         }
 
-        MediaPoster(
-            modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-            coverUrl = mediaCoverUrl
-        )
+        if (!reviewDescription.isNullOrBlank() || !reviewTitle.isNullOrBlank()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (!reviewTitle.isNullOrBlank()) {
+                    Text(
+                        text = reviewTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = if (expanded) Int.MAX_VALUE else 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+
+                if (!reviewDescription.isNullOrBlank()) {
+                    Text(
+                        text = reviewDescription,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = if (expanded) Int.MAX_VALUE else 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
     }
 }
 

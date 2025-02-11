@@ -12,12 +12,12 @@ interface FirestoreService {
 
     // TRACKING
     suspend fun saveTracking(tracking: TrackingEntity)
-    suspend fun deleteTrackingsByMediaId(mediaId: String)
+    suspend fun deleteTracking(mediaId: String)
     fun fetchTrackings(userId: String): Flow<List<TrackingEntity>>
     fun fetchTracking(mediaId: String): Flow<TrackingEntity?>
 
     // FEED
-    suspend fun getTrackingFeed(): List<TrackingEntity>
+    suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>>
     suspend fun likeTracking(friendId: String, trackingId: String)
     suspend fun unlikeTracking(friendId: String, trackingId: String)
     suspend fun addComment(friendId: String, trackingId: String, comment: String)
