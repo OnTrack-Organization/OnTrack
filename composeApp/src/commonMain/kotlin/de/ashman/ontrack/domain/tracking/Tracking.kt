@@ -26,16 +26,26 @@ data class Tracking(
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
 
-    val userId: String? = Firebase.auth.currentUser?.uid,
-    val username: String? = Firebase.auth.currentUser?.displayName,
-    val userImageUrl: String? = Firebase.auth.currentUser?.photoURL,
+    val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
+    val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
+    val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
 
-    val likedBy: List<String> = listOf(),
+    val likedBy: List<TrackingLike> = listOf(),
     val comments: List<TrackingComment> = listOf(),
     val history: List<TrackingHistoryEntry> = listOf(),
 
     val timestamp: Long = System.now().toEpochMilliseconds(),
-) : CommonParcelable
+) : CommonParcelable {
+    // TODO evt nicht gut weil nicht live? mal sehen
+    val likeCount: Int
+        get() = likedBy.size
+
+    val likeImages: List<String>
+        get() = likedBy.map { it.userImageUrl }
+
+    val isLikedByCurrentUser: Boolean
+        get() = likedBy.any { it.userId == Firebase.auth.currentUser?.uid }
+}
 
 @Serializable
 enum class TrackStatus {

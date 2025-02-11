@@ -2,24 +2,29 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
+import de.ashman.ontrack.db.toEntity
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.tracking.TrackingComment
+import de.ashman.ontrack.domain.tracking.TrackingLike
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
     private val firestoreService: FirestoreService,
-    private val authService: AuthService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState
+        .onStart {
+            fetchTrackingFeed()
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -47,40 +52,59 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        tracking.userId?.let {
-            if (isLikedByCurrentUser(tracking)) {
-                firestoreService.unlikeTracking(it, tracking.id)
-            } else {
-                firestoreService.likeTracking(it, tracking.id)
-            }
+        val like = TrackingLike()
+
+        if (tracking.isLikedByCurrentUser) {
+            firestoreService.unlikeTracking(
+                friendId = tracking.userId,
+                trackingId = tracking.id,
+                like = like.toEntity()
+            )
+        } else {
+            firestoreService.likeTracking(
+                friendId = tracking.userId,
+                trackingId = tracking.id,
+                like = like.toEntity()
+            )
         }
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
-        _uiState.value.selectedTracking?.let {
-            firestoreService.addComment(friendId = it.userId.orEmpty(), trackingId = it.id, comment = comment)
+        val newComment = TrackingComment(comment = comment)
+
+        _uiState.value.selectedTracking?.let { selectedTracking ->
+            firestoreService.addComment(
+                friendId = selectedTracking.userId,
+                trackingId = selectedTracking.id,
+                comment = newComment.toEntity(),
+            )
         }
     }
 
-    fun deleteComment(commentId: String) = viewModelScope.launch {
-        _uiState.value.selectedTracking?.let {
-            firestoreService.deleteComment(friendId = it.userId.orEmpty(), trackingId = it.id, commentId = commentId)
+    fun deleteComment(comment: TrackingComment) = viewModelScope.launch {
+        _uiState.value.selectedTracking?.let { selectedTracking ->
+            firestoreService.deleteComment(
+                friendId = selectedTracking.userId,
+                trackingId = selectedTracking.id,
+                comment = comment.toEntity(),
+            )
         }
     }
 
-    fun selectTracking(tracking: Tracking) {
-        _uiState.update { it.copy(selectedTracking = tracking) }
+    fun selectTracking(trackingId: String) {
+        _uiState.update { it.copy(selectedTrackingId = trackingId) }
     }
-
-    fun isLikedByCurrentUser(tracking: Tracking) = tracking.likedBy.contains(authService.currentUserId)
 }
 
 data class FeedUiState(
-    val selectedTracking: Tracking? = null,
     val feedTrackings: List<Tracking> = emptyList(),
+    val selectedTrackingId: String? = null,
     val feedResultState: FeedResultState = FeedResultState.Loading,
     val isRefreshing: Boolean = false,
-)
+) {
+    val selectedTracking: Tracking?
+        get() = feedTrackings.find { it.id == selectedTrackingId }
+}
 
 enum class FeedResultState {
     Loading,

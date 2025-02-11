@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.map
 
 interface AuthService {
     val currentUserId: String
+    val currentUserImage: String
+    val currentUserName: String
 
     suspend fun signUpUser(user: UserEntity)
     suspend fun deleteUser(userId: String)
@@ -21,6 +23,12 @@ class AuthServiceImpl : AuthService {
 
     override val currentUserId: String
         get() = Firebase.auth.currentUser?.uid.orEmpty()
+
+    override val currentUserImage: String
+        get() = Firebase.auth.currentUser?.photoURL.orEmpty()
+
+    override val currentUserName: String
+        get() = Firebase.auth.currentUser?.displayName.orEmpty()
 
     override suspend fun signUpUser(user: UserEntity) {
         Firebase.firestore

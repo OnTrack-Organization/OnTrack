@@ -3,9 +3,11 @@ package de.ashman.ontrack.db
 import de.ashman.ontrack.db.entity.TrackingCommentEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
+import de.ashman.ontrack.db.entity.TrackingLikeEntity
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.domain.tracking.TrackingHistoryEntry
+import de.ashman.ontrack.domain.tracking.TrackingLike
 
 fun Tracking.toEntity() = TrackingEntity(
     id = id,
@@ -20,7 +22,7 @@ fun Tracking.toEntity() = TrackingEntity(
     userId = userId,
     username = username,
     userImageUrl = userImageUrl,
-    likedBy = likedBy,
+    likedBy = likedBy.map { it.toEntity() },
     comments = comments.map { it.toEntity() },
     history = history.map { it.toEntity() },
     timestamp = timestamp,
@@ -39,7 +41,7 @@ fun TrackingEntity.toDomain() = Tracking(
     userId = userId,
     username = username,
     userImageUrl = userImageUrl,
-    likedBy = likedBy,
+    likedBy = likedBy.map { it.toDomain() },
     comments = comments.map { it.toDomain() },
     history = history.map { it.toDomain() },
     timestamp = timestamp,
@@ -71,4 +73,16 @@ fun TrackingHistoryEntry.toEntity() = TrackingHistoryEntryEntity(
 fun TrackingHistoryEntryEntity.toDomain() = TrackingHistoryEntry(
     status = status,
     timestamp = timestamp,
+)
+
+fun TrackingLike.toEntity() = TrackingLikeEntity(
+    userId = userId,
+    username = username,
+    userImageUrl = userImageUrl,
+)
+
+fun TrackingLikeEntity.toDomain() = TrackingLike(
+    userId = userId,
+    username = username,
+    userImageUrl = userImageUrl,
 )

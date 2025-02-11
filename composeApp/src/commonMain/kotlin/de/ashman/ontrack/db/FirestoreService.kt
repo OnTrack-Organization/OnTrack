@@ -1,6 +1,8 @@
 package de.ashman.ontrack.db
 
+import de.ashman.ontrack.db.entity.TrackingCommentEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
+import de.ashman.ontrack.db.entity.TrackingLikeEntity
 import de.ashman.ontrack.db.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,14 +14,14 @@ interface FirestoreService {
 
     // TRACKING
     suspend fun saveTracking(tracking: TrackingEntity)
-    suspend fun deleteTracking(mediaId: String)
+    suspend fun deleteTracking(trackingId: String)
     fun fetchTrackings(userId: String): Flow<List<TrackingEntity>>
-    fun fetchTracking(mediaId: String): Flow<TrackingEntity?>
+    fun fetchTracking(trackingId: String): Flow<TrackingEntity?>
 
     // FEED
     suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>>
-    suspend fun likeTracking(friendId: String, trackingId: String)
-    suspend fun unlikeTracking(friendId: String, trackingId: String)
-    suspend fun addComment(friendId: String, trackingId: String, comment: String)
-    suspend fun deleteComment(friendId: String, trackingId: String, commentId: String)
+    suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
+    suspend fun unlikeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
+    suspend fun addComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
+    suspend fun deleteComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
 }

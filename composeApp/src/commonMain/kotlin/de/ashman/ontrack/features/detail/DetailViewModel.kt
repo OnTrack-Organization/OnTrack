@@ -9,6 +9,7 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.db.toEntity
@@ -32,6 +33,7 @@ class DetailViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val firestoreService: FirestoreService,
+    private val authService: AuthService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -92,17 +94,19 @@ class DetailViewModel(
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
-    fun deleteTracking(mediaId: String) = viewModelScope.launch {
-        firestoreService.deleteTracking(mediaId)
+    fun deleteTracking(trackingId: String) = viewModelScope.launch {
+        firestoreService.deleteTracking(trackingId)
         _uiState.update { it.copy(selectedTracking = null) }
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        firestoreService.fetchTracking(mediaId)
-            .collect { trackingEntity ->
-                _uiState.update { it.copy(selectedTracking = trackingEntity?.toDomain()) }
+        firestoreService.fetchTrackings(authService.currentUserId)
+            .collect { trackings ->
+                val tracking = trackings.find { it.mediaId == mediaId }
+                _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
             }
     }
+
 }
 
 data class DetailUiState(

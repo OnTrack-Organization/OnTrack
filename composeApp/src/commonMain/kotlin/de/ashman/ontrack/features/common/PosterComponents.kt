@@ -178,7 +178,12 @@ fun MediaPosterRow(
                                 textStyle = MaterialTheme.typography.titleSmall,
                                 onClick = {
                                     onClickItem(
-                                        MediaNavigationItems(item.id, item.title, item.coverUrl, item.mediaType)
+                                        MediaNavigationItems(
+                                            id = item.id,
+                                            title = item.title,
+                                            coverUrl = item.coverUrl,
+                                            mediaType = item.mediaType
+                                        )
                                     )
                                 },
                             )

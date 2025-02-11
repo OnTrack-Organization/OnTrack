@@ -21,12 +21,10 @@ import de.ashman.ontrack.features.tracking.content.DeleteContent
 import de.ashman.ontrack.features.tracking.content.ReviewContent
 import de.ashman.ontrack.features.tracking.content.TrackingContent
 import kotlinx.datetime.Clock.System
-import kotlin.uuid.ExperimentalUuidApi
 
 // TODO add back handling
 // Back Handling is being worked on rn
 // https://youtrack.jetbrains.com/issue/CMP-4419
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun TrackingBottomSheetContent(
     currentContent: CurrentBottomSheetContent,
@@ -100,7 +98,7 @@ fun TrackingBottomSheetContent(
             )
 
             CurrentBottomSheetContent.DELETE -> DeleteContent(
-                onDelete = { onDeleteTracking(tracking.mediaId) },
+                onDelete = { onDeleteTracking(tracking.id) },
                 onCancel = onCancel,
             )
         }

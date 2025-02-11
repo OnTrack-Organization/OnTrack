@@ -54,10 +54,6 @@ fun FeedScreen(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showCommentsSheet by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchTrackingFeed()
-    }
-
     LaunchedEffect(uiState.feedTrackings) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { index ->
@@ -120,10 +116,9 @@ fun FeedScreen(
                 items(items = uiState.feedTrackings, key = { it.id }) {
                     FeedCard(
                         tracking = it,
-                        isLiked = viewModel.isLikedByCurrentUser(it),
                         onClickLike = { viewModel.likeTracking(it) },
                         onShowComments = {
-                            viewModel.selectTracking(it)
+                            viewModel.selectTracking(it.id)
                             showCommentsSheet = true
                         },
                         onClickTrackingHistory = { },

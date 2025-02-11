@@ -30,11 +30,11 @@ data class TrackingEntity(
     val reviewTitle: String?,
     val reviewDescription: String?,
 
-    val userId: String?,
-    val username: String?,
-    val userImageUrl: String?,
+    val userId: String,
+    val username: String,
+    val userImageUrl: String,
 
-    val likedBy: List<String>,
+    val likedBy: List<TrackingLikeEntity>,
     val comments: List<TrackingCommentEntity>,
     val history: List<TrackingHistoryEntryEntity>,
 
@@ -56,4 +56,11 @@ data class TrackingCommentEntity(
 data class TrackingHistoryEntryEntity(
     val status: TrackStatus,
     val timestamp: Long,
+)
+
+@Serializable
+data class TrackingLikeEntity(
+    val userId: String,
+    val username: String,
+    val userImageUrl: String,
 )

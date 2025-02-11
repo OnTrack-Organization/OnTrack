@@ -43,7 +43,6 @@ import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTextField
-import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_comments
 import ontrack.composeapp.generated.resources.feed_comments_placeholder
@@ -53,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 fun CommentsContent(
     comments: List<TrackingComment>,
     onAddComment: (String) -> Unit,
-    onDeleteComment: (String) -> Unit,
+    onDeleteComment: (TrackingComment) -> Unit,
 ) {
     var commentString by remember { mutableStateOf("") }
     var showDeleteCommentDialog by remember { mutableStateOf(false) }
@@ -95,7 +94,7 @@ fun CommentsContent(
                 if (showDeleteCommentDialog) {
                     DeleteCommentDialog(
                         onConfirmDelete = {
-                            onDeleteComment(it.id)
+                            onDeleteComment(it)
                             showDeleteCommentDialog = false
                         },
                         onDismiss = { showDeleteCommentDialog = false },
@@ -124,11 +123,11 @@ fun CommentsContent(
                         commentString = ""
                         localFocusManager.clearFocus()
 
-                        coroutineScope.launch {
+                       /* coroutineScope.launch {
                             listState.animateScrollToItem(
                                 index = comments.size - 1,
                             )
-                        }
+                        }*/
                     }
                 },
             )

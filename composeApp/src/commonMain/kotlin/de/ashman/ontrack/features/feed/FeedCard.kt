@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.feed
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.MediaType
@@ -48,11 +50,13 @@ import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import de.ashman.ontrack.features.detail.components.formatDateTime
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_likes_count
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FeedCard(
     tracking: Tracking,
-    isLiked: Boolean,
     onClickLike: () -> Unit,
     onShowComments: () -> Unit,
     onClickTrackingHistory: () -> Unit,
@@ -84,7 +88,9 @@ fun FeedCard(
             )
 
             FeedCardFooter(
-                isLiked = isLiked,
+                isLiked = tracking.isLikedByCurrentUser,
+                likeCount = tracking.likeCount,
+                likeImages = tracking.likeImages,
                 onLikeTracking = onClickLike,
                 onShowComments = onShowComments,
             )
@@ -99,8 +105,6 @@ fun FeedCardHeader(
     timestamp: String,
     onShowTrackingHistory: () -> Unit,
 ) {
-    val painter = rememberAsyncImagePainter(userImageUrl)
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -110,36 +114,8 @@ fun FeedCardHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Surface(
-                modifier = Modifier.size(42.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceVariant,
-            ) {
-                val state = painter.state.collectAsState().value
+            UserImage(userImageUrl = userImageUrl)
 
-                when (state) {
-                    is AsyncImagePainter.State.Empty -> {}
-                    is AsyncImagePainter.State.Loading -> {
-                        CircularProgressIndicator()
-                    }
-
-                    is AsyncImagePainter.State.Success -> {
-                        Image(
-                            painter = painter,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Account Image",
-                        )
-                    }
-
-                    is AsyncImagePainter.State.Error -> {
-                        Icon(
-                            modifier = Modifier.padding(8.dp),
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "No Image",
-                        )
-                    }
-                }
-            }
             Column {
                 username?.let {
                     Text(
@@ -263,6 +239,8 @@ fun FeedCardContent(
 @Composable
 fun FeedCardFooter(
     isLiked: Boolean,
+    likeCount: Int,
+    likeImages: List<String>,
     onLikeTracking: () -> Unit,
     onShowComments: () -> Unit,
 ) {
@@ -272,14 +250,33 @@ fun FeedCardFooter(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        IconButton(
-            onClick = onLikeTracking
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(
-                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = null,
+            IconButton(
+                onClick = onLikeTracking
+            ) {
+                Icon(
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = null,
+                )
+            }
+
+            LikeImages(
+                imageUrls = likeImages,
+                modifier = Modifier.size(24.dp),
             )
+
+            if (likeCount > 0) {
+                Text(
+                    text = stringResource(Res.string.feed_likes_count, likeCount),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
+
         IconButton(
             onClick = onShowComments
         ) {
@@ -287,6 +284,69 @@ fun FeedCardFooter(
                 imageVector = Icons.AutoMirrored.Outlined.Chat,
                 contentDescription = null,
             )
+        }
+    }
+}
+
+@Composable
+fun LikeImages(
+    imageUrls: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    if (imageUrls.isNotEmpty()) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy((-8).dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            imageUrls.forEachIndexed { index, imageUrl ->
+                UserImage(
+                    userImageUrl = imageUrl,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                        .zIndex(index.toFloat()),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun UserImage(
+    userImageUrl: String?,
+    modifier: Modifier = Modifier.size(42.dp),
+) {
+    val painter = rememberAsyncImagePainter(userImageUrl)
+
+    Surface(
+        modifier = modifier,
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        val state = painter.state.collectAsState().value
+
+        when (state) {
+            is AsyncImagePainter.State.Empty -> {}
+            is AsyncImagePainter.State.Loading -> {
+                CircularProgressIndicator()
+            }
+
+            is AsyncImagePainter.State.Success -> {
+                Image(
+                    painter = painter,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Account Image",
+                )
+            }
+
+            is AsyncImagePainter.State.Error -> {
+                Icon(
+                    modifier = Modifier.padding(8.dp),
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "No Image",
+                )
+            }
         }
     }
 }

@@ -2,14 +2,17 @@ package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.entity.TrackingCommentEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
+import de.ashman.ontrack.db.entity.TrackingLikeEntity
 import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.firestore.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.merge
 
 class FirestoreServiceImpl(
     firestore: FirebaseFirestore,
@@ -38,7 +41,7 @@ class FirestoreServiceImpl(
 
     // TRACKING
     override suspend fun saveTracking(tracking: TrackingEntity) {
-        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.mediaId)
+        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.id)
 
         // maybe get from viewmodel instead of here
         val existingTracking = if (trackingRef.get().exists) {
@@ -61,22 +64,22 @@ class FirestoreServiceImpl(
         )
     }
 
-    override suspend fun deleteTracking(mediaId: String) {
+    override suspend fun deleteTracking(trackingId: String) {
         userTrackingCollection(authService.currentUserId)
-            .document(mediaId)
+            .document(trackingId)
             .delete()
     }
 
-    override fun fetchTracking(mediaId: String): Flow<TrackingEntity?> {
+    override fun fetchTracking(trackingId: String): Flow<TrackingEntity?> {
         return userTrackingCollection(authService.currentUserId)
-            .document(mediaId)
+            .document(trackingId)
             .snapshots
             .map { snapshot ->
                 if (!snapshot.exists) {
-                    Logger.i("Document does not exist for mediaId: $mediaId")
+                    Logger.i("Document does not exist for id: $trackingId")
                     null
                 } else {
-                    Logger.d("Document fetched for mediaId: $mediaId")
+                    Logger.d("Document fetched for id: $trackingId")
                     snapshot.data<TrackingEntity>()
                 }
             }
@@ -91,9 +94,10 @@ class FirestoreServiceImpl(
     }
 
     // FEED
-    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
+    // ONE TIME FETCH
+    /*override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
         val currentUserId = authService.currentUserId
-        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.orEmpty() + currentUserId
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
 
         val allTrackings = mutableListOf<TrackingEntity>()
 
@@ -111,25 +115,51 @@ class FirestoreServiceImpl(
         }
 
         emit(allTrackings.sortedByDescending { it.timestamp }.take(10))
+    }*/
+
+    // LIVE
+    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
+        val currentUserId = authService.currentUserId
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
+
+        val allFlows = friends.map { friendId ->
+            var query = userTrackingCollection(friendId)
+                .orderBy("timestamp", Direction.DESCENDING)
+
+            if (lastTimestamp != null) {
+                query = query.startAfter(lastTimestamp)
+            }
+
+            query.snapshots()
+                .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
+        }
+
+        allFlows.merge()
+            .map { allTrackings ->
+                allTrackings
+                    .sortedByDescending { it.timestamp }
+                    .take(10)
+            }
+            .collect { emit(it) }
     }
 
-    override suspend fun likeTracking(friendId: String, trackingId: String) {
+    override suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likedBy" to FieldValue.arrayUnion(friendId)
+                "likedBy" to FieldValue.arrayUnion(like)
             )
     }
 
-    override suspend fun unlikeTracking(friendId: String, trackingId: String) {
+    override suspend fun unlikeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likedBy" to FieldValue.arrayRemove(friendId)
+                "likedBy" to FieldValue.arrayRemove(like)
             )
     }
 
-    override suspend fun addComment(friendId: String, trackingId: String, comment: String) {
+    override suspend fun addComment(friendId: String, trackingId: String, comment: TrackingCommentEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
@@ -137,11 +167,11 @@ class FirestoreServiceImpl(
             )
     }
 
-    override suspend fun deleteComment(friendId: String, trackingId: String, commentId: String) {
+    override suspend fun deleteComment(friendId: String, trackingId: String, comment: TrackingCommentEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayRemove(commentId)
+                "comments" to FieldValue.arrayRemove(comment)
             )
     }
 }
