@@ -15,6 +15,7 @@ import de.ashman.ontrack.db.toEntity
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,14 +46,13 @@ class DetailViewModel(
         Logger.d { "DetailViewModel init" }
     }
 
-    fun fetchDetails(tracking: Tracking) = viewModelScope.launch {
-        //_uiState.update { it.copy(selectedTracking = tracking) }
-        observeLatestTracking(tracking.mediaId)
+    fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
+        observeLatestTracking(mediaNavItems.id)
 
         val duration = measureTime {
             _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-            val repository = when (tracking.mediaType) {
+            val repository = when (mediaNavItems.mediaType) {
                 MediaType.MOVIE -> movieRepository
                 MediaType.SHOW -> showRepository
                 MediaType.BOOK -> bookRepository
@@ -61,7 +61,7 @@ class DetailViewModel(
                 MediaType.ALBUM -> albumRepository
             }
 
-            repository.fetchDetails(tracking.mediaId).fold(
+            repository.fetchDetails(mediaNavItems.id).fold(
                 onSuccess = { result ->
                     _uiState.update {
                         it.copy(

@@ -5,6 +5,7 @@ import de.ashman.ontrack.domain.Album
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_artist
 import ontrack.composeapp.generated.resources.detail_artist_albums
@@ -15,7 +16,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.AlbumDetailContent(
     album: Album,
-    onClickItem: (String) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     item {
         MediaDescription(

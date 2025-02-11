@@ -27,6 +27,7 @@ import de.ashman.ontrack.features.detail.content.BookDetailContent
 import de.ashman.ontrack.features.detail.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
+import de.ashman.ontrack.navigation.MediaNavigationItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,7 @@ fun DetailContent(
     media: Media,
     tracking: Tracking?,
     listState: LazyListState,
-    onClickItem: (String) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     LazyColumn(
         state = listState,

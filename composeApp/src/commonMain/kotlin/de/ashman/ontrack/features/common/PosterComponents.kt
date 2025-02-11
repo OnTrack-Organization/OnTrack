@@ -37,6 +37,7 @@ import de.ashman.ontrack.domain.Franchise
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.Season
 import de.ashman.ontrack.features.detail.components.MediaTitle
+import de.ashman.ontrack.navigation.MediaNavigationItems
 
 @Composable
 fun MediaPoster(
@@ -151,7 +152,7 @@ fun TrackOverlay(
 fun MediaPosterRow(
     title: String,
     items: List<Any>?,
-    onClickItem: (String) -> Unit = { },
+    onClickItem: (MediaNavigationItems) -> Unit = { },
 ) {
     items?.let {
         Column(
@@ -175,7 +176,11 @@ fun MediaPosterRow(
                                 title = item.title,
                                 coverUrl = item.coverUrl,
                                 textStyle = MaterialTheme.typography.titleSmall,
-                                onClick = { onClickItem(item.id) },
+                                onClick = {
+                                    onClickItem(
+                                        MediaNavigationItems(item.id, item.title, item.coverUrl, item.mediaType)
+                                    )
+                                },
                             )
                         }
 

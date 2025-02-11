@@ -26,4 +26,24 @@ object CustomNavType {
             return UriCodec.encode(Json.encodeToString(value))
         }
     }
+
+    val MediaNavigationItemsType = object : NavType<MediaNavigationItems>(
+        isNullableAllowed = false
+    ) {
+        override fun get(bundle: Bundle, key: String): MediaNavigationItems? {
+            return Json.decodeFromString(bundle.getString(key) ?: return null)
+        }
+
+        override fun parseValue(value: String): MediaNavigationItems {
+            return Json.decodeFromString(UriCodec.decode(value))
+        }
+
+        override fun put(bundle: Bundle, key: String, value: MediaNavigationItems) {
+            bundle.putString(key, Json.encodeToString(value))
+        }
+
+        override fun serializeAsValue(value: MediaNavigationItems): String {
+            return UriCodec.encode(Json.encodeToString(value))
+        }
+    }
 }

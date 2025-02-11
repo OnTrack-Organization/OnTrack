@@ -33,12 +33,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.detail.components.ErrorContent
 import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.detail.components.StickyMainContent
 import de.ashman.ontrack.features.tracking.CurrentBottomSheetContent
 import de.ashman.ontrack.features.tracking.TrackingBottomSheetContent
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
@@ -50,9 +50,9 @@ import org.jetbrains.compose.resources.pluralStringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    tracking: Tracking,
+    mediaNavItems: MediaNavigationItems,
     viewModel: DetailViewModel,
-    onClickItem: (String) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,8 +66,8 @@ fun DetailScreen(
 
     val listState = rememberLazyListState()
 
-    LaunchedEffect(tracking.mediaId) {
-        viewModel.fetchDetails(tracking)
+    LaunchedEffect(mediaNavItems.id) {
+        viewModel.fetchDetails(mediaNavItems)
     }
 
     Scaffold(
@@ -81,11 +81,11 @@ fun DetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = tracking.mediaType.getMediaTypeUi().icon,
+                            imageVector = mediaNavItems.mediaType.getMediaTypeUi().icon,
                             contentDescription = "Media Type Icon"
                         )
                         Text(
-                            text = pluralStringResource(tracking.mediaType.getMediaTypeUi().title, 1),
+                            text = pluralStringResource(mediaNavItems.mediaType.getMediaTypeUi().title, 1),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                         )
@@ -106,9 +106,9 @@ fun DetailScreen(
             StickyMainContent(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
                 media = uiState.selectedMedia,
-                mediaType = tracking.mediaType,
-                mediaTitle = tracking.mediaTitle,
-                mediaCoverUrl = tracking.mediaCoverUrl,
+                mediaType = mediaNavItems.mediaType,
+                mediaTitle = mediaNavItems.title,
+                mediaCoverUrl = mediaNavItems.coverUrl,
                 status = uiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
@@ -125,7 +125,7 @@ fun DetailScreen(
             when (uiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()
 
-                DetailResultState.Error -> ErrorContent(text = tracking.mediaType.getMediaTypeUi().error)
+                DetailResultState.Error -> ErrorContent(text = mediaNavItems.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
                     uiState.selectedMedia?.let {
@@ -147,11 +147,11 @@ fun DetailScreen(
             ) {
                 TrackingBottomSheetContent(
                     currentContent = currentBottomSheet,
-                    mediaId = tracking.mediaId,
-                    mediaType = tracking.mediaType,
-                    mediaTitle = tracking.mediaTitle,
-                    mediaCoverUrl = tracking.mediaCoverUrl,
-                    tracking = tracking,
+                    mediaId = mediaNavItems.id,
+                    mediaType = mediaNavItems.mediaType,
+                    mediaTitle = mediaNavItems.title,
+                    mediaCoverUrl = mediaNavItems.coverUrl,
+                    tracking = uiState.selectedTracking,
                     onSaveTracking = {
                         viewModel.saveTracking(it)
                         showBottomSheet = false

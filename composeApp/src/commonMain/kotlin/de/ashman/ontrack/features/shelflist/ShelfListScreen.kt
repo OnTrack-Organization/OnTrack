@@ -35,10 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.tracking.getLabel
 import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -49,7 +49,7 @@ fun ShelfListScreen(
     viewModel: ShelfListViewModel,
     userId: String,
     mediaType: MediaType,
-    onClickItem: (Tracking) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -110,7 +110,7 @@ fun ShelfListScreen(
                 items(uiState.filteredTrackings, key = { it.id }) {
                     MediaPoster(
                         coverUrl = it.mediaCoverUrl,
-                        onClick = { onClickItem(it) },
+                        onClick = { onClickItem(MediaNavigationItems(it.id, it.mediaTitle, it.mediaCoverUrl, it.mediaType)) },
                     )
                 }
             }

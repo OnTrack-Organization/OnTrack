@@ -46,6 +46,7 @@ import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
 import kotlin.collections.filter
@@ -56,7 +57,7 @@ fun ShelfScreen(
     viewModel: ShelfViewModel,
     userId: String,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (Tracking) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -192,7 +193,7 @@ fun ShelfItem(
     mediaType: MediaType,
     items: List<Tracking>?,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (Tracking) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     items?.let {
         Column {
@@ -231,7 +232,7 @@ fun ShelfItem(
                     MediaPoster(
                         modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                         coverUrl = item.mediaCoverUrl,
-                        onClick = { onClickItem(item) },
+                        onClick = { onClickItem(MediaNavigationItems(item.mediaId, item.mediaTitle, item.mediaCoverUrl, item.mediaType)) },
                     )
                 }
             }

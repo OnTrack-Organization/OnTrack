@@ -142,7 +142,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
-            onClickItem = { tracking -> navController.navigate(Detail(tracking)) }
+            onClickItem = { mediaNav -> navController.navigate(Detail(mediaNav)) }
         )
     }
 
@@ -152,7 +152,7 @@ fun NavGraphBuilder.mainGraph(
             viewModel = shelfViewModel,
             userId = authService.currentUserId,
             onClickMore = { mediaType -> navController.navigate(ShelfList(authService.currentUserId, mediaType)) },
-            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
+            onClickItem = { mediaNav -> navController.navigate(Detail(mediaNav)) },
         )
     }
 }
@@ -166,21 +166,21 @@ fun NavGraphBuilder.mediaGraph(
     composable<Detail>(
         typeMap = mapOf(
             typeOf<Tracking>() to CustomNavType.TrackingNavType,
+            typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
         )
     ) { backStackEntry ->
         val detail: Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            tracking = detail.tracking,
+            mediaNavItems = detail.mediaNavItems,
             viewModel = detailViewModel,
-            onClickItem = { tracking ->
+            onClickItem = { mediaNavItems ->
                 // Remove all the Detail Navigations from graph before navigating
-                // TODO ADD IN LATER IF I KNOW HOW
-                /*navController.navigate(Detail(tracking)) {
+                navController.navigate(Detail(mediaNavItems)) {
                     popUpTo<Detail> {
                         inclusive = true
                     }
-                }*/
+                }
             },
             onBack = {
                 navController.popBackStack()
@@ -195,7 +195,7 @@ fun NavGraphBuilder.mediaGraph(
             viewModel = shelfListViewModel,
             userId = shelfList.userId,
             mediaType = shelfList.mediaType,
-            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
+            onClickItem = { mediaNavItems -> navController.navigate(Detail(mediaNavItems)) },
             onBack = {
                 shelfListViewModel.reset()
                 navController.popBackStack()
@@ -210,7 +210,7 @@ fun NavGraphBuilder.mediaGraph(
             viewModel = shelfViewModel,
             userId = otherShelf.userId,
             onClickMore = { mediaType -> navController.navigate(ShelfList(otherShelf.userId, mediaType)) },
-            onClickItem = { tracking -> navController.navigate(Detail(tracking)) },
+            onClickItem = { mediaNavItem -> navController.navigate(Detail(mediaNavItem)) },
             onBack = { navController.popBackStack() },
         )
     }
