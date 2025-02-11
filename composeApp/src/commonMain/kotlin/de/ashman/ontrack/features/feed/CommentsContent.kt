@@ -5,8 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -79,16 +78,16 @@ fun CommentsContent(
 
         LazyColumn(
             modifier = Modifier.fillMaxHeight(0.5f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             state = listState,
-            contentPadding = PaddingValues(16.dp),
         ) {
             items(items = comments, key = { it.id }) {
                 FeedCardComment(
                     userImageUrl = it.userImageUrl,
                     username = it.username,
                     comment = it.comment,
-                    showDeleteCommentDialog = { showDeleteCommentDialog  = true},
+                    showDeleteCommentDialog = { showDeleteCommentDialog = true },
+                    isScrolling = listState.isScrollInProgress,
                 )
 
                 if (showDeleteCommentDialog) {
@@ -123,11 +122,11 @@ fun CommentsContent(
                         commentString = ""
                         localFocusManager.clearFocus()
 
-                       /* coroutineScope.launch {
-                            listState.animateScrollToItem(
-                                index = comments.size - 1,
-                            )
-                        }*/
+                        /* coroutineScope.launch {
+                             listState.animateScrollToItem(
+                                 index = comments.size - 1,
+                             )
+                         }*/
                     }
                 },
             )
@@ -142,19 +141,24 @@ fun FeedCardComment(
     username: String,
     comment: String,
     showDeleteCommentDialog: () -> Unit,
+    isScrolling: Boolean,
 ) {
     val painter = rememberAsyncImagePainter(userImageUrl)
 
-    Column(
-        modifier = Modifier.combinedClickable(
-            onClick = {},
-            onLongClick = showDeleteCommentDialog,
-        ),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (!isScrolling) Modifier.combinedClickable(
+                    onClick = {},
+                    onLongClick = showDeleteCommentDialog,
+                ) else Modifier
+            ),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Top,
         ) {
             Surface(
                 modifier = Modifier.size(32.dp),
@@ -186,15 +190,17 @@ fun FeedCardComment(
                     }
                 }
             }
-            Text(
-                text = username,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-            )
+            Column {
+                Text(
+                    text = username,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = comment,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
-        Text(
-            text = comment,
-            style = MaterialTheme.typography.bodySmall,
-        )
     }
 }

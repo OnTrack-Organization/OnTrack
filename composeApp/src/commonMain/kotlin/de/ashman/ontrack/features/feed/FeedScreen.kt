@@ -1,6 +1,5 @@
 package de.ashman.ontrack.features.feed
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +19,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +47,7 @@ fun FeedScreen(
     onLogoutClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -65,7 +64,7 @@ fun FeedScreen(
 
     // TODO maybe use BottomSheetScaffold?
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -102,43 +101,46 @@ fun FeedScreen(
             )
         }
     ) { contentPadding ->
-        PullToRefreshBox(
+        /*PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
             isRefreshing = uiState.feedResultState == FeedResultState.Loading,
             onRefresh = { viewModel.fetchTrackingFeed() },
+        ) {*/
+        LazyColumn(
+            // TODO remove the bottom padding and handle nav bar differently
+            modifier = Modifier.fillMaxSize().padding(contentPadding).padding(bottom = 80.dp),
+            contentPadding = PaddingValues(16.dp),
+            state = listState,
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
-                state = listState,
-            ) {
-                items(items = uiState.feedTrackings, key = { it.id }) {
-                    FeedCard(
-                        tracking = it,
-                        onClickLike = { viewModel.likeTracking(it) },
-                        onShowComments = {
-                            viewModel.selectTracking(it.id)
-                            showCommentsSheet = true
-                        },
-                        onClickTrackingHistory = { },
-                    )
+            items(items = uiState.feedTrackings, key = { it.id }) {
+                FeedCard(
+                    tracking = it,
+                    onClickLike = { viewModel.likeTracking(it) },
+                    onShowComments = {
+                        viewModel.selectTracking(it.id)
+                        showCommentsSheet = true
+                    },
+                    onClickTrackingHistory = { },
+                )
+
+                if (it != uiState.feedTrackings.last()) {
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                 }
             }
         }
+    }
 
-        if (showCommentsSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showCommentsSheet = false },
-                sheetState = bottomSheetState,
-            ) {
-                uiState.selectedTracking?.let {
-                    CommentsContent(
-                        comments = it.comments,
-                        onAddComment = viewModel::addComment,
-                        onDeleteComment = viewModel::deleteComment,
-                    )
-                }
+    if (showCommentsSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showCommentsSheet = false },
+            sheetState = bottomSheetState,
+        ) {
+            uiState.selectedTracking?.let {
+                CommentsContent(
+                    comments = it.comments,
+                    onAddComment = viewModel::addComment,
+                    onDeleteComment = viewModel::deleteComment,
+                )
             }
         }
     }

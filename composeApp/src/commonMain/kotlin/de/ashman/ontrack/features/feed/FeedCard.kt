@@ -1,7 +1,6 @@
 package de.ashman.ontrack.features.feed
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,8 +50,9 @@ import de.ashman.ontrack.features.detail.components.formatDateTime
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_comments_count
 import ontrack.composeapp.generated.resources.feed_likes_count
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.pluralStringResource
 
 @Composable
 fun FeedCard(
@@ -91,6 +91,7 @@ fun FeedCard(
                 isLiked = tracking.isLikedByCurrentUser,
                 likeCount = tracking.likeCount,
                 likeImages = tracking.likeImages,
+                commentCount = tracking.commentCount,
                 onLikeTracking = onClickLike,
                 onShowComments = onShowComments,
             )
@@ -240,41 +241,49 @@ fun FeedCardContent(
 fun FeedCardFooter(
     isLiked: Boolean,
     likeCount: Int,
+    commentCount: Int,
     likeImages: List<String>,
     onLikeTracking: () -> Unit,
     onShowComments: () -> Unit,
 ) {
-    // TODO add like counter, image urls and texts
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
+        IconButton(
+            onClick = onLikeTracking
+        ) {
+            Icon(
+                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+            )
+        }
+
         Row(
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            IconButton(
-                onClick = onLikeTracking
-            ) {
-                Icon(
-                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = null,
-                )
-            }
-
             LikeImages(
                 imageUrls = likeImages,
-                modifier = Modifier.size(24.dp),
             )
 
             if (likeCount > 0) {
                 Text(
-                    text = stringResource(Res.string.feed_likes_count, likeCount),
+                    text = pluralStringResource(Res.plurals.feed_likes_count, likeCount, likeCount),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+
+        if (commentCount > 0) {
+            Text(
+                text = pluralStringResource(Res.plurals.feed_comments_count, commentCount, commentCount),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
 
         IconButton(
@@ -291,11 +300,9 @@ fun FeedCardFooter(
 @Composable
 fun LikeImages(
     imageUrls: List<String>,
-    modifier: Modifier = Modifier,
 ) {
     if (imageUrls.isNotEmpty()) {
         Row(
-            modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy((-8).dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -304,8 +311,7 @@ fun LikeImages(
                     userImageUrl = imageUrl,
                     modifier = Modifier
                         .size(24.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
-                        .zIndex(index.toFloat()),
+                        .zIndex((imageUrls.size - index).toFloat()),
                 )
             }
         }

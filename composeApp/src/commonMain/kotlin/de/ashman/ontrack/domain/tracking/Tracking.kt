@@ -36,15 +36,17 @@ data class Tracking(
 
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable {
-    // TODO evt nicht gut weil nicht live? mal sehen
     val likeCount: Int
         get() = likedBy.size
 
     val likeImages: List<String>
-        get() = likedBy.map { it.userImageUrl }
+        get() = likedBy.map { it.userImageUrl }.take(3)
 
     val isLikedByCurrentUser: Boolean
         get() = likedBy.any { it.userId == Firebase.auth.currentUser?.uid }
+
+    val commentCount: Int
+        get() = comments.size
 }
 
 @Serializable
