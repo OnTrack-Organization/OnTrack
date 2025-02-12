@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.common
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,48 +62,51 @@ fun MediaPoster(
             modifier = modifier
                 .aspectRatio(2f / 3f),
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+            color = MaterialTheme.colorScheme.surface,
             enabled = (onClick != null),
             onClick = { onClick?.invoke() },
         ) {
-            when (imageState) {
-                is AsyncImagePainter.State.Loading -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        CircularProgressIndicator()
+            AnimatedContent(
+                targetState = imageState,
+            ) { targetState ->
+                when (targetState) {
+                    is AsyncImagePainter.State.Loading -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
 
-                is AsyncImagePainter.State.Success -> {
-                    Image(
-                        painter = painter,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Poster Image",
-                    )
-                    TrackOverlay(
-                        trackStatusIcon = trackStatusIcon,
-                        trackStatusRating = trackStatusRating,
-                    )
-                }
-
-                is AsyncImagePainter.State.Error -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(0.5f),
-                            imageVector = Icons.Default.HideSource,
-                            contentDescription = "No Image",
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            painter = painter,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Poster Image",
+                        )
+                        TrackOverlay(
+                            trackStatusIcon = trackStatusIcon,
+                            trackStatusRating = trackStatusRating,
                         )
                     }
-                }
 
-                else -> {}
+                    is AsyncImagePainter.State.Error -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                modifier = Modifier.fillMaxSize(0.5f),
+                                imageVector = Icons.Default.HideSource,
+                                contentDescription = "No Image",
+                            )
+                        }
+                    }
+
+                    else -> {}
+                }
             }
         }
-
         MediaTitle(
             title = title,
             textStyle = textStyle,

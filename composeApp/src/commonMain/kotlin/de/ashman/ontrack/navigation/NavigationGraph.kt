@@ -29,9 +29,6 @@ import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
-import de.ashman.ontrack.navigation.Route.Detail
-import de.ashman.ontrack.navigation.Route.OtherShelf
-import de.ashman.ontrack.navigation.Route.ShelfList
 import org.koin.compose.koinInject
 import kotlin.reflect.typeOf
 
@@ -139,6 +136,12 @@ fun NavGraphBuilder.mainGraph(
                     popUpTo(Route.Feed) { inclusive = true } // Clear backstack
                 }
             },
+            onClickCover = { mediaNav ->
+                navController.navigate(Route.Detail(mediaNav))
+            },
+            onUserClick = { userId ->
+                navController.navigate(Route.OtherShelf(userId))
+            },
         )
     }
 
@@ -146,7 +149,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
-            onClickItem = { mediaNav -> navController.navigate(Detail(mediaNav)) }
+            onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
     }
 
@@ -155,8 +158,8 @@ fun NavGraphBuilder.mainGraph(
             modifier = modifier,
             viewModel = shelfViewModel,
             userId = authService.currentUserId,
-            onClickMore = { mediaType -> navController.navigate(ShelfList(authService.currentUserId, mediaType)) },
-            onClickItem = { mediaNav -> navController.navigate(Detail(mediaNav)) },
+            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(authService.currentUserId, mediaType)) },
+            onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
         )
     }
 }
@@ -167,21 +170,21 @@ fun NavGraphBuilder.mediaGraph(
     shelfViewModel: ShelfViewModel,
     navController: NavHostController,
 ) {
-    composable<Detail>(
+    composable<Route.Detail>(
         typeMap = mapOf(
             typeOf<Tracking>() to CustomNavType.TrackingNavType,
             typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
         )
     ) { backStackEntry ->
-        val detail: Detail = backStackEntry.toRoute()
+        val detail: Route.Detail = backStackEntry.toRoute()
 
         DetailScreen(
             mediaNavItems = detail.mediaNavItems,
             viewModel = detailViewModel,
             onClickItem = { mediaNavItems ->
                 // Remove all the Detail Navigations from graph before navigating
-                navController.navigate(Detail(mediaNavItems)) {
-                    popUpTo<Detail> {
+                navController.navigate(Route.Detail(mediaNavItems)) {
+                    popUpTo<Route.Detail> {
                         inclusive = true
                     }
                 }
@@ -192,14 +195,14 @@ fun NavGraphBuilder.mediaGraph(
         )
     }
 
-    composable<ShelfList> { backStackEntry ->
-        val shelfList: ShelfList = backStackEntry.toRoute()
+    composable<Route.ShelfList> { backStackEntry ->
+        val shelfList: Route.ShelfList = backStackEntry.toRoute()
 
         ShelfListScreen(
             viewModel = shelfListViewModel,
             userId = shelfList.userId,
             mediaType = shelfList.mediaType,
-            onClickItem = { mediaNavItems -> navController.navigate(Detail(mediaNavItems)) },
+            onClickItem = { mediaNavItems -> navController.navigate(Route.Detail(mediaNavItems)) },
             onBack = {
                 shelfListViewModel.reset()
                 navController.popBackStack()
@@ -207,14 +210,14 @@ fun NavGraphBuilder.mediaGraph(
         )
     }
 
-    composable<OtherShelf> { backStackEntry ->
-        val otherShelf: OtherShelf = backStackEntry.toRoute()
+    composable<Route.OtherShelf> { backStackEntry ->
+        val otherShelf: Route.OtherShelf = backStackEntry.toRoute()
 
         OtherUserShelf(
             viewModel = shelfViewModel,
             userId = otherShelf.userId,
-            onClickMore = { mediaType -> navController.navigate(ShelfList(otherShelf.userId, mediaType)) },
-            onClickItem = { mediaNavItem -> navController.navigate(Detail(mediaNavItem)) },
+            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
+            onClickItem = { mediaNavItem -> navController.navigate(Route.Detail(mediaNavItem)) },
             onBack = { navController.popBackStack() },
         )
     }

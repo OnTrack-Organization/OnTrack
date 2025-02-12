@@ -152,7 +152,7 @@ class FirestoreServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likedBy" to FieldValue.arrayUnion(like)
+                "likes" to FieldValue.arrayUnion(like)
             )
     }
 
@@ -160,7 +160,7 @@ class FirestoreServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likedBy" to FieldValue.arrayRemove(like)
+                "likes" to FieldValue.arrayRemove(like)
             )
     }
 

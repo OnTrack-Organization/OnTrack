@@ -30,20 +30,20 @@ data class Tracking(
     val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
     val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
 
-    val likedBy: List<TrackingLike> = listOf(),
+    val likes: List<TrackingLike> = listOf(),
     val comments: List<TrackingComment> = listOf(),
     val history: List<TrackingHistoryEntry> = listOf(),
 
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable {
     val likeCount: Int
-        get() = likedBy.size
+        get() = this@Tracking.likes.size
 
     val likeImages: List<String>
-        get() = likedBy.map { it.userImageUrl }.take(3)
+        get() = this@Tracking.likes.map { it.userImageUrl }.take(3)
 
     val isLikedByCurrentUser: Boolean
-        get() = likedBy.any { it.userId == Firebase.auth.currentUser?.uid }
+        get() = this@Tracking.likes.any { it.userId == Firebase.auth.currentUser?.uid }
 
     val commentCount: Int
         get() = comments.size

@@ -34,7 +34,7 @@ data class TrackingEntity(
     val username: String,
     val userImageUrl: String,
 
-    val likedBy: List<TrackingLikeEntity>,
+    val likes: List<TrackingLikeEntity>,
     val comments: List<TrackingCommentEntity>,
     val history: List<TrackingHistoryEntryEntity>,
 

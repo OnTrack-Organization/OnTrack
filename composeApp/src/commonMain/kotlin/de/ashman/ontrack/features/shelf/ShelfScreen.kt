@@ -1,6 +1,5 @@
 package de.ashman.ontrack.features.shelf
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,19 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,16 +31,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
@@ -140,36 +134,10 @@ fun AccountComponent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Surface(
-            modifier = Modifier.size(50.dp),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant,
-        ) {
-            val state = painter.state.collectAsState().value
-
-            when (state) {
-                is AsyncImagePainter.State.Empty -> {}
-                is AsyncImagePainter.State.Loading -> {
-                    CircularProgressIndicator()
-                }
-
-                is AsyncImagePainter.State.Success -> {
-                    Image(
-                        painter = painter,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Account Image",
-                    )
-                }
-
-                is AsyncImagePainter.State.Error -> {
-                    Icon(
-                        modifier = Modifier.padding(8.dp),
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "No Image",
-                    )
-                }
-            }
-        }
+        PersonImage(
+            modifier = Modifier.size(42.dp),
+            userImageUrl = imageUrl,
+        )
 
         name?.let {
             Text(

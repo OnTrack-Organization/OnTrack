@@ -26,6 +26,7 @@
     <!-- FEED -->
     <string name="feed_comments">Comments</string>
     <string name="feed_comments_placeholder">Write a comment…</string>
+    <string name="feed_likes">Likes</string>
     <plurals name="feed_likes_count">
         <item quantity="one">%1$s Like</item>
         <item quantity="other">%1$s Likes</item>

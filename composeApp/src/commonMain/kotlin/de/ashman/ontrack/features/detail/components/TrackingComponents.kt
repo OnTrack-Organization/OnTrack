@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.features.common.contentSizeAnimation
 import de.ashman.ontrack.features.tracking.getStatusIcon
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
@@ -47,7 +48,9 @@ fun ReviewCard(
             onClick = { expanded = !expanded }
         ) {
             ReviewCardContent(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
@@ -72,7 +75,7 @@ fun ReviewCardContent(
     var hasOverflow by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier,
+        modifier = modifier.contentSizeAnimation(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.feed
+package de.ashman.ontrack.features.feed.comment
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

@@ -32,6 +32,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.features.feed.comment.CommentsSheetContent
+import de.ashman.ontrack.features.feed.like.LikesSheetContent
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_nav_title
 import org.jetbrains.compose.resources.stringResource
@@ -43,13 +46,16 @@ fun FeedScreen(
     viewModel: FeedViewModel,
     onFriendsClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onClickCover: (MediaNavigationItems) -> Unit,
+    onUserClick: (String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
 
+    var currentSheetContent by remember { mutableStateOf<SheetContent>(SheetContent.Comments) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showCommentsSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.feedTrackings) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
@@ -112,10 +118,18 @@ fun FeedScreen(
                     tracking = it,
                     onClickLike = { viewModel.likeTracking(it) },
                     onShowComments = {
+                        currentSheetContent = SheetContent.Comments
                         viewModel.selectTracking(it.id)
-                        showCommentsSheet = true
+                        showBottomSheet = true
                     },
                     onClickTrackingHistory = { },
+                    onShowLikes = {
+                        currentSheetContent = SheetContent.Likes
+                        viewModel.selectTracking(it.id)
+                        showBottomSheet = true
+                    },
+                    onClickCover = onClickCover,
+                    onUserClick = { onUserClick(it.userId) },
                 )
 
                 if (it != uiState.feedTrackings.last()) {
@@ -125,18 +139,36 @@ fun FeedScreen(
         }
     }
 
-    if (showCommentsSheet) {
+    if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showCommentsSheet = false },
+            onDismissRequest = { showBottomSheet = false },
             sheetState = bottomSheetState,
         ) {
-            uiState.selectedTracking?.let {
-                CommentsContent(
-                    comments = it.comments,
+            when (currentSheetContent) {
+                SheetContent.Comments -> CommentsSheetContent(
+                    comments = uiState.selectedTracking?.comments ?: emptyList(),
                     onAddComment = viewModel::addComment,
                     onDeleteComment = viewModel::deleteComment,
+                    onClickUser = {
+                        showBottomSheet = false
+                        onUserClick(it)
+                    },
                 )
+
+                SheetContent.Likes -> LikesSheetContent(
+                    likes = uiState.selectedTracking?.likes ?: emptyList(),
+                    onUserClick = {
+                        showBottomSheet = false
+                        onUserClick(it)
+                    },
+                )
+
+                SheetContent.History -> {}
             }
         }
     }
+}
+
+enum class SheetContent {
+    Comments, Likes, History
 }

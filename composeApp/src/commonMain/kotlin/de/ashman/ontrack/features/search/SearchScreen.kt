@@ -97,6 +97,7 @@ fun SearchScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     item {
+                        // TODO add AnimatedContent
                         when (uiState.searchResultState) {
                             SearchResultState.Empty -> EmptyContent(
                                 modifier = Modifier.wrapContentSize(),
