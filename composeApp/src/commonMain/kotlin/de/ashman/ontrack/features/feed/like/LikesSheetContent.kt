@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,7 +41,6 @@ fun LikesSheetContent(
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxHeight(0.5f),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             state = listState,
         ) {

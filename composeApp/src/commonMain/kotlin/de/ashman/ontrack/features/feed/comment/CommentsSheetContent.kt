@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.feed.comment
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.features.common.OnTrackIconButton
@@ -35,6 +36,7 @@ import de.ashman.ontrack.features.common.PersonImage
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_comments
 import ontrack.composeapp.generated.resources.feed_comments_placeholder
+import ontrack.composeapp.generated.resources.feed_no_comments
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -67,31 +69,47 @@ fun CommentsSheetContent(
             style = MaterialTheme.typography.titleMedium,
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxHeight(0.5f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            state = listState,
-        ) {
-            items(items = comments, key = { it.id }) {
-                FeedComment(
-                    userImageUrl = it.userImageUrl,
-                    username = it.username,
-                    comment = it.comment,
-                    showDeleteCommentDialog = { showDeleteCommentDialog = true },
-                    onClickUser = {
-                        onClickUser(it.userId)
-                    },
-                    isScrolling = listState.isScrollInProgress,
-                )
+        AnimatedContent(
+            targetState = comments.isNotEmpty(),
+            label = "Comment List Animation"
+        ) { hasComments ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = listState,
+            ) {
+                if (!hasComments) {
+                    item {
+                        Text(
+                            text = stringResource(Res.string.feed_no_comments),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    items(items = comments, key = { it.id }) {
+                        FeedComment(
+                            userImageUrl = it.userImageUrl,
+                            username = it.username,
+                            comment = it.comment,
+                            showDeleteCommentDialog = { showDeleteCommentDialog = true },
+                            onClickUser = { onClickUser(it.userId) },
+                            isScrolling = listState.isScrollInProgress,
+                        )
 
-                if (showDeleteCommentDialog) {
-                    DeleteCommentDialog(
-                        onConfirmDelete = {
-                            onDeleteComment(it)
-                            showDeleteCommentDialog = false
-                        },
-                        onDismiss = { showDeleteCommentDialog = false },
-                    )
+                        if (showDeleteCommentDialog) {
+                            DeleteCommentDialog(
+                                onConfirmDelete = {
+                                    onDeleteComment(it)
+                                    showDeleteCommentDialog = false
+                                },
+                                onDismiss = { showDeleteCommentDialog = false },
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -26,6 +26,7 @@
     <!-- FEED -->
     <string name="feed_comments">Comments</string>
     <string name="feed_comments_placeholder">Write a comment…</string>
+    <string name="feed_no_comments">No comments yet. Be the first to comment!</string>
     <string name="feed_likes">Likes</string>
     <plurals name="feed_likes_count">
         <item quantity="one">%1$s Like</item>
