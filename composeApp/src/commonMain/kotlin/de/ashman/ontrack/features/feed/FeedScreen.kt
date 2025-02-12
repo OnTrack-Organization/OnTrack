@@ -32,7 +32,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.authentication.AuthViewModel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_nav_title
 import org.jetbrains.compose.resources.stringResource
@@ -42,7 +41,6 @@ import org.jetbrains.compose.resources.stringResource
 fun FeedScreen(
     modifier: Modifier,
     viewModel: FeedViewModel,
-    authViewModel: AuthViewModel,
     onFriendsClick: () -> Unit,
     onLogoutClick: () -> Unit,
 ) {
@@ -86,10 +84,7 @@ fun FeedScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            authViewModel.signOut()
-                            onLogoutClick()
-                        },
+                        onClick = onLogoutClick,
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.Logout,

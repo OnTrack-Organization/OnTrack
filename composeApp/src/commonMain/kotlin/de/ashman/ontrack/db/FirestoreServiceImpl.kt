@@ -9,10 +9,10 @@ import de.ashman.ontrack.db.entity.TrackingLikeEntity
 import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.firestore.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.merge
 
 class FirestoreServiceImpl(
     firestore: FirebaseFirestore,
@@ -118,7 +118,7 @@ class FirestoreServiceImpl(
     }*/
 
     // LIVE
-    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
+    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
         val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
 
@@ -134,13 +134,18 @@ class FirestoreServiceImpl(
                 .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
         }
 
-        allFlows.merge()
-            .map { allTrackings ->
-                allTrackings
+        return if (allFlows.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            combine(allFlows) { trackingLists ->
+                trackingLists
+                    .toList()
+                    .flatten()
+                    .distinctBy { it.id }
                     .sortedByDescending { it.timestamp }
                     .take(10)
             }
-            .collect { emit(it) }
+        }
     }
 
     override suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity) {

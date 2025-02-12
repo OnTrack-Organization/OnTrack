@@ -12,7 +12,6 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,7 +21,6 @@ class AuthViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState
-        .onStart {}
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -31,9 +29,8 @@ class AuthViewModel(
 
     init {
         // Login with Firebase after closing the app
-        _uiState.update {
-            it.copy(user = Firebase.auth.currentUser?.toEntity()?.toDomain())
-        }
+        val currentUser = Firebase.auth.currentUser?.toEntity()?.toDomain()
+        _uiState.update { it.copy(user = currentUser) }
         Logger.i { "Initialized AuthViewModel" }
     }
 
@@ -50,7 +47,7 @@ class AuthViewModel(
         }
     }
 
-    fun signOut() = viewModelScope.launch {
+    fun logout() = viewModelScope.launch {
         try {
             Firebase.auth.signOut()
             _uiState.update { it.copy(user = null) }
@@ -60,12 +57,18 @@ class AuthViewModel(
     }
 
     fun deleteAccount() = viewModelScope.launch {
+        val userId = _uiState.value.user?.id
+        if (userId == null) {
+            _uiState.update { it.copy(error = "No user to delete") }
+            return@launch
+        }
+
         try {
-            authService.deleteUser(_uiState.value.user!!.id)
-            _uiState.update { it.copy(user = null) }
+            authService.deleteUser(userId)
+            _uiState.update { it.copy(user = null, error = null) }
         } catch (e: Exception) {
-            Logger.e("Error deleting account: ${e.message}")
-            _uiState.update { it.copy(error = e.message) }
+            Logger.e("Error deleting account", e)
+            _uiState.update { it.copy(error = e.message ?: "Unknown error") }
         }
     }
 }

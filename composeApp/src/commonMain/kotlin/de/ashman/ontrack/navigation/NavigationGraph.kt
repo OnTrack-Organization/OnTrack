@@ -129,12 +129,16 @@ fun NavGraphBuilder.mainGraph(
         FeedScreen(
             modifier = modifier,
             viewModel = feedViewModel,
-            authViewModel = authViewModel,
             onFriendsClick = {
                 // TODO Maybe change not to route, but bottom sheet content?
                 //navController.navigate(Route.Friends)
             },
-            onLogoutClick = { navController.navigate(Route.Start) },
+            onLogoutClick = {
+                authViewModel.logout()
+                navController.navigate(Route.Start) {
+                    popUpTo(Route.Feed) { inclusive = true } // Clear backstack
+                }
+            },
         )
     }
 
