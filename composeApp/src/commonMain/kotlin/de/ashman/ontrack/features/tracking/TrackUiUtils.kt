@@ -181,10 +181,10 @@ fun TrackStatus.getIcon(isFilled: Boolean = false): ImageVector {
 @Composable
 fun TrackStatus?.getColor(): Color {
     return when (this) {
-        TrackStatus.CONSUMING -> MaterialTheme.colorScheme.secondary
-        TrackStatus.CONSUMED -> MaterialTheme.colorScheme.tertiary
-        TrackStatus.DROPPED -> MaterialTheme.colorScheme.error
-        TrackStatus.CATALOG -> MaterialTheme.colorScheme.inversePrimary
+        TrackStatus.CONSUMING -> MaterialTheme.colorScheme.secondaryContainer
+        TrackStatus.CONSUMED -> MaterialTheme.colorScheme.tertiaryContainer
+        TrackStatus.DROPPED -> MaterialTheme.colorScheme.errorContainer
+        TrackStatus.CATALOG -> MaterialTheme.colorScheme.primaryContainer
         null -> MaterialTheme.colorScheme.primary
     }
 }

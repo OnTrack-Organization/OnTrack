@@ -1,10 +1,18 @@
 package de.ashman.ontrack.features.common
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +34,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,6 +46,41 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimatedButtonContent(
+    text: StringResource,
+    icon: ImageVector?,
+    contentColor: Color
+) {
+    AnimatedContent(
+        targetState = Pair(text, icon),
+        transitionSpec = {
+            fadeIn() togetherWith fadeOut() using SizeTransform(false)
+        }
+    ) { (targetText, targetIcon) ->
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            targetIcon?.let {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = it,
+                    contentDescription = it.name,
+                    tint = contentColor
+                )
+            }
+            Text(
+                text = stringResource(targetText),
+                style = MaterialTheme.typography.titleMedium,
+                color = contentColor
+            )
+        }
+    }
+}
+
 
 @Composable
 fun OnTrackButton(
@@ -47,29 +92,27 @@ fun OnTrackButton(
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
+    val animatedContainerColor by animateColorAsState(targetValue = color)
+    val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
+
     Button(
         modifier = modifier.fillMaxWidth().height(48.dp),
         onClick = onClick,
         enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = color,
-            contentColor = contentColorFor(color),
+            containerColor = animatedContainerColor,
+            contentColor = animatedContentColor,
         ),
         shape = MaterialTheme.shapes.medium,
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = animatedContentColor,
                 strokeWidth = 3.dp,
             )
         } else {
-            icon?.let { Icon(modifier = Modifier.size(24.dp), imageVector = icon, contentDescription = icon.name) }
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = stringResource(text),
-                style = MaterialTheme.typography.titleMedium,
-            )
+            AnimatedButtonContent(text, icon, animatedContentColor)
         }
     }
 }
@@ -79,19 +122,20 @@ fun OnTrackOutlinedButton(
     modifier: Modifier = Modifier,
     text: StringResource,
     icon: ImageVector? = null,
+    color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
+    val animatedContentColor by animateColorAsState(targetValue = color)
+
     OutlinedButton(
         modifier = modifier.fillMaxWidth().height(48.dp),
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
-    ) {
-        icon?.let { Icon(modifier = Modifier.size(24.dp), imageVector = icon, contentDescription = icon.name) }
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = stringResource(text),
-            style = MaterialTheme.typography.titleMedium,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = animatedContentColor,
         )
+    ) {
+        AnimatedButtonContent(text, icon, animatedContentColor)
     }
 }
 
@@ -100,19 +144,29 @@ fun OnTrackIconButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     enabled: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
+    val animatedContainerColor by animateColorAsState(targetValue = color)
+    val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
+
     Button(
         modifier = modifier.size(48.dp),
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
         contentPadding = PaddingValues(0.dp),
         enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = animatedContainerColor,
+            contentColor = animatedContentColor
+        )
+
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = icon.name,
+            tint = animatedContentColor
         )
     }
 }
@@ -125,6 +179,8 @@ fun OnTrackOutlinedIconButton(
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
+    val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
+
     OutlinedButton(
         modifier = modifier.size(48.dp),
         onClick = onClick,
@@ -132,13 +188,14 @@ fun OnTrackOutlinedIconButton(
         contentPadding = PaddingValues(0.dp),
         enabled = enabled,
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = color,
+            contentColor = animatedContentColor,
         )
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = icon.name,
+            tint = animatedContentColor
         )
     }
 }

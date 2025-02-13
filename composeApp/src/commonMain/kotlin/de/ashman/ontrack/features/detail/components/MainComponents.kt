@@ -1,7 +1,13 @@
 package de.ashman.ontrack.features.detail.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -101,13 +107,17 @@ fun StickyMainContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OnTrackButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).animateContentSize(),
                 text = if (status != null) status.getLabel(mediaType) else Res.string.track_button,
                 icon = if (status != null) status.getIcon(true) else Icons.Default.Add,
                 color = status.getColor(),
                 onClick = onClickAddTracking,
             )
-            if (status != null) {
+            AnimatedVisibility(
+                visible = status != null,
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally(),
+            ) {
                 OnTrackOutlinedIconButton(
                     icon = Icons.Outlined.Delete,
                     color = status.getColor(),
@@ -117,6 +127,7 @@ fun StickyMainContent(
         }
     }
 }
+
 
 @Composable
 fun MainInfo(
