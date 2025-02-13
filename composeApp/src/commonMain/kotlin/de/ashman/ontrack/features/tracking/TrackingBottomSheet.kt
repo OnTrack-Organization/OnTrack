@@ -22,6 +22,12 @@ import de.ashman.ontrack.features.tracking.content.ReviewContent
 import de.ashman.ontrack.features.tracking.content.TrackingContent
 import kotlinx.datetime.Clock.System
 
+enum class CurrentBottomSheetContent {
+    TRACKING,
+    REVIEW,
+    DELETE
+}
+
 // TODO add back handling
 // Back Handling is being worked on rn
 // https://youtrack.jetbrains.com/issue/CMP-4419

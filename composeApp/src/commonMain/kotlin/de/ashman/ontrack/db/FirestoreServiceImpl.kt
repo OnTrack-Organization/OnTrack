@@ -93,6 +93,31 @@ class FirestoreServiceImpl(
             }
     }
 
+    override suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>> {
+        val currentUserId = authService.currentUserId
+
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
+
+        val allFlows = friends.map { friendId ->
+            userTrackingCollection(friendId)
+                .where { "mediaId" equalTo mediaId }
+                .snapshots()
+                .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
+        }
+
+        return if (allFlows.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            combine(allFlows) { trackingLists ->
+                trackingLists
+                    .toList()
+                    .flatten()
+                    .distinctBy { it.id }
+                    .sortedByDescending { it.timestamp }
+            }
+        }
+    }
+
     // FEED
     // ONE TIME FETCH
     /*override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> = flow {
@@ -118,7 +143,7 @@ class FirestoreServiceImpl(
     }*/
 
     // LIVE
-    override suspend fun getTrackingFeed(lastTimestamp: Long?): Flow<List<TrackingEntity>> {
+    override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
         val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
 
@@ -143,7 +168,7 @@ class FirestoreServiceImpl(
                     .flatten()
                     .distinctBy { it.id }
                     .sortedByDescending { it.timestamp }
-                    .take(10)
+                    .take(limit)
             }
         }
     }

@@ -53,6 +53,7 @@ fun DetailScreen(
     mediaNavItems: MediaNavigationItems,
     viewModel: DetailViewModel,
     onClickItem: (MediaNavigationItems) -> Unit,
+    onUserClick: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,6 +69,7 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNavItems.id) {
         viewModel.fetchDetails(mediaNavItems)
+        viewModel.observeFriendTrackings(mediaNavItems.id)
     }
 
     Scaffold(
@@ -131,9 +133,14 @@ fun DetailScreen(
                     uiState.selectedMedia?.let {
                         DetailContent(
                             media = it,
-                            tracking = uiState.selectedTracking,
-                            listState = listState,
+                            friendTrackings = uiState.friendTrackings,
+                            columnListState = listState,
                             onClickItem = onClickItem,
+                            onUserClick = onUserClick,
+                            onClickTrackingHistory = {
+                                //currentBottomSheet = CurrentBottomSheetContent.TRACKING_HISTORY
+                                showBottomSheet = true
+                            }
                         )
                     }
                 }

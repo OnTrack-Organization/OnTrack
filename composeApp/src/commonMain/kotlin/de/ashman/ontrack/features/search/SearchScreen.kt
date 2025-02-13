@@ -44,7 +44,7 @@ import de.ashman.ontrack.features.common.keyboardAsState
 import de.ashman.ontrack.features.detail.components.EmptyContent
 import de.ashman.ontrack.features.detail.components.ErrorContent
 import de.ashman.ontrack.features.detail.components.LoadingContent
-import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
@@ -130,7 +130,7 @@ fun SearchScreen(
                                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                                 title = media.title,
                                 coverUrl = media.coverUrl,
-                                trackStatusIcon = tracking?.status?.getStatusIcon(true),
+                                trackStatusIcon = tracking?.status?.getIcon(true),
                                 onClick = {
                                     onClickItem(
                                         MediaNavigationItems(

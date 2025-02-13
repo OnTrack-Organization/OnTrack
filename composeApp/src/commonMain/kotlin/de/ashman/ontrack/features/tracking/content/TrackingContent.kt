@@ -26,7 +26,7 @@ import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.tracking.getLabel
-import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.tracking.getIcon
 import de.ashman.ontrack.features.tracking.getSublabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
@@ -58,7 +58,7 @@ fun TrackingContent(
 
             TrackStatusButton(
                 onClick = { onSelectStatus(status) },
-                icon = status.getStatusIcon(isSelected),
+                icon = status.getIcon(isSelected),
                 label = status.getLabel(mediaType),
                 subLabel = status.getSublabel(mediaType),
                 isSelected = selectedStatus == status,

@@ -1,14 +1,13 @@
 package de.ashman.ontrack.features.detail.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +25,8 @@ import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.contentSizeAnimation
-import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.feed.FeedCardHeader
+import de.ashman.ontrack.features.tracking.getIcon
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -35,30 +35,26 @@ import kotlinx.datetime.toLocalDateTime
 fun ReviewCard(
     modifier: Modifier = Modifier,
     tracking: Tracking,
+    onClickTrackingHistory: () -> Unit,
+    onUserClick: () -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    if (tracking.status != TrackStatus.CATALOG && tracking.status != TrackStatus.CONSUMING) {
-        Card(
-            modifier = modifier,
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            onClick = { expanded = !expanded }
-        ) {
-            ReviewCardContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                reviewTitle = tracking.reviewTitle,
-                reviewDescription = tracking.reviewDescription,
-                reviewRating = tracking.rating,
-                timestamp = tracking.timestamp,
-                trackStatus = tracking.status,
-                expanded = expanded,
-            )
-        }
+    Column(
+        modifier = modifier.contentSizeAnimation(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        FeedCardHeader(
+            userImageUrl = tracking.userImageUrl,
+            username = tracking.username,
+            timestamp = tracking.timestamp.formatDateTime(),
+            onShowTrackingHistory = onClickTrackingHistory,
+            onUserClick = onUserClick,
+        )
+        ReviewCardContent(
+            reviewTitle = tracking.reviewTitle,
+            reviewDescription = tracking.reviewDescription,
+            reviewRating = tracking.rating,
+            trackStatus = tracking.status,
+        )
     }
 }
 
@@ -68,21 +64,21 @@ fun ReviewCardContent(
     reviewTitle: String?,
     reviewDescription: String?,
     reviewRating: Double?,
-    timestamp: Long? = null,
     trackStatus: TrackStatus?,
-    expanded: Boolean,
 ) {
+    var expanded by remember { mutableStateOf(false) }
     var hasOverflow by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.contentSizeAnimation(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            trackStatus?.getStatusIcon(true)?.let {
+            trackStatus?.getIcon(true)?.let {
                 Icon(
                     imageVector = it, it.name,
                     tint = MaterialTheme.colorScheme.primary,
@@ -90,38 +86,38 @@ fun ReviewCardContent(
             }
 
             MiniStarRatingBar(
-                modifier = Modifier.weight(1f),
                 rating = reviewRating
             )
+        }
 
-            timestamp?.let {
+        Column(
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = { expanded = !expanded }
+            )
+        ) {
+            if (!reviewTitle.isNullOrBlank()) {
                 Text(
-                    text = it.formatDate(),
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = reviewTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = if (expanded) Int.MAX_VALUE else 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
-        }
 
-        if (!reviewTitle.isNullOrBlank()) {
-            Text(
-                text = reviewTitle,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = if (expanded) Int.MAX_VALUE else 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        if (!reviewDescription.isNullOrBlank()) {
-            Text(
-                text = reviewDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = if (expanded) Int.MAX_VALUE else 2,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = {
-                    if (!expanded) hasOverflow = it.hasVisualOverflow
-                }
-            )
+            if (!reviewDescription.isNullOrBlank()) {
+                Text(
+                    text = reviewDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = if (expanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = {
+                        if (!expanded) hasOverflow = it.hasVisualOverflow
+                    }
+                )
+            }
         }
     }
 }

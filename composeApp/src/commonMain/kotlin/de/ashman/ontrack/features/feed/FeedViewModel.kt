@@ -36,7 +36,7 @@ class FeedViewModel(
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
 
-        firestoreService.getTrackingFeed(lastTimestamp).collect { feedTrackings ->
+        firestoreService.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
             if (feedTrackings.isEmpty()) {
                 _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
             } else {

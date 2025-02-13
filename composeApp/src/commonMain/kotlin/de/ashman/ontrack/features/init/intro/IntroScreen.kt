@@ -137,7 +137,7 @@ fun PagerIndicator(
         }
         Row {
             repeat(pageSize) {
-                val color = if (it == currentPage) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.secondaryContainer
+                val color = if (it == currentPage) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
                 Box(
                     modifier = Modifier
                         .padding(4.dp)

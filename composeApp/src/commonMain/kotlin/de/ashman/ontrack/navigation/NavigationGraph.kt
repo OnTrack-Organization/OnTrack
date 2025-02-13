@@ -189,6 +189,9 @@ fun NavGraphBuilder.mediaGraph(
                     }
                 }
             },
+            onUserClick = { userId ->
+                navController.navigate(Route.OtherShelf(userId))
+            },
             onBack = {
                 navController.popBackStack()
             },

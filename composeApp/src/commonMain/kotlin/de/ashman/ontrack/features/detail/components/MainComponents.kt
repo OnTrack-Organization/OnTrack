@@ -40,10 +40,11 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
-import de.ashman.ontrack.features.common.OnTrackIconButton
+import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.tracking.getColor
+import de.ashman.ontrack.features.tracking.getIcon
 import de.ashman.ontrack.features.tracking.getLabel
-import de.ashman.ontrack.features.tracking.getStatusIcon
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.no_title
 import ontrack.composeapp.generated.resources.track_button
@@ -102,12 +103,14 @@ fun StickyMainContent(
             OnTrackButton(
                 modifier = Modifier.weight(1f),
                 text = if (status != null) status.getLabel(mediaType) else Res.string.track_button,
-                icon = if (status != null) status.getStatusIcon(true) else Icons.Default.Add,
+                icon = if (status != null) status.getIcon(true) else Icons.Default.Add,
+                color = status.getColor(),
                 onClick = onClickAddTracking,
             )
             if (status != null) {
-                OnTrackIconButton(
+                OnTrackOutlinedIconButton(
                     icon = Icons.Outlined.Delete,
+                    color = status.getColor(),
                     onClick = onClickRemoveTracking
                 )
             }

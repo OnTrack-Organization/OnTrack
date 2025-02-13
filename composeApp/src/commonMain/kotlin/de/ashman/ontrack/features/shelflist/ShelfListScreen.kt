@@ -37,7 +37,7 @@ import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.tracking.getLabel
-import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource
@@ -140,7 +140,7 @@ fun TrackStatusFilterChips(
                 leadingIcon = {
                     Icon(
                         modifier = Modifier.size(AssistChipDefaults.IconSize),
-                        imageVector = it.getStatusIcon(true),
+                        imageVector = it.getIcon(true),
                         contentDescription = "Chip Icon",
                     )
                 }

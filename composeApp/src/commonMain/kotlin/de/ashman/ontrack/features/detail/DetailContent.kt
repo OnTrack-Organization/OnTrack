@@ -1,11 +1,21 @@
 package de.ashman.ontrack.features.detail
 
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,35 +38,78 @@ import de.ashman.ontrack.features.detail.content.MovieDetailContent
 import de.ashman.ontrack.features.detail.content.ShowDetailContent
 import de.ashman.ontrack.features.detail.content.VideogameDetailContent
 import de.ashman.ontrack.navigation.MediaNavigationItems
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_tracked_by
+import ontrack.composeapp.generated.resources.ratings_overview
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailContent(
     media: Media,
-    tracking: Tracking?,
-    listState: LazyListState,
+    friendTrackings: List<Tracking>,
+    columnListState: LazyListState,
     onClickItem: (MediaNavigationItems) -> Unit,
+    onUserClick: (String) -> Unit,
+    onClickTrackingHistory: () -> Unit,
 ) {
+    val rowListState = rememberLazyListState()
+    val flingBehavior = rememberSnapFlingBehavior(SnapLayoutInfoProvider(rowListState))
+
     LazyColumn(
-        state = listState,
+        state = columnListState,
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            RatingCardRow(
-                apiType = media.mediaType.getRatingType(),
-                rating = media.apiRating,
-                ratingCount = media.apiRatingCount
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = stringResource(Res.string.detail_tracked_by),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    state = rowListState,
+                    flingBehavior = flingBehavior,
+                ) {
+                    items(friendTrackings) {
+                        ReviewCard(
+                            modifier = Modifier
+                                .fillParentMaxWidth(0.95f),
+                            tracking = it,
+                            onClickTrackingHistory = onClickTrackingHistory,
+                            onUserClick = { onUserClick(it.userId) },
+                        )
+                    }
+                }
+            }
         }
 
-        tracking?.let {
-            item {
-                ReviewCard(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    tracking = it,
+        item {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = stringResource(Res.string.ratings_overview),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                RatingCardRow(
+                    apiType = media.mediaType.getRatingType(),
+                    rating = media.apiRating,
+                    ratingCount = media.apiRatingCount
                 )
             }
+        }
+
+        item {
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         }
 
         when (media.mediaType) {

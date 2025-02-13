@@ -60,7 +60,7 @@ fun RatingCard(
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surface,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,7 +47,7 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.contentSizeAnimation
 import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import de.ashman.ontrack.features.detail.components.formatDateTime
-import de.ashman.ontrack.features.tracking.getStatusIcon
+import de.ashman.ontrack.features.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
@@ -67,8 +66,9 @@ fun FeedCard(
     onUserClick: () -> Unit,
 ) {
     Card(
+        modifier = Modifier.contentSizeAnimation(),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -207,7 +207,7 @@ fun FeedCardContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    trackStatus?.getStatusIcon(true)?.let {
+                    trackStatus?.getIcon(true)?.let {
                         Icon(
                             imageVector = it, it.name,
                             tint = MaterialTheme.colorScheme.primary,
@@ -240,11 +240,9 @@ fun FeedCardContent(
                 modifier = Modifier
                     .clickable(
                         indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        expanded = !expanded
-                    }
-                    .contentSizeAnimation(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick ={expanded = !expanded}
+                    ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (!reviewTitle.isNullOrBlank()) {

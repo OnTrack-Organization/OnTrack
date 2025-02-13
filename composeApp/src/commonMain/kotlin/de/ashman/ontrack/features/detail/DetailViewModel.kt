@@ -107,11 +107,24 @@ class DetailViewModel(
             }
     }
 
+    fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+
+        firestoreService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
+            _uiState.update { state ->
+                state.copy(
+                    resultState = DetailResultState.Success,
+                    friendTrackings = feedTrackings.map { it.toDomain() }
+                )
+            }
+        }
+    }
 }
 
 data class DetailUiState(
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
+    val friendTrackings: List<Tracking> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,

@@ -9,7 +9,9 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
@@ -71,12 +73,6 @@ import ontrack.composeapp.generated.resources.videogame_status_dropped_label
 import ontrack.composeapp.generated.resources.videogame_status_dropped_sublabel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-
-enum class CurrentBottomSheetContent {
-    TRACKING,
-    REVIEW,
-    DELETE
-}
 
 @Composable
 fun TrackStatus.getLabel(mediaType: MediaType): StringResource {
@@ -173,12 +169,23 @@ fun TrackStatus.getSublabel(mediaType: MediaType): StringResource {
 }
 
 @Composable
-fun TrackStatus.getStatusIcon(isFilled: Boolean = false): ImageVector {
+fun TrackStatus.getIcon(isFilled: Boolean = false): ImageVector {
     return when (this) {
         TrackStatus.CONSUMING -> if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
         TrackStatus.CONSUMED -> if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
         TrackStatus.DROPPED -> if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel
         TrackStatus.CATALOG -> if (isFilled) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
+    }
+}
+
+@Composable
+fun TrackStatus?.getColor(): Color {
+    return when (this) {
+        TrackStatus.CONSUMING -> MaterialTheme.colorScheme.secondary
+        TrackStatus.CONSUMED -> MaterialTheme.colorScheme.tertiary
+        TrackStatus.DROPPED -> MaterialTheme.colorScheme.error
+        TrackStatus.CATALOG -> MaterialTheme.colorScheme.inversePrimary
+        null -> MaterialTheme.colorScheme.primary
     }
 }
 

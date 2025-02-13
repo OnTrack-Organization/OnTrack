@@ -84,7 +84,7 @@ fun FeedScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Group,
-                            contentDescription = "Friends",
+                            contentDescription = null,
                         )
                     }
                 },

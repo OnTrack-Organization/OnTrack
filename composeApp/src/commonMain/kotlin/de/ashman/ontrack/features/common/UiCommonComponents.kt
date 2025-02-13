@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ fun OnTrackButton(
         enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
+            contentColor = contentColorFor(color),
         ),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -106,6 +108,32 @@ fun OnTrackIconButton(
         shape = MaterialTheme.shapes.medium,
         contentPadding = PaddingValues(0.dp),
         enabled = enabled,
+    ) {
+        Icon(
+            modifier = Modifier.size(24.dp),
+            imageVector = icon,
+            contentDescription = icon.name,
+        )
+    }
+}
+
+@Composable
+fun OnTrackOutlinedIconButton(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    enabled: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        modifier = modifier.size(48.dp),
+        onClick = onClick,
+        shape = MaterialTheme.shapes.medium,
+        contentPadding = PaddingValues(0.dp),
+        enabled = enabled,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = color,
+        )
     ) {
         Icon(
             modifier = Modifier.size(24.dp),

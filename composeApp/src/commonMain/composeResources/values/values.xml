@@ -57,32 +57,7 @@
     <string name="search_empty_boardgames">No boardgames found</string>
     <string name="search_empty_albums">No albums found</string>
 
-    <!-- TRACK -->
-    <string name="track_button">Track</string>
-    <string name="continue_button">Continue</string>
-    <string name="save_button">Save</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="delete_button">Delete</string>
-
-    <string name="review_title">Review of "%1$s"</string>
-    <string name="track_title">Track status of "%1$s"</string>
-    <string name="delete_title">Delete trackings?</string>
-    <string name="delete_description">Are you sure you want to delete the trackings of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
-
-    <string name="no_rating">No rating</string>
-    <string name="rating_one">Trash</string>
-    <string name="rating_two">Alright</string>
-    <string name="rating_three">Good one</string>
-    <string name="rating_four">Very nice</string>
-    <string name="rating_five">Masterpiece</string>
-    <string name="rating_subtitle">%1$d/%2$d %3$s</string>
-
-    <string name="review_title_label">Write a review title...</string>
-    <string name="review_description_label">Write a review...</string>
-
-    <string name="tracking_saved">Saved media tracking</string>
-    <string name="tracking_deleted">Deleted media tracking</string>
-
+    <!-- MEDIA -->
     <plurals name="movie">
         <item quantity="one">Movie</item>
         <item quantity="other">Movies</item>
@@ -176,7 +151,37 @@
     <string name="boardgame_network_error">Rulebook says: Try again later.</string>
     <string name="album_network_error">Lost connection… now it’s just silence.</string>
 
-    <!-- DETAIL -->
+    <!-- DETAIL TRACKING -->
+    <string name="track_button">Track</string>
+    <string name="continue_button">Continue</string>
+    <string name="save_button">Save</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="delete_button">Delete</string>
+
+    <string name="detail_tracked_by">Tracked by</string>
+
+    <string name="review_title">Review of "%1$s"</string>
+    <string name="track_title">Track status of "%1$s"</string>
+    <string name="delete_title">Delete trackings?</string>
+    <string name="delete_description">Are you sure you want to delete the trackings of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
+
+    <string name="no_rating">No rating</string>
+    <string name="rating_one">Trash</string>
+    <string name="rating_two">Alright</string>
+    <string name="rating_three">Good one</string>
+    <string name="rating_four">Very nice</string>
+    <string name="rating_five">Masterpiece</string>
+    <string name="rating_subtitle">%1$d/%2$d %3$s</string>
+
+    <string name="review_title_label">Write a review title...</string>
+    <string name="review_description_label">Write a review...</string>
+
+    <string name="tracking_saved">Saved tracking</string>
+    <string name="tracking_deleted">Deleted tracking</string>
+
+    <string name="ratings_overview">Ratings</string>
+
+    <!-- DETAIL CONTENT -->
     <string name="detail_description">Description</string>
 
     <plurals name="detail_seasons">
