@@ -156,8 +156,7 @@ fun OnTrackIconButton(
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
-    val animatedContainerColor by animateColorAsState(targetValue = color)
-    val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
+    val animatedContentColor by animateColorAsState(targetValue = color)
 
     Button(
         modifier = modifier.size(48.dp),
@@ -166,7 +165,6 @@ fun OnTrackIconButton(
         contentPadding = PaddingValues(0.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = animatedContainerColor,
             contentColor = animatedContentColor
         )
 

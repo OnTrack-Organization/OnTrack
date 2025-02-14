@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.detail.tracking
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -89,6 +90,7 @@ fun SelectableStarRatingBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (i in 1..MAX_RATING) {
+                // TODO add a nice animation here
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = null,
@@ -104,11 +106,15 @@ fun SelectableStarRatingBar(
                 )
             }
         }
-        Text(
-            text = getRatingLabel(rating, MAX_RATING),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold,
-        )
+        AnimatedContent(
+            targetState = rating,
+        ) { targetState ->
+            Text(
+                text = getRatingLabel(targetState?.toInt(), MAX_RATING),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
 }

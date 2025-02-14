@@ -5,12 +5,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +25,7 @@ import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.contentSizeAnimation
+import de.ashman.ontrack.features.detail.tracking.getColor
 import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.features.feed.FeedCardHeader
 import kotlinx.datetime.Instant
@@ -73,21 +74,20 @@ fun ReviewCardContent(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            trackStatus?.getIcon(true)?.let {
+        trackStatus?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Icon(
-                    imageVector = it, it.name,
-                    tint = MaterialTheme.colorScheme.primary,
+                    imageVector = it.getIcon(true), it.name,
+                    tint = contentColorFor(it.getColor()),
+                )
+                MiniStarRatingBar(
+                    rating = reviewRating,
+                    trackStatus = it
                 )
             }
-
-            MiniStarRatingBar(
-                rating = reviewRating
-            )
         }
 
         Column(
@@ -126,6 +126,7 @@ fun ReviewCardContent(
 fun MiniStarRatingBar(
     modifier: Modifier = Modifier,
     rating: Double?,
+    trackStatus: TrackStatus,
 ) {
     Row(
         modifier = modifier
@@ -135,7 +136,7 @@ fun MiniStarRatingBar(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
                 tint = if (rating != null && i <= rating) {
-                    MaterialTheme.colorScheme.primary
+                    contentColorFor(trackStatus.getColor())
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },

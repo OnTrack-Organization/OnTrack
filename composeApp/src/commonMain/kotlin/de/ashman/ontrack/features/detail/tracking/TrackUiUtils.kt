@@ -190,14 +190,14 @@ fun TrackStatus?.getColor(): Color {
 }
 
 @Composable
-fun getRatingLabel(rating: Double?, maxRating: Int): String {
+fun getRatingLabel(rating: Int?, maxRating: Int): String {
     val ratingLabel = when (rating) {
         null -> stringResource(Res.string.no_rating)
-        1.0 -> stringResource(Res.string.rating_one)
-        2.0 -> stringResource(Res.string.rating_two)
-        3.0 -> stringResource(Res.string.rating_three)
-        4.0 -> stringResource(Res.string.rating_four)
-        5.0 -> stringResource(Res.string.rating_five)
+        1 -> stringResource(Res.string.rating_one)
+        2 -> stringResource(Res.string.rating_two)
+        3 -> stringResource(Res.string.rating_three)
+        4 -> stringResource(Res.string.rating_four)
+        5 -> stringResource(Res.string.rating_five)
         else -> ""
     }
 

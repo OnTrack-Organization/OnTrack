@@ -21,7 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.util.getMediaTypeUi
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_empty
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -81,7 +84,7 @@ fun EmptyContent(
         )
         Spacer(modifier = Modifier.size(8.dp))
         Text(
-            text = stringResource(mediaType.getMediaTypeUi().emptySearch),
+            text = stringResource(Res.string.search_empty, pluralStringResource(mediaType.getMediaTypeUi().title, 2).lowercase()),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

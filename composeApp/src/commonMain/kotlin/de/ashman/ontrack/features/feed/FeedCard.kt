@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,7 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.contentSizeAnimation
 import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import de.ashman.ontrack.features.detail.components.formatDateTime
+import de.ashman.ontrack.features.detail.tracking.getColor
 import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -203,19 +205,20 @@ fun FeedCardContent(
                     }
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    trackStatus?.getIcon(true)?.let {
+                trackStatus?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         Icon(
-                            imageVector = it, it.name,
-                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector = it.getIcon(true), it.name,
+                            tint = contentColorFor(it.getColor()),
+                        )
+                        MiniStarRatingBar(
+                            rating = reviewRating,
+                            trackStatus = it
                         )
                     }
-                    MiniStarRatingBar(
-                        rating = reviewRating
-                    )
                 }
             }
 
@@ -241,7 +244,7 @@ fun FeedCardContent(
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick ={expanded = !expanded}
+                        onClick = { expanded = !expanded }
                     ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {

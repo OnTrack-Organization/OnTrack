@@ -5,8 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_delete_comment_cancel
-import ontrack.composeapp.generated.resources.feed_delete_comment_confirm
+import ontrack.composeapp.generated.resources.cancel_button
+import ontrack.composeapp.generated.resources.delete_button
 import ontrack.composeapp.generated.resources.feed_delete_comment_description
 import ontrack.composeapp.generated.resources.feed_delete_comment_title
 import org.jetbrains.compose.resources.stringResource
@@ -24,14 +24,14 @@ fun DeleteCommentDialog(
             TextButton(
                 onClick = onConfirmDelete
             ) {
-                Text(stringResource(Res.string.feed_delete_comment_confirm))
+                Text(stringResource(Res.string.delete_button))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(stringResource(Res.string.feed_delete_comment_cancel))
+                Text(stringResource(Res.string.cancel_button))
             }
         },
     )

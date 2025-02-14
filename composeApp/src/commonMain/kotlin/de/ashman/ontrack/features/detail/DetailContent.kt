@@ -60,31 +60,33 @@ fun DetailContent(
         state = columnListState,
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        item {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = stringResource(Res.string.detail_tracked_by),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    state = rowListState,
-                    flingBehavior = flingBehavior,
+        if (friendTrackings.isNotEmpty()) {
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    items(friendTrackings) {
-                        ReviewCard(
-                            modifier = Modifier
-                                .fillParentMaxWidth(0.95f),
-                            tracking = it,
-                            onClickTrackingHistory = onClickTrackingHistory,
-                            onUserClick = { onUserClick(it.userId) },
-                        )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = stringResource(Res.string.detail_tracked_by),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        state = rowListState,
+                        flingBehavior = flingBehavior,
+                    ) {
+                        items(friendTrackings) {
+                            ReviewCard(
+                                modifier = Modifier.fillParentMaxWidth(if (friendTrackings.size == 1) 1f else 0.95f),
+                                tracking = it,
+                                onClickTrackingHistory = onClickTrackingHistory,
+                                onUserClick = { onUserClick(it.userId) },
+                            )
+                        }
                     }
                 }
             }
