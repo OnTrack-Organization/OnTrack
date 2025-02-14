@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.detail.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -67,7 +68,14 @@ fun MediaDescription(
                     )
                 }
                 if (hasOverflow) {
-                    Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+                    AnimatedContent(
+                        targetState = expanded,
+                    ) { targetState ->
+                        Icon(
+                            imageVector = if (targetState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
 
@@ -153,10 +161,16 @@ fun CreatorCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 description?.let {
-                    Icon(imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, "Arrow")
+                    AnimatedContent(
+                        targetState = expanded,
+                    ) { targetState ->
+                        Icon(
+                            imageVector = if (targetState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
-
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),

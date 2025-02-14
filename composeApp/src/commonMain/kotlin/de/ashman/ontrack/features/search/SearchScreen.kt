@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -178,18 +179,26 @@ fun SearchBar(
                 onExpandedChange = { },
                 placeholder = { Text(stringResource(selectedMediaType.getMediaTypeUi().searchPlaceholder)) },
                 leadingIcon = {
-                    if (isKeyboardOpen) {
-                        IconButton(onClick = closeKeyboard) {
-                            Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back Arrow")
+                    AnimatedContent(
+                        targetState = isKeyboardOpen,
+                    ) { targetState ->
+                        if (targetState) {
+                            IconButton(onClick = closeKeyboard) {
+                                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back Arrow")
+                            }
+                        } else {
+                            Icon(Icons.Default.Search, contentDescription = "Search Icon")
                         }
-                    } else {
-                        Icon(Icons.Default.Search, contentDescription = "Search Icon")
                     }
                 },
                 trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { onQueryChanged("") }) {
-                            Icon(Icons.Rounded.Close, contentDescription = "Clear Search Icon")
+                    AnimatedContent(
+                        targetState = query.isNotEmpty(),
+                    ) { targetState ->
+                        if (targetState) {
+                            IconButton(onClick = { onQueryChanged("") }) {
+                                Icon(Icons.Rounded.Close, contentDescription = "Clear Search Icon")
+                            }
                         }
                     }
                 }

@@ -111,7 +111,16 @@ fun ShelfListScreen(
                 items(uiState.filteredTrackings, key = { it.mediaId }) {
                     MediaPoster(
                         coverUrl = it.mediaCoverUrl,
-                        onClick = { onClickItem(MediaNavigationItems(it.id, it.mediaTitle, it.mediaCoverUrl, it.mediaType)) },
+                        onClick = {
+                            onClickItem(
+                                MediaNavigationItems(
+                                    id = it.mediaId,
+                                    title = it.mediaTitle,
+                                    coverUrl = it.mediaCoverUrl,
+                                    mediaType = it.mediaType
+                                )
+                            )
+                        },
                     )
                 }
             }
