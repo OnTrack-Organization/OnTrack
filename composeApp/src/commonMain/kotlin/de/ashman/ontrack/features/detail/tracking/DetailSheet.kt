@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.tracking
+package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +17,6 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.features.tracking.content.DeleteContent
-import de.ashman.ontrack.features.tracking.content.ReviewContent
-import de.ashman.ontrack.features.tracking.content.TrackingContent
 import kotlinx.datetime.Clock.System
 
 enum class CurrentBottomSheetContent {
@@ -32,7 +29,7 @@ enum class CurrentBottomSheetContent {
 // Back Handling is being worked on rn
 // https://youtrack.jetbrains.com/issue/CMP-4419
 @Composable
-fun TrackingBottomSheetContent(
+fun DetailSheet(
     currentContent: CurrentBottomSheetContent,
     mediaId: String,
     mediaType: MediaType,

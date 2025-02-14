@@ -71,7 +71,7 @@ class SearchViewModel(
 
     fun search(query: String) = viewModelScope.launch {
         val duration = measureTime {
-            _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
+            _uiState.update { it.copy(resultState = SearchResultState.Loading) }
 
             val repository = when (uiState.value.selectedMediaType) {
                 MediaType.MOVIE -> movieRepository
@@ -86,7 +86,7 @@ class SearchViewModel(
                 onSuccess = { searchResults ->
                     _uiState.update {
                         it.copy(
-                            searchResultState = if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            resultState = if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
                             errorMessage = null,
                             searchResults = searchResults,
                         )
@@ -95,7 +95,7 @@ class SearchViewModel(
                 onFailure = { exception ->
                     _uiState.update {
                         it.copy(
-                            searchResultState = SearchResultState.Error,
+                            resultState = SearchResultState.Error,
                             errorMessage = "Failed to fetch results: ${exception.message}",
                             searchResults = emptyList(),
                         )
@@ -110,7 +110,7 @@ class SearchViewModel(
 
     private fun getTrending() = viewModelScope.launch {
         val duration = measureTime {
-            _uiState.update { it.copy(searchResultState = SearchResultState.Loading) }
+            _uiState.update { it.copy(resultState = SearchResultState.Loading) }
 
             val repository = when (uiState.value.selectedMediaType) {
                 MediaType.MOVIE -> movieRepository
@@ -125,7 +125,7 @@ class SearchViewModel(
                 onSuccess = { trendingResults ->
                     _uiState.update {
                         it.copy(
-                            searchResultState = if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
+                            resultState = if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
                             errorMessage = null,
                             cachedTrending = trendingResults,
                             searchResults = trendingResults,
@@ -135,7 +135,7 @@ class SearchViewModel(
                 onFailure = { exception ->
                     _uiState.update {
                         it.copy(
-                            searchResultState = SearchResultState.Error,
+                            resultState = SearchResultState.Error,
                             errorMessage = "Failed to fetch trending results: ${exception.message}",
                             cachedTrending = emptyList(),
                         )
@@ -215,7 +215,7 @@ data class SearchUiState(
     val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
-    val searchResultState: SearchResultState = SearchResultState.Empty,
+    val resultState: SearchResultState = SearchResultState.Empty,
     val searchDuration: Long = 0L,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,

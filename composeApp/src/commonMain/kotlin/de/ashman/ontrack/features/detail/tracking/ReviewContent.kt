@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.tracking.content
+package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTextField
-import de.ashman.ontrack.features.tracking.getRatingLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.review_description_label
 import ontrack.composeapp.generated.resources.review_title

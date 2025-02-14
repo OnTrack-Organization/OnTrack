@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.tracking
+package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark

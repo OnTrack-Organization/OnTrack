@@ -25,8 +25,8 @@ import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.contentSizeAnimation
+import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.features.feed.FeedCardHeader
-import de.ashman.ontrack.features.tracking.getIcon
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -142,13 +142,6 @@ fun MiniStarRatingBar(
             )
         }
     }
-}
-
-fun Long.formatDate(): String {
-    val instant = Instant.fromEpochMilliseconds(this)
-    val dateTime = instant.toLocalDateTime(currentSystemDefault())
-
-    return "${dateTime.dayOfMonth.toString().padStart(2, '0')}.${dateTime.monthNumber.toString().padStart(2, '0')}.${dateTime.year}"
 }
 
 fun Long.formatDateTime(): String {

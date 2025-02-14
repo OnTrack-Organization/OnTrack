@@ -15,6 +15,7 @@ import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.FirestoreServiceImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
+import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
@@ -217,6 +218,7 @@ val appModule = module {
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { AuthViewModel(get()) }
     viewModelDefinition { FeedViewModel(get()) }
+    viewModelDefinition { FriendsViewModel(get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }

@@ -96,7 +96,7 @@ class FirestoreServiceImpl(
     override suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
 
-        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.map { it.id } + currentUserId
 
         val allFlows = friends.map { friendId ->
             userTrackingCollection(friendId)
@@ -145,7 +145,7 @@ class FirestoreServiceImpl(
     // LIVE
     override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
-        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends + currentUserId
+        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.map { it.id } + currentUserId
 
         val allFlows = friends.map { friendId ->
             var query = userTrackingCollection(friendId)

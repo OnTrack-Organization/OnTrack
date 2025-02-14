@@ -48,9 +48,9 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.tracking.getColor
-import de.ashman.ontrack.features.tracking.getIcon
-import de.ashman.ontrack.features.tracking.getLabel
+import de.ashman.ontrack.features.detail.tracking.getColor
+import de.ashman.ontrack.features.detail.tracking.getIcon
+import de.ashman.ontrack.features.detail.tracking.getLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.no_title
 import ontrack.composeapp.generated.resources.track_button

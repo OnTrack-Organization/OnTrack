@@ -3,9 +3,9 @@ package de.ashman.ontrack.authentication
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.authentication.user.User
-import de.ashman.ontrack.authentication.user.toDomain
-import de.ashman.ontrack.authentication.user.toEntity
+import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.toDomain
+import de.ashman.ontrack.domain.user.toEntity
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.auth.auth

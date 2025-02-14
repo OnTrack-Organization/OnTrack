@@ -36,8 +36,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.features.detail.components.ErrorContent
 import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.detail.components.StickyMainContent
-import de.ashman.ontrack.features.tracking.CurrentBottomSheetContent
-import de.ashman.ontrack.features.tracking.TrackingBottomSheetContent
+import de.ashman.ontrack.features.detail.tracking.CurrentBottomSheetContent
+import de.ashman.ontrack.features.detail.tracking.DetailSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
@@ -152,7 +152,7 @@ fun DetailScreen(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
             ) {
-                TrackingBottomSheetContent(
+                DetailSheet(
                     currentContent = currentBottomSheet,
                     mediaId = mediaNavItems.id,
                     mediaType = mediaNavItems.mediaType,

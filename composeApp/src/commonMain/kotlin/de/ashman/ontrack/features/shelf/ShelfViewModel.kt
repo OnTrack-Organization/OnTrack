@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.authentication.user.User
-import de.ashman.ontrack.authentication.user.toDomain
+import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.toDomain
 import de.ashman.ontrack.db.FirestoreService
 import de.ashman.ontrack.db.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking

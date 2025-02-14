@@ -33,6 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.features.feed.comment.CommentsSheetContent
+import de.ashman.ontrack.features.feed.friend.FriendsSheetContent
+import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.feed.like.LikesSheetContent
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import ontrack.composeapp.generated.resources.Res
@@ -42,14 +44,13 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
-    modifier: Modifier,
-    viewModel: FeedViewModel,
-    onFriendsClick: () -> Unit,
+    feedViewModel: FeedViewModel,
+    friendsViewModel: FriendsViewModel,
     onLogoutClick: () -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
     onUserClick: (String) -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
 
@@ -57,11 +58,13 @@ fun FeedScreen(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.feedTrackings) {
+    val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(feedUiState.feedTrackings) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { index ->
-                if (index != null && index >= uiState.feedTrackings.size - 1) {
-                    viewModel.fetchTrackingFeed()
+                if (index != null && index >= feedUiState.feedTrackings.size - 1) {
+                    feedViewModel.fetchTrackingFeed()
                 }
             }
     }
@@ -80,7 +83,10 @@ fun FeedScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = onFriendsClick,
+                        onClick = {
+                            currentSheetContent = SheetContent.Friends
+                            showBottomSheet = true
+                        },
                     ) {
                         Icon(
                             imageVector = Icons.Default.Group,
@@ -113,26 +119,26 @@ fun FeedScreen(
             contentPadding = PaddingValues(16.dp),
             state = listState,
         ) {
-            items(items = uiState.feedTrackings, key = { it.id }) {
+            items(items = feedUiState.feedTrackings, key = { it.id }) {
                 FeedCard(
                     tracking = it,
-                    onClickLike = { viewModel.likeTracking(it) },
+                    onClickLike = { feedViewModel.likeTracking(it) },
                     onShowComments = {
                         currentSheetContent = SheetContent.Comments
-                        viewModel.selectTracking(it.id)
+                        feedViewModel.selectTracking(it.id)
                         showBottomSheet = true
                     },
                     onClickTrackingHistory = { },
                     onShowLikes = {
                         currentSheetContent = SheetContent.Likes
-                        viewModel.selectTracking(it.id)
+                        feedViewModel.selectTracking(it.id)
                         showBottomSheet = true
                     },
                     onClickCover = onClickCover,
                     onUserClick = { onUserClick(it.userId) },
                 )
 
-                if (it != uiState.feedTrackings.last()) {
+                if (it != feedUiState.feedTrackings.last()) {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                 }
             }
@@ -146,9 +152,9 @@ fun FeedScreen(
         ) {
             when (currentSheetContent) {
                 SheetContent.Comments -> CommentsSheetContent(
-                    comments = uiState.selectedTracking?.comments ?: emptyList(),
-                    onAddComment = viewModel::addComment,
-                    onDeleteComment = viewModel::deleteComment,
+                    comments = feedUiState.selectedTracking?.comments ?: emptyList(),
+                    onAddComment = feedViewModel::addComment,
+                    onDeleteComment = feedViewModel::deleteComment,
                     onClickUser = {
                         showBottomSheet = false
                         onUserClick(it)
@@ -156,7 +162,7 @@ fun FeedScreen(
                 )
 
                 SheetContent.Likes -> LikesSheetContent(
-                    likes = uiState.selectedTracking?.likes ?: emptyList(),
+                    likes = feedUiState.selectedTracking?.likes ?: emptyList(),
                     onUserClick = {
                         showBottomSheet = false
                         onUserClick(it)
@@ -164,11 +170,27 @@ fun FeedScreen(
                 )
 
                 SheetContent.History -> {}
+
+                SheetContent.Friends -> {
+                    FriendsSheetContent(
+                        uiState = friendsUiState,
+                        onRemoveFriend = friendsViewModel::removeFriend,
+                        onAcceptRequest = friendsViewModel::acceptFriendRequest,
+                        onDenyRequest = friendsViewModel::denyFriendRequest,
+                        onCancelRequest = friendsViewModel::cancelFriendRequest,
+                        onSendRequest = friendsViewModel::sendFriendRequest,
+                        onClickUser = {
+                            showBottomSheet = false
+                            onUserClick(it)
+                        },
+                        onQueryChanged = friendsViewModel::onQueryChanged,
+                    )
+                }
             }
         }
     }
 }
 
 enum class SheetContent {
-    Comments, Likes, History
+    Comments, Likes, History, Friends
 }

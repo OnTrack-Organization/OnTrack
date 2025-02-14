@@ -24,10 +24,22 @@
     <string name="intro_third_page_description">Never miss what your friends are into right now, you're gonna have something to talk about at the next party.</string>
 
     <!-- FEED -->
+    <string name="feed_friends">Friends</string>
+    <string name="feed_received_requests">Received friend requests</string>
+    <string name="feed_sent_requests">Sent friend requests</string>
+    <string name="feed_potential">Potential friends</string>
+    <string name="feed_no_friends">No friends yet. Be the first to add one!</string>
+
     <string name="feed_comments">Comments</string>
     <string name="feed_comments_placeholder">Write a comment…</string>
     <string name="feed_no_comments">No comments yet. Be the first to comment!</string>
+    <string name="feed_delete_comment_title">Delete comment?</string>
+    <string name="feed_delete_comment_description">Are you sure you want to delete this comment?</string>
+    <string name="feed_delete_comment_confirm">Delete</string>
+    <string name="feed_delete_comment_cancel">Cancel</string>
+
     <string name="feed_likes">Likes</string>
+
     <plurals name="feed_likes_count">
         <item quantity="one">%1$s Like</item>
         <item quantity="other">%1$s Likes</item>
@@ -37,18 +49,8 @@
         <item quantity="other">%1$s Comments</item>
     </plurals>
 
-    <string name="feed_delete_comment_title">Delete comment?</string>
-    <string name="feed_delete_comment_description">Are you sure you want to delete this comment?</string>
-    <string name="feed_delete_comment_confirm">Delete</string>
-    <string name="feed_delete_comment_cancel">Cancel</string>
-
     <!-- SEARCH -->
-    <string name="search_placeholder_movies">Search for movies...</string>
-    <string name="search_placeholder_shows">Search for shows...</string>
-    <string name="search_placeholder_books">Search for books...</string>
-    <string name="search_placeholder_videogames">Search for videogames...</string>
-    <string name="search_placeholder_boardgames">Search for boardgames...</string>
-    <string name="search_placeholder_albums">Search for albums...</string>
+    <string name="search_placeholder">Search for %1$s…</string>
 
     <string name="search_empty_movies">No movies found</string>
     <string name="search_empty_shows">No shows found</string>

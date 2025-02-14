@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
-import de.ashman.ontrack.features.tracking.getIcon
-import de.ashman.ontrack.features.tracking.getLabel
+import de.ashman.ontrack.features.detail.tracking.getIcon
+import de.ashman.ontrack.features.detail.tracking.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import org.jetbrains.compose.resources.pluralStringResource

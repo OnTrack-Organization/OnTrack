@@ -2,19 +2,7 @@ package de.ashman.ontrack.db.entity
 
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class UserEntity(
-    val id: String,
-    val displayName: String?,
-    val username: String,
-    val email: String?,
-    val imageUrl: String? = null,
-    val friends: List<String> = emptyList(),
-    val createdAt: Long = System.now().toEpochMilliseconds(),
-)
 
 @Serializable
 data class TrackingEntity(

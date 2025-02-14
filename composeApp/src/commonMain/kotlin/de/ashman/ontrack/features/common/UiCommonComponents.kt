@@ -13,20 +13,27 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -44,6 +51,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_placeholder
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -296,4 +305,67 @@ fun PersonImage(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    query: String,
+    onQueryChanged: (String) -> Unit,
+    placeholder: String,
+    closeKeyboard: () -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    modifier: Modifier = Modifier,
+) {
+    val isKeyboardOpen by keyboardAsState()
+
+    SearchBar(
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        inputField = {
+            SearchBarDefaults.InputField(
+                query = query,
+                onQueryChange = { newQuery ->
+                    onQueryChanged(newQuery)
+                },
+                onSearch = {
+                    closeKeyboard()
+                },
+                expanded = false,
+                onExpandedChange = { },
+                placeholder = { Text(stringResource(Res.string.search_placeholder, placeholder)) },
+                leadingIcon = {
+                    AnimatedContent(
+                        targetState = isKeyboardOpen,
+                    ) { targetState ->
+                        if (targetState) {
+                            IconButton(onClick = closeKeyboard) {
+                                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back Arrow")
+                            }
+                        } else {
+                            Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                        }
+                    }
+                },
+                trailingIcon = {
+                    AnimatedContent(
+                        targetState = query.isNotEmpty(),
+                    ) { targetState ->
+                        if (targetState) {
+                            IconButton(onClick = { onQueryChanged("") }) {
+                                Icon(Icons.Rounded.Close, contentDescription = "Clear Search Icon")
+                            }
+                        }
+                    }
+                }
+            )
+        },
+        expanded = false,
+        onExpandedChange = { },
+        colors = SearchBarDefaults.colors(
+            containerColor = containerColor,
+        ),
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = 0.dp,
+        windowInsets = WindowInsets(top = 0.dp),
+    ) {}
 }

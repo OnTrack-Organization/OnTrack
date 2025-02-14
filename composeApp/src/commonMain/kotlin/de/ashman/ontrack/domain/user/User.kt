@@ -1,4 +1,4 @@
-package de.ashman.ontrack.authentication.user
+package de.ashman.ontrack.domain.user
 
 data class User(
     val id: String,
@@ -6,6 +6,9 @@ data class User(
     val username: String? = null,
     val email: String? = null,
     val imageUrl: String? = null,
-    val friends: List<String> = emptyList(),
     val trackings: List<String> = emptyList(),
+
+    val friends: List<Friend> = emptyList(),
+    val receivedRequests: List<FriendRequest> = emptyList(),
+    val sentRequests: List<FriendRequest> = emptyList(),
 )

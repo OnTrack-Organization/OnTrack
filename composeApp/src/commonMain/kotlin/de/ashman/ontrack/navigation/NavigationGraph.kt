@@ -18,6 +18,7 @@ import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
 import de.ashman.ontrack.features.feed.FeedViewModel
+import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
 import de.ashman.ontrack.features.init.start.StartScreen
@@ -39,6 +40,7 @@ fun NavigationGraph(
     startViewModel: StartViewModel = koinInject(),
     authViewModel: AuthViewModel = koinInject(),
     feedViewModel: FeedViewModel = koinInject(),
+    friendsViewModel: FriendsViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
@@ -67,6 +69,7 @@ fun NavigationGraph(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 navController = navController,
                 feedViewModel = feedViewModel,
+                friendsViewModel = friendsViewModel,
                 authViewModel = authViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
@@ -117,6 +120,7 @@ fun NavGraphBuilder.mainGraph(
     modifier: Modifier,
     navController: NavHostController,
     feedViewModel: FeedViewModel,
+    friendsViewModel: FriendsViewModel,
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
@@ -124,12 +128,8 @@ fun NavGraphBuilder.mainGraph(
 ) {
     composable<Route.Feed> {
         FeedScreen(
-            modifier = modifier,
-            viewModel = feedViewModel,
-            onFriendsClick = {
-                // TODO Maybe change not to route, but bottom sheet content?
-                //navController.navigate(Route.Friends)
-            },
+            feedViewModel = feedViewModel,
+            friendsViewModel = friendsViewModel,
             onLogoutClick = {
                 authViewModel.logout()
                 navController.navigate(Route.Start) {

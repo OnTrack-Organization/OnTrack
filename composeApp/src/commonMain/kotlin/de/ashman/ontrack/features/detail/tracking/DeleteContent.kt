@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.tracking.content
+package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

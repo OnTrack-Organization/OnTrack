@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.tracking.content
+package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -34,10 +34,6 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
-import de.ashman.ontrack.features.tracking.getColor
-import de.ashman.ontrack.features.tracking.getIcon
-import de.ashman.ontrack.features.tracking.getLabel
-import de.ashman.ontrack.features.tracking.getSublabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.continue_button
 import ontrack.composeapp.generated.resources.save_button
