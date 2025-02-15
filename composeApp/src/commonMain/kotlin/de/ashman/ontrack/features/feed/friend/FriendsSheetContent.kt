@@ -32,6 +32,8 @@ import de.ashman.ontrack.features.common.SearchBar
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_friends
 import ontrack.composeapp.generated.resources.feed_no_friends
+import ontrack.composeapp.generated.resources.feed_no_potential_friends
+import ontrack.composeapp.generated.resources.feed_potential_friends
 import ontrack.composeapp.generated.resources.feed_received_requests
 import ontrack.composeapp.generated.resources.feed_sent_requests
 import org.jetbrains.compose.resources.stringResource
@@ -39,11 +41,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun FriendsSheetContent(
     uiState: FriendsUiState,
-    onRemoveFriend: (String) -> Unit,
-    onAcceptRequest: (String) -> Unit,
-    onDenyRequest: (String) -> Unit,
-    onCancelRequest: (String) -> Unit,
-    onSendRequest: (String) -> Unit,
+    onRemoveFriend: (Friend) -> Unit,
+    onAcceptRequest: (FriendRequest) -> Unit,
+    onDenyRequest: (FriendRequest) -> Unit,
+    onCancelRequest: (String, FriendRequest) -> Unit,
+    onSendRequest: (FriendRequest) -> Unit,
     onClickUser: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
 ) {
@@ -93,6 +95,20 @@ fun FriendsSheetContent(
                             onClickUser = onClickUser,
                         )
                     }
+                    // TODO add other states
+                    FriendsResultState.Empty -> {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            text = stringResource(Res.string.feed_no_potential_friends),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    else -> {}
                 }
             }
         }
@@ -102,12 +118,12 @@ fun FriendsSheetContent(
 @Composable
 fun PotentialFriends(
     potentialFriends: List<Friend>,
-    onSendRequest: (String) -> Unit,
+    onSendRequest: (FriendRequest) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     Text(
         modifier = Modifier.padding(horizontal = 16.dp),
-        text = stringResource(Res.string.feed_received_requests),
+        text = stringResource(Res.string.feed_potential_friends),
         style = MaterialTheme.typography.titleMedium,
     )
 
@@ -117,7 +133,7 @@ fun PotentialFriends(
             username = it.username,
             name = it.name,
             onClickUser = { onClickUser(it.id) },
-            onClickPlus = { onSendRequest(it.id) },
+            onClickPlus = { onSendRequest(it.toRequest()) },
         )
     }
 }
@@ -127,10 +143,10 @@ fun FriendsAndRequests(
     receivedRequests: List<FriendRequest>,
     sentRequests: List<FriendRequest>,
     friends: List<Friend>,
-    onAcceptRequest: (String) -> Unit,
-    onDenyRequest: (String) -> Unit,
-    onCancelRequest: (String) -> Unit,
-    onRemoveFriend: (String) -> Unit,
+    onAcceptRequest: (FriendRequest) -> Unit,
+    onDenyRequest: (FriendRequest) -> Unit,
+    onCancelRequest: (String, FriendRequest) -> Unit,
+    onRemoveFriend: (Friend) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     if (receivedRequests.isNotEmpty()) {
@@ -142,42 +158,30 @@ fun FriendsAndRequests(
 
         receivedRequests.forEach {
             FriendCard(
-                imageUrl = it.senderImageUrl,
-                username = it.senderName,
-                name = it.senderName,
-                onClickUser = { onClickUser(it.senderId) },
-                onClickPlus = { onAcceptRequest(it.senderId) },
-                onClickMinus = { onDenyRequest(it.senderId) },
+                imageUrl = it.imageUrl,
+                username = it.name,
+                name = it.name,
+                onClickUser = { onClickUser(it.userId) },
+                onClickPlus = { onAcceptRequest(it) },
+                onClickMinus = { onDenyRequest(it) },
             )
         }
     }
 
-    Text(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        text = stringResource(Res.string.feed_friends),
-        style = MaterialTheme.typography.titleMedium,
-    )
-
-    if (friends.isEmpty() && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = stringResource(Res.string.feed_no_friends),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-
     if (friends.isNotEmpty()) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = stringResource(Res.string.feed_friends),
+            style = MaterialTheme.typography.titleMedium,
+        )
+
         friends.forEach {
             FriendCard(
                 imageUrl = it.imageUrl,
                 username = it.username,
                 name = it.name,
                 onClickUser = { onClickUser(it.id) },
-                onClickMinus = { onRemoveFriend(it.id) },
+                onClickMinus = { onRemoveFriend(it) },
             )
         }
     }
@@ -191,13 +195,25 @@ fun FriendsAndRequests(
 
         sentRequests.forEach {
             FriendCard(
-                imageUrl = it.senderImageUrl,
-                username = it.senderUsername,
-                name = it.senderName,
-                onClickUser = { onClickUser(it.id) },
-                onClickMinus = { onCancelRequest(it.id) },
+                imageUrl = it.imageUrl,
+                username = it.username,
+                name = it.name,
+                onClickUser = { onClickUser(it.userId) },
+                onClickMinus = { },
             )
         }
+    }
+
+    if (friends.isEmpty() && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = stringResource(Res.string.feed_no_friends),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -262,3 +278,10 @@ fun FriendCard(
         }
     }
 }
+
+fun Friend.toRequest() = FriendRequest(
+    userId = id,
+    name = name,
+    username = username,
+    imageUrl = imageUrl,
+)

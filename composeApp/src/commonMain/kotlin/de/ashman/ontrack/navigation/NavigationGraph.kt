@@ -131,6 +131,9 @@ fun NavGraphBuilder.mainGraph(
             feedViewModel = feedViewModel,
             friendsViewModel = friendsViewModel,
             onLogoutClick = {
+                // TODO probably do differently
+                friendsViewModel.clearViewModel()
+
                 authViewModel.logout()
                 navController.navigate(Route.Start) {
                     popUpTo(Route.Feed) { inclusive = true } // Clear backstack

@@ -202,7 +202,7 @@ val appModule = module {
     }
 
     // SERVICES
-    single<AuthService> { AuthServiceImpl() }
+    single<AuthService> { AuthServiceImpl(Firebase.firestore) }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
@@ -218,7 +218,7 @@ val appModule = module {
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { AuthViewModel(get()) }
     viewModelDefinition { FeedViewModel(get()) }
-    viewModelDefinition { FriendsViewModel(get()) }
+    viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }

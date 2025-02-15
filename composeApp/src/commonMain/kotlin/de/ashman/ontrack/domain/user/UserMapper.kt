@@ -11,7 +11,7 @@ fun FirebaseUser.toEntity() =
         email = email,
         displayName = displayName,
         // TODO different way
-        username = "@${displayName?.lowercase()}",
+        username = "${displayName?.lowercase()}",
         imageUrl = photoURL,
     )
 
@@ -46,20 +46,18 @@ fun Friend.toEntity() =
 
 fun FriendRequestEntity.toDomain() =
     FriendRequest(
-        id = id,
-        senderId = senderId,
-        senderUsername = senderUsername,
-        senderName = senderName,
-        senderImageUrl = senderImageUrl,
+        userId = userId,
+        username = username,
+        name = name,
+        imageUrl = imageUrl,
         status = status,
     )
 
 fun FriendRequest.toEntity() =
     FriendRequestEntity(
-        id = id,
-        senderId = senderId,
-        senderUsername = senderUsername,
-        senderName = senderName,
-        senderImageUrl = senderImageUrl,
+        userId = userId,
+        username = username,
+        name = name,
+        imageUrl = imageUrl,
         status = status,
     )

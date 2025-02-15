@@ -12,11 +12,10 @@ data class Friend(
 
 @Serializable
 data class FriendRequest(
-    val id: String,
-    val senderId: String,
-    val senderUsername: String,
-    val senderName: String,
-    val senderImageUrl: String,
+    val userId: String,
+    val username: String,
+    val name: String,
+    val imageUrl: String,
     val status: FriendRequestStatus = FriendRequestStatus.PENDING,
 )
 

@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -18,8 +18,10 @@ interface AuthService {
     suspend fun getUserFlow(userId: String): Flow<UserEntity?>
 }
 
-class AuthServiceImpl : AuthService {
-    private val userRef = "users"
+class AuthServiceImpl(
+    firestore: FirebaseFirestore,
+) : AuthService {
+    private val userCollection = firestore.collection("users")
 
     override val currentUserId: String
         get() = Firebase.auth.currentUser?.uid.orEmpty()
@@ -31,25 +33,28 @@ class AuthServiceImpl : AuthService {
         get() = Firebase.auth.currentUser?.displayName.orEmpty()
 
     override suspend fun signUpUser(user: UserEntity) {
-        Firebase.firestore
-            .collection(userRef)
-            .document(user.id)
-            .set(user)
+        return try {
+            val document = userCollection.document(user.id).get()
+            if (!document.exists) {
+                userCollection
+                    .document(user.id)
+                    .set(user)
+            } else {
+                Logger.w("User with ID ${user.id} already exists.")
+            }
+        } catch (e: Exception) {
+            Logger.e("Error during sign-up: ${e.message}")
+        }
     }
 
     override suspend fun deleteUser(userId: String) {
-        Firebase.firestore
-            .collection(userRef)
+        userCollection
             .document(userId)
             .delete()
     }
 
     override suspend fun getUserFlow(userId: String): Flow<UserEntity?> {
-        val userRef = Firebase.firestore
-            .collection(userRef)
-            .document(userId)
-
-        return userRef.snapshots.map { documentSnapshot ->
+        return userCollection.document(userId).snapshots.map { documentSnapshot ->
             try {
                 documentSnapshot.data<UserEntity>()
             } catch (e: Exception) {
