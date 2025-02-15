@@ -79,6 +79,7 @@ fun NavigationGraph(
                 detailViewModel = detailViewModel,
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
+                authService = authService,
                 navController = navController
             )
         }
@@ -143,7 +144,7 @@ fun NavGraphBuilder.mainGraph(
                 navController.navigate(Route.Detail(mediaNav))
             },
             onUserClick = { userId ->
-                navController.navigate(Route.OtherShelf(userId))
+                navController.navigate(if (userId == authService.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
         )
     }
@@ -171,6 +172,7 @@ fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
+    authService: AuthService,
     navController: NavHostController,
 ) {
     composable<Route.Detail>(
@@ -193,7 +195,7 @@ fun NavGraphBuilder.mediaGraph(
                 }
             },
             onUserClick = { userId ->
-                navController.navigate(Route.OtherShelf(userId))
+                navController.navigate(if (userId == authService.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
             onBack = {
                 navController.popBackStack()

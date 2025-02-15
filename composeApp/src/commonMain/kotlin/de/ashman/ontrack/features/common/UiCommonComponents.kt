@@ -61,7 +61,6 @@ import org.jetbrains.compose.resources.stringResource
 fun AnimatedButtonContent(
     text: StringResource,
     icon: ImageVector?,
-    contentColor: Color
 ) {
     AnimatedContent(
         targetState = Pair(text, icon),
@@ -78,13 +77,11 @@ fun AnimatedButtonContent(
                     modifier = Modifier.size(24.dp),
                     imageVector = it,
                     contentDescription = it.name,
-                    tint = contentColor
                 )
             }
             Text(
                 text = stringResource(targetText),
                 style = MaterialTheme.typography.titleMedium,
-                color = contentColor
             )
         }
     }
@@ -121,7 +118,10 @@ fun OnTrackButton(
                 strokeWidth = 3.dp,
             )
         } else {
-            AnimatedButtonContent(text, icon, animatedContentColor)
+            AnimatedButtonContent(
+                text = text,
+                icon = icon,
+            )
         }
     }
 }
@@ -144,7 +144,10 @@ fun OnTrackOutlinedButton(
             contentColor = animatedContentColor,
         )
     ) {
-        AnimatedButtonContent(text, icon, animatedContentColor)
+        AnimatedButtonContent(
+            text = text,
+            icon = icon,
+        )
     }
 }
 
@@ -156,7 +159,8 @@ fun OnTrackIconButton(
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
-    val animatedContentColor by animateColorAsState(targetValue = color)
+    val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
+    val animatedContainerColor by animateColorAsState(targetValue = color)
 
     Button(
         modifier = modifier.size(48.dp),
@@ -165,7 +169,8 @@ fun OnTrackIconButton(
         contentPadding = PaddingValues(0.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            contentColor = animatedContentColor
+            contentColor = animatedContentColor,
+            containerColor = animatedContainerColor,
         )
 
     ) {
@@ -173,7 +178,6 @@ fun OnTrackIconButton(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = icon.name,
-            tint = animatedContentColor
         )
     }
 }
@@ -202,7 +206,6 @@ fun OnTrackOutlinedIconButton(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = icon.name,
-            tint = animatedContentColor
         )
     }
 }
