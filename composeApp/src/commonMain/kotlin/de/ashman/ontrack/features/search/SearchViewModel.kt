@@ -14,8 +14,8 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
+import de.ashman.ontrack.db.entity.toDomain
+import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -43,7 +43,7 @@ class SearchViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val firestoreService: FirestoreService,
+    private val trackingService: TrackingService,
     private val authService: AuthService,
 ) : ViewModel() {
 
@@ -180,7 +180,7 @@ class SearchViewModel(
     }
 
     private fun observeUserTrackings() {
-        firestoreService.fetchTrackings(authService.currentUserId)
+        trackingService.fetchTrackings(authService.currentUserId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

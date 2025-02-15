@@ -11,8 +11,12 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthServiceImpl
 import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.FirestoreServiceImpl
+import de.ashman.ontrack.db.FeedService
+import de.ashman.ontrack.db.FeedServiceImpl
+import de.ashman.ontrack.db.FriendService
+import de.ashman.ontrack.db.FriendServiceImpl
+import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.TrackingServiceImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
@@ -201,12 +205,18 @@ val appModule = module {
         }
     }
 
-    // SERVICES
-    single<AuthService> { AuthServiceImpl(Firebase.firestore) }
+    // AUTH
+    single<AuthService> { AuthServiceImpl(get()) }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
-    // REPOSITORY
+    // DATABASE
+    single { Firebase.firestore }
+    single<FriendService> { FriendServiceImpl(get(), get()) }
+    single<FeedService> { FeedServiceImpl(get(), get()) }
+    single<TrackingService> { TrackingServiceImpl(get(), get()) }
+
+    // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
     single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
     single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
@@ -223,9 +233,6 @@ val appModule = module {
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
-
-    // TEST
-    single<FirestoreService> { FirestoreServiceImpl(Firebase.firestore, get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

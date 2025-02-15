@@ -7,11 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.entity.toDomain
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.domain.user.toDomain
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
-import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShelfViewModel(
-    private val firestoreService: FirestoreService,
+    private val trackingService: TrackingService,
     private val authService: AuthService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
@@ -45,7 +45,7 @@ class ShelfViewModel(
     }
 
     fun observeUserTrackings(userId: String) {
-        firestoreService.fetchTrackings(userId)
+        trackingService.fetchTrackings(userId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

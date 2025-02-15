@@ -10,9 +10,9 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
-import de.ashman.ontrack.db.toEntity
+import de.ashman.ontrack.db.entity.toDomain
+import de.ashman.ontrack.db.entity.toEntity
+import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -32,7 +32,7 @@ class DetailViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val firestoreService: FirestoreService,
+    private val trackingService: TrackingService,
     private val authService: AuthService,
 ) : ViewModel() {
 
@@ -89,18 +89,18 @@ class DetailViewModel(
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
         val trackingEntity = tracking.toEntity()
-        firestoreService.saveTracking(trackingEntity)
+        trackingService.saveTracking(trackingEntity)
 
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
     fun deleteTracking(trackingId: String) = viewModelScope.launch {
-        firestoreService.deleteTracking(trackingId)
+        trackingService.deleteTracking(trackingId)
         _uiState.update { it.copy(selectedTracking = null) }
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        firestoreService.fetchTrackings(authService.currentUserId)
+        trackingService.fetchTrackings(authService.currentUserId)
             .collect { trackings ->
                 val tracking = trackings.find { it.mediaId == mediaId }
                 _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
@@ -110,7 +110,7 @@ class DetailViewModel(
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        firestoreService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
+        trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
             _uiState.update { state ->
                 state.copy(
                     resultState = DetailResultState.Success,

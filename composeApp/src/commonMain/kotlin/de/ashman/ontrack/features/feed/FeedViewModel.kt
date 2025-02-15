@@ -2,9 +2,9 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
-import de.ashman.ontrack.db.toEntity
+import de.ashman.ontrack.db.FeedService
+import de.ashman.ontrack.db.entity.toDomain
+import de.ashman.ontrack.db.entity.toEntity
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.domain.tracking.TrackingLike
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val firestoreService: FirestoreService,
+    private val feedService: FeedService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -36,7 +36,7 @@ class FeedViewModel(
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
 
-        firestoreService.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
+        feedService.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
             if (feedTrackings.isEmpty()) {
                 _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
             } else {
@@ -55,13 +55,13 @@ class FeedViewModel(
         val like = TrackingLike()
 
         if (tracking.isLikedByCurrentUser) {
-            firestoreService.unlikeTracking(
+            feedService.unlikeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
                 like = like.toEntity()
             )
         } else {
-            firestoreService.likeTracking(
+            feedService.likeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
                 like = like.toEntity()
@@ -73,7 +73,7 @@ class FeedViewModel(
         val newComment = TrackingComment(comment = comment)
 
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            firestoreService.addComment(
+            feedService.addComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = newComment.toEntity(),
@@ -83,7 +83,7 @@ class FeedViewModel(
 
     fun deleteComment(comment: TrackingComment) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            firestoreService.deleteComment(
+            feedService.deleteComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = comment.toEntity(),

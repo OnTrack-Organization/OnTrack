@@ -3,7 +3,7 @@ package de.ashman.ontrack.features.feed.friend
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.FirestoreService
+import de.ashman.ontrack.db.FriendService
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.toDomain
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 // TODO statt jedes mal zu refreshen evt doch nen flow?
 class FriendsViewModel(
-    private val firestoreService: FirestoreService,
+    private val friendService: FriendService,
     private val authService: AuthService,
 ) : ViewModel() {
 
@@ -71,9 +71,9 @@ class FriendsViewModel(
 
     private fun fetchFriendsAndRequests() {
         viewModelScope.launch {
-            val friends = firestoreService.getFriends().map { it.toDomain() }
-            val receivedRequests = firestoreService.getReceivedRequests().map { it.toDomain() }
-            val sentRequests = firestoreService.getSentRequests().map { it.toDomain() }
+            val friends = friendService.getFriends().map { it.toDomain() }
+            val receivedRequests = friendService.getReceivedRequests().map { it.toDomain() }
+            val sentRequests = friendService.getSentRequests().map { it.toDomain() }
 
             _uiState.update {
                 it.copy(
@@ -87,7 +87,7 @@ class FriendsViewModel(
 
     fun search(query: String) = viewModelScope.launch {
         _uiState.update { it.copy(resultState = FriendsResultState.Loading) }
-        val potentialFriends = firestoreService.searchForNewFriend(query).map { it.toDomain() }
+        val potentialFriends = friendService.searchForNewFriend(query).map { it.toDomain() }
         _uiState.update {
             it.copy(
                 potentialFriends = potentialFriends,
@@ -98,7 +98,7 @@ class FriendsViewModel(
 
     fun removeFriend(friend: Friend) {
         viewModelScope.launch {
-            firestoreService.removeFriend(friend)
+            friendService.removeFriend(friend)
             fetchFriendsAndRequests()
         }
     }
@@ -111,28 +111,28 @@ class FriendsViewModel(
                 name = authService.currentUserName,
                 imageUrl = authService.currentUserImage,
             )
-            firestoreService.sendRequest(otherRequest, myRequest)
+            friendService.sendRequest(otherRequest, myRequest)
             fetchFriendsAndRequests()
         }
     }
 
     fun acceptFriendRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            firestoreService.acceptRequest(friendRequest)
+            friendService.acceptRequest(friendRequest)
             fetchFriendsAndRequests()
         }
     }
 
     fun denyFriendRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            firestoreService.denyRequest(friendRequest)
+            friendService.denyRequest(friendRequest)
             fetchFriendsAndRequests()
         }
     }
 
     fun cancelFriendRequest(friendId: String, friendRequest: FriendRequest) {
         viewModelScope.launch {
-            firestoreService.cancelRequest(friendId, friendRequest)
+            friendService.cancelRequest(friendId, friendRequest)
             fetchFriendsAndRequests()
         }
     }

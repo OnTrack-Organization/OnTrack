@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.FirestoreService
-import de.ashman.ontrack.db.toDomain
+import de.ashman.ontrack.db.entity.toDomain
+import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ShelfListViewModel(
-    private val firestoreService: FirestoreService,
+    private val trackingService: TrackingService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfListUiState())
     val uiState: StateFlow<ShelfListUiState> = _uiState
@@ -33,7 +33,7 @@ class ShelfListViewModel(
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
     fun observeUserTrackings(userId: String) {
-        firestoreService.fetchTrackings(userId)
+        trackingService.fetchTrackings(userId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

@@ -1,9 +1,5 @@
-package de.ashman.ontrack.db
+package de.ashman.ontrack.db.entity
 
-import de.ashman.ontrack.db.entity.TrackingCommentEntity
-import de.ashman.ontrack.db.entity.TrackingEntity
-import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
-import de.ashman.ontrack.db.entity.TrackingLikeEntity
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.domain.tracking.TrackingHistoryEntry
