@@ -171,20 +171,20 @@ fun TrackStatus.getSublabel(mediaType: MediaType): StringResource {
 @Composable
 fun TrackStatus.getIcon(isFilled: Boolean = false): ImageVector {
     return when (this) {
+        TrackStatus.CATALOG -> if (isFilled) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
         TrackStatus.CONSUMING -> if (isFilled) Icons.Filled.Visibility else Icons.Outlined.Visibility
         TrackStatus.CONSUMED -> if (isFilled) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle
         TrackStatus.DROPPED -> if (isFilled) Icons.Filled.Cancel else Icons.Outlined.Cancel
-        TrackStatus.CATALOG -> if (isFilled) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
     }
 }
 
 @Composable
 fun TrackStatus?.getColor(): Color {
     return when (this) {
+        TrackStatus.CATALOG -> MaterialTheme.colorScheme.primaryContainer
         TrackStatus.CONSUMING -> MaterialTheme.colorScheme.secondaryContainer
         TrackStatus.CONSUMED -> MaterialTheme.colorScheme.tertiaryContainer
         TrackStatus.DROPPED -> MaterialTheme.colorScheme.errorContainer
-        TrackStatus.CATALOG -> MaterialTheme.colorScheme.primaryContainer
         null -> MaterialTheme.colorScheme.primary
     }
 }
