@@ -41,4 +41,7 @@ sealed class Route {
     data class OtherShelf(
         val userId: String,
     ) : Route()
+
+    @Serializable
+    data object Settings : Route()
 }

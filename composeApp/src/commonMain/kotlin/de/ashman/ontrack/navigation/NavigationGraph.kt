@@ -25,6 +25,8 @@ import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
+import de.ashman.ontrack.features.settings.SettingsScreen
+import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.OtherUserShelf
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
@@ -45,6 +47,7 @@ fun NavigationGraph(
     detailViewModel: DetailViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
     shelfListViewModel: ShelfListViewModel = koinInject(),
+    settingsViewModel: SettingsViewModel = koinInject(),
     authService: AuthService = koinInject(),
 ) {
     MainScaffold(
@@ -58,7 +61,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId.isNotBlank()) Route.Feed else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -70,7 +73,6 @@ fun NavigationGraph(
                 navController = navController,
                 feedViewModel = feedViewModel,
                 friendsViewModel = friendsViewModel,
-                authViewModel = authViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
                 authService = authService,
@@ -82,6 +84,24 @@ fun NavigationGraph(
                 authService = authService,
                 navController = navController
             )
+
+            composable<Route.Settings> {
+                SettingsScreen(
+                    viewModel = settingsViewModel,
+                    onBack = { navController.popBackStack() },
+                    onLogout = {
+                        // TODO clear all vms
+                        friendsViewModel.clearViewModel()
+                        feedViewModel.clearViewModel()
+
+                        authViewModel.signOut()
+
+                        navController.navigate(Route.Start) {
+                            popUpTo(Route.Feed) { inclusive = true } // Clear backstack
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -125,21 +145,11 @@ fun NavGraphBuilder.mainGraph(
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
-    authViewModel: AuthViewModel,
 ) {
     composable<Route.Feed> {
         FeedScreen(
             feedViewModel = feedViewModel,
             friendsViewModel = friendsViewModel,
-            onLogoutClick = {
-                // TODO probably do differently
-                friendsViewModel.clearViewModel()
-                authViewModel.signOut()
-
-                navController.navigate(Route.Start) {
-                    popUpTo(Route.Feed) { inclusive = true } // Clear backstack
-                }
-            },
             onClickCover = { mediaNav ->
                 navController.navigate(Route.Detail(mediaNav))
             },
@@ -163,6 +173,7 @@ fun NavGraphBuilder.mainGraph(
             userId = authService.currentUserId,
             onClickMore = { mediaType -> navController.navigate(Route.ShelfList(authService.currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
+            onSettings = { navController.navigate(Route.Settings) },
         )
     }
 }

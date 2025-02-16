@@ -90,6 +90,17 @@ class FeedViewModel(
     fun selectTracking(trackingId: String) {
         _uiState.update { it.copy(selectedTrackingId = trackingId) }
     }
+
+    fun clearViewModel() {
+        _uiState.update {
+            it.copy(
+                feedTrackings = emptyList(),
+                selectedTrackingId = null,
+                feedResultState = FeedResultState.Loading,
+                isRefreshing = false,
+            )
+        }
+    }
 }
 
 data class FeedUiState(

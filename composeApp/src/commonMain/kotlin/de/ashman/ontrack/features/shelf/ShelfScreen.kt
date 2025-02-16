@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,6 +58,7 @@ fun ShelfScreen(
     onClickMore: (MediaType) -> Unit,
     onClickItem: (MediaNavigationItems) -> Unit,
     onBack: (() -> Unit)? = null,
+    onSettings: (() -> Unit)? = null,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -87,6 +89,18 @@ fun ShelfScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                                 contentDescription = "Back",
+                            )
+                        }
+                    }
+                },
+                actions = {
+                    onSettings?.let {
+                        IconButton(
+                            onClick = onSettings,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
                             )
                         }
                     }
