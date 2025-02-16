@@ -10,9 +10,9 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.entity.toEntity
-import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -113,7 +113,6 @@ class DetailViewModel(
         trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
             _uiState.update { state ->
                 state.copy(
-                    resultState = DetailResultState.Success,
                     friendTrackings = feedTrackings.map { it.toDomain() }
                 )
             }
