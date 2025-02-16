@@ -41,14 +41,13 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_empty
-import ontrack.composeapp.generated.resources.shelves_filled
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +95,8 @@ fun ShelfScreen(
                 expandedHeight = 110.dp,
                 scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
             )
-        }) { contentPadding ->
+        }
+    ) { contentPadding ->
         if (uiState.trackings.isEmpty()) {
             EmptyShelfContent()
         } else {
@@ -224,7 +224,7 @@ fun EmptyShelfContent(
     ) {
         Icon(
             modifier = Modifier.size(48.dp),
-            imageVector = vectorResource(Res.drawable.shelves_filled),
+            imageVector = BottomNavItem.ShelfNav.filledIcon(),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             contentDescription = null
         )

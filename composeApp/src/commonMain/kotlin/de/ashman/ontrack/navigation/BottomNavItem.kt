@@ -1,9 +1,9 @@
 package de.ashman.ontrack.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.SavedSearch
-import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,8 +25,8 @@ sealed class BottomNavItem(
     data object FeedNav : BottomNavItem(
         title = Res.string.feed_nav_title,
         route = Route.Feed,
-        icon = { Icons.Outlined.Home },
-        filledIcon = { Icons.Filled.Home }
+        icon = { Icons.Outlined.Public },
+        filledIcon = { Icons.Filled.Public }
     )
 
     data object SearchNav : BottomNavItem(

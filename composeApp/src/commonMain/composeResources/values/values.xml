@@ -24,6 +24,8 @@
     <string name="intro_third_page_description">Never miss what your friends are into right now, you're gonna have something to talk about at the next party.</string>
 
     <!-- FEED -->
+    <string name="feed_empty">Add some friends or track some media to share it in your feed!</string>
+
     <string name="feed_friends">Friends</string>
     <string name="feed_received_requests">Received friend requests</string>
     <string name="feed_sent_requests">Sent friend requests</string>
