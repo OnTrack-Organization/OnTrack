@@ -157,8 +157,8 @@
 
     <string name="review_title">Review of "%1$s"</string>
     <string name="track_title">Track status of "%1$s"</string>
-    <string name="delete_title">Delete trackings?</string>
-    <string name="delete_description">Are you sure you want to delete the trackings of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
+    <string name="delete_title">Delete tracking?</string>
+    <string name="delete_description">Are you sure you want to delete the tracking of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
 
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>
@@ -187,12 +187,7 @@
         <item quantity="one">%1$d Episode</item>
         <item quantity="other">%1$d Episodes</item>
     </plurals>
-    <string name="detail_similar_movies">Similar Movies</string>
-    <string name="detail_similar_shows">Similar Shows</string>
-    <string name="detail_similar_books">Similar Books</string>
-    <string name="detail_similar_videogames">Similar Videogames</string>
-    <string name="detail_similar_boardgames">Similar Boardgames</string>
-    <string name="detail_similar_albums">Similar Albums</string>
+    <string name="detail_similar">Similar %1$s</string>
 
     <string name="detail_platforms">Platforms</string>
     <string name="detail_genres">Genres</string>
