@@ -27,12 +27,9 @@ class FriendsViewModel(
     private val friendService: FriendService,
     private val authService: AuthService,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState
         .onStart {
-            // 1. Fetch friends and requests once
-            fetchFriendsAndRequests()
             observeSearchQuery()
         }
         .stateIn(
@@ -69,7 +66,7 @@ class FriendsViewModel(
         _uiState.update { it.copy(query = query) }
     }
 
-    private fun fetchFriendsAndRequests() {
+    fun fetchFriendsAndRequests() {
         viewModelScope.launch {
             val friends = friendService.getFriends().map { it.toDomain() }
             val receivedRequests = friendService.getReceivedRequests().map { it.toDomain() }
@@ -86,7 +83,6 @@ class FriendsViewModel(
     }
 
     fun search(query: String) = viewModelScope.launch {
-        _uiState.update { it.copy(resultState = FriendsResultState.Loading) }
         val potentialFriends = friendService.searchForNewFriend(query).map { it.toDomain() }
         _uiState.update {
             it.copy(
@@ -161,6 +157,5 @@ data class FriendsUiState(
 enum class FriendsResultState {
     Default,
     Empty,
-    Loading,
     Success,
 }

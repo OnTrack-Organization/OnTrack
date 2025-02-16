@@ -58,7 +58,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId.isNotBlank()) Route.Feed else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -134,8 +134,8 @@ fun NavGraphBuilder.mainGraph(
             onLogoutClick = {
                 // TODO probably do differently
                 friendsViewModel.clearViewModel()
+                authViewModel.signOut()
 
-                authViewModel.logout()
                 navController.navigate(Route.Start) {
                     popUpTo(Route.Feed) { inclusive = true } // Clear backstack
                 }
@@ -159,7 +159,6 @@ fun NavGraphBuilder.mainGraph(
 
     composable<Route.Shelf> {
         ShelfScreen(
-            modifier = modifier,
             viewModel = shelfViewModel,
             userId = authService.currentUserId,
             onClickMore = { mediaType -> navController.navigate(Route.ShelfList(authService.currentUserId, mediaType)) },

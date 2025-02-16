@@ -20,6 +20,7 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.domain.user.toDomain
 import de.ashman.ontrack.features.common.OnTrackButton
 import dev.gitlive.firebase.auth.FirebaseUser
 import ontrack.composeapp.generated.resources.Res
@@ -46,7 +47,7 @@ fun LoginScreen(
         ) {
             LoginButtons(
                 onClickContinue = { firebaseUser ->
-                    viewModel.signUp(firebaseUser)
+                    viewModel.signUp(firebaseUser.toDomain())
                     onNavigateAfterLogin()
                 }
             )

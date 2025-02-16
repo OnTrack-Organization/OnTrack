@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserEntity(
     val id: String,
-    val displayName: String?,
+    val displayName: String,
     val username: String,
-    val email: String?,
-    val imageUrl: String? = null,
+    val email: String,
+    val imageUrl: String,
 
     val friends: List<FriendEntity> = emptyList(),
     val receivedRequests: List<FriendRequestEntity> = emptyList(),

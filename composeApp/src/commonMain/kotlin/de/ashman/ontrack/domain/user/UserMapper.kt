@@ -1,19 +1,24 @@
 package de.ashman.ontrack.domain.user
 
-import de.ashman.ontrack.db.entity.FriendEntity
-import de.ashman.ontrack.db.entity.FriendRequestEntity
 import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.auth.FirebaseUser
 
-fun FirebaseUser.toEntity() =
-    UserEntity(
+fun FirebaseUser.toDomain() =
+    User(
         id = uid,
-        email = email,
-        displayName = displayName,
-        // TODO different way
+        email = email.orEmpty(),
+        name = displayName.orEmpty(),
         username = "${displayName?.lowercase()}",
-        imageUrl = photoURL,
+        imageUrl = photoURL.orEmpty(),
     )
+
+fun User.toEntity() = UserEntity(
+    id = id,
+    email = email,
+    displayName = name,
+    username = username,
+    imageUrl = imageUrl,
+)
 
 fun UserEntity.toDomain() =
     User(
@@ -25,39 +30,4 @@ fun UserEntity.toDomain() =
         friends = friends.map { it.toDomain() },
         receivedRequests = receivedRequests.map { it.toDomain() },
         sentRequests = sentRequests.map { it.toDomain() },
-        //trackings = currentTrackings,
-    )
-
-fun FriendEntity.toDomain() =
-    Friend(
-        id = id,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-    )
-
-fun Friend.toEntity() =
-    FriendEntity(
-        id = id,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-    )
-
-fun FriendRequestEntity.toDomain() =
-    FriendRequest(
-        userId = userId,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-        status = status,
-    )
-
-fun FriendRequest.toEntity() =
-    FriendRequestEntity(
-        userId = userId,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-        status = status,
     )

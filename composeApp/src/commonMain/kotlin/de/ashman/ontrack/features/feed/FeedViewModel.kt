@@ -11,7 +11,6 @@ import de.ashman.ontrack.domain.tracking.TrackingLike
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,9 +21,6 @@ class FeedViewModel(
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState
-        .onStart {
-            fetchTrackingFeed()
-        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),

@@ -57,7 +57,6 @@ fun ShelfScreen(
     onClickMore: (MediaType) -> Unit,
     onClickItem: (MediaNavigationItems) -> Unit,
     onBack: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

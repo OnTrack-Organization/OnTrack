@@ -4,11 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.domain.user.toDomain
 import de.ashman.ontrack.domain.user.toEntity
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.FirebaseUser
-import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,53 +23,34 @@ class AuthViewModel(
             _uiState.value,
         )
 
-    init {
-        // Login with Firebase after closing the app
-        val currentUser = Firebase.auth.currentUser?.toEntity()?.toDomain()
-        _uiState.update { it.copy(user = currentUser) }
-        Logger.i { "Initialized AuthViewModel" }
-    }
-
-    fun signUp(user: FirebaseUser) = viewModelScope.launch {
+    fun signUp(user: User) = viewModelScope.launch {
         try {
-            val userEntity = user.toEntity()
-
-            authService.signUpUser(userEntity)
-
-            _uiState.update { it.copy(user = userEntity.toDomain()) }
+            authService.signUp(user.toEntity())
         } catch (e: Exception) {
             Logger.e("Error signing up: ${e.message}")
             _uiState.update { it.copy(error = e.message) }
         }
     }
 
-    fun logout() = viewModelScope.launch {
+    fun signOut() = viewModelScope.launch {
         try {
-            Firebase.auth.signOut()
-            _uiState.update { it.copy(user = null) }
+            authService.signOut()
         } catch (e: Exception) {
+            Logger.e("Error signing out: ${e.message}")
             _uiState.update { it.copy(error = e.message) }
         }
     }
 
-    fun deleteAccount() = viewModelScope.launch {
-        val userId = _uiState.value.user?.id
-        if (userId == null) {
-            _uiState.update { it.copy(error = "No user to delete") }
-            return@launch
-        }
-
+    fun deleteUser() = viewModelScope.launch {
         try {
-            authService.deleteUser(userId)
-            _uiState.update { it.copy(user = null, error = null) }
+            authService.deleteUser()
         } catch (e: Exception) {
-            Logger.e("Error deleting account", e)
+            Logger.e("Error deleting user", e)
             _uiState.update { it.copy(error = e.message ?: "Unknown error") }
         }
     }
 }
 
 data class AuthUiState(
-    val user: User? = null,
     val error: String? = null,
 )

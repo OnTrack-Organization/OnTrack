@@ -68,6 +68,10 @@ fun FeedScreen(
 
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        feedViewModel.fetchTrackingFeed()
+    }
+
     LaunchedEffect(feedUiState.feedTrackings) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { index ->
@@ -195,6 +199,7 @@ fun FeedScreen(
                                 onUserClick(it)
                             },
                             onQueryChanged = friendsViewModel::onQueryChanged,
+                            fetchFriendsAndRequests = friendsViewModel::fetchFriendsAndRequests,
                         )
                     }
                 }

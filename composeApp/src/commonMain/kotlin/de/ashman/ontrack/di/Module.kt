@@ -25,6 +25,7 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -206,7 +207,8 @@ val appModule = module {
     }
 
     // AUTH
-    single<AuthService> { AuthServiceImpl(get()) }
+    single { Firebase.auth }
+    single<AuthService> { AuthServiceImpl(get(), get()) }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
