@@ -224,6 +224,10 @@
     <!-- SHELF -->
     <string name="shelf_empty">Track some media to display it on your shelf!</string>
 
+    <!-- SETTINGS -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_logout">Logout</string>
+
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
     <string name="delete_button">Delete</string>

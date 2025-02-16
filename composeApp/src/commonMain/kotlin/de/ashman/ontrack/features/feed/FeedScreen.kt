@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +53,6 @@ import org.jetbrains.compose.resources.stringResource
 fun FeedScreen(
     feedViewModel: FeedViewModel,
     friendsViewModel: FriendsViewModel,
-    onLogoutClick: () -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
     onUserClick: (String) -> Unit,
 ) {
@@ -102,16 +100,6 @@ fun FeedScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Group,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onLogoutClick,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.Logout,
                             contentDescription = null,
                         )
                     }

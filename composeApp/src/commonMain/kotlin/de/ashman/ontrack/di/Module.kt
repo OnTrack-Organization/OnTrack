@@ -22,6 +22,7 @@ import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
+import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import dev.gitlive.firebase.Firebase
@@ -235,6 +236,7 @@ val appModule = module {
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
+    viewModelDefinition { SettingsViewModel() }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
