@@ -224,8 +224,10 @@
         <item quantity="other">%1$d Tracks</item>
     </plurals>
 
+    <!-- SHELF -->
+    <string name="shelf_empty">Track some media to display it on your shelf!</string>
+
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
     <string name="delete_button">Delete</string>
-
 </resources>

@@ -51,7 +51,7 @@ fun ErrorContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(48.dp),
             imageVector = Icons.Default.WifiOff,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             contentDescription = "Error Icon"
@@ -77,7 +77,7 @@ fun EmptyContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(48.dp),
             imageVector = Icons.Default.HideSource,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             contentDescription = "No Results Icon"
