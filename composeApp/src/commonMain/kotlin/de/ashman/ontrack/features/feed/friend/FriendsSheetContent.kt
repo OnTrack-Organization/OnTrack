@@ -45,7 +45,7 @@ fun FriendsSheetContent(
     onRemoveFriend: (Friend) -> Unit,
     onAcceptRequest: (FriendRequest) -> Unit,
     onDenyRequest: (FriendRequest) -> Unit,
-    onCancelRequest: (String, FriendRequest) -> Unit,
+    onCancelRequest: (FriendRequest) -> Unit,
     onSendRequest: (FriendRequest) -> Unit,
     onClickUser: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
@@ -151,7 +151,7 @@ fun FriendsAndRequests(
     friends: List<Friend>,
     onAcceptRequest: (FriendRequest) -> Unit,
     onDenyRequest: (FriendRequest) -> Unit,
-    onCancelRequest: (String, FriendRequest) -> Unit,
+    onCancelRequest: (FriendRequest) -> Unit,
     onRemoveFriend: (Friend) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
@@ -205,7 +205,7 @@ fun FriendsAndRequests(
                 username = it.username,
                 name = it.name,
                 onClickUser = { onClickUser(it.userId) },
-                onClickMinus = { },
+                onClickMinus = { onCancelRequest(it) },
             )
         }
     }

@@ -83,7 +83,7 @@ class FriendsViewModel(
     }
 
     fun search(query: String) = viewModelScope.launch {
-        val potentialFriends = friendService.searchForNewFriend(query).map { it.toDomain() }
+        val potentialFriends = friendService.searchForNewFriends(query).map { it.toDomain() }
         _uiState.update {
             it.copy(
                 potentialFriends = potentialFriends,
@@ -99,7 +99,7 @@ class FriendsViewModel(
         }
     }
 
-    fun sendFriendRequest(otherRequest: FriendRequest) {
+    fun sendRequest(otherRequest: FriendRequest) {
         viewModelScope.launch {
             val myRequest = FriendRequest(
                 userId = authService.currentUserId,
@@ -112,23 +112,23 @@ class FriendsViewModel(
         }
     }
 
-    fun acceptFriendRequest(friendRequest: FriendRequest) {
+    fun acceptRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
             friendService.acceptRequest(friendRequest)
             fetchFriendsAndRequests()
         }
     }
 
-    fun denyFriendRequest(friendRequest: FriendRequest) {
+    fun denyRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
             friendService.denyRequest(friendRequest)
             fetchFriendsAndRequests()
         }
     }
 
-    fun cancelFriendRequest(friendId: String, friendRequest: FriendRequest) {
+    fun cancelRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            friendService.cancelRequest(friendId, friendRequest)
+            friendService.cancelRequest(friendRequest)
             fetchFriendsAndRequests()
         }
     }

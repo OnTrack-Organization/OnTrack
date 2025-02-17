@@ -11,15 +11,17 @@ import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 interface FriendService {
-    suspend fun searchForNewFriend(query: String): List<FriendEntity>
+    suspend fun searchForNewFriends(query: String): List<FriendEntity>
     suspend fun getFriends(): List<FriendEntity>
     suspend fun getReceivedRequests(): List<FriendRequestEntity>
     suspend fun getSentRequests(): List<FriendRequestEntity>
+
     suspend fun removeFriend(friend: Friend)
+
     suspend fun sendRequest(otherRequest: FriendRequest, myRequest: FriendRequest)
     suspend fun acceptRequest(friendRequest: FriendRequest)
     suspend fun denyRequest(friendRequest: FriendRequest)
-    suspend fun cancelRequest(friendId: String, friendRequest: FriendRequest)
+    suspend fun cancelRequest(friendRequest: FriendRequest)
 }
 
 class FriendServiceImpl(
@@ -28,7 +30,7 @@ class FriendServiceImpl(
 ) : FriendService {
     private val userCollection = firestore.collection("users")
 
-    override suspend fun searchForNewFriend(query: String): List<FriendEntity> {
+    override suspend fun searchForNewFriends(query: String): List<FriendEntity> {
         val results = mutableListOf<FriendEntity>()
 
         val snapshot = userCollection
@@ -43,8 +45,8 @@ class FriendServiceImpl(
                     FriendEntity(
                         id = user.id,
                         username = user.username,
-                        name = user.username,
-                        imageUrl = user.imageUrl.orEmpty(),
+                        name = user.displayName,
+                        imageUrl = user.imageUrl,
                     )
                 )
             }
@@ -89,12 +91,12 @@ class FriendServiceImpl(
         )
     }
 
-    override suspend fun sendRequest(otherRequest: FriendRequest, myRequest: FriendRequest) {
+    override suspend fun sendRequest(friendRequest: FriendRequest, myRequest: FriendRequest) {
         userCollection.document(authService.currentUserId).update(
-            "sentRequests" to FieldValue.arrayUnion(otherRequest.toEntity())
+            "sentRequests" to FieldValue.arrayUnion(friendRequest.toEntity())
         )
 
-        userCollection.document(otherRequest.userId).update(
+        userCollection.document(friendRequest.userId).update(
             "receivedRequests" to FieldValue.arrayUnion(myRequest.toEntity())
         )
     }
@@ -117,13 +119,13 @@ class FriendServiceImpl(
         )
 
         // Remove other persons sent request
+        // TODO still not working yet
         val myRequest = FriendRequestEntity(
             userId = authService.currentUserId,
             username = authService.currentUserName,
             name = authService.currentUserName,
             imageUrl = authService.currentUserImage,
-
-            )
+        )
 
         userCollection.document(friendRequest.userId).update(
             "sentRequests" to FieldValue.arrayRemove(myRequest)
@@ -133,7 +135,6 @@ class FriendServiceImpl(
         val myself = FriendEntity(
             id = authService.currentUserId,
             username = authService.currentUserName,
-            // TODO i guess name und so muss von woanders her
             name = authService.currentUserName,
             imageUrl = authService.currentUserImage,
         )
@@ -149,20 +150,34 @@ class FriendServiceImpl(
         )
 
         // Remove other persons sent request
+        val myRequest = FriendRequestEntity(
+            userId = authService.currentUserId,
+            username = authService.currentUserName,
+            name = authService.currentUserName,
+            imageUrl = authService.currentUserImage,
+        )
+
         userCollection.document(friendRequest.userId).update(
-            "sentRequests" to FieldValue.arrayRemove(friendRequest.toEntity())
+            "sentRequests" to FieldValue.arrayRemove(myRequest)
         )
     }
 
-    override suspend fun cancelRequest(friendId: String, friendRequest: FriendRequest) {
+    override suspend fun cancelRequest(friendRequest: FriendRequest) {
         // Remove own sent request
         userCollection.document(authService.currentUserId).update(
             "sentRequests" to FieldValue.arrayRemove(friendRequest.toEntity())
         )
 
         // Remove other persons received request
-        userCollection.document(friendId).update(
-            "receivedRequests" to FieldValue.arrayRemove(friendRequest.toEntity())
+        val myRequest = FriendRequestEntity(
+            userId = authService.currentUserId,
+            username = authService.currentUserName,
+            name = authService.currentUserName,
+            imageUrl = authService.currentUserImage,
+        )
+
+        userCollection.document(friendRequest.userId).update(
+            "receivedRequests" to FieldValue.arrayRemove(myRequest)
         )
     }
 }

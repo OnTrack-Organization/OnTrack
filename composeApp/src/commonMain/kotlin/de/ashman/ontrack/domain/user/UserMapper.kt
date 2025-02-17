@@ -8,7 +8,7 @@ fun FirebaseUser.toDomain() =
         id = uid,
         email = email.orEmpty(),
         name = displayName.orEmpty(),
-        username = "${displayName?.lowercase()}",
+        username = displayName?.lowercase().orEmpty(),
         imageUrl = photoURL.orEmpty(),
     )
 

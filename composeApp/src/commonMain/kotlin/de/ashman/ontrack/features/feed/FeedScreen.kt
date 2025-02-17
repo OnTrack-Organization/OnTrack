@@ -178,10 +178,10 @@ fun FeedScreen(
                         FriendsSheetContent(
                             uiState = friendsUiState,
                             onRemoveFriend = friendsViewModel::removeFriend,
-                            onAcceptRequest = friendsViewModel::acceptFriendRequest,
-                            onDenyRequest = friendsViewModel::denyFriendRequest,
-                            onCancelRequest = friendsViewModel::cancelFriendRequest,
-                            onSendRequest = friendsViewModel::sendFriendRequest,
+                            onAcceptRequest = friendsViewModel::acceptRequest,
+                            onDenyRequest = friendsViewModel::denyRequest,
+                            onCancelRequest = friendsViewModel::cancelRequest,
+                            onSendRequest = friendsViewModel::sendRequest,
                             onClickUser = {
                                 showBottomSheet = false
                                 onUserClick(it)
