@@ -90,7 +90,7 @@ fun SearchScreen(
                 ) {
                     item {
                         // TODO add AnimatedContent
-                        when (uiState.resultState) {
+                        when (uiState.resultStates[uiState.selectedMediaType]) {
                             SearchResultState.Empty -> EmptyContent(
                                 modifier = Modifier.wrapContentSize(),
                                 uiState.selectedMediaType,
@@ -105,24 +105,24 @@ fun SearchScreen(
                                 modifier = Modifier.wrapContentSize()
                             )
 
-                            SearchResultState.Success -> {}
+                            else -> {}
                         }
                     }
                 }
 
-                if (uiState.resultState == SearchResultState.Success) {
+                if (uiState.resultStates[uiState.selectedMediaType] == SearchResultState.Success) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp),
                     ) {
                         items(items = uiState.searchResults, key = { it.id }) { media ->
-                            val tracking = uiState.trackings.find { it.mediaId == media.id }
+                            val tracking = uiState.trackings.associateBy { it.mediaId }
 
                             MediaPoster(
                                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                                 title = media.title,
                                 coverUrl = media.coverUrl,
-                                trackStatusIcon = tracking?.status?.getIcon(true),
+                                trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
                                 onClick = {
                                     onClickItem(
                                         MediaNavigationItems(

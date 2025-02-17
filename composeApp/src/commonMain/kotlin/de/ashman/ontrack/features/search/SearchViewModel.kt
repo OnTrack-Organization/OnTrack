@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
@@ -14,14 +13,13 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +32,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.measureTime
 
 class SearchViewModel(
     private val movieRepository: MovieRepository,
@@ -65,87 +62,59 @@ class SearchViewModel(
     private var searchJob: Job? = null
 
     init {
-        Logger.i { "SearchViewModel init" }
-        searchJob = getTrending()
+        fetchAllTrending()
+    }
+
+    private fun fetchAllTrending() {
+        _uiState.update { it.copy(resultStates = it.resultStates + (MediaType.entries.associateWith { SearchResultState.Loading })) }
+
+        viewModelScope.launch {
+            val trendingResults = mutableListOf<Media>()
+
+            MediaType.entries.forEach { mediaType ->
+                launch {
+                    val results = getRepositoryForType(mediaType).fetchTrending().getOrElse { emptyList() }
+                    trendingResults.addAll(results)
+
+                    _uiState.update {
+                        it.copy(
+                            cachedTrending = trendingResults,
+                            searchResults = trendingResults.filter { media -> media.mediaType == it.selectedMediaType },
+                            resultStates = it.resultStates + (mediaType to if (results.isEmpty()) SearchResultState.Empty else SearchResultState.Success)
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun search(query: String) = viewModelScope.launch {
-        val duration = measureTime {
-            _uiState.update { it.copy(resultState = SearchResultState.Loading) }
+        val mediaType = uiState.value.selectedMediaType
 
-            val repository = when (uiState.value.selectedMediaType) {
-                MediaType.MOVIE -> movieRepository
-                MediaType.SHOW -> showRepository
-                MediaType.BOOK -> bookRepository
-                MediaType.VIDEOGAME -> videogameRepository
-                MediaType.BOARDGAME -> boardgameRepository
-                MediaType.ALBUM -> albumRepository
-            }
+        _uiState.update { it.copy(resultStates = it.resultStates + (mediaType to SearchResultState.Loading)) }
 
-            repository.fetchByQuery(query).fold(
-                onSuccess = { searchResults ->
-                    _uiState.update {
-                        it.copy(
-                            resultState = if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
-                            errorMessage = null,
-                            searchResults = searchResults,
-                        )
-                    }
-                },
-                onFailure = { exception ->
-                    _uiState.update {
-                        it.copy(
-                            resultState = SearchResultState.Error,
-                            errorMessage = "Failed to fetch results: ${exception.message}",
-                            searchResults = emptyList(),
-                        )
-                    }
+        val repository = getRepositoryForType(mediaType)
+
+        repository.fetchByQuery(query).fold(
+            onSuccess = { searchResults ->
+                _uiState.update {
+                    it.copy(
+                        searchResults = searchResults.distinctBy { media -> media.id }
+                            .ifEmpty { it.cachedTrending.filter { media -> media.mediaType == mediaType } }, // Restore trending if empty
+                        errorMessage = null,
+                        resultStates = it.resultStates + (mediaType to if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success)
+                    )
                 }
-            )
-        }
-
-        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
-        Logger.i { "${_uiState.value.selectedMediaType.name} Search took $duration" }
-    }
-
-    private fun getTrending() = viewModelScope.launch {
-        val duration = measureTime {
-            _uiState.update { it.copy(resultState = SearchResultState.Loading) }
-
-            val repository = when (uiState.value.selectedMediaType) {
-                MediaType.MOVIE -> movieRepository
-                MediaType.SHOW -> showRepository
-                MediaType.BOOK -> bookRepository
-                MediaType.VIDEOGAME -> videogameRepository
-                MediaType.BOARDGAME -> boardgameRepository
-                MediaType.ALBUM -> albumRepository
-            }
-
-            repository.fetchTrending().fold(
-                onSuccess = { trendingResults ->
-                    _uiState.update {
-                        it.copy(
-                            resultState = if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success,
-                            errorMessage = null,
-                            cachedTrending = trendingResults,
-                            searchResults = trendingResults,
-                        )
-                    }
-                },
-                onFailure = { exception ->
-                    _uiState.update {
-                        it.copy(
-                            resultState = SearchResultState.Error,
-                            errorMessage = "Failed to fetch trending results: ${exception.message}",
-                            cachedTrending = emptyList(),
-                        )
-                    }
+            },
+            onFailure = { exception ->
+                _uiState.update {
+                    it.copy(
+                        resultStates = it.resultStates + (mediaType to SearchResultState.Error),
+                        errorMessage = "Failed to fetch results: ${exception.message}",
+                    )
                 }
-            )
-        }
-
-        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
-        Logger.i { "${_uiState.value.selectedMediaType.name} Trending took $duration" }
+            }
+        )
     }
 
     @OptIn(FlowPreview::class)
@@ -155,18 +124,17 @@ class SearchViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
+                val mediaType = uiState.value.selectedMediaType
+
                 when {
                     query.isBlank() -> {
                         searchJob?.cancel()
-                        if (_uiState.value.cachedTrending.isEmpty()) {
-                            searchJob = getTrending()
-                        } else {
-                            _uiState.update {
-                                it.copy(
-                                    errorMessage = null,
-                                    searchResults = _uiState.value.cachedTrending,
-                                )
-                            }
+                        val trendingResults = uiState.value.cachedTrending.filter { media -> media.mediaType == mediaType }
+                        _uiState.update {
+                            it.copy(
+                                searchResults = trendingResults,
+                                resultStates = it.resultStates + (mediaType to if (trendingResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success)
+                            )
                         }
                     }
 
@@ -182,9 +150,7 @@ class SearchViewModel(
     private fun observeUserTrackings() {
         trackingService.fetchTrackings(authService.currentUserId)
             .onEach { trackings ->
-                _uiState.update {
-                    it.copy(trackings = trackings.map { it.toDomain() })
-                }
+                _uiState.update { it.copy(trackings = trackings.map { it.toDomain() }) }
             }
             .launchIn(viewModelScope)
     }
@@ -194,18 +160,26 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
-        _uiState.update { it.copy(selectedMediaType = mediaType, cachedTrending = emptyList()) }
+        _uiState.update { it.copy(selectedMediaType = mediaType) }
 
-        searchJob?.cancel()
-        searchJob = if (_uiState.value.query.isBlank()) getTrending() else search(_uiState.value.query)
+        if (uiState.value.query.isNotBlank()) {
+            search(uiState.value.query)
+        } else {
+            _uiState.update {
+                it.copy(
+                    searchResults = it.cachedTrending.filter { media -> media.mediaType == mediaType }
+                )
+            }
+        }
     }
 
-    fun refresh() = viewModelScope.launch {
-        _uiState.update { it.copy(isRefreshing = true) }
-        searchJob?.cancel()
-        searchJob = if (_uiState.value.query.isBlank()) getTrending() else search(_uiState.value.query)
-        delay(300L)
-        _uiState.update { it.copy(isRefreshing = false) }
+    private fun getRepositoryForType(mediaType: MediaType) = when (mediaType) {
+        MediaType.MOVIE -> movieRepository
+        MediaType.SHOW -> showRepository
+        MediaType.BOOK -> bookRepository
+        MediaType.VIDEOGAME -> videogameRepository
+        MediaType.BOARDGAME -> boardgameRepository
+        MediaType.ALBUM -> albumRepository
     }
 }
 
@@ -215,7 +189,7 @@ data class SearchUiState(
     val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
-    val resultState: SearchResultState = SearchResultState.Empty,
+    val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Empty },
     val searchDuration: Long = 0L,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
