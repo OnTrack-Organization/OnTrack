@@ -6,6 +6,7 @@ import dev.gitlive.firebase.auth.FirebaseUser
 fun FirebaseUser.toDomain() =
     User(
         id = uid,
+        fcmToken = "",
         email = email.orEmpty(),
         name = displayName.orEmpty(),
         username = displayName?.lowercase().orEmpty(),
@@ -14,6 +15,7 @@ fun FirebaseUser.toDomain() =
 
 fun User.toEntity() = UserEntity(
     id = id,
+    fcmToken = fcmToken,
     email = email,
     displayName = name,
     username = username,
@@ -23,6 +25,7 @@ fun User.toEntity() = UserEntity(
 fun UserEntity.toDomain() =
     User(
         id = id,
+        fcmToken = fcmToken,
         email = email,
         name = displayName,
         username = username,

@@ -16,6 +16,7 @@ interface AuthService {
     suspend fun signOut()
     suspend fun deleteUser()
     suspend fun consumeUser(userId: String): Flow<UserEntity?>
+    suspend fun updateFcmToken(token: String)
 }
 
 class AuthServiceImpl(
@@ -69,5 +70,14 @@ class AuthServiceImpl(
                 null
             }
         }
+    }
+
+    override suspend fun updateFcmToken(token: String) {
+        userCollection
+            .document(currentUserId)
+            .set(
+                data = mapOf("fcmToken" to token),
+                merge = true
+            )
     }
 }

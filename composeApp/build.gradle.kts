@@ -43,6 +43,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             freeCompilerArgs += "-Xbinary=bundleId=de.ashman.ontrack.ComposeApp"
+
+            export("io.github.mirzemehdi:kmpnotifier:1.4.0")
         }
     }
 
@@ -83,6 +85,8 @@ kotlin {
             implementation(libs.bundles.ksoup)
             implementation(libs.bundles.kmpauth)
             implementation(libs.bundles.firebase)
+
+            api(libs.kmpnotifier)
         }
 
         androidMain.dependencies {

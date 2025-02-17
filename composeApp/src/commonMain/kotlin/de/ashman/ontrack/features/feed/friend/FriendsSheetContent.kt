@@ -136,7 +136,9 @@ fun PotentialFriends(
             username = friend.username,
             name = friend.name,
             onClickUser = { onClickUser(friend.id) },
-            onSendRequest = { onSendRequest(friend.toRequest()) },
+            onSendRequest = {
+                onSendRequest(friend.toRequest())
+            },
             onCancelRequest = { onCancelRequest(friend.toRequest()) },
             isFriendRequestSent = isRequestSent,
         )

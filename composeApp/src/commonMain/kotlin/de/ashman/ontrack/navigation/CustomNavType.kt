@@ -3,30 +3,10 @@ package de.ashman.ontrack.navigation
 import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
 import com.eygraber.uri.UriCodec
-import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.MediaType
 import kotlinx.serialization.json.Json
 
 object CustomNavType {
-    val TrackingNavType = object : NavType<Tracking>(
-        isNullableAllowed = false
-    ) {
-        override fun get(bundle: Bundle, key: String): Tracking? {
-            return Json.decodeFromString(bundle.getString(key) ?: return null)
-        }
-
-        override fun parseValue(value: String): Tracking {
-            return Json.decodeFromString(UriCodec.decode(value))
-        }
-
-        override fun put(bundle: Bundle, key: String, value: Tracking) {
-            bundle.putString(key, Json.encodeToString(value))
-        }
-
-        override fun serializeAsValue(value: Tracking): String {
-            return UriCodec.encode(Json.encodeToString(value))
-        }
-    }
-
     val MediaNavigationItemsType = object : NavType<MediaNavigationItems>(
         isNullableAllowed = false
     ) {
@@ -43,6 +23,26 @@ object CustomNavType {
         }
 
         override fun serializeAsValue(value: MediaNavigationItems): String {
+            return UriCodec.encode(Json.encodeToString(value))
+        }
+    }
+
+    val MediaTypeNavType = object : NavType<MediaType>(
+        isNullableAllowed = false
+    ) {
+        override fun get(bundle: Bundle, key: String): MediaType? {
+            return Json.decodeFromString(bundle.getString(key) ?: return null)
+        }
+
+        override fun parseValue(value: String): MediaType {
+            return Json.decodeFromString(UriCodec.decode(value))
+        }
+
+        override fun put(bundle: Bundle, key: String, value: MediaType) {
+            bundle.putString(key, Json.encodeToString(value))
+        }
+
+        override fun serializeAsValue(value: MediaType): String {
             return UriCodec.encode(Json.encodeToString(value))
         }
     }

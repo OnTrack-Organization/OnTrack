@@ -70,7 +70,7 @@ class FeedServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayUnion(like)
+                "likes" to FieldValue.arrayUnion(like.toMap())
             )
     }
 
@@ -78,7 +78,7 @@ class FeedServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayRemove(like)
+                "likes" to FieldValue.arrayRemove(like.toMap())
             )
     }
 
@@ -86,7 +86,7 @@ class FeedServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayUnion(comment)
+                "comments" to FieldValue.arrayUnion(comment.toMap())
             )
     }
 
@@ -94,7 +94,7 @@ class FeedServiceImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayRemove(comment)
+                "comments" to FieldValue.arrayRemove(comment.toMap())
             )
     }
 }

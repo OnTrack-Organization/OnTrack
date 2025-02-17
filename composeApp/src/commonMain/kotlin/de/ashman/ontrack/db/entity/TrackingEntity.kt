@@ -38,7 +38,19 @@ data class TrackingCommentEntity(
 
     val comment: String,
     val timestamp: Long,
-)
+) {
+    // Needed for Ios...
+    fun toMap(): Map<String, Any> {
+        return mapOf(
+            "id" to id,
+            "userId" to userId,
+            "userImageUrl" to userImageUrl,
+            "username" to username,
+            "comment" to comment,
+            "timestamp" to timestamp,
+        )
+    }
+}
 
 @Serializable
 data class TrackingHistoryEntryEntity(
@@ -51,4 +63,12 @@ data class TrackingLikeEntity(
     val userId: String,
     val username: String,
     val userImageUrl: String,
-)
+) {
+    fun toMap(): Map<String, Any> {
+        return mapOf(
+            "userId" to userId,
+            "username" to username,
+            "userImageUrl" to userImageUrl,
+        )
+    }
+}

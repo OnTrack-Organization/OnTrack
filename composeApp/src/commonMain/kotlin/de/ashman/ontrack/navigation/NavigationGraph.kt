@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthViewModel
-import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
@@ -163,6 +163,7 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
+            authService = authService,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
     }
@@ -187,7 +188,6 @@ fun NavGraphBuilder.mediaGraph(
 ) {
     composable<Route.Detail>(
         typeMap = mapOf(
-            typeOf<Tracking>() to CustomNavType.TrackingNavType,
             typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
         )
     ) { backStackEntry ->
@@ -213,7 +213,11 @@ fun NavGraphBuilder.mediaGraph(
         )
     }
 
-    composable<Route.ShelfList> { backStackEntry ->
+    composable<Route.ShelfList>(
+        typeMap = mapOf(
+            typeOf<MediaType>() to CustomNavType.MediaTypeNavType,
+        )
+    ) { backStackEntry ->
         val shelfList: Route.ShelfList = backStackEntry.toRoute()
 
         ShelfListScreen(
