@@ -4,10 +4,11 @@ import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
-import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -80,27 +81,33 @@ class TrackingServiceImpl(
             }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
 
-        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.map { it.id } + currentUserId
+        val friendsFlow = userCollection.document(currentUserId)
+            .collection("friends")
+            .snapshots()
+            .map { snapshot -> snapshot.documents.map { it.id } + currentUserId }
 
-        val allFlows = friends.map { friendId ->
-            userTrackingCollection(friendId)
-                .where { "mediaId" equalTo mediaId }
-                .snapshots()
-                .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
-        }
+        return friendsFlow.flatMapLatest { friends ->
+            val allFlows = friends.map { friendId ->
+                userTrackingCollection(friendId)
+                    .where { "mediaId" equalTo mediaId }
+                    .snapshots()
+                    .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
+            }
 
-        return if (allFlows.isEmpty()) {
-            flowOf(emptyList())
-        } else {
-            combine(allFlows) { trackingLists ->
-                trackingLists
-                    .toList()
-                    .flatten()
-                    .distinctBy { it.id }
-                    .sortedByDescending { it.timestamp }
+            if (allFlows.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(allFlows) { trackingLists ->
+                    trackingLists
+                        .toList()
+                        .flatten()
+                        .distinctBy { it.id }
+                        .sortedByDescending { it.timestamp }
+                }
             }
         }
     }

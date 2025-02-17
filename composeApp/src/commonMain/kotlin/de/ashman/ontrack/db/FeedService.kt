@@ -4,12 +4,13 @@ import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.entity.TrackingCommentEntity
 import de.ashman.ontrack.db.entity.TrackingEntity
 import de.ashman.ontrack.db.entity.TrackingLikeEntity
-import de.ashman.ontrack.db.entity.UserEntity
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
@@ -28,32 +29,39 @@ class FeedServiceImpl(
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>> {
         val currentUserId = authService.currentUserId
-        val friends = userCollection.document(currentUserId).get().data<UserEntity>().friends.map { it.id } + currentUserId
 
-        val allFlows = friends.map { friendId ->
-            var query = userTrackingCollection(friendId)
-                .orderBy("timestamp", Direction.DESCENDING)
+        val friendsFlow = userCollection.document(currentUserId)
+            .collection("friends")
+            .snapshots()
+            .map { snapshot -> snapshot.documents.map { it.id } + currentUserId }
 
-            if (lastTimestamp != null) {
-                query = query.startAfter(lastTimestamp)
+        return friendsFlow.flatMapLatest { friends ->
+            val allFlows = friends.map { friendId ->
+                var query = userTrackingCollection(friendId)
+                    .orderBy("timestamp", Direction.DESCENDING)
+
+                if (lastTimestamp != null) {
+                    query = query.startAfter(lastTimestamp)
+                }
+
+                query.snapshots()
+                    .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
             }
 
-            query.snapshots()
-                .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
-        }
-
-        return if (allFlows.isEmpty()) {
-            flowOf(emptyList())
-        } else {
-            combine(allFlows) { trackingLists ->
-                trackingLists
-                    .toList()
-                    .flatten()
-                    .distinctBy { it.id }
-                    .sortedByDescending { it.timestamp }
-                    .take(limit)
+            if (allFlows.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(allFlows) { trackingLists ->
+                    trackingLists
+                        .toList()
+                        .flatten()
+                        .distinctBy { it.id }
+                        .sortedByDescending { it.timestamp }
+                        .take(limit)
+                }
             }
         }
     }

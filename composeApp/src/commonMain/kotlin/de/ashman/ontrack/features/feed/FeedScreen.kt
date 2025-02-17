@@ -187,7 +187,6 @@ fun FeedScreen(
                                 onUserClick(it)
                             },
                             onQueryChanged = friendsViewModel::onQueryChanged,
-                            fetchFriendsAndRequests = friendsViewModel::fetchFriendsAndRequests,
                         )
                     }
                 }

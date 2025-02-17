@@ -27,7 +27,4 @@ fun UserEntity.toDomain() =
         name = displayName,
         username = username,
         imageUrl = imageUrl,
-        friends = friends.map { it.toDomain() },
-        receivedRequests = receivedRequests.map { it.toDomain() },
-        sentRequests = sentRequests.map { it.toDomain() },
     )

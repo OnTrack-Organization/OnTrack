@@ -28,6 +28,7 @@
 
     <string name="feed_friends">Friends</string>
     <string name="feed_received_requests">Received friend requests</string>
+    <string name="feed_current_friends">Current friends</string>
     <string name="feed_sent_requests">Sent friend requests</string>
     <string name="feed_potential_friends">Potential friends</string>
     <string name="feed_no_friends">No friends yet. Be the first to add one!</string>

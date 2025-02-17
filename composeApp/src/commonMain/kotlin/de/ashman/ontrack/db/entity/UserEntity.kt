@@ -10,9 +10,5 @@ data class UserEntity(
     val username: String,
     val email: String,
     val imageUrl: String,
-
-    val friends: List<FriendEntity> = emptyList(),
-    val receivedRequests: List<FriendRequestEntity> = emptyList(),
-    val sentRequests: List<FriendRequestEntity> = emptyList(),
     val createdAt: Long = System.now().toEpochMilliseconds(),
 )

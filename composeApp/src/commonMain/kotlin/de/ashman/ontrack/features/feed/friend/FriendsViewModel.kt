@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// TODO statt jedes mal zu refreshen evt doch nen flow?
 class FriendsViewModel(
     private val friendService: FriendService,
     private val authService: AuthService,
@@ -31,6 +30,7 @@ class FriendsViewModel(
     val uiState: StateFlow<FriendsUiState> = _uiState
         .onStart {
             observeSearchQuery()
+            observeFriendsAndRequests()
         }
         .stateIn(
             viewModelScope,
@@ -39,48 +39,6 @@ class FriendsViewModel(
         )
 
     private var searchJob: Job? = null
-
-    @OptIn(FlowPreview::class)
-    private fun observeSearchQuery() {
-        uiState
-            .map { it.query }
-            .distinctUntilChanged()
-            .debounce(500L)
-            .onEach { query ->
-                when {
-                    query.isBlank() -> {
-                        _uiState.update { it.copy(potentialFriends = emptyList(), resultState = FriendsResultState.Default) }
-                        fetchFriendsAndRequests()
-                    }
-
-                    query.length >= 2 -> {
-                        searchJob?.cancel()
-                        searchJob = search(query)
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun onQueryChanged(query: String) {
-        _uiState.update { it.copy(query = query) }
-    }
-
-    fun fetchFriendsAndRequests() {
-        viewModelScope.launch {
-            val friends = friendService.getFriends().map { it.toDomain() }
-            val receivedRequests = friendService.getReceivedRequests().map { it.toDomain() }
-            val sentRequests = friendService.getSentRequests().map { it.toDomain() }
-
-            _uiState.update {
-                it.copy(
-                    friends = friends,
-                    receivedRequests = receivedRequests,
-                    sentRequests = sentRequests
-                )
-            }
-        }
-    }
 
     fun search(query: String) = viewModelScope.launch {
         val potentialFriends = friendService.searchForNewFriends(query).map { it.toDomain() }
@@ -95,7 +53,6 @@ class FriendsViewModel(
     fun removeFriend(friend: Friend) {
         viewModelScope.launch {
             friendService.removeFriend(friend)
-            fetchFriendsAndRequests()
         }
     }
 
@@ -108,28 +65,24 @@ class FriendsViewModel(
                 imageUrl = authService.currentUserImage,
             )
             friendService.sendRequest(otherRequest, myRequest)
-            fetchFriendsAndRequests()
         }
     }
 
     fun acceptRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
             friendService.acceptRequest(friendRequest)
-            fetchFriendsAndRequests()
         }
     }
 
     fun denyRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
             friendService.denyRequest(friendRequest)
-            fetchFriendsAndRequests()
         }
     }
 
     fun cancelRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
             friendService.cancelRequest(friendRequest)
-            fetchFriendsAndRequests()
         }
     }
 
@@ -142,6 +95,48 @@ class FriendsViewModel(
                 sentRequests = emptyList(),
             )
         }
+    }
+
+    fun onQueryChanged(query: String) {
+        _uiState.update { it.copy(query = query) }
+    }
+
+    private fun observeFriendsAndRequests() {
+        viewModelScope.launch {
+            launch {
+                friendService.getFriends()
+                    .collect { friends -> _uiState.update { it.copy(friends = friends.map { it.toDomain() }) } }
+            }
+            launch {
+                friendService.getReceivedRequests()
+                    .collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests.map { it.toDomain() }) } }
+            }
+            launch {
+                friendService.getSentRequests()
+                    .collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests.map { it.toDomain() }) } }
+            }
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeSearchQuery() {
+        uiState
+            .map { it.query }
+            .distinctUntilChanged()
+            .debounce(500L)
+            .onEach { query ->
+                when {
+                    query.isBlank() -> {
+                        _uiState.update { it.copy(potentialFriends = emptyList(), resultState = FriendsResultState.Default) }
+                    }
+
+                    query.length >= 2 -> {
+                        searchJob?.cancel()
+                        searchJob = search(query)
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
     }
 }
 
