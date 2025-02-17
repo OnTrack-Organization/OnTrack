@@ -44,26 +44,11 @@ class DetailViewModel(
             _uiState.value,
         )
 
-    init {
-        Logger.d { "DetailViewModel init" }
-    }
-
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
-        observeTracking(mediaNavItems.id)
-
-        val duration = measureTime {
+        measureTime {
             _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-            val repository = when (mediaNavItems.mediaType) {
-                MediaType.MOVIE -> movieRepository
-                MediaType.SHOW -> showRepository
-                MediaType.BOOK -> bookRepository
-                MediaType.VIDEOGAME -> videogameRepository
-                MediaType.BOARDGAME -> boardgameRepository
-                MediaType.ALBUM -> albumRepository
-            }
-
-            repository.fetchDetails(mediaNavItems.id).fold(
+            mediaNavItems.mediaType.getRepository().fetchDetails(mediaNavItems.id).fold(
                 onSuccess = { result ->
                     _uiState.update {
                         it.copy(
@@ -73,18 +58,19 @@ class DetailViewModel(
                     }
                 },
                 onFailure = { exception ->
+                    val errorMessage = "Failed to fetch details: ${exception.message}"
                     _uiState.update {
                         it.copy(
                             resultState = DetailResultState.Error,
-                            errorMessage = "Failed to fetch details: ${exception.message}"
+                            errorMessage = errorMessage
                         )
                     }
-                    Logger.e { _uiState.value.errorMessage.toString() }
+                    Logger.e { errorMessage }
                 }
             )
+        }.also { duration ->
+            _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
         }
-
-        _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
@@ -108,8 +94,6 @@ class DetailViewModel(
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
-
         trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
             _uiState.update { state ->
                 state.copy(
@@ -117,6 +101,15 @@ class DetailViewModel(
                 )
             }
         }
+    }
+
+    private fun MediaType.getRepository() = when (this) {
+        MediaType.MOVIE -> movieRepository
+        MediaType.SHOW -> showRepository
+        MediaType.BOOK -> bookRepository
+        MediaType.VIDEOGAME -> videogameRepository
+        MediaType.BOARDGAME -> boardgameRepository
+        MediaType.ALBUM -> albumRepository
     }
 }
 

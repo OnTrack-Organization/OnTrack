@@ -73,7 +73,7 @@ class SearchViewModel(
 
             MediaType.entries.forEach { mediaType ->
                 launch {
-                    val results = getRepositoryForType(mediaType).fetchTrending().getOrElse { emptyList() }
+                    val results = mediaType.getRepository().fetchTrending().getOrElse { emptyList() }
                     trendingResults.addAll(results)
 
                     _uiState.update {
@@ -93,9 +93,7 @@ class SearchViewModel(
 
         _uiState.update { it.copy(resultStates = it.resultStates + (mediaType to SearchResultState.Loading)) }
 
-        val repository = getRepositoryForType(mediaType)
-
-        repository.fetchByQuery(query).fold(
+        mediaType.getRepository().fetchByQuery(query).fold(
             onSuccess = { searchResults ->
                 _uiState.update {
                     it.copy(
@@ -173,7 +171,7 @@ class SearchViewModel(
         }
     }
 
-    private fun getRepositoryForType(mediaType: MediaType) = when (mediaType) {
+    private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository
         MediaType.BOOK -> bookRepository
@@ -190,7 +188,6 @@ data class SearchUiState(
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Empty },
-    val searchDuration: Long = 0L,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
 )

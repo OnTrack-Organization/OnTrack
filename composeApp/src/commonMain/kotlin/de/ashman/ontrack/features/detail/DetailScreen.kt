@@ -69,6 +69,7 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNavItems.id) {
         viewModel.fetchDetails(mediaNavItems)
+        viewModel.observeTracking(mediaNavItems.id)
         viewModel.observeFriendTrackings(mediaNavItems.id)
     }
 
