@@ -84,7 +84,7 @@ fun DetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = mediaNavItems.mediaType.getMediaTypeUi().icon,
+                            imageVector = mediaNavItems.mediaType.getMediaTypeUi().outlinedIcon,
                             contentDescription = "Media Type Icon"
                         )
                         Text(

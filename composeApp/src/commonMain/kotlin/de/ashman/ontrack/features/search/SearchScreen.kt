@@ -175,16 +175,16 @@ fun FilterChips(
         state = listState,
     ) {
         items(MediaType.entries) { mediaType ->
+            val isSelected = selectedMediaType == mediaType
+
             FilterChip(
-                selected = selectedMediaType == mediaType,
-                onClick = {
-                    if (selectedMediaType != mediaType) onMediaTypeSelected(mediaType)
-                },
+                selected = isSelected,
+                onClick = { if (!isSelected) onMediaTypeSelected(mediaType) },
                 label = { Text(pluralStringResource(mediaType.getMediaTypeUi().title, 2)) },
                 leadingIcon = {
                     Icon(
                         modifier = Modifier.size(AssistChipDefaults.IconSize),
-                        imageVector = mediaType.getMediaTypeUi().icon,
+                        imageVector = if (isSelected) mediaType.getMediaTypeUi().icon else mediaType.getMediaTypeUi().outlinedIcon,
                         contentDescription = "Chip icon",
                     )
                 },

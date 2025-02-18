@@ -5,12 +5,10 @@ import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.SportsEsports
-import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.ashman.ontrack.domain.MediaType
@@ -26,7 +24,9 @@ import ontrack.composeapp.generated.resources.movie_network_error
 import ontrack.composeapp.generated.resources.playingcards
 import ontrack.composeapp.generated.resources.playingcards_outlined
 import ontrack.composeapp.generated.resources.show
+import ontrack.composeapp.generated.resources.show_filled
 import ontrack.composeapp.generated.resources.show_network_error
+import ontrack.composeapp.generated.resources.show_outlined
 import ontrack.composeapp.generated.resources.videogame
 import ontrack.composeapp.generated.resources.videogame_network_error
 import org.jetbrains.compose.resources.PluralStringResource
@@ -51,8 +51,8 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
         )
 
         MediaType.SHOW -> MediaTypeUi(
-            icon = Icons.Default.Tv,
-            outlinedIcon = Icons.Outlined.Tv,
+            icon = vectorResource(Res.drawable.show_filled),
+            outlinedIcon = vectorResource(Res.drawable.show_outlined),
             title = Res.plurals.show,
             error = Res.string.show_network_error,
         )
