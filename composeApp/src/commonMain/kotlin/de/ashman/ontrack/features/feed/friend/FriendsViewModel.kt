@@ -45,7 +45,7 @@ class FriendsViewModel(
         _uiState.update {
             it.copy(
                 potentialFriends = potentialFriends,
-                resultState = if (potentialFriends.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success
+                resultState = if (potentialFriends.isEmpty()) FriendsResultState.PotentialEmpty else FriendsResultState.Potential
             )
         }
     }
@@ -115,6 +115,19 @@ class FriendsViewModel(
                 friendService.getSentRequests()
                     .collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests.map { it.toDomain() }) } }
             }
+        }.invokeOnCompletion {
+            updateFriendsResultState()
+        }
+    }
+
+    private fun updateFriendsResultState() {
+        _uiState.update {
+            it.copy(
+                resultState = when {
+                    it.friends.isNotEmpty() || it.receivedRequests.isNotEmpty() || it.sentRequests.isNotEmpty() -> FriendsResultState.Friends
+                    else -> FriendsResultState.FriendsEmpty
+                }
+            )
         }
     }
 
@@ -127,7 +140,15 @@ class FriendsViewModel(
             .onEach { query ->
                 when {
                     query.isBlank() -> {
-                        _uiState.update { it.copy(potentialFriends = emptyList(), resultState = FriendsResultState.Default) }
+                        _uiState.update {
+                            it.copy(
+                                potentialFriends = emptyList(),
+                                resultState = if (it.friends.isNotEmpty() ||
+                                    it.receivedRequests.isNotEmpty() ||
+                                    it.sentRequests.isNotEmpty()
+                                ) FriendsResultState.Friends else FriendsResultState.FriendsEmpty
+                            )
+                        }
                     }
 
                     query.length >= 2 -> {
@@ -146,11 +167,12 @@ data class FriendsUiState(
     val receivedRequests: List<FriendRequest> = emptyList(),
     val sentRequests: List<FriendRequest> = emptyList(),
     val potentialFriends: List<Friend> = emptyList(),
-    val resultState: FriendsResultState = FriendsResultState.Default,
+    val resultState: FriendsResultState = FriendsResultState.Friends,
 )
 
 enum class FriendsResultState {
-    Default,
-    Empty,
-    Success,
+    Friends,
+    FriendsEmpty,
+    Potential,
+    PotentialEmpty,
 }

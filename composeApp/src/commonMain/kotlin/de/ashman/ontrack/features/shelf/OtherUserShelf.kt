@@ -3,6 +3,8 @@ package de.ashman.ontrack.features.shelf
 import androidx.compose.runtime.Composable
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.navigation.MediaNavigationItems
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_other_empty
 
 @Composable
 fun OtherUserShelf(
@@ -18,5 +20,6 @@ fun OtherUserShelf(
         onClickMore = onClickMore,
         onClickItem = onClickItem,
         onBack = onBack,
+        emptyText = Res.string.shelf_other_empty,
     )
 }

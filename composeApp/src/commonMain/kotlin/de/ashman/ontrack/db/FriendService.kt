@@ -80,7 +80,6 @@ class FriendServiceImpl(
         return results
     }
 
-
     override suspend fun getFriends(): Flow<List<FriendEntity>> {
         return userCollection.document(authService.currentUserId)
             .collection("friends")

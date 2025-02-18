@@ -22,7 +22,7 @@ import de.ashman.ontrack.features.common.SearchBar
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_current_friends
 import ontrack.composeapp.generated.resources.feed_friends
-import ontrack.composeapp.generated.resources.feed_no_friends
+import ontrack.composeapp.generated.resources.feed_no_friends_and_potential
 import ontrack.composeapp.generated.resources.feed_no_potential_friends
 import ontrack.composeapp.generated.resources.feed_potential_friends
 import ontrack.composeapp.generated.resources.feed_received_requests
@@ -72,7 +72,7 @@ fun FriendsSheetContent(
         ) {
             item {
                 when (uiState.resultState) {
-                    FriendsResultState.Default -> {
+                    FriendsResultState.Friends -> {
                         FriendsAndRequests(
                             receivedRequests = uiState.receivedRequests,
                             sentRequests = uiState.sentRequests,
@@ -85,7 +85,19 @@ fun FriendsSheetContent(
                         )
                     }
 
-                    FriendsResultState.Success -> {
+                    FriendsResultState.FriendsEmpty -> {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            text = stringResource(Res.string.feed_no_friends_and_potential),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    FriendsResultState.Potential -> {
                         PotentialFriends(
                             potentialFriends = uiState.potentialFriends,
                             sentRequests = uiState.sentRequests,
@@ -94,8 +106,8 @@ fun FriendsSheetContent(
                             onClickUser = onClickUser,
                         )
                     }
-                    // TODO add other states
-                    FriendsResultState.Empty -> {
+
+                    FriendsResultState.PotentialEmpty -> {
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -106,8 +118,6 @@ fun FriendsSheetContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-
-                    else -> {}
                 }
             }
         }
@@ -216,7 +226,7 @@ fun FriendsAndRequests(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = stringResource(Res.string.feed_no_friends),
+            text = stringResource(Res.string.feed_no_friends_and_potential),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant

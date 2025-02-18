@@ -46,7 +46,8 @@ import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.shelf_empty
+import ontrack.composeapp.generated.resources.shelf_own_empty
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -59,6 +60,7 @@ fun ShelfScreen(
     onClickItem: (MediaNavigationItems) -> Unit,
     onBack: (() -> Unit)? = null,
     onSettings: (() -> Unit)? = null,
+    emptyText: StringResource = Res.string.shelf_own_empty,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -111,7 +113,7 @@ fun ShelfScreen(
         }
     ) { contentPadding ->
         if (uiState.trackings.isEmpty()) {
-            EmptyShelfContent()
+            EmptyShelfContent(text = emptyText)
         } else {
             LazyColumn(
                 modifier = Modifier.padding(
@@ -229,6 +231,7 @@ fun ShelfItem(
 @Composable
 fun EmptyShelfContent(
     modifier: Modifier = Modifier,
+    text: StringResource,
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
@@ -243,7 +246,7 @@ fun EmptyShelfContent(
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(
-            text = stringResource(Res.string.shelf_empty),
+            text = stringResource(text),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

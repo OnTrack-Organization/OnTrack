@@ -31,7 +31,7 @@
     <string name="feed_current_friends">Current friends</string>
     <string name="feed_sent_requests">Sent friend requests</string>
     <string name="feed_potential_friends">Potential friends</string>
-    <string name="feed_no_friends">No friends yet. Be the first to add one!</string>
+    <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
     <string name="feed_no_potential_friends">No potential friends found, sad.</string>
 
     <string name="feed_comments">Comments</string>
@@ -223,7 +223,8 @@
     </plurals>
 
     <!-- SHELF -->
-    <string name="shelf_empty">Track some media to display it on your shelf!</string>
+    <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
+    <string name="shelf_other_empty">This shelf is looking pretty empty, recommend them something!</string>
 
     <!-- SETTINGS -->
     <string name="settings_title">Settings</string>
