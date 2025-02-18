@@ -1,13 +1,13 @@
 package de.ashman.ontrack.features.shelf
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +33,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -73,59 +74,58 @@ fun ShelfScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    uiState.user?.let {
-                        AccountComponent(
-                            name = it.name,
-                            accountName = it.username,
-                            imageUrl = it.imageUrl,
-                        )
-                    }
-                },
-                navigationIcon = {
-                    onBack?.let {
-                        IconButton(
-                            onClick = onBack,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = "Back",
+            Column {
+                CenterAlignedTopAppBar(
+                    title = {
+                        uiState.user?.let {
+                            AccountComponent(
+                                name = it.name,
+                                accountName = it.username,
+                                imageUrl = it.imageUrl,
                             )
                         }
-                    }
-                },
-                actions = {
-                    onSettings?.let {
-                        IconButton(
-                            onClick = onSettings,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings",
-                            )
+                    },
+                    navigationIcon = {
+                        onBack?.let {
+                            IconButton(
+                                onClick = onBack,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                    contentDescription = "Back",
+                                )
+                            }
                         }
-                    }
-                },
-                expandedHeight = 110.dp,
-                scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
-            )
+                    },
+                    actions = {
+                        onSettings?.let {
+                            IconButton(
+                                onClick = it,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings",
+                                )
+                            }
+                        }
+                    },
+                    expandedHeight = 110.dp,
+                    scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
+                )
+            }
         }
     ) { contentPadding ->
         if (uiState.trackings.isEmpty()) {
             EmptyShelfContent(text = emptyText)
         } else {
             LazyColumn(
-                modifier = Modifier.padding(
-                    start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-                    top = contentPadding.calculateTopPadding(),
-                    end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-                    bottom = 0.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(vertical = 16.dp),
+                modifier = Modifier.padding(contentPadding).padding(bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+                contentPadding = PaddingValues(bottom = 16.dp),
                 state = viewModel.listState,
             ) {
+                item { MediaCounts(trackings = uiState.trackings) }
+
                 MediaType.entries.forEach { mediaType ->
                     val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
 
@@ -177,6 +177,59 @@ fun AccountComponent(
 }
 
 @Composable
+fun MediaCounts(
+    trackings: List<Tracking>,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            MediaType.entries.forEach { mediaType ->
+                val count = trackings.count { it.mediaType == mediaType }
+
+                MediaCount(
+                    icon = mediaType.getMediaTypeUi().outlinedIcon,
+                    count = count
+                )
+            }
+        }
+        HorizontalDivider()
+    }
+}
+
+@Composable
+fun MediaCount(
+    icon: ImageVector,
+    count: Int,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier.size(42.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = Modifier.fillMaxSize().padding(4.dp),
+                imageVector = icon,
+                contentDescription = "Media Icon",
+            )
+        }
+        Text(
+            text = "$count",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
 fun ShelfItem(
     mediaType: MediaType,
     items: List<Tracking>?,
@@ -184,24 +237,38 @@ fun ShelfItem(
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     items?.let {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             Row(
                 modifier = Modifier.padding(start = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = mediaType.getMediaTypeUi().icon,
-                    contentDescription = "Media Icon",
-                )
-                Text(
-                    text = pluralStringResource(mediaType.getMediaTypeUi().title, 2),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
+                Spacer(modifier = Modifier.size(42.dp))
 
-                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Box(
+                        modifier = Modifier.size(42.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize().padding(4.dp),
+                            imageVector = mediaType.getMediaTypeUi().outlinedIcon,
+                            contentDescription = "Media Icon",
+                        )
+                    }
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = pluralStringResource(mediaType.getMediaTypeUi().title, 2),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
 
                 IconButton(
                     onClick = { onClickMore(mediaType) },

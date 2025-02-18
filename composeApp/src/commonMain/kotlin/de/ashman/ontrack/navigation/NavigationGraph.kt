@@ -61,7 +61,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Shelf else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -82,6 +82,7 @@ fun NavigationGraph(
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
                 authService = authService,
+                friendsViewModel = friendsViewModel,
                 navController = navController
             )
 
@@ -184,6 +185,7 @@ fun NavGraphBuilder.mediaGraph(
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
+    friendsViewModel: FriendsViewModel,
     navController: NavHostController,
 ) {
     composable<Route.Detail>(
