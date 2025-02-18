@@ -119,7 +119,7 @@ fun ShelfScreen(
             EmptyShelfContent(text = emptyText)
         } else {
             LazyColumn(
-                modifier = Modifier.padding(contentPadding).padding(bottom = 80.dp),
+                modifier = Modifier.padding(contentPadding).padding(bottom = if (onSettings != null) 80.dp else 0.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp),
                 contentPadding = PaddingValues(bottom = 16.dp),
                 state = viewModel.listState,
@@ -186,7 +186,7 @@ fun MediaCounts(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {

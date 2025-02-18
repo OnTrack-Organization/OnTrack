@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -42,7 +42,7 @@ class ShelfListViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun updateSelectedTrackType(trackStatus: TrackStatus) {
+    fun updateSelectedTrackType(trackStatus: TrackStatus?) {
         _uiState.update {
             it.copy(selectedStatus = trackStatus)
         }
@@ -61,9 +61,11 @@ class ShelfListViewModel(
 
 data class ShelfListUiState(
     val selectedMediaType: MediaType = MediaType.MOVIE,
-    val selectedStatus: TrackStatus = TrackStatus.CATALOG,
+    val selectedStatus: TrackStatus? = null,
     val trackings: List<Tracking> = emptyList(),
 ) {
     val filteredTrackings: List<Tracking>
-        get() = trackings.filter { it.mediaType == selectedMediaType && it.status == selectedStatus }
+        get() = trackings.filter {
+            it.mediaType == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
+        }
 }

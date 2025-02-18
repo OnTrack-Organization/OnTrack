@@ -226,6 +226,9 @@
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
     <string name="shelf_other_empty">This shelf is looking pretty empty, recommend them something!</string>
 
+    <!-- SHELF LIST -->
+    <string name="shelf_list_all">All</string>
+
     <!-- SETTINGS -->
     <string name="settings_title">Settings</string>
     <string name="settings_logout">Logout</string>

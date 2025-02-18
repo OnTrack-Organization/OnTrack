@@ -1,5 +1,9 @@
 package de.ashman.ontrack.features.shelflist
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,8 +45,13 @@ import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.features.detail.tracking.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_list_all
+import ontrack.composeapp.generated.resources.shelves_filled
+import ontrack.composeapp.generated.resources.shelves_outlined
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,30 +107,38 @@ fun ShelfListScreen(
             TrackStatusFilterChips(
                 mediaType = mediaType,
                 selectedTrackStatus = uiState.selectedStatus,
-                onTrackTypeSelected = viewModel::updateSelectedTrackType,
+                onTrackStatusSelected = viewModel::updateSelectedTrackType,
                 listState = viewModel.listState,
             )
 
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 92.dp),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(uiState.filteredTrackings, key = { it.mediaId }) {
-                    MediaPoster(
-                        coverUrl = it.mediaCoverUrl,
-                        onClick = {
-                            onClickItem(
-                                MediaNavigationItems(
-                                    id = it.mediaId,
-                                    title = it.mediaTitle,
-                                    coverUrl = it.mediaCoverUrl,
-                                    mediaType = it.mediaType
+            AnimatedContent(
+                targetState = uiState.filteredTrackings,
+                transitionSpec = {
+                    fadeIn() togetherWith fadeOut() // Smooth fade transition
+                },
+                label = "MediaListAnimation"
+            ) { trackings ->
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 92.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(trackings, key = { it.mediaId }) {
+                        MediaPoster(
+                            coverUrl = it.mediaCoverUrl,
+                            onClick = {
+                                onClickItem(
+                                    MediaNavigationItems(
+                                        id = it.mediaId,
+                                        title = it.mediaTitle,
+                                        coverUrl = it.mediaCoverUrl,
+                                        mediaType = it.mediaType
+                                    )
                                 )
-                            )
-                        },
-                    )
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -131,8 +148,8 @@ fun ShelfListScreen(
 @Composable
 fun TrackStatusFilterChips(
     mediaType: MediaType,
-    selectedTrackStatus: TrackStatus,
-    onTrackTypeSelected: (TrackStatus) -> Unit,
+    selectedTrackStatus: TrackStatus?,
+    onTrackStatusSelected: (TrackStatus?) -> Unit,
     listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
@@ -142,15 +159,39 @@ fun TrackStatusFilterChips(
         contentPadding = PaddingValues(horizontal = 16.dp),
         state = listState,
     ) {
-        items(TrackStatus.entries) {
+        item {
+            val isSelected = selectedTrackStatus == null
+
             FilterChip(
-                selected = selectedTrackStatus == it,
-                onClick = { if (selectedTrackStatus != it) onTrackTypeSelected(it) },
+                selected = isSelected,
+                onClick = { if (!isSelected) onTrackStatusSelected(null) },
+                label = { Text(stringResource(Res.string.shelf_list_all)) },
+                leadingIcon = {
+                    Icon(
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                        imageVector = if (isSelected) vectorResource(Res.drawable.shelves_filled) else vectorResource(Res.drawable.shelves_outlined),
+                        contentDescription = "All Trackings",
+                    )
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            )
+        }
+
+        items(TrackStatus.entries) {
+            val isSelected = selectedTrackStatus == it
+
+            FilterChip(
+                selected = isSelected,
+                onClick = { if (!isSelected) onTrackStatusSelected(it) },
                 label = { Text(stringResource(it.getLabel(mediaType))) },
                 leadingIcon = {
                     Icon(
                         modifier = Modifier.size(AssistChipDefaults.IconSize),
-                        imageVector = it.getIcon(true),
+                        imageVector = it.getIcon(isSelected),
                         contentDescription = "Chip Icon",
                     )
                 },
