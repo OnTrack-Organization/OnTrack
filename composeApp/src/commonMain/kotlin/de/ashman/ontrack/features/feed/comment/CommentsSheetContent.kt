@@ -33,6 +33,8 @@ import de.ashman.ontrack.domain.tracking.TrackingComment
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.PersonImage
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_comments
 import ontrack.composeapp.generated.resources.feed_comments_placeholder
@@ -92,10 +94,13 @@ fun CommentsSheetContent(
                 } else {
                     items(items = comments, key = { it.id }) {
                         FeedComment(
+                            userId = it.userId,
                             userImageUrl = it.userImageUrl,
                             username = it.username,
                             comment = it.comment,
-                            showDeleteCommentDialog = { showDeleteCommentDialog = true },
+                            showDeleteCommentDialog = {
+                                showDeleteCommentDialog = true
+                            },
                             onClickUser = { onClickUser(it.userId) },
                             isScrolling = listState.isScrollInProgress,
                         )
@@ -149,6 +154,7 @@ fun CommentsSheetContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedComment(
+    userId: String,
     userImageUrl: String,
     username: String,
     comment: String,
@@ -162,7 +168,9 @@ fun FeedComment(
             .then(
                 if (!isScrolling) Modifier.combinedClickable(
                     onClick = {},
-                    onLongClick = showDeleteCommentDialog,
+                    onLongClick = {
+                        if (userId == Firebase.auth.currentUser?.uid) showDeleteCommentDialog() else null
+                    },
                 ) else Modifier
             ),
     ) {

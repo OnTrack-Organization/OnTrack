@@ -54,7 +54,7 @@ class ShelfListViewModel(
         }
     }
 
-    fun reset() {
+    fun clearViewModel() {
         _uiState.update { ShelfListUiState() }
     }
 }

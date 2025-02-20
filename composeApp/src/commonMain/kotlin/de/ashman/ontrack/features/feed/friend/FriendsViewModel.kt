@@ -87,14 +87,7 @@ class FriendsViewModel(
     }
 
     fun clearViewModel() {
-        _uiState.update {
-            it.copy(
-                query = "",
-                friends = emptyList(),
-                receivedRequests = emptyList(),
-                sentRequests = emptyList(),
-            )
-        }
+        _uiState.update { FriendsUiState() }
     }
 
     fun onQueryChanged(query: String) {

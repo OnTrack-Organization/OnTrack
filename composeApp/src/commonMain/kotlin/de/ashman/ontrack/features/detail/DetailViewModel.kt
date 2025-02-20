@@ -103,6 +103,10 @@ class DetailViewModel(
         }
     }
 
+    fun clearViewModel() {
+        _uiState.update { DetailUiState() }
+    }
+
     private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository

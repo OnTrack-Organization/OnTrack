@@ -53,6 +53,10 @@ class ShelfViewModel(
             }
             .launchIn(viewModelScope)
     }
+
+    fun clearViewModel() {
+        _uiState.update { ShelfUiState() }
+    }
 }
 
 data class ShelfUiState(

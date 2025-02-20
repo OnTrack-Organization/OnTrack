@@ -48,8 +48,6 @@ class SearchViewModel(
     val uiState: StateFlow<SearchUiState> = _uiState
         .onStart {
             observeSearchQuery()
-        }
-        .onEach {
             observeUserTrackings()
         }
         .stateIn(
@@ -170,6 +168,8 @@ class SearchViewModel(
             }
         }
     }
+
+    fun clearViewModel() {}
 
     private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository

@@ -74,6 +74,8 @@ class TrackingServiceImpl(
     }
 
     override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> {
+        if (userId.isBlank()) { return flowOf(emptyList()) }
+
         return userTrackingCollection(userId)
             .snapshots
             .mapNotNull { snapshot ->

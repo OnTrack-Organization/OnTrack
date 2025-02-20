@@ -49,6 +49,10 @@ class AuthViewModel(
             _uiState.update { it.copy(error = e.message ?: "Unknown error") }
         }
     }
+
+    fun clearViewModel() {
+        _uiState.update { AuthUiState() }
+    }
 }
 
 data class AuthUiState(

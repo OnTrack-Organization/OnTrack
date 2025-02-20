@@ -61,7 +61,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId.isNotBlank()) Route.Feed else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -91,9 +91,14 @@ fun NavigationGraph(
                     viewModel = settingsViewModel,
                     onBack = { navController.popBackStack() },
                     onLogout = {
-                        // TODO clear all vms
                         friendsViewModel.clearViewModel()
                         feedViewModel.clearViewModel()
+                        detailViewModel.clearViewModel()
+                        shelfListViewModel.clearViewModel()
+                        shelfViewModel.clearViewModel()
+                        searchViewModel.clearViewModel()
+                        settingsViewModel.clearViewModel()
+                        authViewModel.clearViewModel()
 
                         authViewModel.signOut()
 
@@ -228,7 +233,6 @@ fun NavGraphBuilder.mediaGraph(
             mediaType = shelfList.mediaType,
             onClickItem = { mediaNavItems -> navController.navigate(Route.Detail(mediaNavItems)) },
             onBack = {
-                shelfListViewModel.reset()
                 navController.popBackStack()
             },
         )

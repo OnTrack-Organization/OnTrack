@@ -23,6 +23,10 @@ class SettingsViewModel(
     fun deleteAccount() = viewModelScope.launch {
         authService.deleteUser()
     }
+
+    fun clearViewModel() {
+        _uiState.value = SettingsUiState()
+    }
 }
 
 data class SettingsUiState(
