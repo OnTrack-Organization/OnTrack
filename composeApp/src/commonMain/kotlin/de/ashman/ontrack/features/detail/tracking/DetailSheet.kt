@@ -17,7 +17,11 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.features.common.DeleteSheetContent
 import kotlinx.datetime.Clock.System
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_delete_confirm_text
+import ontrack.composeapp.generated.resources.detail_delete_confirm_title
 
 enum class CurrentBottomSheetContent {
     TRACKING,
@@ -100,8 +104,10 @@ fun DetailSheet(
                 onSave = { onSaveTracking(tracking) },
             )
 
-            CurrentBottomSheetContent.DELETE -> DeleteContent(
-                onDelete = { onDeleteTracking(tracking.id) },
+            CurrentBottomSheetContent.DELETE -> DeleteSheetContent(
+                title = Res.string.detail_delete_confirm_title,
+                text = Res.string.detail_delete_confirm_text,
+                onConfirm = { onDeleteTracking(tracking.id) },
                 onCancel = onCancel,
             )
         }
