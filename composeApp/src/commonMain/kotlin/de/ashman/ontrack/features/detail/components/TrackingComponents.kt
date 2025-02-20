@@ -36,7 +36,6 @@ import kotlinx.datetime.toLocalDateTime
 fun ReviewCard(
     modifier: Modifier = Modifier,
     tracking: Tracking,
-    onClickTrackingHistory: () -> Unit,
     onUserClick: () -> Unit,
 ) {
     Column(
@@ -47,7 +46,6 @@ fun ReviewCard(
             userImageUrl = tracking.userImageUrl,
             username = tracking.username,
             timestamp = tracking.timestamp.formatDateTime(),
-            onShowTrackingHistory = onClickTrackingHistory,
             onUserClick = onUserClick,
         )
         ReviewCardContent(

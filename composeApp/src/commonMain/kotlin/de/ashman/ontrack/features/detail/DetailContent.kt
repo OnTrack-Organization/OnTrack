@@ -51,7 +51,6 @@ fun DetailContent(
     columnListState: LazyListState,
     onClickItem: (MediaNavigationItems) -> Unit,
     onUserClick: (String) -> Unit,
-    onClickTrackingHistory: () -> Unit,
 ) {
     val rowListState = rememberLazyListState()
     val flingBehavior = rememberSnapFlingBehavior(SnapLayoutInfoProvider(rowListState))
@@ -83,7 +82,6 @@ fun DetailContent(
                             ReviewCard(
                                 modifier = Modifier.fillParentMaxWidth(if (friendTrackings.size == 1) 1f else 0.95f),
                                 tracking = it,
-                                onClickTrackingHistory = onClickTrackingHistory,
                                 onUserClick = { onUserClick(it.userId) },
                             )
                         }

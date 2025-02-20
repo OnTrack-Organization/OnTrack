@@ -138,10 +138,6 @@ fun DetailScreen(
                             columnListState = listState,
                             onClickItem = onClickItem,
                             onUserClick = onUserClick,
-                            onClickTrackingHistory = {
-                                //currentBottomSheet = CurrentBottomSheetContent.TRACKING_HISTORY
-                                showBottomSheet = true
-                            }
                         )
                     }
                 }

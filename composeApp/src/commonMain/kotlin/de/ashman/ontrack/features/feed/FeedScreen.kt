@@ -149,7 +149,6 @@ fun FeedScreen(
                             feedViewModel.selectTracking(it.id)
                             showBottomSheet = true
                         },
-                        onClickTrackingHistory = { },
                         onShowLikes = {
                             currentSheetContent = SheetContent.Likes
                             feedViewModel.selectTracking(it.id)
@@ -189,8 +188,6 @@ fun FeedScreen(
                             onUserClick(it)
                         },
                     )
-
-                    SheetContent.History -> {}
 
                     SheetContent.Friends -> {
                         FriendsSheetContent(
@@ -269,5 +266,5 @@ fun EmptyFeedContent(
 }
 
 enum class SheetContent {
-    Comments, Likes, History, Friends
+    Comments, Likes, Friends
 }

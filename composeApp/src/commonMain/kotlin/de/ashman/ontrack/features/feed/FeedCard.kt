@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,7 +62,6 @@ fun FeedCard(
     onClickLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
-    onClickTrackingHistory: () -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
     onUserClick: () -> Unit,
 ) {
@@ -81,7 +79,6 @@ fun FeedCard(
                 userImageUrl = tracking.userImageUrl,
                 username = tracking.username,
                 timestamp = tracking.timestamp.formatDateTime(),
-                onShowTrackingHistory = onClickTrackingHistory,
                 onUserClick = onUserClick,
             )
 
@@ -115,7 +112,6 @@ fun FeedCardHeader(
     userImageUrl: String?,
     username: String?,
     timestamp: String,
-    onShowTrackingHistory: () -> Unit,
     onUserClick: () -> Unit,
 ) {
     Row(
@@ -146,14 +142,6 @@ fun FeedCardHeader(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-        }
-        IconButton(
-            onClick = onShowTrackingHistory
-        ) {
-            Icon(
-                imageVector = Icons.Default.Schedule,
-                contentDescription = null,
-            )
         }
     }
 }
