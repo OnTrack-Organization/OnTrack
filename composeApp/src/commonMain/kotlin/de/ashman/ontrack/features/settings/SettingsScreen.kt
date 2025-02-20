@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.DeleteSheetContent
 import de.ashman.ontrack.features.common.OnTrackButton
+import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.settings_delete
 import ontrack.composeapp.generated.resources.settings_delete_confirm_text
@@ -75,21 +77,24 @@ fun SettingsScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.Bottom,
         ) {
             item {
-                OnTrackButton(
-                    text = Res.string.settings_delete,
-                    icon = Icons.Default.Delete,
-                    onClick = { showBottomSheet = true },
-                )
-            }
-            item {
-                OnTrackButton(
-                    text = Res.string.settings_logout,
-                    icon = Icons.AutoMirrored.Default.Logout,
-                    onClick = onLogout,
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    OnTrackButton(
+                        text = Res.string.settings_logout,
+                        icon = Icons.AutoMirrored.Default.Logout,
+                        onClick = onLogout,
+                    )
+                    OnTrackButton(
+                        text = Res.string.settings_delete,
+                        icon = Icons.Default.Delete,
+                        onClick = { showBottomSheet = true },
+                    )
+                    ApiContributions()
+                }
             }
         }
 

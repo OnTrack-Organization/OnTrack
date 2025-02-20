@@ -81,7 +81,7 @@ val appModule = module {
             }
 
             install(UserAgent) {
-                agent = "OnTrackApp/1.0 (ashkan.haghighifashi@gmail.com)"
+                agent = "OnTrack/1.0 (ashkan.haghighifashi@gmail.com)"
             }
 
             install(ContentNegotiation) {

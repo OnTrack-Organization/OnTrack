@@ -13,26 +13,32 @@ import org.jetbrains.compose.resources.DrawableResource
 enum class ApiType(
     val icon: DrawableResource,
     val maxRating: Int,
+    val uri: String? = null,
 ) {
     TMDB(
         icon = Res.drawable.tmdb,
         maxRating = 10,
+        uri = "https://www.themoviedb.org/",
     ),
     OpenLibrary(
         icon = Res.drawable.openlib,
         maxRating = 5,
+        uri = "https://openlibrary.org/",
     ),
     IGDB(
         icon = Res.drawable.igdb,
         maxRating = 100,
+        uri = "https://www.igdb.com/",
     ),
     BGG(
         icon = Res.drawable.bgg,
         maxRating = 10,
+        uri = "https://boardgamegeek.com/",
     ),
     Spotify(
         icon = Res.drawable.spotify,
         maxRating = 100,
+        uri = "https://open.spotify.com/",
     ),
     OnTrack(
         icon = Res.drawable.on_track_icon_v1,
