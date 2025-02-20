@@ -141,14 +141,19 @@ fun AutoScrollPoster(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = itemTypes[realIndex].icon,
-                        contentDescription = "Media Icon",
-                    )
+                    Box(
+                        modifier = Modifier.size(42.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize().padding(4.dp),
+                            imageVector = itemTypes[realIndex].outlinedIcon,
+                            contentDescription = "Media Icon",
+                        )
+                    }
                     Text(
                         text = pluralStringResource(itemTypes[realIndex].title, 2),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                     )
                 }
