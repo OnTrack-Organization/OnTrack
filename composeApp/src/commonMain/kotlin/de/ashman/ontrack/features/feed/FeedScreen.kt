@@ -20,6 +20,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -28,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -43,9 +46,16 @@ import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.feed.like.LikesSheetContent
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
+import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_empty
+import ontrack.composeapp.generated.resources.feed_friend_removed
 import ontrack.composeapp.generated.resources.feed_nav_title
+import ontrack.composeapp.generated.resources.feed_request_accepted
+import ontrack.composeapp.generated.resources.feed_request_cancelled
+import ontrack.composeapp.generated.resources.feed_request_declined
+import ontrack.composeapp.generated.resources.feed_request_sent
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +75,8 @@ fun FeedScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         feedViewModel.fetchTrackingFeed()
@@ -82,6 +94,12 @@ fun FeedScreen(
     // TODO maybe use BottomSheetScaffold?
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier.padding(bottom = 600.dp),
+                hostState = snackbarHostState
+            )
+        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -177,11 +195,41 @@ fun FeedScreen(
                     SheetContent.Friends -> {
                         FriendsSheetContent(
                             uiState = friendsUiState,
-                            onRemoveFriend = friendsViewModel::removeFriend,
-                            onAcceptRequest = friendsViewModel::acceptRequest,
-                            onDenyRequest = friendsViewModel::denyRequest,
-                            onCancelRequest = friendsViewModel::cancelRequest,
-                            onSendRequest = friendsViewModel::sendRequest,
+                            onRemoveFriend = {
+                                friendsViewModel.removeFriend(it)
+
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(getString(Res.string.feed_friend_removed))
+                                }
+                            },
+                            onAcceptRequest = {
+                                friendsViewModel.acceptRequest(it)
+
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_accepted))
+                                }
+                            },
+                            onDeclineRequest = {
+                                friendsViewModel.declineRequest(it)
+
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_declined))
+                                }
+                            },
+                            onCancelRequest = {
+                                friendsViewModel.cancelRequest(it)
+
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_cancelled))
+                                }
+                            },
+                            onSendRequest = {
+                                friendsViewModel.sendRequest(it)
+
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_sent))
+                                }
+                            },
                             onClickUser = {
                                 showBottomSheet = false
                                 onUserClick(it)

@@ -23,7 +23,7 @@ interface FriendService {
 
     suspend fun sendRequest(otherRequest: FriendRequest, myRequest: FriendRequest)
     suspend fun acceptRequest(friendRequest: FriendRequest)
-    suspend fun denyRequest(friendRequest: FriendRequest)
+    suspend fun declineRequest(friendRequest: FriendRequest)
     suspend fun cancelRequest(friendRequest: FriendRequest)
 }
 
@@ -142,7 +142,7 @@ class FriendServiceImpl(
             .collection("friends").document(authService.currentUserId).set(myself)
     }
 
-    override suspend fun denyRequest(friendRequest: FriendRequest) {
+    override suspend fun declineRequest(friendRequest: FriendRequest) {
         userCollection.document(authService.currentUserId)
             .collection("receivedRequests")
             .document(friendRequest.userId).delete()

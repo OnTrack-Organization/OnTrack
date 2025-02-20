@@ -74,9 +74,9 @@ class FriendsViewModel(
         }
     }
 
-    fun denyRequest(friendRequest: FriendRequest) {
+    fun declineRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            friendService.denyRequest(friendRequest)
+            friendService.declineRequest(friendRequest)
         }
     }
 

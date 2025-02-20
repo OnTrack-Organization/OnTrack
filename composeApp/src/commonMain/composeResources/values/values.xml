@@ -33,6 +33,11 @@
     <string name="feed_potential_friends">Potential friends</string>
     <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
     <string name="feed_no_potential_friends">No potential friends found, sad.</string>
+    <string name="feed_request_sent">Friend request sent</string>
+    <string name="feed_request_accepted">Friend request accepted</string>
+    <string name="feed_request_declined">Friend request declined</string>
+    <string name="feed_request_cancelled">Friend request cancelled</string>
+    <string name="feed_friend_removed">Friend removed</string>
 
     <string name="feed_comments">Comments</string>
     <string name="feed_comments_placeholder">Write a comment…</string>

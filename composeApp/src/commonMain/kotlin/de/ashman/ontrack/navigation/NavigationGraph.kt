@@ -61,7 +61,7 @@ fun NavigationGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (authService.currentUserId.isNotBlank()) Route.Shelf else Route.Start,
+            startDestination = if (authService.currentUserId.isNotBlank()) Route.Feed else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
