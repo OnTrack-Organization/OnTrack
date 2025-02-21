@@ -61,35 +61,6 @@ fun DetailContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        if (friendTrackings.isNotEmpty()) {
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        text = stringResource(Res.string.detail_tracked_by),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        state = rowListState,
-                        flingBehavior = flingBehavior,
-                    ) {
-                        items(friendTrackings) {
-                            ReviewCard(
-                                modifier = Modifier.fillParentMaxWidth(if (friendTrackings.size == 1) 1f else 0.95f),
-                                tracking = it,
-                                onUserClick = { onUserClick(it.userId) },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
         item {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -119,6 +90,35 @@ fun DetailContent(
             MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
             MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
             MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
+        }
+
+        if (friendTrackings.isNotEmpty()) {
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = stringResource(Res.string.detail_tracked_by),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        state = rowListState,
+                        flingBehavior = flingBehavior,
+                    ) {
+                        items(friendTrackings) {
+                            ReviewCard(
+                                modifier = Modifier.fillParentMaxWidth(if (friendTrackings.size == 1) 1f else 0.95f),
+                                tracking = it,
+                                onUserClick = { onUserClick(it.userId) },
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

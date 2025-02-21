@@ -2,7 +2,6 @@ package de.ashman.ontrack.features.feed.like
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +40,6 @@ fun LikesSheetContent(
         )
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
             state = listState,
         ) {
             items(items = likes, key = { it.userId }) {
@@ -61,25 +59,22 @@ fun FeedLike(
     username: String,
     onClick: () -> Unit,
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { onClick() } // Move clickable here
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PersonImage(
-                modifier = Modifier.size(42.dp),
-                userImageUrl = userImageUrl,
-                onClick = onClick,
-            )
-            Text(
-                text = username,
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
+        PersonImage(
+            modifier = Modifier.size(42.dp),
+            userImageUrl = userImageUrl,
+            onClick = onClick,
+        )
+        Text(
+            text = username,
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 }

@@ -133,6 +133,7 @@ fun SearchScreen(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp),
+                        state = viewModel.posterRowState,
                     ) {
                         items(items = uiState.searchResults, key = { it.id }) { media ->
                             val tracking = uiState.trackings.associateBy { it.mediaId }

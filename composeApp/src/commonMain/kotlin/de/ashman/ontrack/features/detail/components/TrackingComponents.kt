@@ -5,10 +5,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -38,22 +40,33 @@ fun ReviewCard(
     tracking: Tracking,
     onUserClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier.contentSizeAnimation(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    var expanded by remember { mutableStateOf(false) }
+
+    OutlinedCard(
+        modifier = Modifier.clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = { expanded = !expanded }
+        )
     ) {
-        FeedCardHeader(
-            userImageUrl = tracking.userImageUrl,
-            username = tracking.username,
-            timestamp = tracking.timestamp.formatDateTime(),
-            onUserClick = onUserClick,
-        )
-        ReviewCardContent(
-            reviewTitle = tracking.reviewTitle,
-            reviewDescription = tracking.reviewDescription,
-            reviewRating = tracking.rating,
-            trackStatus = tracking.status,
-        )
+        Column(
+            modifier = modifier.contentSizeAnimation().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            FeedCardHeader(
+                userImageUrl = tracking.userImageUrl,
+                username = tracking.username,
+                timestamp = tracking.timestamp.formatDateTime(),
+                onUserClick = onUserClick,
+            )
+            ReviewCardContent(
+                reviewTitle = tracking.reviewTitle,
+                reviewDescription = tracking.reviewDescription,
+                reviewRating = tracking.rating,
+                trackStatus = tracking.status,
+                expanded = expanded,
+            )
+        }
     }
 }
 
@@ -64,8 +77,8 @@ fun ReviewCardContent(
     reviewDescription: String?,
     reviewRating: Double?,
     trackStatus: TrackStatus?,
+    expanded: Boolean = false,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     var hasOverflow by remember { mutableStateOf(false) }
 
     Column(
@@ -88,13 +101,7 @@ fun ReviewCardContent(
             }
         }
 
-        Column(
-            modifier = Modifier.clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = { expanded = !expanded }
-            )
-        ) {
+        Column {
             if (!reviewTitle.isNullOrBlank()) {
                 Text(
                     text = reviewTitle,

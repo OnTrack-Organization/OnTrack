@@ -57,6 +57,7 @@ class SearchViewModel(
         )
 
     var chipRowState: LazyListState by mutableStateOf(LazyListState(0, 0))
+    var posterRowState: LazyListState by mutableStateOf(LazyListState(0, 0))
     private var searchJob: Job? = null
 
     init {
@@ -157,6 +158,7 @@ class SearchViewModel(
 
     fun onMediaTypeSelected(mediaType: MediaType) {
         _uiState.update { it.copy(selectedMediaType = mediaType) }
+        posterRowState = LazyListState(0, 0)
 
         if (uiState.value.query.isNotBlank()) {
             search(uiState.value.query)

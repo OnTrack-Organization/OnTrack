@@ -78,7 +78,7 @@ fun ShelfListScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = mediaType.getMediaTypeUi().icon,
+                            imageVector = mediaType.getMediaTypeUi().outlinedIcon,
                             contentDescription = "Media Type Icon"
                         )
                         Text(

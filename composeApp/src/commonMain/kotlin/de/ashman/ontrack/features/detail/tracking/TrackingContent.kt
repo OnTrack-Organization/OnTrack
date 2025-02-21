@@ -127,6 +127,7 @@ fun TrackStatusButton(
             }
 
             Column(
+                modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -143,6 +144,7 @@ fun TrackStatusButton(
                     color = if (isSelected) animatedContentColor else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+
             Spacer(modifier = Modifier.size(42.dp))
         }
     }

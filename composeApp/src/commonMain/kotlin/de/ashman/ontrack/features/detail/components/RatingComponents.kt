@@ -34,7 +34,7 @@ fun RatingCardRow(
         RatingCard(
             modifier = Modifier.weight(1f),
             icon = ApiType.OnTrack.icon,
-            rating = 0.0,
+            rating = "0.0",
             ratingCount = 0,
             maxRating = ApiType.OnTrack.maxRating,
         )
@@ -42,7 +42,7 @@ fun RatingCardRow(
         RatingCard(
             modifier = Modifier.weight(1f),
             icon = apiType.icon,
-            rating = rating,
+            rating = if (apiType == ApiType.Spotify) rating?.roundDecimals(0) else rating?.roundDecimals(1),
             ratingCount = ratingCount,
             maxRating = apiType.maxRating,
         )
@@ -53,7 +53,7 @@ fun RatingCardRow(
 fun RatingCard(
     modifier: Modifier = Modifier,
     icon: DrawableResource,
-    rating: Double?,
+    rating: String?,
     maxRating: Int?,
     ratingCount: Int?,
 ) {
@@ -81,7 +81,7 @@ fun RatingCard(
             ) {
                 rating?.let {
                     Text(
-                        text = "${rating.roundDecimals(1)} / $maxRating",
+                        text = "$rating / $maxRating",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,

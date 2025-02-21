@@ -59,5 +59,10 @@ fun String.formatDates(): String? {
 fun Double.roundDecimals(decimals: Int): String {
     val integerDigits = this.toInt()
     val doubleDigits = ((this - integerDigits) * 10f.pow(decimals)).roundToInt()
-    return "${integerDigits}.${doubleDigits}"
+
+    return if (doubleDigits == 0 && decimals == 0) {
+        integerDigits.toString()
+    } else {
+        "${integerDigits}.${doubleDigits}"
+    }
 }
