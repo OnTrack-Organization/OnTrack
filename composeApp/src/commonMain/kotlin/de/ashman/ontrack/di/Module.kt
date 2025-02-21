@@ -26,6 +26,7 @@ import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import io.ktor.client.HttpClient
@@ -206,6 +207,9 @@ val appModule = module {
             }
         }
     }
+
+    // ANALYTICS
+    single { Firebase.analytics }
 
     // AUTH
     single { Firebase.auth }

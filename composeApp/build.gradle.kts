@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.serialization)
     alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.crashlytics)
     id("kotlin-parcelize")
     id("kotlin-kapt")
 }

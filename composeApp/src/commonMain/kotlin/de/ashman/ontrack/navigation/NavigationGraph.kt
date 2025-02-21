@@ -32,6 +32,8 @@ import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import dev.gitlive.firebase.analytics.Event
+import dev.gitlive.firebase.analytics.FirebaseAnalytics
 import org.koin.compose.koinInject
 import kotlin.reflect.typeOf
 
@@ -49,6 +51,7 @@ fun NavigationGraph(
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     authService: AuthService = koinInject(),
+    analytics: FirebaseAnalytics = koinInject(),
 ) {
     MainScaffold(
         navController = navController,
@@ -66,7 +69,8 @@ fun NavigationGraph(
             initGraph(
                 startViewModel = startViewModel,
                 authViewModel = authViewModel,
-                navController = navController
+                navController = navController,
+                analytics = analytics,
             )
             mainGraph(
                 modifier = Modifier.fillMaxSize().padding(padding),
@@ -82,7 +86,6 @@ fun NavigationGraph(
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
                 authService = authService,
-                friendsViewModel = friendsViewModel,
                 navController = navController
             )
 
@@ -116,6 +119,7 @@ fun NavGraphBuilder.initGraph(
     startViewModel: StartViewModel,
     authViewModel: AuthViewModel,
     navController: NavHostController,
+    analytics: FirebaseAnalytics,
 ) {
     composable<Route.Start> {
         StartScreen(
@@ -135,6 +139,8 @@ fun NavGraphBuilder.initGraph(
         LoginScreen(
             viewModel = authViewModel,
             onNavigateAfterLogin = {
+                analytics.logEvent(analytics.Event.LOGIN)
+
                 navController.navigate(Route.Search) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
@@ -190,7 +196,6 @@ fun NavGraphBuilder.mediaGraph(
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
     authService: AuthService,
-    friendsViewModel: FriendsViewModel,
     navController: NavHostController,
 ) {
     composable<Route.Detail>(
