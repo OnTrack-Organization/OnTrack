@@ -11,5 +11,5 @@ data class UserEntity(
     val username: String,
     val email: String,
     val imageUrl: String,
-    val createdAt: Long = System.now().toEpochMilliseconds(),
+    val updatedAt: Long = System.now().toEpochMilliseconds(),
 )

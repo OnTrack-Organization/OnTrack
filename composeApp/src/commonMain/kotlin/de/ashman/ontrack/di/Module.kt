@@ -29,6 +29,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.storage.storage
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -219,6 +220,7 @@ val appModule = module {
 
     // DATABASE
     single { Firebase.firestore }
+    single { Firebase.storage }
     single<FriendService> { FriendServiceImpl(get(), get()) }
     single<FeedService> { FeedServiceImpl(get(), get()) }
     single<TrackingService> { TrackingServiceImpl(get(), get()) }

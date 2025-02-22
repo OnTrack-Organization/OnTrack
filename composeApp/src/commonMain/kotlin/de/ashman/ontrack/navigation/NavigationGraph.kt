@@ -93,6 +93,7 @@ fun NavigationGraph(
                 SettingsScreen(
                     viewModel = settingsViewModel,
                     onBack = { navController.popBackStack() },
+                    userId = authService.currentUserId,
                     onLogout = {
                         friendsViewModel.clearViewModel()
                         feedViewModel.clearViewModel()

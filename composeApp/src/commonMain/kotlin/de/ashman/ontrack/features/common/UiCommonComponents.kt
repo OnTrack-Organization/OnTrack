@@ -231,6 +231,41 @@ fun OnTrackTextField(
     )
 }
 
+@Composable
+fun OnTrackUserTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    support: StringResource,
+    errorSupport: StringResource? = null,
+    prefix: StringResource? = null,
+    value: String?,
+    onValueChange: (String) -> Unit,
+) {
+    TextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value.orEmpty(),
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder) },
+        supportingText = {
+            if (errorSupport != null) {
+                Text(text = stringResource(errorSupport))
+            } else {
+                Text(text = stringResource(support))
+            }
+        },
+        prefix = { prefix?.let { Text(text = stringResource(it)) } },
+        singleLine = true,
+        isError = errorSupport != null,
+        shape = MaterialTheme.shapes.medium,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent,
+        )
+    )
+}
+
 // TODO maybe create my own
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -157,7 +157,6 @@
     <!-- DETAIL TRACKING -->
     <string name="track_button">Track</string>
     <string name="continue_button">Continue</string>
-    <string name="save_button">Save</string>
 
     <string name="detail_tracked_by">Tracked by</string>
 
@@ -236,8 +235,16 @@
 
     <!-- SETTINGS -->
     <string name="settings_title">Settings</string>
+    <string name="settings_username_hint">Username</string>
+    <string name="settings_name_hint">Name</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_delete">Delete account</string>
+
+    <string name="settings_username_taken">Username is already taken</string>
+    <string name="settings_username_empty">Username cannot be empty</string>
+    <string name="settings_username_too_long">Username should be less than 25 characters</string>
+    <string name="settings_username_too_short">Username should be more than 5 characters</string>
+    <string name="settings_account_data_saved">Account data saved</string>
 
     <string name="settings_delete_confirm_title">Delete account?</string>
     <string name="settings_delete_confirm_text">Are you sure you want to delete your account? All of your data will be permanently deleted.</string>
@@ -245,4 +252,5 @@
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
     <string name="delete_button">Delete</string>
+    <string name="save_button">Save</string>
 </resources>

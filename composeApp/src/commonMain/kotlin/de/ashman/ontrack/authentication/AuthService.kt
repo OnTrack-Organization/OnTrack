@@ -15,8 +15,12 @@ interface AuthService {
     suspend fun signUp(user: UserEntity)
     suspend fun signOut()
     suspend fun deleteUser()
-    suspend fun consumeUser(userId: String): Flow<UserEntity?>
+    suspend fun observeUser(userId: String): Flow<UserEntity?>
+
     suspend fun updateFcmToken(token: String)
+
+    suspend fun updateUser(user: UserEntity)
+    suspend fun isUsernameTaken(username: String): Boolean
 }
 
 class AuthServiceImpl(
@@ -61,7 +65,7 @@ class AuthServiceImpl(
             .delete()
     }
 
-    override suspend fun consumeUser(userId: String): Flow<UserEntity?> {
+    override suspend fun observeUser(userId: String): Flow<UserEntity?> {
         return userCollection.document(userId).snapshots.map { documentSnapshot ->
             try {
                 documentSnapshot.data<UserEntity>()
@@ -72,12 +76,32 @@ class AuthServiceImpl(
         }
     }
 
+    // TODO make this work
     override suspend fun updateFcmToken(token: String) {
         userCollection
             .document(currentUserId)
+            .update("fcmToken" to token)
+    }
+
+    override suspend fun updateUser(user: UserEntity) {
+        userCollection
+            .document(currentUserId)
             .set(
-                data = mapOf("fcmToken" to token),
+                data = user,
                 merge = true
             )
+    }
+
+    override suspend fun isUsernameTaken(username: String): Boolean {
+        return try {
+            val querySnapshot = userCollection
+                .where { "username" equalTo username }
+                .get()
+
+            !querySnapshot.documents.isEmpty()
+        } catch (e: Exception) {
+            Logger.e { "Error checking username availability: ${e.message}" }
+            false
+        }
     }
 }

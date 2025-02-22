@@ -37,7 +37,7 @@ class ShelfViewModel(
 
     fun observeUser(userId: String) {
         viewModelScope.launch {
-            authService.consumeUser(userId)
+            authService.observeUser(userId)
                 .collect { user ->
                     _uiState.update { it.copy(user = user?.toDomain()) }
                 }

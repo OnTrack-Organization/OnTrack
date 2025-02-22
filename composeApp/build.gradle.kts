@@ -59,6 +59,8 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            implementation(libs.filekit)
+
             implementation(libs.compose.navigation)
 
             implementation(libs.coil.compose)
