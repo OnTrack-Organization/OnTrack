@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.domain.user.toDomain
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.logout_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
@@ -88,6 +90,17 @@ class SettingsViewModel(
         )
 
         _uiState.update { it.copy(snackbarMessage = getString(Res.string.settings_account_data_saved)) }
+    }
+
+    fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
+        try {
+            authService.signOut()
+            onSuccess()
+        } catch (e: Exception) {
+            Logger.e("Error signing out: ${e.message}")
+
+            _uiState.update { it.copy(snackbarMessage = getString(Res.string.logout_error)) }
+        }
     }
 
     fun clearUnsavedChanges() {

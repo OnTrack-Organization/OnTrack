@@ -165,7 +165,11 @@ fun SettingsScreen(
                     OnTrackOutlinedButton(
                         text = Res.string.settings_logout,
                         icon = Icons.AutoMirrored.Default.Logout,
-                        onClick = onLogout,
+                        onClick = {
+                            viewModel.signOut(
+                                onSuccess = onLogout,
+                            )
+                        },
                     )
                     OnTrackOutlinedButton(
                         text = Res.string.settings_delete,

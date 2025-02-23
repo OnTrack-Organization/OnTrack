@@ -12,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.authentication.AuthViewModel
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
@@ -21,6 +20,7 @@ import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
+import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchScreen
@@ -42,7 +42,7 @@ import kotlin.reflect.typeOf
 fun NavigationGraph(
     navController: NavHostController = rememberNavController(),
     startViewModel: StartViewModel = koinInject(),
-    authViewModel: AuthViewModel = koinInject(),
+    loginViewModel: LoginViewModel = koinInject(),
     feedViewModel: FeedViewModel = koinInject(),
     friendsViewModel: FriendsViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
@@ -68,7 +68,7 @@ fun NavigationGraph(
         ) {
             initGraph(
                 startViewModel = startViewModel,
-                authViewModel = authViewModel,
+                loginViewModel = loginViewModel,
                 navController = navController,
                 analytics = analytics,
             )
@@ -102,9 +102,7 @@ fun NavigationGraph(
                         shelfViewModel.clearViewModel()
                         searchViewModel.clearViewModel()
                         settingsViewModel.clearViewModel()
-                        authViewModel.clearViewModel()
-
-                        authViewModel.signOut()
+                        loginViewModel.clearViewModel()
 
                         navController.navigate(Route.Start) {
                             popUpTo(Route.Feed) { inclusive = true } // Clear backstack
@@ -118,7 +116,7 @@ fun NavigationGraph(
 
 fun NavGraphBuilder.initGraph(
     startViewModel: StartViewModel,
-    authViewModel: AuthViewModel,
+    loginViewModel: LoginViewModel,
     navController: NavHostController,
     analytics: FirebaseAnalytics,
 ) {
@@ -139,7 +137,7 @@ fun NavGraphBuilder.initGraph(
 
     composable<Route.Login> {
         LoginScreen(
-            viewModel = authViewModel,
+            viewModel = loginViewModel,
             onNavigateAfterLogin = {
                 analytics.logEvent(analytics.Event.LOGIN)
 

@@ -20,18 +20,19 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.touchlab.kermit.Logger
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
-import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.domain.user.toDomain
 import de.ashman.ontrack.features.common.OnTrackButton
-import dev.gitlive.firebase.auth.FirebaseUser
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.apple
 import ontrack.composeapp.generated.resources.apple_login_button
@@ -46,11 +47,19 @@ import org.jetbrains.compose.resources.vectorResource
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel,
+    viewModel: LoginViewModel,
     onNavigateAfterLogin: () -> Unit,
     onBack: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.snackbarMessage) {
+        uiState.snackbarMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearSnackbarMessage()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -85,9 +94,8 @@ fun LoginScreen(
             //MailLogin()
 
             GoogleAppleLogin(
-                onClickContinue = { firebaseUser ->
-                    viewModel.signUp(firebaseUser.toDomain())
-                    onNavigateAfterLogin()
+                onClickContinue = { result ->
+                    viewModel.signIn(result, onNavigateAfterLogin)
                 }
             )
         }
@@ -106,7 +114,7 @@ fun MailLogin() {
 
 @Composable
 fun GoogleAppleLogin(
-    onClickContinue: (FirebaseUser) -> Unit = {},
+    onClickContinue: (Result<User?>) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,8 +123,8 @@ fun GoogleAppleLogin(
         GoogleButtonUiContainerFirebase(
             linkAccount = false,
             onResult = { result ->
-                result.getOrNull()?.let(onClickContinue)
-                    ?: Logger.e("Error while logging in: ${result.exceptionOrNull()?.message}")
+                val userResult = result.mapCatching { it?.toDomain() }
+                onClickContinue(userResult)
             }
         ) {
             OnTrackButton(
@@ -144,8 +152,8 @@ fun GoogleAppleLogin(
         AppleButtonUiContainer(
             linkAccount = false,
             onResult = { result ->
-                result.getOrNull()?.let(onClickContinue)
-                    ?: Logger.e("Error while logging in: ${result.exceptionOrNull()?.message}")
+                val userResult = result.mapCatching { it?.toDomain() }
+                onClickContinue(userResult)
             }
         ) {
             OnTrackButton(

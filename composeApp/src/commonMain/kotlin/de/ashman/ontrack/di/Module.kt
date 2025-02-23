@@ -10,7 +10,7 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.authentication.AuthServiceImpl
-import de.ashman.ontrack.authentication.AuthViewModel
+import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.db.FeedService
 import de.ashman.ontrack.db.FeedServiceImpl
 import de.ashman.ontrack.db.FriendService
@@ -235,7 +235,7 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { AuthViewModel(get()) }
+    viewModelDefinition { LoginViewModel(get()) }
     viewModelDefinition { FeedViewModel(get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }

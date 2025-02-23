@@ -12,14 +12,15 @@ interface AuthService {
     val currentUserImage: String
     val currentUserName: String
 
-    suspend fun signUp(user: UserEntity)
-    suspend fun signOut()
+    suspend fun createUser(user: UserEntity): Boolean
     suspend fun deleteUser()
-    suspend fun observeUser(userId: String): Flow<UserEntity?>
+    suspend fun updateUser(user: UserEntity)
 
     suspend fun updateFcmToken(token: String)
 
-    suspend fun updateUser(user: UserEntity)
+    suspend fun signOut()
+
+    suspend fun observeUser(userId: String): Flow<UserEntity?>
     suspend fun isUsernameTaken(username: String): Boolean
 }
 
@@ -38,42 +39,25 @@ class AuthServiceImpl(
     override val currentUserName: String
         get() = auth.currentUser?.displayName.orEmpty()
 
-    override suspend fun signUp(user: UserEntity) {
-        return try {
-            val document = userCollection.document(user.id).get()
-            if (!document.exists) {
-                userCollection
-                    .document(user.id)
-                    .set(user)
+    override suspend fun createUser(user: UserEntity): Boolean {
+        val document = userCollection.document(user.id).get()
+        if (!document.exists) {
+            userCollection
+                .document(user.id)
+                .set(user)
 
-                Logger.d("User with ID ${user.id} successfully added.")
-            } else {
-                Logger.w("User with ID ${user.id} already exists.")
-            }
-        } catch (e: Exception) {
-            Logger.e("Error during sign-up: ${e.message}")
+            Logger.d("User with ID ${user.id} successfully added.")
+            return true
+        } else {
+            Logger.w("User with ID ${user.id} already exists.")
+            return false
         }
-    }
-
-    override suspend fun signOut() {
-        auth.signOut()
     }
 
     override suspend fun deleteUser() {
         userCollection
             .document(currentUserId)
             .delete()
-    }
-
-    override suspend fun observeUser(userId: String): Flow<UserEntity?> {
-        return userCollection.document(userId).snapshots.map { documentSnapshot ->
-            try {
-                documentSnapshot.data<UserEntity>()
-            } catch (e: Exception) {
-                Logger.e { "Error parsing user document: ${e.message}" }
-                null
-            }
-        }
     }
 
     // TODO make this work
@@ -90,6 +74,21 @@ class AuthServiceImpl(
                 data = user,
                 merge = true
             )
+    }
+
+    override suspend fun signOut() {
+        auth.signOut()
+    }
+
+    override suspend fun observeUser(userId: String): Flow<UserEntity?> {
+        return userCollection.document(userId).snapshots.map { documentSnapshot ->
+            try {
+                documentSnapshot.data<UserEntity>()
+            } catch (e: Exception) {
+                Logger.e { "Error parsing user document: ${e.message}" }
+                null
+            }
+        }
     }
 
     override suspend fun isUsernameTaken(username: String): Boolean {

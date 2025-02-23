@@ -15,6 +15,7 @@
     <string name="apple_login_button">Continue with Apple</string>
     <string name="or_divider">or</string>
     <string name="login_error">Couldn't log in, are you offline?</string>
+    <string name="logout_error">Couldn't log out, are you offline?</string>
 
     <!-- INTRO -->
     <string name="intro_first_page_title">Track all of your media - in one place</string>
