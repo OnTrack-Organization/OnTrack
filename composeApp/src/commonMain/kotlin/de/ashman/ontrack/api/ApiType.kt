@@ -2,9 +2,9 @@ package de.ashman.ontrack.api
 
 import de.ashman.ontrack.domain.MediaType
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.app_icon
 import ontrack.composeapp.generated.resources.bgg
 import ontrack.composeapp.generated.resources.igdb
-import ontrack.composeapp.generated.resources.on_track_icon_v1
 import ontrack.composeapp.generated.resources.openlib
 import ontrack.composeapp.generated.resources.spotify
 import ontrack.composeapp.generated.resources.tmdb
@@ -41,7 +41,7 @@ enum class ApiType(
         uri = "https://open.spotify.com/",
     ),
     OnTrack(
-        icon = Res.drawable.on_track_icon_v1,
+        icon = Res.drawable.app_icon,
         maxRating = 5,
     ),
 }
