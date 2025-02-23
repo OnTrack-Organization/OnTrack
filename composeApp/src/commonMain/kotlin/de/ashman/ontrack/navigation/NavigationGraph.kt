@@ -133,6 +133,7 @@ fun NavGraphBuilder.initGraph(
     composable<Route.Intro> {
         IntroScreen(
             onGoToLogin = { navController.navigate(Route.Login) },
+            onBack = { navController.popBackStack() }
         )
     }
 
@@ -145,7 +146,8 @@ fun NavGraphBuilder.initGraph(
                 navController.navigate(Route.Search) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
-            }
+            },
+            onBack = { navController.popBackStack() }
         )
     }
 }

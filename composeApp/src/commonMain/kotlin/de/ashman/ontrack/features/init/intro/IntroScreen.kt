@@ -18,6 +18,12 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,9 +41,11 @@ import ontrack.composeapp.generated.resources.login_button
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IntroScreen(
     onGoToLogin: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val pages = listOf<IntroPage>(
         IntroPage.FIRST_PAGE,
@@ -47,6 +55,21 @@ fun IntroScreen(
     val pagerState = rememberPagerState(initialPage = 0) { pages.size }
 
     Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
+            )
+        },
         bottomBar = {
             PagerIndicator(
                 pageSize = pages.size,

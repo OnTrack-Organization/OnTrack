@@ -6,12 +6,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -28,24 +37,54 @@ import ontrack.composeapp.generated.resources.apple
 import ontrack.composeapp.generated.resources.apple_login_button
 import ontrack.composeapp.generated.resources.google
 import ontrack.composeapp.generated.resources.google_login_button
-import ontrack.composeapp.generated.resources.join_title
+import ontrack.composeapp.generated.resources.login_title
 import ontrack.composeapp.generated.resources.or_divider
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel,
     onNavigateAfterLogin: () -> Unit,
+    onBack: () -> Unit,
 ) {
-    Scaffold { contentPadding ->
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(Res.string.login_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { contentPadding ->
         Column(
             modifier = modifier.fillMaxSize().padding(contentPadding).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround,
         ) {
-            LoginButtons(
+
+            //MailLogin()
+
+            GoogleAppleLogin(
                 onClickContinue = { firebaseUser ->
                     viewModel.signUp(firebaseUser.toDomain())
                     onNavigateAfterLogin()
@@ -56,19 +95,23 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginButtons(
+fun MailLogin() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // TODO add
+    }
+}
+
+@Composable
+fun GoogleAppleLogin(
     onClickContinue: (FirebaseUser) -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = stringResource(Res.string.join_title),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-        )
-
         GoogleButtonUiContainerFirebase(
             linkAccount = false,
             onResult = { result ->
