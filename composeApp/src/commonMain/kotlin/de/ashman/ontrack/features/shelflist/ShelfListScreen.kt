@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.detail.tracking.getColor
 import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.features.detail.tracking.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -173,10 +175,14 @@ fun TrackStatusFilterChips(
                         contentDescription = "All Trackings",
                     )
                 },
+                // TODO maybe different color
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    labelColor = contentColorFor(TrackStatus.CATALOG.getColor()),
+                    iconColor = contentColorFor(TrackStatus.CATALOG.getColor()),
+
+                    selectedContainerColor = TrackStatus.CATALOG.getColor(),
+                    selectedLabelColor = contentColorFor(TrackStatus.CATALOG.getColor()),
+                    selectedLeadingIconColor = contentColorFor(TrackStatus.CATALOG.getColor()),
                 )
             )
         }
@@ -196,9 +202,12 @@ fun TrackStatusFilterChips(
                     )
                 },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    labelColor = contentColorFor(it.getColor()),
+                    iconColor = contentColorFor(it.getColor()),
+
+                    selectedContainerColor = it.getColor(),
+                    selectedLabelColor = contentColorFor(it.getColor()),
+                    selectedLeadingIconColor = contentColorFor(it.getColor()),
                 )
             )
         }
