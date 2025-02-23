@@ -1,13 +1,11 @@
 package de.ashman.ontrack.features.shelflist
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,7 +35,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
@@ -51,6 +51,7 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_list_all
 import ontrack.composeapp.generated.resources.shelves_filled
 import ontrack.composeapp.generated.resources.shelves_outlined
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -114,35 +115,42 @@ fun ShelfListScreen(
             )
 
             AnimatedContent(
-                targetState = uiState.filteredTrackings,
-                transitionSpec = {
-                    fadeIn() togetherWith fadeOut() // Smooth fade transition
-                },
-                label = "MediaListAnimation"
-            ) { trackings ->
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 92.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(trackings, key = { it.mediaId }) {
-                        MediaPoster(
-                            coverUrl = it.mediaCoverUrl,
-                            onClick = {
-                                onClickItem(
-                                    MediaNavigationItems(
-                                        id = it.mediaId,
-                                        title = it.mediaTitle,
-                                        coverUrl = it.mediaCoverUrl,
-                                        mediaType = it.mediaType
-                                    )
-                                )
-                            },
+                targetState = uiState.filteredTrackings.isEmpty() to uiState.selectedStatus,
+                label = "EmptyContentAnimation"
+            ) { (isEmpty, selectedStatus) ->
+                if (isEmpty) {
+                    selectedStatus?.let {
+                        EmptyShelfListContent(
+                            text = it.getLabel(mediaType),
+                            icon = it.getIcon(),
                         )
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 92.dp),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(uiState.filteredTrackings, key = { it.mediaId }) {
+                            MediaPoster(
+                                coverUrl = it.mediaCoverUrl,
+                                onClick = {
+                                    onClickItem(
+                                        MediaNavigationItems(
+                                            id = it.mediaId,
+                                            title = it.mediaTitle,
+                                            coverUrl = it.mediaCoverUrl,
+                                            mediaType = it.mediaType
+                                        )
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
 }
@@ -211,5 +219,32 @@ fun TrackStatusFilterChips(
                 )
             )
         }
+    }
+}
+
+@Composable
+fun EmptyShelfListContent(
+    modifier: Modifier = Modifier,
+    text: StringResource,
+    icon: ImageVector,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(48.dp),
+            imageVector = icon,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(
+            text = stringResource(text),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
     }
 }
