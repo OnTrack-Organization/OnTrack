@@ -7,22 +7,22 @@ import androidx.compose.runtime.Composable
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.cancel_button
 import ontrack.composeapp.generated.resources.delete_button
-import ontrack.composeapp.generated.resources.feed_delete_confirm_text
-import ontrack.composeapp.generated.resources.feed_delete_confirm_title
+import ontrack.composeapp.generated.resources.feed_remove_comment_confirm_title
+import ontrack.composeapp.generated.resources.feed_remove_friend_confirm_text
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun DeleteCommentDialog(
-    onConfirmDelete: () -> Unit,
+fun RemoveCommentConfirmDialog(
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(Res.string.feed_delete_confirm_title)) },
-        text = { Text(text = stringResource(Res.string.feed_delete_confirm_text)) },
+        title = { Text(text = stringResource(Res.string.feed_remove_comment_confirm_title)) },
+        text = { Text(text = stringResource(Res.string.feed_remove_friend_confirm_text)) },
         confirmButton = {
             TextButton(
-                onClick = onConfirmDelete
+                onClick = onConfirm
             ) {
                 Text(stringResource(Res.string.delete_button))
             }

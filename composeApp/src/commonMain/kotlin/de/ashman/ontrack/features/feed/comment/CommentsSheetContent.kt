@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,11 +48,10 @@ fun CommentsSheetContent(
     onClickUser: (String) -> Unit,
 ) {
     var commentString by remember { mutableStateOf("") }
-    var showDeleteCommentDialog by remember { mutableStateOf(false) }
+    var showCommentRemoveConfirmDialog by remember { mutableStateOf(false) }
 
     val localFocusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -99,19 +97,19 @@ fun CommentsSheetContent(
                             username = it.username,
                             comment = it.comment,
                             showDeleteCommentDialog = {
-                                showDeleteCommentDialog = true
+                                showCommentRemoveConfirmDialog = true
                             },
                             onClickUser = { onClickUser(it.userId) },
                             isScrolling = listState.isScrollInProgress,
                         )
 
-                        if (showDeleteCommentDialog) {
-                            DeleteCommentDialog(
-                                onConfirmDelete = {
+                        if (showCommentRemoveConfirmDialog) {
+                            RemoveCommentConfirmDialog(
+                                onConfirm = {
                                     onDeleteComment(it)
-                                    showDeleteCommentDialog = false
+                                    showCommentRemoveConfirmDialog = false
                                 },
-                                onDismiss = { showDeleteCommentDialog = false },
+                                onDismiss = { showCommentRemoveConfirmDialog = false },
                             )
                         }
                     }

@@ -50,10 +50,16 @@ class FriendsViewModel(
         }
     }
 
-    fun removeFriend(friend: Friend) {
+    fun removeFriend() {
         viewModelScope.launch {
-            friendService.removeFriend(friend)
+            _uiState.value.selectedFriend?.let {
+                friendService.removeFriend(it)
+            }
         }
+    }
+
+    fun selectFriend(friend: Friend) {
+        _uiState.update { it.copy(selectedFriend = friend) }
     }
 
     fun sendRequest(otherRequest: FriendRequest) {
@@ -161,6 +167,7 @@ data class FriendsUiState(
     val sentRequests: List<FriendRequest> = emptyList(),
     val potentialFriends: List<Friend> = emptyList(),
     val resultState: FriendsResultState = FriendsResultState.Friends,
+    val selectedFriend: Friend? = null,
 )
 
 enum class FriendsResultState {

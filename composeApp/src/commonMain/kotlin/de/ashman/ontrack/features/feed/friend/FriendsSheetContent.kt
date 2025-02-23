@@ -10,6 +10,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -32,7 +36,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun FriendsSheetContent(
     uiState: FriendsUiState,
-    onRemoveFriend: (Friend) -> Unit,
+    onRemoveFriend: () -> Unit,
+    onSelectFriend: (Friend) -> Unit,
     onAcceptRequest: (FriendRequest) -> Unit,
     onDeclineRequest: (FriendRequest) -> Unit,
     onCancelRequest: (FriendRequest) -> Unit,
@@ -40,6 +45,8 @@ fun FriendsSheetContent(
     onClickUser: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
 ) {
+    var showFriendRemoveConfirmDialog by remember { mutableStateOf(false) }
+
     val localFocusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
 
@@ -80,7 +87,10 @@ fun FriendsSheetContent(
                             onAcceptRequest = onAcceptRequest,
                             onDenyRequest = onDeclineRequest,
                             onCancelRequest = onCancelRequest,
-                            onRemoveFriend = onRemoveFriend,
+                            onRemoveFriend = {
+                                onSelectFriend(it)
+                                showFriendRemoveConfirmDialog = true
+                            },
                             onClickUser = onClickUser,
                         )
                     }
@@ -120,6 +130,16 @@ fun FriendsSheetContent(
                     }
                 }
             }
+        }
+
+        if (showFriendRemoveConfirmDialog) {
+            RemoveFriendConfirmDialog(
+                onConfirm = {
+                    onRemoveFriend()
+                    showFriendRemoveConfirmDialog = false
+                },
+                onDismiss = { showFriendRemoveConfirmDialog = false },
+            )
         }
     }
 }

@@ -193,7 +193,7 @@ fun FeedScreen(
                         FriendsSheetContent(
                             uiState = friendsUiState,
                             onRemoveFriend = {
-                                friendsViewModel.removeFriend(it)
+                                friendsViewModel.removeFriend()
 
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar(getString(Res.string.feed_friend_removed))
@@ -232,6 +232,7 @@ fun FeedScreen(
                                 onUserClick(it)
                             },
                             onQueryChanged = friendsViewModel::onQueryChanged,
+                            onSelectFriend = friendsViewModel::selectFriend,
                         )
                     }
                 }
