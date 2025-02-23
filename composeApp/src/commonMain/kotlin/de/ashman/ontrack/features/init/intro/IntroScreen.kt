@@ -74,64 +74,78 @@ fun IntroScreen(
             PagerIndicator(
                 pageSize = pages.size,
                 currentPage = pagerState.currentPage,
-                showLogin = pagerState.currentPage == pages.size - 1,
-                onGoToLogin = onGoToLogin
             )
         }
     ) { contentPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-                contentPadding = PaddingValues(horizontal = 32.dp),
-                pageSpacing = 32.dp,
-                pageSize = PageSize.Fill
-            ) { index ->
-                IntroContent(
-                    introPage = pages[index]
-                )
-            }
-    }}
+        val showLogin = pagerState.settledPage == pages.lastIndex && pagerState.currentPage == pages.lastIndex
+
+        HorizontalPager(
+            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            pageSpacing = 16.dp,
+            pageSize = PageSize.Fill,
+            beyondViewportPageCount = 0,
+        ) { index ->
+            IntroContent(
+                introPage = pages[index],
+                showLogin = showLogin,
+                onGoToLogin = onGoToLogin
+            )
+        }
+    }
 }
 
 @Composable
 fun IntroContent(
     introPage: IntroPage,
+    showLogin: Boolean,
+    onGoToLogin: () -> Unit,
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(42.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Box(
-            modifier = Modifier
-                .width(200.dp)
-                .shadow(8.dp, shape = RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.Center,
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
-            Image(
-                painter = painterResource(introPage.image),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
+            Box(
+                modifier = Modifier
+                    .width(170.dp)
+                    .shadow(8.dp, shape = RoundedCornerShape(16.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(introPage.image),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = stringResource(introPage.title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Text(
+                    text = stringResource(introPage.description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
-        Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(introPage.title),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Text(
-                text = stringResource(introPage.description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+        AnimatedVisibility(visible = showLogin) {
+            OnTrackButton(
+                text = Res.string.login_button,
+                onClick = onGoToLogin,
             )
         }
     }
@@ -139,36 +153,23 @@ fun IntroContent(
 
 @Composable
 fun PagerIndicator(
-    modifier: Modifier = Modifier,
     pageSize: Int,
     currentPage: Int,
-    showLogin: Boolean,
-    onGoToLogin: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(32.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        AnimatedVisibility(
-            showLogin,
-        ) {
-            OnTrackButton(
-                text = Res.string.login_button,
-                onClick = onGoToLogin,
+        repeat(pageSize) {
+            val color = if (it == currentPage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .size(16.dp)
             )
-        }
-        Row {
-            repeat(pageSize) {
-                val color = if (it == currentPage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(16.dp)
-                )
-            }
         }
     }
 }
