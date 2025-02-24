@@ -27,32 +27,40 @@ fun LazyListScope.VideogameDetailContent(
         )
     }
 
-    item {
-        MediaChips(
-            title = stringResource(Res.string.detail_platforms),
-            items = videogame.platforms?.map { it.name },
-        )
+    videogame.getPlatformNames()?.let {
+        item {
+            MediaChips(
+                title = stringResource(Res.string.detail_platforms),
+                items = it,
+            )
+        }
     }
 
-    item {
-        MediaChips(
-            title = stringResource(Res.string.detail_genres),
-            items = videogame.genres,
-        )
+    videogame.genres?.let {
+        item {
+            MediaChips(
+                title = stringResource(Res.string.detail_genres),
+                items = it,
+            )
+        }
     }
 
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_franchise),
-            items = videogame.franchises,
-        )
+    videogame.franchises?.let {
+        item {
+            MediaPosterRow(
+                title = stringResource(Res.string.detail_franchise),
+                items = it,
+            )
+        }
     }
 
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_similar, pluralStringResource(videogame.mediaType.getMediaTypeUi().title, 2)),
-            items = videogame.similarGames,
-            onClickItem = onClickItem,
-        )
+    videogame.similarGames?.let {
+        item {
+            MediaPosterRow(
+                title = stringResource(Res.string.detail_similar, pluralStringResource(videogame.mediaType.getMediaTypeUi().title, 2)),
+                items = it,
+                onClickItem = onClickItem,
+            )
+        }
     }
 }

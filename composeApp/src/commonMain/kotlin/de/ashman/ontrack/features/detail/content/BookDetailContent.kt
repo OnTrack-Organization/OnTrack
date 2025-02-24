@@ -36,20 +36,24 @@ fun LazyListScope.BookDetailContent(
         )
     }
 
-    item {
-        MediaChips(
-            title = stringResource(Res.string.detail_genres),
-            items = book.genres,
-        )
+    book.genres?.let {
+        item {
+            MediaChips(
+                title = stringResource(Res.string.detail_genres),
+                items = it,
+            )
+        }
     }
 
-    item {
-        MediaPosterRow(
-            title = book.author?.booksCount?.let {
-                stringResource(Res.string.detail_author_books, it)
-            } ?: stringResource(Res.string.detail_author_books),
-            items = book.author?.books,
-            onClickItem = onClickItem,
-        )
+    book.author?.books?.let {
+        item {
+            MediaPosterRow(
+                title = book.author.booksCount?.let {
+                    stringResource(Res.string.detail_author_books, it)
+                } ?: stringResource(Res.string.detail_author_books),
+                items = it,
+                onClickItem = onClickItem,
+            )
+        }
     }
 }

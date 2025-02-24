@@ -2,16 +2,10 @@ package de.ashman.ontrack.features.search
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,11 +29,11 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.EmptyContent
+import de.ashman.ontrack.features.common.ErrorContent
+import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.SearchBar
-import de.ashman.ontrack.features.detail.components.EmptyContent
-import de.ashman.ontrack.features.detail.components.ErrorContent
-import de.ashman.ontrack.features.detail.components.LoadingContent
 import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -73,13 +66,12 @@ fun SearchScreen(
 
     Column(
         modifier = modifier
-            .padding(vertical = 16.dp)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     localFocusManager.clearFocus()
                 })
             },
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -94,70 +86,63 @@ fun SearchScreen(
             FilterChips(
                 selectedMediaType = uiState.selectedMediaType,
                 onMediaTypeSelected = viewModel::onMediaTypeSelected,
-                listState = viewModel.chipRowState,
+                listState = uiState.chipRowState,
             )
         }
 
-        Column(Modifier.fillMaxSize()) {
-            BoxWithConstraints {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(maxHeight / 2),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    item {
-                        // TODO add AnimatedContent
-                        when (uiState.resultStates[uiState.selectedMediaType]) {
-                            SearchResultState.Empty -> EmptyContent(
-                                modifier = Modifier.wrapContentSize(),
-                                uiState.selectedMediaType,
-                            )
+        when (uiState.resultStates[uiState.selectedMediaType]) {
+            SearchResultState.Empty -> EmptyContent(
+                mediaType = uiState.selectedMediaType,
+            )
 
-                            SearchResultState.Loading -> LoadingContent(
-                                modifier = Modifier.wrapContentSize()
-                            )
+            SearchResultState.Loading -> LoadingContent()
 
-                            SearchResultState.Error -> ErrorContent(
-                                text = uiState.selectedMediaType.getMediaTypeUi().error,
-                                modifier = Modifier.wrapContentSize()
-                            )
+            SearchResultState.Error -> ErrorContent(
+                text = uiState.selectedMediaType.getMediaTypeUi().error,
+            )
 
-                            else -> {}
-                        }
-                    }
-                }
-
-                if (uiState.resultStates[uiState.selectedMediaType] == SearchResultState.Success) {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        state = viewModel.posterRowState,
-                    ) {
-                        items(items = uiState.searchResults, key = { it.id }) { media ->
-                            val tracking = uiState.trackings.associateBy { it.mediaId }
-
-                            MediaPoster(
-                                modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                                title = media.title,
-                                coverUrl = media.coverUrl,
-                                trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
-                                onClick = {
-                                    onClickItem(
-                                        MediaNavigationItems(
-                                            id = media.id,
-                                            title = media.title,
-                                            coverUrl = media.coverUrl,
-                                            mediaType = media.mediaType
-                                        )
-                                    )
-                                },
-                            )
-                        }
-                    }
-                }
+            SearchResultState.Success -> {
+                SuccessContent(
+                    uiState = uiState,
+                    onClickItem = onClickItem,
+                )
             }
+
+            else -> {}
+        }
+    }
+}
+
+@Composable
+fun SuccessContent(
+    uiState: SearchUiState,
+    onClickItem: (MediaNavigationItems) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        state = uiState.posterRowState,
+    ) {
+        items(items = uiState.searchResults, key = { it.id }) { media ->
+            val tracking = uiState.trackings.associateBy { it.mediaId }
+
+            MediaPoster(
+                modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
+                title = media.title,
+                coverUrl = media.coverUrl,
+                trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
+                onClick = {
+                    onClickItem(
+                        MediaNavigationItems(
+                            id = media.id,
+                            title = media.title,
+                            coverUrl = media.coverUrl,
+                            mediaType = media.mediaType
+                        )
+                    )
+                },
+            )
         }
     }
 }

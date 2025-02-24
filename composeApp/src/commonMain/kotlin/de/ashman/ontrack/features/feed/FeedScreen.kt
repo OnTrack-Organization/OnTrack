@@ -67,7 +67,7 @@ fun FeedScreen(
     onUserClick: (String) -> Unit,
 ) {
     val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
 
     var currentSheetContent by remember { mutableStateOf<SheetContent>(SheetContent.Comments) }
@@ -93,7 +93,7 @@ fun FeedScreen(
 
     // TODO maybe use BottomSheetScaffold?
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(
                 modifier = Modifier.padding(bottom = 600.dp),
@@ -122,9 +122,9 @@ fun FeedScreen(
                         )
                     }
                 },
-                scrollBehavior = if (feedUiState.feedTrackings.isEmpty()) null else scrollBehavior,
+                scrollBehavior = if (feedUiState.feedTrackings.isEmpty()) null else appBarScrollBehavior,
             )
-        }
+        },
     ) { contentPadding ->
         /*PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),

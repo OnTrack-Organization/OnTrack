@@ -61,7 +61,7 @@ fun NavigationGraph(
                 popUpTo(0) {}
             }
         },
-    ) { padding ->
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = if (authService.currentUserId.isNotBlank()) Route.Search else Route.Start,
@@ -73,7 +73,7 @@ fun NavigationGraph(
                 analytics = analytics,
             )
             mainGraph(
-                modifier = Modifier.fillMaxSize().padding(padding),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
                 navController = navController,
                 feedViewModel = feedViewModel,
                 friendsViewModel = friendsViewModel,

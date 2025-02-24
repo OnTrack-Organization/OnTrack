@@ -31,14 +31,17 @@ fun LazyListScope.AlbumDetailContent(
             name = album.mainArtist?.name,
             imageUrl = album.mainArtist?.imageUrl,
             subInfo = album.mainArtist?.popularity?.let { stringResource(Res.string.detail_artist_popularity, it) },
+            description = null,
         )
     }
 
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_artist_albums),
-            items = album.mainArtist?.artistAlbums,
-            onClickItem = onClickItem,
-        )
+    album.mainArtist?.artistAlbums?.let {
+        item {
+            MediaPosterRow(
+                title = stringResource(Res.string.detail_artist_albums),
+                items = it,
+                onClickItem = onClickItem,
+            )
+        }
     }
 }

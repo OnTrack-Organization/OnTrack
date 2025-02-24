@@ -155,64 +155,62 @@ fun TrackOverlay(
 @Composable
 fun MediaPosterRow(
     title: String,
-    items: List<Any>?,
+    items: List<Any>,
     onClickItem: (MediaNavigationItems) -> Unit = { },
 ) {
-    items?.let {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                items(items) { item ->
-                    when (item) {
-                        is Media -> {
-                            MediaPoster(
-                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                                title = item.title,
-                                coverUrl = item.coverUrl,
-                                textStyle = MaterialTheme.typography.titleSmall,
-                                onClick = {
-                                    onClickItem(
-                                        MediaNavigationItems(
-                                            id = item.id,
-                                            title = item.title,
-                                            coverUrl = item.coverUrl,
-                                            mediaType = item.mediaType
-                                        )
+            items(items) { item ->
+                when (item) {
+                    is Media -> {
+                        MediaPoster(
+                            modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                            title = item.title,
+                            coverUrl = item.coverUrl,
+                            textStyle = MaterialTheme.typography.titleSmall,
+                            onClick = {
+                                onClickItem(
+                                    MediaNavigationItems(
+                                        id = item.id,
+                                        title = item.title,
+                                        coverUrl = item.coverUrl,
+                                        mediaType = item.mediaType
                                     )
-                                },
-                            )
-                        }
-
-                        is Franchise -> {
-                            MediaPoster(
-                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                                title = item.name,
-                                coverUrl = item.imageUrl,
-                                textStyle = MaterialTheme.typography.titleSmall,
-                            )
-                        }
-
-                        is Season -> {
-                            MediaPoster(
-                                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                                title = item.title,
-                                coverUrl = item.coverUrl,
-                                textStyle = MaterialTheme.typography.titleSmall,
-                            )
-                        }
-
-                        else -> {}
+                                )
+                            },
+                        )
                     }
+
+                    is Franchise -> {
+                        MediaPoster(
+                            modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                            title = item.name,
+                            coverUrl = item.imageUrl,
+                            textStyle = MaterialTheme.typography.titleSmall,
+                        )
+                    }
+
+                    is Season -> {
+                        MediaPoster(
+                            modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                            title = item.title,
+                            coverUrl = item.coverUrl,
+                            textStyle = MaterialTheme.typography.titleSmall,
+                        )
+                    }
+
+                    else -> {}
                 }
             }
         }

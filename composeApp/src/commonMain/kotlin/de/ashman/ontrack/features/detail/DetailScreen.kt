@@ -33,8 +33,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.features.detail.components.ErrorContent
-import de.ashman.ontrack.features.detail.components.LoadingContent
+import de.ashman.ontrack.features.common.ErrorContent
+import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.detail.components.StickyMainContent
 import de.ashman.ontrack.features.detail.tracking.CurrentBottomSheetContent
 import de.ashman.ontrack.features.detail.tracking.DetailSheet

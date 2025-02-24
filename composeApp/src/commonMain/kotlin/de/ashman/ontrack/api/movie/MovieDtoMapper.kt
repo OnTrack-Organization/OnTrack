@@ -34,10 +34,12 @@ fun PersonDetailsDto.toDomain(): Director =
         bio = biography?.ifBlank { null },
     )
 
-fun CollectionResponseDto.toDomain(): MovieCollection =
-    MovieCollection(
-        id = id,
-        name = name,
-        imageUrl = posterPath.getTMDBCoverUrl(),
-        movies = parts?.takeIf { it.isNotEmpty() }?.map { it.toDomain() },
-    )
+fun CollectionResponseDto.toDomain(): MovieCollection? =
+    parts?.takeIf { it.isNotEmpty() }?.let {
+        MovieCollection(
+            id = id,
+            name = name,
+            imageUrl = posterPath.getTMDBCoverUrl(),
+            movies = it.map { part -> part.toDomain() }
+        )
+    }

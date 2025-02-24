@@ -1,9 +1,6 @@
 package de.ashman.ontrack.features.search
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.api.album.AlbumRepository
@@ -56,8 +53,6 @@ class SearchViewModel(
             _uiState.value,
         )
 
-    var chipRowState: LazyListState by mutableStateOf(LazyListState(0, 0))
-    var posterRowState: LazyListState by mutableStateOf(LazyListState(0, 0))
     private var searchJob: Job? = null
 
     init {
@@ -120,7 +115,7 @@ class SearchViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
-                posterRowState = LazyListState(0, 0)
+                _uiState.update { it.copy(posterRowState = LazyListState(0, 0)) }
                 val mediaType = uiState.value.selectedMediaType
 
                 when {
@@ -157,8 +152,7 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
-        _uiState.update { it.copy(selectedMediaType = mediaType) }
-        posterRowState = LazyListState(0, 0)
+        _uiState.update { it.copy(selectedMediaType = mediaType, posterRowState = LazyListState(0, 0)) }
 
         if (uiState.value.query.isNotBlank()) {
             search(uiState.value.query)
@@ -192,6 +186,8 @@ data class SearchUiState(
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Empty },
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
+    val posterRowState: LazyListState = LazyListState(0, 0),
+    val chipRowState: LazyListState = LazyListState(0, 0),
 )
 
 enum class SearchResultState {

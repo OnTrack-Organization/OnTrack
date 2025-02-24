@@ -59,7 +59,7 @@ class MovieRepository(
         return similarResponse.movies.takeIf { it.isNotEmpty() }?.map { it.toDomain() }
     }
 
-    private suspend fun fetchMovieCollection(collectionId: Int?): MovieCollection {
+    private suspend fun fetchMovieCollection(collectionId: Int?): MovieCollection? {
         val response: CollectionResponseDto = httpClient.get("collection/$collectionId").body()
         return response.toDomain()
     }

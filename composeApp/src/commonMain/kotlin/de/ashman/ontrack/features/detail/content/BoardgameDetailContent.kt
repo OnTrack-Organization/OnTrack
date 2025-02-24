@@ -29,14 +29,17 @@ fun LazyListScope.BoardgameDetailContent(
             name = boardgame.designer?.name,
             imageUrl = boardgame.designer?.imageUrl,
             description = boardgame.designer?.bio,
+            subInfo = null,
         )
     }
 
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_franchise),
-            items = boardgame.franchise,
-            onClickItem = onClickItem,
-        )
+    boardgame.franchise?.let {
+        item {
+            MediaPosterRow(
+                title = stringResource(Res.string.detail_franchise),
+                items = it,
+                onClickItem = onClickItem,
+            )
+        }
     }
 }

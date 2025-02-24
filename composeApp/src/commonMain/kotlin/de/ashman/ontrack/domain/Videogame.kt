@@ -28,6 +28,10 @@ data class Videogame(
 
         return infoItems
     }
+
+    fun getPlatformNames(): List<String>? {
+        return this.platforms?.map { it.name }
+    }
 }
 
 @CommonParcelize

@@ -29,37 +29,43 @@ fun LazyListScope.ShowDetailContent(
         )
     }
 
-    item {
-        CreatorCard(
-            title = Res.string.detail_director,
-            name = show.director?.name,
-            subInfo = getLivingDates(show.director?.birthDate, show.director?.deathDate),
-            imageUrl = show.director?.imageUrl,
-            description = show.director?.bio,
-        )
-    }
-
-    item {
-        MediaChips(
-            title = stringResource(Res.string.detail_genres),
-            items = show.genres,
-        )
-    }
-
-    item {
-        show.numberOfSeasons?.let {
-            MediaPosterRow(
-                title = pluralStringResource(Res.plurals.detail_seasons, show.numberOfSeasons, show.numberOfSeasons),
-                items = show.seasons,
+    show.director?.let {
+        item {
+            CreatorCard(
+                title = Res.string.detail_director,
+                name = it.name,
+                subInfo = getLivingDates(it.birthDate, it.deathDate),
+                imageUrl = it.imageUrl,
+                description = it.bio,
             )
         }
     }
 
-    item {
-        MediaPosterRow(
-            title = stringResource(Res.string.detail_similar, pluralStringResource(show.mediaType.getMediaTypeUi().title, 2)),
-            items = show.similarShows,
-            onClickItem = onClickItem,
-        )
+    show.genres?.let {
+        item {
+            MediaChips(
+                title = stringResource(Res.string.detail_genres),
+                items = it,
+            )
+        }
+    }
+
+    show.seasons?.let {
+        item {
+            MediaPosterRow(
+                title = pluralStringResource(Res.plurals.detail_seasons, it.size, it.size),
+                items = it,
+            )
+        }
+    }
+
+    show.similarShows?.let {
+        item {
+            MediaPosterRow(
+                title = stringResource(Res.string.detail_similar, pluralStringResource(show.mediaType.getMediaTypeUi().title, 2)),
+                items = it,
+                onClickItem = onClickItem,
+            )
+        }
     }
 }

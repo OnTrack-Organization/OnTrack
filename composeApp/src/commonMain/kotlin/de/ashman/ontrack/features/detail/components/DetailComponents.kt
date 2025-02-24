@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -95,33 +96,31 @@ fun MediaDescription(
 @Composable
 fun MediaChips(
     title: String,
-    items: List<String>?,
-    modifier: Modifier = Modifier,
+    items: List<String>,
 ) {
-    items?.let {
-        Column(
-            modifier = modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(items) {
-                    OutlinedCard(
-                        modifier = Modifier.width(IntrinsicSize.Max),
-                        shape = MaterialTheme.shapes.small,
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-                            text = it,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(items) {
+                OutlinedCard(
+                    modifier = Modifier.width(IntrinsicSize.Max),
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                        text = it,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
         }
@@ -132,8 +131,8 @@ fun MediaChips(
 fun CreatorCard(
     title: StringResource,
     name: String?,
-    subInfo: String? = null,
-    description: String? = null,
+    subInfo: String?,
+    description: String?,
     imageUrl: String?,
 ) {
     var expanded by remember { mutableStateOf(false) }
