@@ -98,6 +98,7 @@ fun DetailSheet(
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 rating = tracking.rating,
+                trackStatus = tracking.status,
                 onReviewTitleChange = { tracking = tracking.copy(reviewTitle = it) },
                 onReviewDescriptionChange = { tracking = tracking.copy(reviewDescription = it) },
                 onRatingChange = { tracking = tracking.copy(rating = it) },

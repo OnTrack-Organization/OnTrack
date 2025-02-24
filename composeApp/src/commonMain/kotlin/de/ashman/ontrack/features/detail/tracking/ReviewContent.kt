@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.MAX_RATING
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import ontrack.composeapp.generated.resources.Res
@@ -37,6 +39,7 @@ fun ReviewContent(
     rating: Double?,
     reviewTitle: String?,
     reviewDescription: String?,
+    trackStatus: TrackStatus?,
     onRatingChange: (Double) -> Unit,
     onReviewTitleChange: (String) -> Unit,
     onReviewDescriptionChange: (String) -> Unit,
@@ -52,6 +55,7 @@ fun ReviewContent(
     SelectableStarRatingBar(
         rating = rating,
         onRatingChange = onRatingChange,
+        trackStatus = trackStatus,
     )
 
     OnTrackTextField(
@@ -77,6 +81,7 @@ fun ReviewContent(
 @Composable
 fun SelectableStarRatingBar(
     rating: Double?,
+    trackStatus: TrackStatus?,
     onRatingChange: (Double) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -94,7 +99,7 @@ fun SelectableStarRatingBar(
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = null,
-                    tint = if (rating != null && i <= rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    tint = if (rating != null && i <= rating) contentColorFor(trackStatus.getColor()) else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .size(64.dp)
                         .clickable(
@@ -112,7 +117,7 @@ fun SelectableStarRatingBar(
             Text(
                 text = getRatingLabel(targetState?.toInt(), MAX_RATING),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = contentColorFor(trackStatus.getColor()),
                 fontWeight = FontWeight.Bold,
             )
         }

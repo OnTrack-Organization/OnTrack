@@ -89,7 +89,6 @@ class SearchViewModel(
 
     fun search(query: String) = viewModelScope.launch {
         val mediaType = uiState.value.selectedMediaType
-
         _uiState.update { it.copy(resultStates = it.resultStates + (mediaType to SearchResultState.Loading)) }
 
         mediaType.getRepository().fetchByQuery(query).fold(
@@ -121,6 +120,7 @@ class SearchViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
+                posterRowState = LazyListState(0, 0)
                 val mediaType = uiState.value.selectedMediaType
 
                 when {
