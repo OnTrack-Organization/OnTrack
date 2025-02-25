@@ -1,10 +1,14 @@
 package de.ashman.ontrack.features.detail.tracking
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,8 +38,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
+import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.continue_button
+import ontrack.composeapp.generated.resources.review_button
 import ontrack.composeapp.generated.resources.save_button
 import ontrack.composeapp.generated.resources.track_title
 import org.jetbrains.compose.resources.StringResource
@@ -47,7 +52,8 @@ fun TrackingContent(
     mediaTitle: String?,
     selectedStatus: TrackStatus?,
     onSelectStatus: (TrackStatus) -> Unit,
-    onContinue: () -> Unit,
+    onSave: () -> Unit,
+    onToReview: () -> Unit,
 ) {
     mediaTitle?.let {
         Text(
@@ -73,12 +79,31 @@ fun TrackingContent(
         }
     }
 
-    OnTrackButton(
-        enabled = selectedStatus != null,
-        text = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Res.string.save_button else Res.string.continue_button,
-        icon = if (selectedStatus == TrackStatus.CATALOG || selectedStatus == TrackStatus.CONSUMING) Icons.Default.Save else Icons.AutoMirrored.Default.ArrowForward,
-        onClick = onContinue,
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        OnTrackButton(
+            modifier = Modifier.weight(1f).animateContentSize(),
+            enabled = selectedStatus != null,
+            text = Res.string.save_button,
+            icon = Icons.Default.Save,
+            onClick = onSave,
+        )
+
+        AnimatedVisibility(
+            modifier = Modifier.weight(1f),
+            visible = selectedStatus != null && selectedStatus != TrackStatus.CATALOG,
+            enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
+            exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
+        ) {
+            OnTrackOutlinedButton(
+                text = Res.string.review_button,
+                icon = Icons.Default.RateReview,
+                onClick = onToReview,
+            )
+        }
+    }
 }
 
 @Composable

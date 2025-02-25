@@ -77,20 +77,17 @@ fun DetailSheet(
                 mediaTitle = mediaTitle,
                 selectedStatus = tracking.status,
                 onSelectStatus = { tracking = tracking.copy(status = it) },
-                onContinue = {
-                    if (tracking.status == TrackStatus.CATALOG || tracking.status == TrackStatus.CONSUMING) {
-                        tracking = tracking.copy(
-                            rating = null,
-                            reviewTitle = null,
-                            reviewDescription = null,
-                            timestamp = System.now().toEpochMilliseconds()
-                        ).also {
-                            onSaveTracking(it)
-                        }
-                    } else {
-                        goToReview()
+                onSave = {
+                    tracking = tracking.copy(
+                        rating = if (tracking.status == TrackStatus.CATALOG) null else tracking.rating,
+                        reviewTitle = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewTitle,
+                        reviewDescription = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewDescription,
+                        timestamp = System.now().toEpochMilliseconds()
+                    ).also {
+                        onSaveTracking(it)
                     }
                 },
+                onToReview = goToReview,
             )
 
             CurrentBottomSheetContent.REVIEW -> ReviewContent(

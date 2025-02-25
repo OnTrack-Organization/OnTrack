@@ -131,6 +131,7 @@ fun OnTrackOutlinedButton(
     modifier: Modifier = Modifier,
     text: StringResource,
     icon: ImageVector? = null,
+    enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
@@ -140,6 +141,7 @@ fun OnTrackOutlinedButton(
         modifier = modifier.fillMaxWidth().height(48.dp),
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
+        enabled = enabled,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = animatedContentColor,
         )

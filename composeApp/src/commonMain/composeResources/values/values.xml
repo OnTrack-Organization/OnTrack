@@ -161,7 +161,7 @@
 
     <!-- DETAIL TRACKING -->
     <string name="track_button">Track</string>
-    <string name="continue_button">Continue</string>
+    <string name="review_button">Review</string>
 
     <string name="detail_tracked_by">Tracked by</string>
 
