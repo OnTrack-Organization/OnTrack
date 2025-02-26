@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.FeedService
 import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.entity.toEntity
+import de.ashman.ontrack.domain.tracking.Comment
+import de.ashman.ontrack.domain.tracking.Like
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.tracking.TrackingComment
-import de.ashman.ontrack.domain.tracking.TrackingLike
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +48,7 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        val like = TrackingLike()
+        val like = Like()
 
         if (tracking.isLikedByCurrentUser) {
             feedService.unlikeTracking(
@@ -66,7 +66,7 @@ class FeedViewModel(
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
-        val newComment = TrackingComment(comment = comment)
+        val newComment = Comment(comment = comment)
 
         _uiState.value.selectedTracking?.let { selectedTracking ->
             feedService.addComment(
@@ -77,7 +77,7 @@ class FeedViewModel(
         }
     }
 
-    fun removeComment(comment: TrackingComment) = viewModelScope.launch {
+    fun removeComment(comment: Comment) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let { selectedTracking ->
             feedService.removeComment(
                 friendId = selectedTracking.userId,

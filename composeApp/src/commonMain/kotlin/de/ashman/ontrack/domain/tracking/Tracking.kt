@@ -15,6 +15,10 @@ import kotlin.uuid.Uuid
 data class Tracking(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
+    val userId: String = Firebase.auth.currentUser!!.uid,
+    val username: String,
+    val userImageUrl: String,
+    val timestamp: Long = System.now().toEpochMilliseconds(),
 
     val mediaId: String,
     val mediaType: MediaType,
@@ -26,24 +30,15 @@ data class Tracking(
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
 
-    val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
-    val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
-    val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
-
-    val likes: List<TrackingLike> = listOf(),
-    val comments: List<TrackingComment> = listOf(),
-    val history: List<TrackingHistoryEntry> = listOf(),
-
-    val timestamp: Long = System.now().toEpochMilliseconds(),
+    val likes: List<Like> = listOf(),
+    val comments: List<Comment> = listOf(),
+    val history: List<HistoryEntry> = listOf(),
 ) : CommonParcelable {
     val likeCount: Int
-        get() = this@Tracking.likes.size
-
-    val likeImages: List<String>
-        get() = this@Tracking.likes.map { it.userImageUrl }.take(3)
+        get() = likes.size
 
     val isLikedByCurrentUser: Boolean
-        get() = this@Tracking.likes.any { it.userId == Firebase.auth.currentUser?.uid }
+        get() = likes.any { it.userId == Firebase.auth.currentUser?.uid }
 
     val commentCount: Int
         get() = comments.size

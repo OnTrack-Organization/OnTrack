@@ -11,12 +11,9 @@ import kotlin.uuid.Uuid
 
 @CommonParcelize
 @Serializable
-data class TrackingComment(
+data class Like(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
-    val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
-    val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
-    val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
-    val comment: String,
+    val userId: String = Firebase.auth.currentUser!!.uid,
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable

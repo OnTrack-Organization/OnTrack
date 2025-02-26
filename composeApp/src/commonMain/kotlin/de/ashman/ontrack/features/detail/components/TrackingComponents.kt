@@ -59,6 +59,7 @@ fun ReviewCard(
                 timestamp = tracking.timestamp.formatDateTime(),
                 onUserClick = onUserClick,
             )
+
             ReviewCardContent(
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,

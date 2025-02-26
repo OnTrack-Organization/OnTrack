@@ -12,6 +12,7 @@ interface AuthService {
     val currentUserImage: String
     val currentUserName: String
 
+    suspend fun getUser(userId: String): UserEntity?
     suspend fun createUser(user: UserEntity): Boolean
     suspend fun removeUser()
     suspend fun updateUser(user: UserEntity)
@@ -38,6 +39,16 @@ class AuthServiceImpl(
 
     override val currentUserName: String
         get() = auth.currentUser?.displayName.orEmpty()
+
+    override suspend fun getUser(userId: String): UserEntity? {
+        val documentSnapshot = userCollection.document(userId).get()
+        return try {
+            documentSnapshot.data<UserEntity>()
+        } catch (e: Exception) {
+            Logger.e { "Error parsing user document: ${e.message}" }
+            null
+        }
+    }
 
     override suspend fun createUser(user: UserEntity): Boolean {
         val document = userCollection.document(user.id).get()

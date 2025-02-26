@@ -1,12 +1,14 @@
 package de.ashman.ontrack.db.entity
 
+import de.ashman.ontrack.domain.tracking.Comment
+import de.ashman.ontrack.domain.tracking.HistoryEntry
+import de.ashman.ontrack.domain.tracking.Like
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.tracking.TrackingComment
-import de.ashman.ontrack.domain.tracking.TrackingHistoryEntry
-import de.ashman.ontrack.domain.tracking.TrackingLike
 
 fun Tracking.toEntity() = TrackingEntity(
     id = id,
+    userId = userId,
+    timestamp = timestamp,
     mediaId = mediaId,
     mediaType = mediaType,
     mediaTitle = mediaTitle,
@@ -15,70 +17,64 @@ fun Tracking.toEntity() = TrackingEntity(
     rating = rating,
     reviewTitle = reviewTitle,
     reviewDescription = reviewDescription,
-    userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
     likes = likes.map { it.toEntity() },
     comments = comments.map { it.toEntity() },
     history = history.map { it.toEntity() },
-    timestamp = timestamp,
 )
 
-fun TrackingEntity.toDomain() = Tracking(
-    id = id,
-    mediaId = mediaId,
-    mediaType = mediaType,
-    mediaTitle = mediaTitle,
-    mediaCoverUrl = mediaCoverUrl,
-    status = status,
-    rating = rating,
-    reviewTitle = reviewTitle,
-    reviewDescription = reviewDescription,
-    userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
-    likes = likes.map { it.toDomain() },
-    comments = comments.map { it.toDomain() },
-    history = history.map { it.toDomain() },
-    timestamp = timestamp,
-)
+fun TrackingEntity.toDomain(userName: String, userImageUrl: String): Tracking {
+    return Tracking(
+        id = id,
+        userId = userId,
+        username = userName,
+        userImageUrl = userImageUrl,
+        timestamp = timestamp,
+        mediaId = mediaId,
+        mediaType = mediaType,
+        mediaTitle = mediaTitle,
+        mediaCoverUrl = mediaCoverUrl,
+        status = status,
+        rating = rating,
+        reviewTitle = reviewTitle,
+        reviewDescription = reviewDescription,
+        likes = likes.map { it.toDomain() },
+        comments = comments.map { it.toDomain() },
+        history = history.map { it.toDomain() },
+    )
+}
 
-fun TrackingComment.toEntity() = TrackingCommentEntity(
+fun Comment.toEntity() = CommentEntity(
     id = id,
     userId = userId,
-    userImageUrl = userImageUrl,
-    username = username,
     comment = comment,
     timestamp = timestamp,
 )
 
-fun TrackingCommentEntity.toDomain() = TrackingComment(
+fun CommentEntity.toDomain() = Comment(
     id = id,
     userId = userId,
-    userImageUrl = userImageUrl,
-    username = username,
     comment = comment,
     timestamp = timestamp,
 )
 
-fun TrackingHistoryEntry.toEntity() = TrackingHistoryEntryEntity(
+fun HistoryEntry.toEntity() = HistoryEntryEntity(
     status = status,
     timestamp = timestamp,
 )
 
-fun TrackingHistoryEntryEntity.toDomain() = TrackingHistoryEntry(
+fun HistoryEntryEntity.toDomain() = HistoryEntry(
     status = status,
     timestamp = timestamp,
 )
 
-fun TrackingLike.toEntity() = TrackingLikeEntity(
+fun Like.toEntity() = LikeEntity(
+    id = id,
     userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
+    timestamp = timestamp,
 )
 
-fun TrackingLikeEntity.toDomain() = TrackingLike(
+fun LikeEntity.toDomain() = Like(
+    id = id,
     userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
+    timestamp = timestamp,
 )

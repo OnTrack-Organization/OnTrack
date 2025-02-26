@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrackingEntity(
     val id: String,
+    val userId: String,
+    val timestamp: Long,
 
     val mediaId: String,
     val mediaType: MediaType,
@@ -18,24 +20,30 @@ data class TrackingEntity(
     val reviewTitle: String?,
     val reviewDescription: String?,
 
-    val userId: String,
-    val username: String,
-    val userImageUrl: String,
-
-    val likes: List<TrackingLikeEntity>,
-    val comments: List<TrackingCommentEntity>,
-    val history: List<TrackingHistoryEntryEntity>,
-
-    val timestamp: Long,
+    val likes: List<LikeEntity>,
+    val comments: List<CommentEntity>,
+    val history: List<HistoryEntryEntity>,
 )
 
 @Serializable
-data class TrackingCommentEntity(
+data class LikeEntity(
     val id: String,
     val userId: String,
-    val userImageUrl: String,
-    val username: String,
+    val timestamp: Long,
+) {
+    // Needed for Ios...
+    fun toMap(): Map<String, Any> {
+        return mapOf(
+            "userId" to userId,
+            "timestamp" to timestamp,
+        )
+    }
+}
 
+@Serializable
+data class CommentEntity(
+    val id: String,
+    val userId: String,
     val comment: String,
     val timestamp: Long,
 ) {
@@ -44,8 +52,6 @@ data class TrackingCommentEntity(
         return mapOf(
             "id" to id,
             "userId" to userId,
-            "userImageUrl" to userImageUrl,
-            "username" to username,
             "comment" to comment,
             "timestamp" to timestamp,
         )
@@ -53,22 +59,7 @@ data class TrackingCommentEntity(
 }
 
 @Serializable
-data class TrackingHistoryEntryEntity(
+data class HistoryEntryEntity(
     val status: TrackStatus,
     val timestamp: Long,
 )
-
-@Serializable
-data class TrackingLikeEntity(
-    val userId: String,
-    val username: String,
-    val userImageUrl: String,
-) {
-    fun toMap(): Map<String, Any> {
-        return mapOf(
-            "userId" to userId,
-            "username" to username,
-            "userImageUrl" to userImageUrl,
-        )
-    }
-}
