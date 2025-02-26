@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -213,6 +214,27 @@ fun OnTrackOutlinedIconButton(
 }
 
 @Composable
+fun OnTrackCommentTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+) {
+    TextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder) },
+        shape = MaterialTheme.shapes.medium,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        )
+    )
+}
+
+@Composable
 fun OnTrackTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
@@ -267,35 +289,6 @@ fun OnTrackUserTextField(
         )
     )
 }
-
-// TODO maybe create my own
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OnTrackCommentTextField(
-    modifier: Modifier = Modifier,
-    placeholder: String,
-    value: String?,
-    onValueChange: (String) -> Unit,
-) {
-    /* BasicTextField(
-         modifier = modifier.fillMaxWidth(),
-         value = value.orEmpty(),
-         onValueChange = onValueChange,
-         decorationBox = {
-             TextFieldDefaults.DecorationBox(
-                 value = value.orEmpty(),
-                 visualTransformation = { value },
-                 innerTextField = it,
-                 placeholder = { Text(placeholder) },
-                 singleLine = true,
-                 enabled = true,
-                 interactionSource = MutableInteractionSource(),
-                 contentPadding = PaddingValues(0.dp),
-             )
-         }
-     )*/
-}
-
 
 @Composable
 fun PersonImage(

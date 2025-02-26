@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,13 +28,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.TrackingComment
+import de.ashman.ontrack.features.common.OnTrackCommentTextField
 import de.ashman.ontrack.features.common.OnTrackIconButton
-import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.PersonImage
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -47,19 +58,20 @@ fun CommentsSheetContent(
     onDeleteComment: (TrackingComment) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
-    var commentString by remember { mutableStateOf("") }
+    var commentText by remember { mutableStateOf(TextFieldValue("")) }
+    var replyingTo by remember { mutableStateOf<String?>(null) }
+
     var showCommentRemoveConfirmDialog by remember { mutableStateOf(false) }
 
     val localFocusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    localFocusManager.clearFocus()
-                })
+                detectTapGestures(onTap = { localFocusManager.clearFocus() })
             },
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -74,7 +86,7 @@ fun CommentsSheetContent(
             label = "Comment List Animation"
         ) { hasComments ->
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 state = listState,
             ) {
                 if (!hasComments) {
@@ -99,6 +111,14 @@ fun CommentsSheetContent(
                             showDeleteCommentDialog = {
                                 showCommentRemoveConfirmDialog = true
                             },
+                            onReply = {
+                                val newText = "@${it.username} "
+                                commentText = TextFieldValue(
+                                    text = newText,
+                                    selection = TextRange(newText.length)
+                                )
+                                focusRequester.requestFocus()
+                            },
                             onClickUser = { onClickUser(it.userId) },
                             isScrolling = listState.isScrollInProgress,
                         )
@@ -118,31 +138,27 @@ fun CommentsSheetContent(
         }
 
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp).imePadding(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            OnTrackTextField(
-                modifier = Modifier.weight(1f),
+            OnTrackCommentTextField(
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .weight(1f),
                 placeholder = stringResource(Res.string.feed_comments_placeholder),
-                value = commentString,
-                onValueChange = { commentString = it },
+                value = commentText,
+                onValueChange = { commentText = it },
             )
+
             OnTrackIconButton(
                 icon = Icons.AutoMirrored.Default.Send,
-                enabled = commentString.isNotBlank(),
+                enabled = commentText.text.isNotBlank(),
                 onClick = {
-                    if (commentString.isNotBlank()) {
-                        onAddComment(commentString)
-                        commentString = ""
-                        localFocusManager.clearFocus()
-
-                        /* coroutineScope.launch {
-                             listState.animateScrollToItem(
-                                 index = comments.size - 1,
-                             )
-                         }*/
-                    }
+                    localFocusManager.clearFocus()
+                    onAddComment(commentText.text)
+                    replyingTo = null
+                    commentText = TextFieldValue("")
                 },
             )
         }
@@ -157,9 +173,33 @@ fun FeedComment(
     username: String,
     comment: String,
     showDeleteCommentDialog: () -> Unit,
+    onReply: () -> Unit,
     onClickUser: () -> Unit,
     isScrolling: Boolean,
 ) {
+    val isOwnComment = userId == Firebase.auth.currentUser?.uid
+
+    val annotatedString = buildAnnotatedString {
+        append(comment)
+        val startIndex = comment.indexOf("@$username")
+        if (startIndex != -1) {
+            addStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                ),
+                start = startIndex,
+                end = startIndex + username.length + 1
+            )
+            addStringAnnotation(
+                tag = "USERNAME",
+                annotation = username,
+                start = startIndex,
+                end = startIndex + username.length + 1
+            )
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -167,13 +207,15 @@ fun FeedComment(
                 if (!isScrolling) Modifier.combinedClickable(
                     onClick = {},
                     onLongClick = {
-                        if (userId == Firebase.auth.currentUser?.uid) showDeleteCommentDialog() else null
+                        if (isOwnComment) {
+                            showDeleteCommentDialog()
+                        }
                     },
                 ) else Modifier
             ),
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -181,16 +223,27 @@ fun FeedComment(
                 userImageUrl = userImageUrl,
                 onClick = onClickUser,
             )
-            Column {
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
                 Text(
                     text = username,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = comment,
+                    text = annotatedString,
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            }
+
+            if (!isOwnComment) {
+                IconButton(onClick = onReply) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.Reply,
+                        contentDescription = "Reply Icon",
+                    )
+                }
             }
         }
     }
