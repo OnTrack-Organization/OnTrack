@@ -70,9 +70,7 @@ fun MainNavigationBar(
     // TODO do sometime
     val bottomBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
-    BottomAppBar(
-        scrollBehavior = bottomBarScrollBehavior
-    ) {
+    BottomAppBar {
         BottomNavItem.items.forEach { route ->
             val isSelected = currentRoute?.hierarchy?.any { it.route == route.route::class.qualifiedName } == true
 
