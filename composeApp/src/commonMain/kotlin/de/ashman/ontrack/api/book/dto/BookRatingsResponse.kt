@@ -11,9 +11,9 @@ data class BookRatingsResponse(
 
 @Serializable
 data class RatingSummary(
-    val average: Double,
+    val average: Double? = null,
     val count: Int,
-    val sortable: Double,
+    val sortable: Double? = null,
 )
 
 // unused for now, variable names are wrong as well probably
