@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -156,7 +157,7 @@ fun OnTrackOutlinedButton(
 
 @Composable
 fun OnTrackIconButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(48.dp),
     icon: ImageVector,
     enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
@@ -166,7 +167,7 @@ fun OnTrackIconButton(
     val animatedContainerColor by animateColorAsState(targetValue = color)
 
     Button(
-        modifier = modifier.size(48.dp),
+        modifier = modifier,
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
         contentPadding = PaddingValues(0.dp),
@@ -178,7 +179,7 @@ fun OnTrackIconButton(
 
     ) {
         Icon(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.fillMaxSize(0.5f),
             imageVector = icon,
             contentDescription = icon.name,
         )
@@ -233,6 +234,49 @@ fun OnTrackCommentTextField(
         )
     )
 }
+
+/*@Composable
+fun OnTrackCommentTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+) {
+    BasicTextField(
+        modifier = modifier
+            .height(48.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                MaterialTheme.shapes.small,
+            )
+            .fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colorScheme.onSurface,
+        ),
+        decorationBox = { innerTextField ->
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(Modifier.weight(1f)) {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            style = LocalTextStyle.current.copy(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                            )
+                        )
+                    }
+                    innerTextField()
+                }
+            }
+        }
+    )
+}*/
 
 @Composable
 fun OnTrackTextField(

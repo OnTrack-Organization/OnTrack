@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,9 +69,15 @@ fun CommentsSheetContent(
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
 
+    LaunchedEffect(comments.size) {
+        if (comments.isNotEmpty()) {
+            listState.animateScrollToItem(comments.size - 1)
+        }
+    }
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            //.fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { localFocusManager.clearFocus() })
             },
@@ -82,6 +90,9 @@ fun CommentsSheetContent(
         )
 
         AnimatedContent(
+            modifier = Modifier
+                .weight(1f, false)
+                .heightIn(max = 300.dp),
             targetState = comments.isNotEmpty(),
             label = "Comment List Animation"
         ) { hasComments ->
@@ -104,6 +115,7 @@ fun CommentsSheetContent(
                 } else {
                     items(items = comments, key = { it.id }) {
                         FeedComment(
+                            modifier = Modifier.animateItem(),
                             userId = it.userId,
                             userImageUrl = it.userImageUrl,
                             username = it.username,
@@ -138,7 +150,7 @@ fun CommentsSheetContent(
         }
 
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp).imePadding(),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -152,10 +164,10 @@ fun CommentsSheetContent(
             )
 
             OnTrackIconButton(
+                modifier = Modifier.size(56.dp),
                 icon = Icons.AutoMirrored.Default.Send,
                 enabled = commentText.text.isNotBlank(),
                 onClick = {
-                    localFocusManager.clearFocus()
                     onAddComment(commentText.text)
                     replyingTo = null
                     commentText = TextFieldValue("")
@@ -168,6 +180,7 @@ fun CommentsSheetContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedComment(
+    modifier: Modifier = Modifier,
     userId: String,
     userImageUrl: String,
     username: String,
@@ -201,7 +214,7 @@ fun FeedComment(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .then(
                 if (!isScrolling) Modifier.combinedClickable(

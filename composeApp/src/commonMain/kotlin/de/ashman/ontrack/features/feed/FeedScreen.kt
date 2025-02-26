@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -82,14 +81,15 @@ fun FeedScreen(
         feedViewModel.fetchTrackingFeed()
     }
 
-    LaunchedEffect(feedUiState.feedTrackings) {
+    // TODO add again when using pagination and pull to refresh
+    /*LaunchedEffect(feedUiState.feedTrackings) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { index ->
                 if (index != null && index >= feedUiState.feedTrackings.size - 1) {
                     feedViewModel.fetchTrackingFeed()
                 }
             }
-    }
+    }*/
 
     // TODO maybe use BottomSheetScaffold?
     Scaffold(
