@@ -13,7 +13,7 @@ interface AuthService {
     val currentUserName: String
 
     suspend fun createUser(user: UserEntity): Boolean
-    suspend fun deleteUser()
+    suspend fun removeUser()
     suspend fun updateUser(user: UserEntity)
 
     suspend fun updateFcmToken(token: String)
@@ -54,7 +54,7 @@ class AuthServiceImpl(
         }
     }
 
-    override suspend fun deleteUser() {
+    override suspend fun removeUser() {
         userCollection
             .document(currentUserId)
             .delete()

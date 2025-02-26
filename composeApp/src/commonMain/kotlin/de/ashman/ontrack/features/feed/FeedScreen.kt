@@ -174,7 +174,7 @@ fun FeedScreen(
                     SheetContent.Comments -> CommentsSheetContent(
                         comments = feedUiState.selectedTracking?.comments ?: emptyList(),
                         onAddComment = feedViewModel::addComment,
-                        onDeleteComment = feedViewModel::deleteComment,
+                        onRemoveComment = feedViewModel::removeComment,
                         onClickUser = {
                             showBottomSheet = false
                             onUserClick(it)

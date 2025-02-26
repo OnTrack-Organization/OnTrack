@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.mapNotNull
 
 interface TrackingService {
     suspend fun saveTracking(tracking: TrackingEntity)
-    suspend fun deleteTracking(trackingId: String)
+    suspend fun removeTracking(trackingId: String)
     fun fetchTrackings(userId: String): Flow<List<TrackingEntity>>
     fun fetchTracking(trackingId: String): Flow<TrackingEntity?>
     suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>>
@@ -52,7 +52,7 @@ class TrackingServiceImpl(
         )
     }
 
-    override suspend fun deleteTracking(trackingId: String) {
+    override suspend fun removeTracking(trackingId: String) {
         userTrackingCollection(authService.currentUserId)
             .document(trackingId)
             .delete()

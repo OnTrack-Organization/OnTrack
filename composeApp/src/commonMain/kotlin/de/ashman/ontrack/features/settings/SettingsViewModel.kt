@@ -43,7 +43,7 @@ class SettingsViewModel(
     }
 
     fun deleteAccount() = viewModelScope.launch {
-        authService.deleteUser()
+        authService.removeUser()
     }
 
     fun onNameChange(name: String) {

@@ -42,7 +42,7 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.tracking_deleted
+import ontrack.composeapp.generated.resources.tracking_removed
 import ontrack.composeapp.generated.resources.tracking_saved
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.pluralStringResource
@@ -119,7 +119,7 @@ fun DetailScreen(
                     showBottomSheet = true
                 },
                 onClickRemoveTracking = {
-                    currentBottomSheet = CurrentBottomSheetContent.DELETE
+                    currentBottomSheet = CurrentBottomSheetContent.REMOVE
                     showBottomSheet = true
                 },
             )
@@ -163,11 +163,11 @@ fun DetailScreen(
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
                         }
                     },
-                    onDeleteTracking = {
-                        viewModel.deleteTracking(it)
+                    onRemoveTracking = {
+                        viewModel.removeTracking(it)
                         showBottomSheet = false
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.tracking_deleted))
+                            snackbarHostState.showSnackbar(getString(Res.string.tracking_removed))
                         }
                     },
                     onCancel = {

@@ -6,9 +6,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.cancel_button
-import ontrack.composeapp.generated.resources.delete_button
 import ontrack.composeapp.generated.resources.feed_remove_friend_confirm_text
 import ontrack.composeapp.generated.resources.feed_remove_friend_confirm_title
+import ontrack.composeapp.generated.resources.remove_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -24,7 +24,7 @@ fun RemoveFriendConfirmDialog(
             TextButton(
                 onClick = onConfirm
             ) {
-                Text(stringResource(Res.string.delete_button))
+                Text(stringResource(Res.string.remove_button))
             }
         },
         dismissButton = {

@@ -38,21 +38,21 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.features.common.DeleteSheetContent
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackUserTextField
+import de.ashman.ontrack.features.common.RemoveSheetContent
 import de.ashman.ontrack.features.init.start.ApiContributions
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.save_button
-import ontrack.composeapp.generated.resources.settings_delete
-import ontrack.composeapp.generated.resources.settings_delete_confirm_text
-import ontrack.composeapp.generated.resources.settings_delete_confirm_title
 import ontrack.composeapp.generated.resources.settings_logout
 import ontrack.composeapp.generated.resources.settings_name_hint
+import ontrack.composeapp.generated.resources.settings_remove
+import ontrack.composeapp.generated.resources.settings_remove_confirm_text
+import ontrack.composeapp.generated.resources.settings_remove_confirm_title
 import ontrack.composeapp.generated.resources.settings_title
 import ontrack.composeapp.generated.resources.settings_username_empty
 import ontrack.composeapp.generated.resources.settings_username_hint
@@ -172,7 +172,7 @@ fun SettingsScreen(
                         },
                     )
                     OnTrackOutlinedButton(
-                        text = Res.string.settings_delete,
+                        text = Res.string.settings_remove,
                         icon = Icons.Default.Delete,
                         onClick = { showBottomSheet = true },
                     )
@@ -192,9 +192,9 @@ fun SettingsScreen(
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    DeleteSheetContent(
-                        title = Res.string.settings_delete_confirm_title,
-                        text = Res.string.settings_delete_confirm_text,
+                    RemoveSheetContent(
+                        title = Res.string.settings_remove_confirm_title,
+                        text = Res.string.settings_remove_confirm_text,
                         onConfirm = {
                             showBottomSheet = false
                             viewModel.deleteAccount()

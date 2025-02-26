@@ -167,8 +167,8 @@
 
     <string name="review_title">Review of "%1$s"</string>
     <string name="track_title">Track status of "%1$s"</string>
-    <string name="detail_delete_confirm_title">Delete tracking?</string>
-    <string name="detail_delete_confirm_text">Are you sure you want to delete the tracking of this media? Your complete tracking history, current tracking and review is going to be deleted.</string>
+    <string name="detail_remove_confirm_title">Remove tracking?</string>
+    <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>
 
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>
@@ -181,8 +181,8 @@
     <string name="review_title_label">Write a review title...</string>
     <string name="review_description_label">Write a review...</string>
 
-    <string name="tracking_saved">Saved tracking</string>
-    <string name="tracking_deleted">Deleted tracking</string>
+    <string name="tracking_saved">Tracking saved</string>
+    <string name="tracking_removed">Tracking removed</string>
 
     <string name="ratings_overview">Ratings</string>
 
@@ -243,7 +243,7 @@
     <string name="settings_username_hint">Username</string>
     <string name="settings_name_hint">Name</string>
     <string name="settings_logout">Logout</string>
-    <string name="settings_delete">Delete account</string>
+    <string name="settings_remove">Remove account</string>
 
     <string name="settings_username_taken">Username is already taken</string>
     <string name="settings_username_empty">Username cannot be empty</string>
@@ -251,11 +251,11 @@
     <string name="settings_username_too_short">Username should be more than 5 characters</string>
     <string name="settings_account_data_saved">Account data saved</string>
 
-    <string name="settings_delete_confirm_title">Delete account?</string>
-    <string name="settings_delete_confirm_text">Are you sure you want to delete your account? All of your data will be permanently deleted.</string>
+    <string name="settings_remove_confirm_title">Remove account?</string>
+    <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
-    <string name="delete_button">Delete</string>
+    <string name="remove_button">Remove</string>
     <string name="save_button">Save</string>
 </resources>

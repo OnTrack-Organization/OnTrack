@@ -17,16 +17,16 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.features.common.DeleteSheetContent
+import de.ashman.ontrack.features.common.RemoveSheetContent
 import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_delete_confirm_text
-import ontrack.composeapp.generated.resources.detail_delete_confirm_title
+import ontrack.composeapp.generated.resources.detail_remove_confirm_text
+import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 
 enum class CurrentBottomSheetContent {
     TRACKING,
     REVIEW,
-    DELETE
+    REMOVE
 }
 
 // TODO add back handling
@@ -41,7 +41,7 @@ fun DetailSheet(
     mediaCoverUrl: String?,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,
-    onDeleteTracking: (String) -> Unit,
+    onRemoveTracking: (String) -> Unit,
     onCancel: () -> Unit,
     goToReview: () -> Unit,
 ) {
@@ -102,10 +102,10 @@ fun DetailSheet(
                 onSave = { onSaveTracking(tracking) },
             )
 
-            CurrentBottomSheetContent.DELETE -> DeleteSheetContent(
-                title = Res.string.detail_delete_confirm_title,
-                text = Res.string.detail_delete_confirm_text,
-                onConfirm = { onDeleteTracking(tracking.id) },
+            CurrentBottomSheetContent.REMOVE -> RemoveSheetContent(
+                title = Res.string.detail_remove_confirm_title,
+                text = Res.string.detail_remove_confirm_text,
+                onConfirm = { onRemoveTracking(tracking.id) },
                 onCancel = onCancel,
             )
         }

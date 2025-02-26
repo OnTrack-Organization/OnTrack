@@ -19,7 +19,7 @@ interface FeedService {
     suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
     suspend fun unlikeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
     suspend fun addComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
-    suspend fun deleteComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
+    suspend fun removeComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
 }
 
 class FeedServiceImpl(
@@ -90,8 +90,8 @@ class FeedServiceImpl(
             )
     }
 
-    override suspend fun deleteComment(friendId: String, trackingId: String, comment: TrackingCommentEntity) {
-        userTrackingCollection(friendId)
+    override suspend fun removeComment(userId: String, trackingId: String, comment: TrackingCommentEntity) {
+        userTrackingCollection(userId)
             .document(trackingId)
             .update(
                 "comments" to FieldValue.arrayRemove(comment.toMap())

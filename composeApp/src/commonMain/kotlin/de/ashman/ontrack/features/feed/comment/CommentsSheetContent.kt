@@ -57,7 +57,7 @@ import org.jetbrains.compose.resources.stringResource
 fun CommentsSheetContent(
     comments: List<TrackingComment>,
     onAddComment: (String) -> Unit,
-    onDeleteComment: (TrackingComment) -> Unit,
+    onRemoveComment: (TrackingComment) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var commentText by remember { mutableStateOf(TextFieldValue("")) }
@@ -120,7 +120,7 @@ fun CommentsSheetContent(
                             userImageUrl = it.userImageUrl,
                             username = it.username,
                             comment = it.comment,
-                            showDeleteCommentDialog = {
+                            onShowRemoveCommentConfirmDialog = {
                                 showCommentRemoveConfirmDialog = true
                             },
                             onReply = {
@@ -138,7 +138,7 @@ fun CommentsSheetContent(
                         if (showCommentRemoveConfirmDialog) {
                             RemoveCommentConfirmDialog(
                                 onConfirm = {
-                                    onDeleteComment(it)
+                                    onRemoveComment(it)
                                     showCommentRemoveConfirmDialog = false
                                 },
                                 onDismiss = { showCommentRemoveConfirmDialog = false },
@@ -185,7 +185,7 @@ fun FeedComment(
     userImageUrl: String,
     username: String,
     comment: String,
-    showDeleteCommentDialog: () -> Unit,
+    onShowRemoveCommentConfirmDialog: () -> Unit,
     onReply: () -> Unit,
     onClickUser: () -> Unit,
     isScrolling: Boolean,
@@ -221,7 +221,7 @@ fun FeedComment(
                     onClick = {},
                     onLongClick = {
                         if (isOwnComment) {
-                            showDeleteCommentDialog()
+                            onShowRemoveCommentConfirmDialog()
                         }
                     },
                 ) else Modifier

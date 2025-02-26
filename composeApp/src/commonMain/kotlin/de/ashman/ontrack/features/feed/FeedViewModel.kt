@@ -77,9 +77,9 @@ class FeedViewModel(
         }
     }
 
-    fun deleteComment(comment: TrackingComment) = viewModelScope.launch {
+    fun removeComment(comment: TrackingComment) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedService.deleteComment(
+            feedService.removeComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = comment.toEntity(),

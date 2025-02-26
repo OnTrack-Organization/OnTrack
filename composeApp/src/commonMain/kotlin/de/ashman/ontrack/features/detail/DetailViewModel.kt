@@ -80,8 +80,8 @@ class DetailViewModel(
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
-    fun deleteTracking(trackingId: String) = viewModelScope.launch {
-        trackingService.deleteTracking(trackingId)
+    fun removeTracking(trackingId: String) = viewModelScope.launch {
+        trackingService.removeTracking(trackingId)
         _uiState.update { it.copy(selectedTracking = null) }
     }
 

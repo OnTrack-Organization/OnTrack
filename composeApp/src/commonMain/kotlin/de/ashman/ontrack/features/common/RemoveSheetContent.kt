@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.cancel_button
-import ontrack.composeapp.generated.resources.delete_button
+import ontrack.composeapp.generated.resources.remove_button
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun DeleteSheetContent(
+fun RemoveSheetContent(
     title: StringResource,
     text: StringResource,
     onConfirm: () -> Unit,
@@ -44,7 +44,7 @@ fun DeleteSheetContent(
         )
         OnTrackButton(
             modifier = Modifier.weight(1f),
-            text = Res.string.delete_button,
+            text = Res.string.remove_button,
             icon = Icons.Default.Delete,
             onClick = onConfirm,
         )
