@@ -7,20 +7,21 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ShelfListViewModel(
-    private val trackingService: TrackingService,
+    trackingService: TrackingService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfListUiState())
     val uiState: StateFlow<ShelfListUiState> = _uiState
@@ -30,17 +31,24 @@ class ShelfListViewModel(
             _uiState.value,
         )
 
-    var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
+    val userId = trackingService.userId
 
-    fun observeUserTrackings(userId: String) {
-        trackingService.fetchTrackings(userId)
-            .onEach { trackings ->
-                _uiState.update {
-                    it.copy(trackings = trackings.map { it.toDomain() })
-                }
-            }
-            .launchIn(viewModelScope)
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val trackings = userId
+        .filterNotNull()
+        .flatMapLatest { id -> trackingService.observeTrackingsForUser(id) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val filteredTrackings: StateFlow<List<Tracking>> = combine(
+        trackings,
+        uiState
+    ) { trackings, uiState ->
+        trackings.filter {
+            it.mediaType == uiState.selectedMediaType && (uiState.selectedStatus == null || it.status == uiState.selectedStatus)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
     fun updateSelectedTrackType(trackStatus: TrackStatus?) {
         _uiState.update {
@@ -62,10 +70,4 @@ class ShelfListViewModel(
 data class ShelfListUiState(
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val selectedStatus: TrackStatus? = null,
-    val trackings: List<Tracking> = emptyList(),
-) {
-    val filteredTrackings: List<Tracking>
-        get() = trackings.filter {
-            it.mediaType == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
-        }
-}
+)

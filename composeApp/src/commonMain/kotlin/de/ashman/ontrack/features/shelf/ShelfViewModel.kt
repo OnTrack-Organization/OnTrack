@@ -8,15 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.db.entity.toDomain
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.domain.user.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,8 +31,15 @@ class ShelfViewModel(
             _uiState.value,
         )
 
+    val userId = trackingService.userId
+    val trackings = userId
+        .filterNotNull()
+        .flatMapLatest { id -> trackingService.observeTrackingsForUser(id) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
+    // TODO also move into shared
     fun observeUser(userId: String) {
         viewModelScope.launch {
             authService.observeUser(userId)
@@ -44,14 +49,8 @@ class ShelfViewModel(
         }
     }
 
-    fun observeUserTrackings(userId: String) {
-        trackingService.fetchTrackings(userId)
-            .onEach { trackings ->
-                _uiState.update {
-                    it.copy(trackings = trackings.map { it.toDomain() })
-                }
-            }
-            .launchIn(viewModelScope)
+    fun setUserId(id: String) {
+        trackingService.setUserId(id)
     }
 
     fun clearViewModel() {
@@ -61,5 +60,4 @@ class ShelfViewModel(
 
 data class ShelfUiState(
     val user: User? = null,
-    val trackings: List<Tracking> = emptyList(),
 )

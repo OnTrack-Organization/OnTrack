@@ -10,7 +10,7 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.entity.toEntity
 import de.ashman.ontrack.domain.Media
@@ -20,6 +20,8 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,10 +34,9 @@ class DetailViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val trackingService: TrackingService,
+    private val trackingRepository: TrackingRepository,
     private val authService: AuthService,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState
         .stateIn(
@@ -43,6 +44,17 @@ class DetailViewModel(
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
+
+    val trackings = authService.currentUserId?.let { userId ->
+        trackingRepository.observeTrackings(userId)
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    } ?: flowOf(emptyList())
+
+    val selectedTracking: StateFlow<Tracking?> = trackings
+        .combine(_uiState) { trackings, uiState ->
+            trackings.find { it.mediaId == uiState.selectedMedia?.id }
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
         measureTime {
@@ -75,26 +87,15 @@ class DetailViewModel(
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
         val trackingEntity = tracking.toEntity()
-        trackingService.saveTracking(trackingEntity)
-
-        _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
+        trackingRepository.saveTracking(trackingEntity)
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
-        trackingService.removeTracking(trackingId)
-        _uiState.update { it.copy(selectedTracking = null) }
-    }
-
-    fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchTrackings(authService.currentUserId)
-            .collect { trackings ->
-                val tracking = trackings.find { it.mediaId == mediaId }
-                _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
-            }
+        trackingRepository.removeTracking(trackingId)
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
+        trackingRepository.fetchFriendTrackings(mediaId).collect { feedTrackings ->
             _uiState.update { state ->
                 state.copy(
                     friendTrackings = feedTrackings.map { it.toDomain() }
@@ -119,7 +120,6 @@ class DetailViewModel(
 
 data class DetailUiState(
     val selectedMedia: Media? = null,
-    val selectedTracking: Tracking? = null,
     val friendTrackings: List<Tracking> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,

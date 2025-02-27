@@ -176,7 +176,6 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
-            authService = authService,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
     }
@@ -235,7 +234,6 @@ fun NavGraphBuilder.mediaGraph(
 
         ShelfListScreen(
             viewModel = shelfListViewModel,
-            userId = shelfList.userId,
             mediaType = shelfList.mediaType,
             onClickItem = { mediaNavItems -> navController.navigate(Route.Detail(mediaNavItems)) },
             onBack = {
