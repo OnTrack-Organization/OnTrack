@@ -9,12 +9,9 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
-import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,15 +34,12 @@ class SearchViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val trackingService: TrackingService,
-    private val authService: AuthService,
+    trackingService: TrackingService,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState
         .onStart {
             observeSearchQuery()
-            observeUserTrackings()
         }
         .stateIn(
             viewModelScope,
@@ -53,6 +47,7 @@ class SearchViewModel(
             _uiState.value,
         )
 
+    val trackings = trackingService.trackings
     private var searchJob: Job? = null
 
     init {
@@ -139,14 +134,6 @@ class SearchViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun observeUserTrackings() {
-        trackingService.fetchTrackings(authService.currentUserId)
-            .onEach { trackings ->
-                _uiState.update { it.copy(trackings = trackings.map { it.toDomain() }) }
-            }
-            .launchIn(viewModelScope)
-    }
-
     fun onQueryChanged(query: String) {
         _uiState.update { it.copy(query = query) }
     }
@@ -180,7 +167,6 @@ class SearchViewModel(
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val cachedTrending: List<Media> = emptyList(),
-    val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Empty },

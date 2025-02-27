@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,8 @@ fun DetailScreen(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedTracking by viewModel.selectedTracking.collectAsState()
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -69,7 +72,6 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNavItems.id) {
         viewModel.fetchDetails(mediaNavItems)
-        viewModel.observeTracking(mediaNavItems.id)
         viewModel.observeFriendTrackings(mediaNavItems.id)
     }
 
@@ -112,7 +114,7 @@ fun DetailScreen(
                 mediaType = mediaNavItems.mediaType,
                 mediaTitle = mediaNavItems.title,
                 mediaCoverUrl = mediaNavItems.coverUrl,
-                status = uiState.selectedTracking?.status,
+                status = selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
                     currentBottomSheet = CurrentBottomSheetContent.TRACKING
@@ -155,7 +157,7 @@ fun DetailScreen(
                     mediaType = mediaNavItems.mediaType,
                     mediaTitle = mediaNavItems.title,
                     mediaCoverUrl = mediaNavItems.coverUrl,
-                    tracking = uiState.selectedTracking,
+                    tracking = selectedTracking,
                     onSaveTracking = {
                         viewModel.saveTracking(it)
                         showBottomSheet = false

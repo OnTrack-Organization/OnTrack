@@ -38,6 +38,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
@@ -64,11 +65,13 @@ fun ShelfScreen(
     emptyText: StringResource = Res.string.shelf_own_empty,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val trackings by viewModel.trackings.collectAsStateWithLifecycle()
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LaunchedEffect(userId) {
+        viewModel.setUserId(userId)
         viewModel.observeUser(userId)
-        viewModel.observeUserTrackings(userId)
     }
 
     Scaffold(
@@ -110,12 +113,12 @@ fun ShelfScreen(
                         }
                     },
                     expandedHeight = 110.dp,
-                    scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
+                    scrollBehavior = if (trackings.isEmpty()) null else scrollBehavior,
                 )
             }
         }
     ) { contentPadding ->
-        if (uiState.trackings.isEmpty()) {
+        if (trackings.isEmpty()) {
             EmptyShelfContent(text = emptyText)
         } else {
             LazyColumn(
@@ -124,10 +127,10 @@ fun ShelfScreen(
                 contentPadding = PaddingValues(bottom = 16.dp),
                 state = viewModel.listState,
             ) {
-                item { MediaCounts(trackings = uiState.trackings) }
+                item { MediaCounts(trackings = trackings) }
 
                 MediaType.entries.forEach { mediaType ->
-                    val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
+                    val filteredTrackings = trackings.filter { it.mediaType == mediaType }
 
                     if (filteredTrackings.isNotEmpty()) {
                         item(key = mediaType.name) {

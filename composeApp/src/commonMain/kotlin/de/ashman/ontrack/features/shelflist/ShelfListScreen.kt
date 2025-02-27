@@ -60,16 +60,15 @@ import org.jetbrains.compose.resources.vectorResource
 @Composable
 fun ShelfListScreen(
     viewModel: ShelfListViewModel,
-    userId: String,
     mediaType: MediaType,
     onClickItem: (MediaNavigationItems) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val filteredTrackings by viewModel.filteredTrackings.collectAsState()
 
     LaunchedEffect(mediaType) {
         viewModel.updateSelectedMediaType(mediaType)
-        viewModel.observeUserTrackings(userId)
     }
 
     Scaffold(
@@ -115,7 +114,7 @@ fun ShelfListScreen(
             )
 
             AnimatedContent(
-                targetState = uiState.filteredTrackings.isEmpty() to uiState.selectedStatus,
+                targetState = filteredTrackings.isEmpty() to uiState.selectedStatus,
                 label = "EmptyContentAnimation"
             ) { (isEmpty, selectedStatus) ->
                 if (isEmpty) {
@@ -132,7 +131,7 @@ fun ShelfListScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        items(uiState.filteredTrackings, key = { it.mediaId }) {
+                        items(filteredTrackings, key = { it.mediaId }) {
                             MediaPoster(
                                 coverUrl = it.mediaCoverUrl,
                                 onClick = {

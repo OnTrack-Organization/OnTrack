@@ -17,17 +17,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.domain.Media
 import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.EmptyContent
 import de.ashman.ontrack.features.common.ErrorContent
@@ -37,7 +35,6 @@ import de.ashman.ontrack.features.common.SearchBar
 import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,24 +42,11 @@ import org.jetbrains.compose.resources.pluralStringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    authService: AuthService,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(true) {
-        NotifierManager.addListener(object : NotifierManager.Listener {
-            override fun onNewToken(token: String) {
-                coroutineScope.launch {
-                    authService.updateFcmToken(token)
-                }
-                println("onNewToken: $token")
-            }
-        })
-    }
+    val trackings by viewModel.trackings.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -103,7 +87,9 @@ fun SearchScreen(
 
             SearchResultState.Success -> {
                 SuccessContent(
-                    uiState = uiState,
+                    trackings = trackings,
+                    searchResults = uiState.searchResults,
+                    posterRowState = uiState.posterRowState,
                     onClickItem = onClickItem,
                 )
             }
@@ -115,17 +101,18 @@ fun SearchScreen(
 
 @Composable
 fun SuccessContent(
-    uiState: SearchUiState,
+    trackings: List<Tracking>,
+    searchResults: List<Media>,
+    posterRowState: LazyListState,
     onClickItem: (MediaNavigationItems) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        state = uiState.posterRowState,
+        state = posterRowState,
     ) {
-        items(items = uiState.searchResults, key = { it.id }) { media ->
-            val tracking = uiState.trackings.associateBy { it.mediaId }
+        items(items = searchResults, key = { it.id }) { media ->
+            val tracking = trackings.associateBy { it.mediaId }
 
             MediaPoster(
                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
