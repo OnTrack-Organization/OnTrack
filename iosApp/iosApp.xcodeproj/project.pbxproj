@@ -10,8 +10,7 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		B61C208B2D63E0BE0080E2D6 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = B61C208A2D63E0BE0080E2D6 /* FirebaseMessaging */; };
-		B649C9572D71151E002DF43F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B649C9562D71151E002DF43F /* GoogleService-Info.plist */; };
-		B649C9582D71155D002DF43F /* GoogleService-Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = B649C9562D71151E002DF43F /* GoogleService-Info.plist */; };
+		B69552BF2D7126B200626106 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B69552BE2D7126B200626106 /* GoogleService-Info.plist */; };
 		B6A12E4E2C7926A400CC7D1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A12E4D2C7926A400CC7D1C /* ContentView.swift */; };
 		B6A12E502C7926C800CC7D1C /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A12E4F2C7926C800CC7D1C /* iOSApp.swift */; };
 		B6A12E552C7926FA00CC7D1C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B6A12E542C7926FA00CC7D1C /* GoogleSignIn */; };
@@ -31,8 +30,8 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B61C208C2D63E1680080E2D6 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
-		B649C9562D71151E002DF43F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B66BF3532D710BD100FD2D95 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		B69552BE2D7126B200626106 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B6A12E4D2C7926A400CC7D1C /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = ../../../../Desktop/iosApp/iosApp/ContentView.swift; sourceTree = "<group>"; };
 		B6A12E4F2C7926C800CC7D1C /* iOSApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = iOSApp.swift; path = ../../../../Desktop/iosApp/iosApp/iOSApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,7 +93,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				B649C9562D71151E002DF43F /* GoogleService-Info.plist */,
+				B69552BE2D7126B200626106 /* GoogleService-Info.plist */,
 				B61C208C2D63E1680080E2D6 /* iosApp.entitlements */,
 				B6A12E4D2C7926A400CC7D1C /* ContentView.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
@@ -199,7 +198,7 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
-				B649C9572D71151E002DF43F /* GoogleService-Info.plist in Resources */,
+				B69552BF2D7126B200626106 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,7 +253,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B649C9582D71155D002DF43F /* GoogleService-Info.plist in Sources */,
 				B6A12E502C7926C800CC7D1C /* iOSApp.swift in Sources */,
 				B6A12E4E2C7926A400CC7D1C /* ContentView.swift in Sources */,
 			);
