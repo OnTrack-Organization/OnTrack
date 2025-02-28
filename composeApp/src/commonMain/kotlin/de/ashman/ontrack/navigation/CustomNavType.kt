@@ -3,7 +3,7 @@ package de.ashman.ontrack.navigation
 import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
 import com.eygraber.uri.UriCodec
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import kotlinx.serialization.json.Json
 
 object CustomNavType {

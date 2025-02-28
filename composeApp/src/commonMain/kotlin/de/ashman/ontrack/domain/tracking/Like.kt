@@ -1,10 +1,10 @@
 package de.ashman.ontrack.domain.tracking
 
+import de.ashman.ontrack.db.entity.tracking.LikeEntity
+import de.ashman.ontrack.db.entity.user.UserData
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
-import kotlinx.datetime.Clock.System
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -14,6 +14,12 @@ import kotlin.uuid.Uuid
 data class Like(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
-    val userId: String = Firebase.auth.currentUser!!.uid,
-    val timestamp: Long = System.now().toEpochMilliseconds(),
-) : CommonParcelable
+    val userData: UserData,
+    val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+) : CommonParcelable {
+    fun toEntity() = LikeEntity(
+        id = id,
+        userData = userData,
+        timestamp = timestamp,
+    )
+}

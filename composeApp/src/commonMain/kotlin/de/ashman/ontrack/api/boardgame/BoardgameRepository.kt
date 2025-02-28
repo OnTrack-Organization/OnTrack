@@ -8,8 +8,8 @@ import de.ashman.ontrack.api.utils.convertXmlToResponse
 import de.ashman.ontrack.api.utils.decodeHtmlManually
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Boardgame
-import de.ashman.ontrack.domain.BoardgameDesigner
+import de.ashman.ontrack.domain.media.Boardgame
+import de.ashman.ontrack.domain.media.BoardgameDesigner
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

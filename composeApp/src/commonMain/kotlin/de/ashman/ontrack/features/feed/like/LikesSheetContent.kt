@@ -44,8 +44,8 @@ fun LikesSheetContent(
         ) {
             items(items = likes, key = { it.userId }) {
                 FeedLike(
-                    userImageUrl = it.userImageUrl,
-                    username = it.username,
+                    userImageUrl = "it.userImageUrl",
+                    username = "it.username",
                     onClick = { onUserClick(it.userId) },
                 )
             }

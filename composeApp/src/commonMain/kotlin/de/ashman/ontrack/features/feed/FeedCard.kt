@@ -38,7 +38,7 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
@@ -76,9 +76,9 @@ fun FeedCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FeedCardHeader(
-                userImageUrl = tracking.userImageUrl,
-                username = tracking.username,
-                timestamp = tracking.timestamp.formatDateTime(),
+                userImageUrl = tracking.userData.imageUrl,
+                username = tracking.userData.username,
+                timestamp = tracking.updatedAt.formatDateTime(),
                 onUserClick = onUserClick,
             )
 
@@ -97,7 +97,7 @@ fun FeedCard(
             FeedCardFooter(
                 isLiked = tracking.isLikedByCurrentUser,
                 likeCount = tracking.likeCount,
-                likeImages = tracking.likeImages,
+                likeImages = emptyList(),
                 commentCount = tracking.commentCount,
                 onLikeTracking = onClickLike,
                 onShowComments = onShowComments,

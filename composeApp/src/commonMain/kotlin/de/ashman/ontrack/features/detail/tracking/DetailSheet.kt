@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.RemoveSheetContent
@@ -50,7 +50,7 @@ fun DetailSheet(
     var tracking by remember {
         mutableStateOf(
             tracking?.copy(
-                timestamp = System.now().toEpochMilliseconds(),
+                updatedAt = System.now().toEpochMilliseconds(),
             ) ?: Tracking(
                 mediaId = mediaId,
                 mediaType = mediaType,
@@ -82,7 +82,7 @@ fun DetailSheet(
                         rating = if (tracking.status == TrackStatus.CATALOG) null else tracking.rating,
                         reviewTitle = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewTitle,
                         reviewDescription = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewDescription,
-                        timestamp = System.now().toEpochMilliseconds()
+                        updatedAt = System.now().toEpochMilliseconds()
                     ).also {
                         onSaveTracking(it)
                     }

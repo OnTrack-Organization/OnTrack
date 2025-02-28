@@ -116,22 +116,22 @@ fun CommentsSheetContent(
                     items(items = comments, key = { it.id }) {
                         FeedComment(
                             modifier = Modifier.animateItem(),
-                            userId = it.userId,
-                            userImageUrl = it.userImageUrl,
-                            username = it.username,
+                            userId = it.userData.id,
+                            userImageUrl = "it.userImageUrl",
+                            username = "it.username",
                             comment = it.comment,
                             onShowRemoveCommentConfirmDialog = {
                                 showCommentRemoveConfirmDialog = true
                             },
                             onReply = {
-                                val newText = "@${it.username} "
+                                val newText = "@${it} "
                                 commentText = TextFieldValue(
                                     text = newText,
                                     selection = TextRange(newText.length)
                                 )
                                 focusRequester.requestFocus()
                             },
-                            onClickUser = { onClickUser(it.userId) },
+                            onClickUser = { onClickUser(it.userData.id) },
                             isScrolling = listState.isScrollInProgress,
                         )
 

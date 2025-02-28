@@ -34,9 +34,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
-import de.ashman.ontrack.domain.Franchise
-import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.Season
+import de.ashman.ontrack.domain.media.Franchise
+import de.ashman.ontrack.domain.media.Media
+import de.ashman.ontrack.domain.media.Season
 import de.ashman.ontrack.features.detail.components.MediaTitle
 import de.ashman.ontrack.navigation.MediaNavigationItems
 

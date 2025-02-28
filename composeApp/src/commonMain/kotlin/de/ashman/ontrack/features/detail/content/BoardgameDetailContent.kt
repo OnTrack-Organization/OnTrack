@@ -1,7 +1,7 @@
 package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
-import de.ashman.ontrack.domain.Boardgame
+import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription

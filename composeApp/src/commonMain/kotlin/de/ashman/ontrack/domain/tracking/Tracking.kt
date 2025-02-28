@@ -1,6 +1,8 @@
 package de.ashman.ontrack.domain.tracking
 
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.db.entity.tracking.TrackingEntity
+import de.ashman.ontrack.db.entity.user.UserData
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import dev.gitlive.firebase.Firebase
@@ -15,24 +17,22 @@ import kotlin.uuid.Uuid
 data class Tracking(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
-    val userId: String = Firebase.auth.currentUser!!.uid,
-    val username: String,
-    val userImageUrl: String,
-    val timestamp: Long = System.now().toEpochMilliseconds(),
+    val userData: UserData,
+    val updatedAt: Long = System.now().toEpochMilliseconds(),
 
     val mediaId: String,
     val mediaType: MediaType,
-    val mediaTitle: String? = null,
-    val mediaCoverUrl: String? = null,
+    val mediaTitle: String,
+    val mediaCoverUrl: String,
 
-    val status: TrackStatus? = null,
+    val status: TrackStatus,
     val rating: Double? = null,
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
 
     val likes: List<Like> = listOf(),
     val comments: List<Comment> = listOf(),
-    val history: List<HistoryEntry> = listOf(),
+    val history: List<Entry> = listOf(),
 ) : CommonParcelable {
     val likeCount: Int
         get() = likes.size
@@ -42,6 +42,23 @@ data class Tracking(
 
     val commentCount: Int
         get() = comments.size
+
+    val likeImages: List<String>
+        get() = likes.map { it.userImageUrl }.take(3)
+
+    fun toEntity(): TrackingEntity = TrackingEntity(
+        id = id,
+        userData = userData,
+        mediaId = mediaId,
+        mediaType = mediaType,
+        mediaTitle = mediaTitle,
+        mediaCoverUrl = mediaCoverUrl,
+        status = status,
+        rating = rating,
+        reviewTitle = reviewTitle,
+        reviewDescription = reviewDescription,
+        updatedAt = updatedAt,
+    )
 }
 
 @Serializable

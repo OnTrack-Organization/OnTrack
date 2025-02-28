@@ -10,11 +10,9 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.db.entity.toDomain
-import de.ashman.ontrack.db.entity.toEntity
-import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.domain.media.Media
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +30,7 @@ class DetailViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val trackingService: TrackingService,
+    private val trackingRepository: TrackingRepository,
     private val authService: AuthService,
 ) : ViewModel() {
 
@@ -74,33 +72,25 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        val trackingEntity = tracking.toEntity()
-        trackingService.saveTracking(trackingEntity)
+        trackingRepository.saveTracking(tracking)
 
-        _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
+        _uiState.update { it.copy(selectedTracking = tracking) }
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
-        trackingService.removeTracking(trackingId)
+        trackingRepository.removeTracking(trackingId)
         _uiState.update { it.copy(selectedTracking = null) }
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchTrackings(authService.currentUserId)
-            .collect { trackings ->
-                val tracking = trackings.find { it.mediaId == mediaId }
-                _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
+        trackingRepository.observeCurrentUserTracking(mediaId)
+            .collect { tracking ->
+                _uiState.update { it.copy(selectedTracking = tracking) }
             }
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
-            _uiState.update { state ->
-                state.copy(
-                    friendTrackings = feedTrackings.map { it.toDomain() }
-                )
-            }
-        }
+        // TODO add back in again
     }
 
     fun clearViewModel() {

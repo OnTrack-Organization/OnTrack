@@ -4,8 +4,8 @@ import de.ashman.ontrack.api.show.dto.SeasonDto
 import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.utils.getTMDBCoverUrl
 import de.ashman.ontrack.api.utils.getYear
-import de.ashman.ontrack.domain.Season
-import de.ashman.ontrack.domain.Show
+import de.ashman.ontrack.domain.media.Season
+import de.ashman.ontrack.domain.media.Show
 
 fun ShowDto.toDomain(): Show =
     Show(

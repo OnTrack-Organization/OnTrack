@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album_status_catalog_label

@@ -56,7 +56,7 @@ fun ReviewCard(
             FeedCardHeader(
                 userImageUrl = tracking.userImageUrl,
                 username = tracking.username,
-                timestamp = tracking.timestamp.formatDateTime(),
+                timestamp = tracking.updatedAt.formatDateTime(),
                 onUserClick = onUserClick,
             )
 

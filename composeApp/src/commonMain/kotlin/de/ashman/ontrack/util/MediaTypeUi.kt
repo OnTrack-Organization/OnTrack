@@ -11,7 +11,7 @@ import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album
 import ontrack.composeapp.generated.resources.album_network_error

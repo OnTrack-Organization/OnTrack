@@ -1,7 +1,7 @@
 package de.ashman.ontrack.authentication
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.db.entity.UserEntity
+import de.ashman.ontrack.db.entity.user.UserEntity
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +11,7 @@ interface AuthService {
     val currentUserId: String
     val currentUserImage: String
     val currentUserName: String
+    val currentName: String
 
     suspend fun getUser(userId: String): UserEntity?
     suspend fun createUser(user: UserEntity): Boolean
@@ -38,6 +39,9 @@ class AuthServiceImpl(
         get() = auth.currentUser?.photoURL.orEmpty()
 
     override val currentUserName: String
+        get() = auth.currentUser?.displayName?.replace(" ", "")?.lowercase().orEmpty()
+
+    override val currentName: String
         get() = auth.currentUser?.displayName.orEmpty()
 
     override suspend fun getUser(userId: String): UserEntity? {
@@ -51,16 +55,16 @@ class AuthServiceImpl(
     }
 
     override suspend fun createUser(user: UserEntity): Boolean {
-        val document = userCollection.document(user.id).get()
+        val document = userCollection.document(user.userData.id).get()
         if (!document.exists) {
             userCollection
-                .document(user.id)
+                .document(user.userData.id)
                 .set(user)
 
-            Logger.d("User with ID ${user.id} successfully added.")
+            Logger.d("User with ID ${user.userData.id} successfully added.")
             return true
         } else {
-            Logger.w("User with ID ${user.id} already exists.")
+            Logger.w("User with ID ${user.userData.id} already exists.")
             return false
         }
     }

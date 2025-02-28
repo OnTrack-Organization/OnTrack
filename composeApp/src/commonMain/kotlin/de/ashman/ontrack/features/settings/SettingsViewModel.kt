@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.domain.user.toDomain
-import de.ashman.ontrack.domain.user.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +33,7 @@ class SettingsViewModel(
                 _uiState.update {
                     it.copy(
                         user = user?.toDomain(),
-                        name = user?.displayName.orEmpty(),
+                        name = user?.name.orEmpty(),
                         username = user?.username.orEmpty()
                     )
                 }

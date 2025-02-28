@@ -19,7 +19,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.db.entity.FriendEntity
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.SearchBar
@@ -253,17 +252,3 @@ fun FriendsAndRequests(
         )
     }
 }
-
-fun Friend.toRequest() = FriendRequest(
-    userId = id,
-    name = name,
-    username = username,
-    imageUrl = imageUrl,
-)
-
-fun FriendRequest.toFriendEntity() = FriendEntity(
-    id = userId,
-    username = username,
-    name = name,
-    imageUrl = imageUrl,
-)

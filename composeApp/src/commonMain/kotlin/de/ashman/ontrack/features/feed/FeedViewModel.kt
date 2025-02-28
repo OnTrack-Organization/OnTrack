@@ -2,9 +2,9 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.FeedService
-import de.ashman.ontrack.db.entity.toDomain
-import de.ashman.ontrack.db.entity.toEntity
+import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.FeedRepository
+import de.ashman.ontrack.db.entity.user.UserData
 import de.ashman.ontrack.domain.tracking.Comment
 import de.ashman.ontrack.domain.tracking.Like
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -16,7 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val feedService: FeedService,
+    private val feedRepository: FeedRepository,
+    private val authService: AuthService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -36,7 +37,7 @@ class FeedViewModel(
             if (feedTrackings.isEmpty()) {
                 _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
             } else {
-                lastTimestamp = feedTrackings.last().timestamp
+                lastTimestamp = feedTrackings.last().updatedAt
                 _uiState.update { state ->
                     state.copy(
                         feedResultState = FeedResultState.Success,
@@ -48,10 +49,12 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        val like = Like()
+        val like = Like(
+
+        )
 
         if (tracking.isLikedByCurrentUser) {
-            feedService.unlikeTracking(
+            feedRepository.unlikeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
                 like = like.toEntity()
@@ -66,23 +69,31 @@ class FeedViewModel(
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
-        val newComment = Comment(comment = comment)
+        val newComment = Comment(
+            userData = UserData(
+                id = authService.currentUserId,
+                username = authService.currentUserName,
+                name = authService.currentUserName,
+                imageUrl = authService.currentUserImage,
+            ),
+            comment = comment
+        )
 
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedService.addComment(
-                friendId = selectedTracking.userId,
+            feedRepository.addComment(
+                friendId = selectedTracking.userData.id,
                 trackingId = selectedTracking.id,
-                comment = newComment.toEntity(),
+                comment = newComment,
             )
         }
     }
 
     fun removeComment(comment: Comment) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedService.removeComment(
-                friendId = selectedTracking.userId,
+            feedRepository.removeComment(
+                friendId = selectedTracking.userData.id,
                 trackingId = selectedTracking.id,
-                comment = comment.toEntity(),
+                commentId = comment.id,
             )
         }
     }

@@ -155,7 +155,7 @@ fun FeedScreen(
                             showBottomSheet = true
                         },
                         onClickCover = onClickCover,
-                        onUserClick = { onUserClick(it.userId) },
+                        onUserClick = { onUserClick(it.userData.id) },
                     )
 
                     if (it != feedUiState.feedTrackings.last()) {

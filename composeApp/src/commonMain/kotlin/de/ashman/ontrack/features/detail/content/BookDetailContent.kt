@@ -2,7 +2,7 @@ package de.ashman.ontrack.features.detail.content
 
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.api.utils.getLivingDates
-import de.ashman.ontrack.domain.Book
+import de.ashman.ontrack.domain.media.Book
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaChips
