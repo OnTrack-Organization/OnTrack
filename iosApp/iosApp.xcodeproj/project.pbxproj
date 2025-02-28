@@ -207,6 +207,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		B66BF34F2D70FBDB00FD2D95 /* Crashlytics Automatic DSYM Upload */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -230,6 +231,7 @@
 		};
 		F36B1CEB2AD83DDC00CB74D5 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
