@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.domain.user.toEntity
+import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

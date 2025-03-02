@@ -3,11 +3,11 @@ package de.ashman.ontrack.features.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.FeedService
-import de.ashman.ontrack.entity.tracking.toDomain
-import de.ashman.ontrack.entity.tracking.toEntity
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.toDomain
+import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

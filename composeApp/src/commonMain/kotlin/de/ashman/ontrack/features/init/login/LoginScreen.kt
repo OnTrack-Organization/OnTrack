@@ -30,8 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
+import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.domain.user.toDomain
 import de.ashman.ontrack.features.common.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.apple

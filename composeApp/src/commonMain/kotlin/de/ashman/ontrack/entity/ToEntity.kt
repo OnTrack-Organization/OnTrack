@@ -1,11 +1,28 @@
-package de.ashman.ontrack.entity.tracking
+package de.ashman.ontrack.entity
 
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.feed.Comment
-import de.ashman.ontrack.domain.tracking.Entry
 import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.tracking.Entry
+import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.FriendRequest
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.feed.CommentEntity
 import de.ashman.ontrack.entity.feed.LikeEntity
+import de.ashman.ontrack.entity.tracking.EntryEntity
+import de.ashman.ontrack.entity.tracking.TrackingEntity
+import de.ashman.ontrack.entity.user.FriendEntity
+import de.ashman.ontrack.entity.user.FriendRequestEntity
+import de.ashman.ontrack.entity.user.UserEntity
+
+fun User.toEntity() = UserEntity(
+    id = id,
+    fcmToken = fcmToken,
+    email = email,
+    displayName = name,
+    username = username,
+    imageUrl = imageUrl,
+)
 
 fun Tracking.toEntity() = TrackingEntity(
     id = id,
@@ -26,35 +43,7 @@ fun Tracking.toEntity() = TrackingEntity(
     timestamp = timestamp,
 )
 
-fun TrackingEntity.toDomain() = Tracking(
-    id = id,
-    mediaId = mediaId,
-    mediaType = mediaType,
-    mediaTitle = mediaTitle,
-    mediaCoverUrl = mediaCoverUrl,
-    status = status,
-    rating = rating,
-    reviewTitle = reviewTitle,
-    reviewDescription = reviewDescription,
-    userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
-    likes = likes.map { it.toDomain() },
-    comments = comments.map { it.toDomain() },
-    history = history.map { it.toDomain() },
-    timestamp = timestamp,
-)
-
 fun Comment.toEntity() = CommentEntity(
-    id = id,
-    userId = userId,
-    userImageUrl = userImageUrl,
-    username = username,
-    comment = comment,
-    timestamp = timestamp,
-)
-
-fun CommentEntity.toDomain() = Comment(
     id = id,
     userId = userId,
     userImageUrl = userImageUrl,
@@ -68,19 +57,25 @@ fun Entry.toEntity() = EntryEntity(
     timestamp = timestamp,
 )
 
-fun EntryEntity.toDomain() = Entry(
-    status = status,
-    timestamp = timestamp,
-)
-
 fun Like.toEntity() = LikeEntity(
     userId = userId,
     username = username,
     userImageUrl = userImageUrl,
 )
 
-fun LikeEntity.toDomain() = Like(
-    userId = userId,
-    username = username,
-    userImageUrl = userImageUrl,
-)
+fun Friend.toEntity() =
+    FriendEntity(
+        id = id,
+        username = username,
+        name = name,
+        imageUrl = imageUrl,
+    )
+
+fun FriendRequest.toEntity() =
+    FriendRequestEntity(
+        userId = userId,
+        username = username,
+        name = name,
+        imageUrl = imageUrl,
+        status = status,
+    )

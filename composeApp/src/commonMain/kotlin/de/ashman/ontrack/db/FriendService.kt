@@ -3,7 +3,7 @@ package de.ashman.ontrack.db
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.toEntity
+import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.user.FriendEntity
 import de.ashman.ontrack.entity.user.FriendRequestEntity
 import de.ashman.ontrack.entity.user.UserEntity

@@ -11,9 +11,9 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.entity.tracking.toDomain
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job

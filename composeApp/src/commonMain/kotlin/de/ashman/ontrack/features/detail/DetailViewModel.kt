@@ -11,10 +11,10 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.entity.tracking.toDomain
-import de.ashman.ontrack.entity.tracking.toEntity
+import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow

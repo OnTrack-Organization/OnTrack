@@ -8,10 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.entity.tracking.toDomain
+import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.domain.user.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
