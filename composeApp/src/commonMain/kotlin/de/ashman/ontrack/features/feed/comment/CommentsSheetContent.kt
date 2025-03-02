@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.tracking.TrackingComment
+import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.features.common.OnTrackCommentTextField
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.PersonImage
@@ -55,9 +55,9 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CommentsSheetContent(
-    comments: List<TrackingComment>,
+    comments: List<Comment>,
     onAddComment: (String) -> Unit,
-    onRemoveComment: (TrackingComment) -> Unit,
+    onRemoveComment: (Comment) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var commentText by remember { mutableStateOf(TextFieldValue("")) }

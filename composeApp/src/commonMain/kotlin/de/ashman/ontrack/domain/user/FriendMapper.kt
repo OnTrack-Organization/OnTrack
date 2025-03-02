@@ -1,7 +1,7 @@
 package de.ashman.ontrack.domain.user
 
-import de.ashman.ontrack.db.entity.FriendEntity
-import de.ashman.ontrack.db.entity.FriendRequestEntity
+import de.ashman.ontrack.entity.user.FriendEntity
+import de.ashman.ontrack.entity.user.FriendRequestEntity
 
 fun FriendEntity.toDomain() =
     Friend(

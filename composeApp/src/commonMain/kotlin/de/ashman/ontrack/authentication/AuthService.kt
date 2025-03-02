@@ -1,7 +1,7 @@
 package de.ashman.ontrack.authentication
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.db.entity.UserEntity
+import de.ashman.ontrack.entity.user.UserEntity
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow

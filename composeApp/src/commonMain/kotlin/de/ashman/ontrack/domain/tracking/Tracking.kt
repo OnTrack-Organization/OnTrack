@@ -1,5 +1,7 @@
 package de.ashman.ontrack.domain.tracking
 
+import de.ashman.ontrack.domain.feed.Comment
+import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
@@ -30,28 +32,23 @@ data class Tracking(
     val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
     val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
 
-    val likes: List<TrackingLike> = listOf(),
-    val comments: List<TrackingComment> = listOf(),
-    val history: List<TrackingHistoryEntry> = listOf(),
+    val likes: List<Like> = listOf(),
+    val comments: List<Comment> = listOf(),
+    val history: List<Entry> = listOf(),
 
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable {
     val likeCount: Int
-        get() = this@Tracking.likes.size
+        get() = likes.size
 
     val likeImages: List<String>
-        get() = this@Tracking.likes.map { it.userImageUrl }.take(3)
+        get() = likes.map { it.userImageUrl }.take(3)
 
     val isLikedByCurrentUser: Boolean
-        get() = this@Tracking.likes.any { it.userId == Firebase.auth.currentUser?.uid }
+        get() = likes.any { it.userId == Firebase.auth.currentUser?.uid }
 
     val commentCount: Int
         get() = comments.size
-}
-
-@Serializable
-enum class TrackStatus {
-    CATALOG, CONSUMING, CONSUMED, DROPPED
 }
 
 const val MAX_RATING = 5

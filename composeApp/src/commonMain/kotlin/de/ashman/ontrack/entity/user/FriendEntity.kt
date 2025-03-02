@@ -1,9 +1,9 @@
-package de.ashman.ontrack.domain.user
+package de.ashman.ontrack.entity.user
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Friend(
+data class FriendEntity(
     val id: String,
     val username: String,
     val name: String,

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @CommonParcelize
 @Serializable
-data class TrackingHistoryEntry(
+data class Entry(
     val status: TrackStatus,
     val timestamp: Long,
 ) : CommonParcelable

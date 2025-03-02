@@ -1,6 +1,6 @@
 package de.ashman.ontrack.domain.user
 
-import de.ashman.ontrack.db.entity.UserEntity
+import de.ashman.ontrack.entity.user.UserEntity
 import dev.gitlive.firebase.auth.FirebaseUser
 
 fun FirebaseUser.toDomain() =

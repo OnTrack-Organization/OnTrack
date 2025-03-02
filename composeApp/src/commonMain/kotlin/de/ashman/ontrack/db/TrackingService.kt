@@ -2,8 +2,8 @@ package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.entity.TrackingEntity
-import de.ashman.ontrack.db.entity.TrackingHistoryEntryEntity
+import de.ashman.ontrack.entity.tracking.TrackingEntity
+import de.ashman.ontrack.entity.tracking.EntryEntity
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,7 @@ class TrackingServiceImpl(
 
         val updatedHistory = existingTracking?.let {
             if (it.status != tracking.status && it.status != null) {
-                it.history + TrackingHistoryEntryEntity(status = it.status, timestamp = it.timestamp)
+                it.history + EntryEntity(status = it.status, timestamp = it.timestamp)
             } else {
                 it.history
             }

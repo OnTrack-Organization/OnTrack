@@ -1,9 +1,9 @@
 package de.ashman.ontrack.db
 
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.entity.TrackingCommentEntity
-import de.ashman.ontrack.db.entity.TrackingEntity
-import de.ashman.ontrack.db.entity.TrackingLikeEntity
+import de.ashman.ontrack.entity.feed.CommentEntity
+import de.ashman.ontrack.entity.tracking.TrackingEntity
+import de.ashman.ontrack.entity.feed.LikeEntity
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.map
 
 interface FeedService {
     suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>>
-    suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
-    suspend fun unlikeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity)
-    suspend fun addComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
-    suspend fun removeComment(friendId: String, trackingId: String, comment: TrackingCommentEntity)
+    suspend fun likeTracking(friendId: String, trackingId: String, like: LikeEntity)
+    suspend fun unlikeTracking(friendId: String, trackingId: String, like: LikeEntity)
+    suspend fun addComment(friendId: String, trackingId: String, comment: CommentEntity)
+    suspend fun removeComment(friendId: String, trackingId: String, comment: CommentEntity)
 }
 
 class FeedServiceImpl(
@@ -66,7 +66,7 @@ class FeedServiceImpl(
         }
     }
 
-    override suspend fun likeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity) {
+    override suspend fun likeTracking(friendId: String, trackingId: String, like: LikeEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
@@ -74,7 +74,7 @@ class FeedServiceImpl(
             )
     }
 
-    override suspend fun unlikeTracking(friendId: String, trackingId: String, like: TrackingLikeEntity) {
+    override suspend fun unlikeTracking(friendId: String, trackingId: String, like: LikeEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
@@ -82,7 +82,7 @@ class FeedServiceImpl(
             )
     }
 
-    override suspend fun addComment(friendId: String, trackingId: String, comment: TrackingCommentEntity) {
+    override suspend fun addComment(friendId: String, trackingId: String, comment: CommentEntity) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
@@ -90,7 +90,7 @@ class FeedServiceImpl(
             )
     }
 
-    override suspend fun removeComment(userId: String, trackingId: String, comment: TrackingCommentEntity) {
+    override suspend fun removeComment(userId: String, trackingId: String, comment: CommentEntity) {
         userTrackingCollection(userId)
             .document(trackingId)
             .update(

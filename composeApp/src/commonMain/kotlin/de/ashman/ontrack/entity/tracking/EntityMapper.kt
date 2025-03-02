@@ -1,9 +1,11 @@
-package de.ashman.ontrack.db.entity
+package de.ashman.ontrack.entity.tracking
 
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.tracking.TrackingComment
-import de.ashman.ontrack.domain.tracking.TrackingHistoryEntry
-import de.ashman.ontrack.domain.tracking.TrackingLike
+import de.ashman.ontrack.domain.feed.Comment
+import de.ashman.ontrack.domain.tracking.Entry
+import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.entity.feed.CommentEntity
+import de.ashman.ontrack.entity.feed.LikeEntity
 
 fun Tracking.toEntity() = TrackingEntity(
     id = id,
@@ -43,7 +45,7 @@ fun TrackingEntity.toDomain() = Tracking(
     timestamp = timestamp,
 )
 
-fun TrackingComment.toEntity() = TrackingCommentEntity(
+fun Comment.toEntity() = CommentEntity(
     id = id,
     userId = userId,
     userImageUrl = userImageUrl,
@@ -52,7 +54,7 @@ fun TrackingComment.toEntity() = TrackingCommentEntity(
     timestamp = timestamp,
 )
 
-fun TrackingCommentEntity.toDomain() = TrackingComment(
+fun CommentEntity.toDomain() = Comment(
     id = id,
     userId = userId,
     userImageUrl = userImageUrl,
@@ -61,23 +63,23 @@ fun TrackingCommentEntity.toDomain() = TrackingComment(
     timestamp = timestamp,
 )
 
-fun TrackingHistoryEntry.toEntity() = TrackingHistoryEntryEntity(
+fun Entry.toEntity() = EntryEntity(
     status = status,
     timestamp = timestamp,
 )
 
-fun TrackingHistoryEntryEntity.toDomain() = TrackingHistoryEntry(
+fun EntryEntity.toDomain() = Entry(
     status = status,
     timestamp = timestamp,
 )
 
-fun TrackingLike.toEntity() = TrackingLikeEntity(
+fun Like.toEntity() = LikeEntity(
     userId = userId,
     username = username,
     userImageUrl = userImageUrl,
 )
 
-fun TrackingLikeEntity.toDomain() = TrackingLike(
+fun LikeEntity.toDomain() = Like(
     userId = userId,
     username = username,
     userImageUrl = userImageUrl,

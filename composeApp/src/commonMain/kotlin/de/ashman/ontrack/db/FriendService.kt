@@ -1,12 +1,12 @@
 package de.ashman.ontrack.db
 
 import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.entity.FriendEntity
-import de.ashman.ontrack.db.entity.FriendRequestEntity
-import de.ashman.ontrack.db.entity.UserEntity
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.toEntity
+import de.ashman.ontrack.entity.user.FriendEntity
+import de.ashman.ontrack.entity.user.FriendRequestEntity
+import de.ashman.ontrack.entity.user.UserEntity
 import de.ashman.ontrack.features.feed.friend.toFriendEntity
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow

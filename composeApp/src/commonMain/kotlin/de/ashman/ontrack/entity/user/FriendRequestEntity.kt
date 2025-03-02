@@ -1,15 +1,7 @@
-package de.ashman.ontrack.db.entity
+package de.ashman.ontrack.entity.user
 
 import de.ashman.ontrack.domain.user.FriendRequestStatus
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class FriendEntity(
-    val id: String,
-    val username: String,
-    val name: String,
-    val imageUrl: String,
-)
 
 @Serializable
 data class FriendRequestEntity(

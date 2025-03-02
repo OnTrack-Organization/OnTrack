@@ -1,4 +1,4 @@
-package de.ashman.ontrack.db.entity
+package de.ashman.ontrack.entity.user
 
 import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.domain.tracking
+package de.ashman.ontrack.domain.feed
 
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
@@ -11,7 +11,7 @@ import kotlin.uuid.Uuid
 
 @CommonParcelize
 @Serializable
-data class TrackingComment(
+data class Comment(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
     val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
