@@ -7,8 +7,8 @@ import de.ashman.ontrack.api.show.dto.ShowDto
 import de.ashman.ontrack.api.show.dto.ShowResponseDto
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Director
-import de.ashman.ontrack.domain.Show
+import de.ashman.ontrack.domain.media.Director
+import de.ashman.ontrack.domain.media.Show
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

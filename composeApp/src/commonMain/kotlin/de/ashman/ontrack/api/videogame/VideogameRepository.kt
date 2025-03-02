@@ -7,8 +7,8 @@ import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PopularityDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Franchise
-import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.media.Franchise
+import de.ashman.ontrack.domain.media.Videogame
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

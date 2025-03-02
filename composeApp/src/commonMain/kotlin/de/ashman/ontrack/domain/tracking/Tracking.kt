@@ -1,6 +1,6 @@
 package de.ashman.ontrack.domain.tracking
 
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import dev.gitlive.firebase.Firebase

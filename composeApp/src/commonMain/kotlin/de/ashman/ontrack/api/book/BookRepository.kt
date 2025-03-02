@@ -15,8 +15,8 @@ import de.ashman.ontrack.api.utils.extractYear
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.di.SMALL_FETCH_LIMIT
-import de.ashman.ontrack.domain.Author
-import de.ashman.ontrack.domain.Book
+import de.ashman.ontrack.domain.media.Author
+import de.ashman.ontrack.domain.media.Book
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

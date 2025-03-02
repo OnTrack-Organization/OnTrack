@@ -1,6 +1,6 @@
 package de.ashman.ontrack.navigation
 
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable

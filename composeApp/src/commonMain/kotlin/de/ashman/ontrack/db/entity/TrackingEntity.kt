@@ -1,6 +1,6 @@
 package de.ashman.ontrack.db.entity
 
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import kotlinx.serialization.Serializable
 

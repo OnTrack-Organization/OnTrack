@@ -1,6 +1,6 @@
 package de.ashman.ontrack.api
 
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.MediaType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.app_icon
 import ontrack.composeapp.generated.resources.bgg

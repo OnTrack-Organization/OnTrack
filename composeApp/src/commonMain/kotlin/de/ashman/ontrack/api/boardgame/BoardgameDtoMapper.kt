@@ -4,8 +4,8 @@ import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
 import de.ashman.ontrack.api.utils.decodeHtmlManually
 import de.ashman.ontrack.api.utils.nonZeroToInt
-import de.ashman.ontrack.domain.Boardgame
-import de.ashman.ontrack.domain.BoardgameDesigner
+import de.ashman.ontrack.domain.media.Boardgame
+import de.ashman.ontrack.domain.media.BoardgameDesigner
 
 fun BoardgameDto.toDomain(): Boardgame =
     Boardgame(

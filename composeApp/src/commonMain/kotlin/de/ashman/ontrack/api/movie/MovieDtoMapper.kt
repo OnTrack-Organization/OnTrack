@@ -6,9 +6,9 @@ import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.utils.formatDates
 import de.ashman.ontrack.api.utils.getTMDBCoverUrl
 import de.ashman.ontrack.api.utils.getYear
-import de.ashman.ontrack.domain.Director
-import de.ashman.ontrack.domain.Movie
-import de.ashman.ontrack.domain.MovieCollection
+import de.ashman.ontrack.domain.media.Director
+import de.ashman.ontrack.domain.media.Movie
+import de.ashman.ontrack.domain.media.MovieCollection
 
 fun MovieDto.toDomain(): Movie =
     Movie(

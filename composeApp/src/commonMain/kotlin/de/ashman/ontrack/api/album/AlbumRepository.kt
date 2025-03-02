@@ -8,8 +8,8 @@ import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
-import de.ashman.ontrack.domain.Album
-import de.ashman.ontrack.domain.Artist
+import de.ashman.ontrack.domain.media.Album
+import de.ashman.ontrack.domain.media.Artist
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

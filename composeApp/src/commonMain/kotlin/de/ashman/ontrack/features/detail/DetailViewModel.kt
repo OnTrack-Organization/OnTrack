@@ -13,8 +13,8 @@ import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.db.TrackingService
 import de.ashman.ontrack.db.entity.toDomain
 import de.ashman.ontrack.db.entity.toEntity
-import de.ashman.ontrack.domain.Media
-import de.ashman.ontrack.domain.MediaType
+import de.ashman.ontrack.domain.media.Media
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow

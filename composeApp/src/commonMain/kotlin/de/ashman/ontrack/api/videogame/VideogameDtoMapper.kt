@@ -4,9 +4,9 @@ import de.ashman.ontrack.api.utils.getIGDBCoverUrl
 import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PlatformDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
-import de.ashman.ontrack.domain.Franchise
-import de.ashman.ontrack.domain.Platform
-import de.ashman.ontrack.domain.Videogame
+import de.ashman.ontrack.domain.media.Franchise
+import de.ashman.ontrack.domain.media.Platform
+import de.ashman.ontrack.domain.media.Videogame
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

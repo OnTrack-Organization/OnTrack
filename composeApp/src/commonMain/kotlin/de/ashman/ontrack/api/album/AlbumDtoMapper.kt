@@ -6,9 +6,9 @@ import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.album.dto.TrackDto
 import de.ashman.ontrack.api.utils.getYear
 import de.ashman.ontrack.api.utils.toNumberedTracks
-import de.ashman.ontrack.domain.Album
-import de.ashman.ontrack.domain.AlbumTrack
-import de.ashman.ontrack.domain.Artist
+import de.ashman.ontrack.domain.media.Album
+import de.ashman.ontrack.domain.media.AlbumTrack
+import de.ashman.ontrack.domain.media.Artist
 
 fun AlbumDto.toDomain(): Album =
     Album(
