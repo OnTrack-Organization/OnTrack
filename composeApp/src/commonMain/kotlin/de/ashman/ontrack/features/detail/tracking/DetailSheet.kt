@@ -37,7 +37,7 @@ fun DetailSheet(
     currentContent: CurrentBottomSheetContent,
     mediaId: String,
     mediaType: MediaType,
-    mediaTitle: String?,
+    mediaTitle: String,
     mediaCoverUrl: String?,
     tracking: Tracking?,
     onSaveTracking: (Tracking) -> Unit,

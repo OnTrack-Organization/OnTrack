@@ -18,8 +18,8 @@ data class Tracking(
 
     val mediaId: String,
     val mediaType: MediaType,
-    val mediaTitle: String? = null,
-    val mediaCoverUrl: String? = null,
+    val mediaTitle: String,
+    val mediaCoverUrl: String?,
 
     val status: TrackStatus? = null,
     val rating: Double? = null,

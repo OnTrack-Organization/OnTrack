@@ -150,7 +150,7 @@ fun FeedCardHeader(
 fun FeedCardContent(
     mediaId: String,
     mediaType: MediaType,
-    mediaTitle: String?,
+    mediaTitle: String,
     mediaCoverUrl: String?,
     trackStatus: TrackStatus?,
     reviewRating: Double?,

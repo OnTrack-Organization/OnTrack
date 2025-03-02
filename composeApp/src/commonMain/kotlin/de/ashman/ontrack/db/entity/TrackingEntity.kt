@@ -10,7 +10,7 @@ data class TrackingEntity(
 
     val mediaId: String,
     val mediaType: MediaType,
-    val mediaTitle: String?,
+    val mediaTitle: String,
     val mediaCoverUrl: String?,
 
     val status: TrackStatus?,
