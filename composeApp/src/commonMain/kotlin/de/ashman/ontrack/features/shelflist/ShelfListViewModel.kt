@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.TrackStatus
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ShelfListViewModel(
-    private val trackingService: TrackingService,
+    private val trackingRepository: TrackingRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfListUiState())
     val uiState: StateFlow<ShelfListUiState> = _uiState
@@ -33,7 +33,7 @@ class ShelfListViewModel(
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
     fun observeUserTrackings(userId: String) {
-        trackingService.fetchTrackings(userId)
+        trackingRepository.fetchTrackings(userId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

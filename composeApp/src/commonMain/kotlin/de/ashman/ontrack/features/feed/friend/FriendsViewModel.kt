@@ -2,8 +2,8 @@ package de.ashman.ontrack.features.feed.friend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.FriendService
+import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.FriendRepository
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
@@ -23,8 +23,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FriendsViewModel(
-    private val friendService: FriendService,
-    private val authService: AuthService,
+    private val friendRepository: FriendRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState
@@ -41,7 +41,7 @@ class FriendsViewModel(
     private var searchJob: Job? = null
 
     fun search(query: String) = viewModelScope.launch {
-        val potentialFriends = friendService.searchForNewFriends(query).map { it.toDomain() }
+        val potentialFriends = friendRepository.searchForNewFriends(query).map { it.toDomain() }
         _uiState.update {
             it.copy(
                 potentialFriends = potentialFriends,
@@ -53,7 +53,7 @@ class FriendsViewModel(
     fun removeFriend() {
         viewModelScope.launch {
             _uiState.value.selectedFriend?.let {
-                friendService.removeFriend(it)
+                friendRepository.removeFriend(it)
             }
         }
     }
@@ -65,30 +65,30 @@ class FriendsViewModel(
     fun sendRequest(otherRequest: FriendRequest) {
         viewModelScope.launch {
             val myRequest = FriendRequest(
-                userId = authService.currentUserId,
-                username = authService.currentUserName,
-                name = authService.currentUserName,
-                imageUrl = authService.currentUserImage,
+                userId = authRepository.currentUserId,
+                username = authRepository.currentUserName,
+                name = authRepository.currentUserName,
+                imageUrl = authRepository.currentUserImage,
             )
-            friendService.sendRequest(otherRequest, myRequest)
+            friendRepository.sendRequest(otherRequest, myRequest)
         }
     }
 
     fun acceptRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            friendService.acceptRequest(friendRequest)
+            friendRepository.acceptRequest(friendRequest)
         }
     }
 
     fun declineRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            friendService.declineRequest(friendRequest)
+            friendRepository.declineRequest(friendRequest)
         }
     }
 
     fun cancelRequest(friendRequest: FriendRequest) {
         viewModelScope.launch {
-            friendService.cancelRequest(friendRequest)
+            friendRepository.cancelRequest(friendRequest)
         }
     }
 
@@ -103,15 +103,15 @@ class FriendsViewModel(
     private fun observeFriendsAndRequests() {
         viewModelScope.launch {
             launch {
-                friendService.getFriends()
+                friendRepository.getFriends()
                     .collect { friends -> _uiState.update { it.copy(friends = friends.map { it.toDomain() }) } }
             }
             launch {
-                friendService.getReceivedRequests()
+                friendRepository.getReceivedRequests()
                     .collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests.map { it.toDomain() }) } }
             }
             launch {
-                friendService.getSentRequests()
+                friendRepository.getSentRequests()
                     .collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests.map { it.toDomain() }) } }
             }
         }.invokeOnCompletion {

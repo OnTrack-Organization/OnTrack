@@ -1,9 +1,8 @@
 package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.entity.tracking.TrackingEntity
 import de.ashman.ontrack.entity.tracking.EntryEntity
+import de.ashman.ontrack.entity.tracking.TrackingEntity
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
-interface TrackingService {
+interface TrackingRepository {
     suspend fun saveTracking(tracking: TrackingEntity)
     suspend fun removeTracking(trackingId: String)
     fun fetchTrackings(userId: String): Flow<List<TrackingEntity>>
@@ -21,15 +20,15 @@ interface TrackingService {
     suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>>
 }
 
-class TrackingServiceImpl(
+class TrackingRepositoryImpl(
     firestore: FirebaseFirestore,
-    private val authService: AuthService,
-) : TrackingService {
+    private val authRepository: AuthRepository,
+) : TrackingRepository {
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     override suspend fun saveTracking(tracking: TrackingEntity) {
-        val trackingRef = userTrackingCollection(authService.currentUserId).document(tracking.id)
+        val trackingRef = userTrackingCollection(authRepository.currentUserId).document(tracking.id)
 
         // maybe get from viewmodel instead of here
         val existingTracking = if (trackingRef.get().exists) {
@@ -53,13 +52,13 @@ class TrackingServiceImpl(
     }
 
     override suspend fun removeTracking(trackingId: String) {
-        userTrackingCollection(authService.currentUserId)
+        userTrackingCollection(authRepository.currentUserId)
             .document(trackingId)
             .delete()
     }
 
     override fun fetchTracking(trackingId: String): Flow<TrackingEntity?> {
-        return userTrackingCollection(authService.currentUserId)
+        return userTrackingCollection(authRepository.currentUserId)
             .document(trackingId)
             .snapshots
             .map { snapshot ->
@@ -85,7 +84,7 @@ class TrackingServiceImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun fetchFriendTrackings(mediaId: String): Flow<List<TrackingEntity>> {
-        val currentUserId = authService.currentUserId
+        val currentUserId = authRepository.currentUserId
 
         val friendsFlow = userCollection.document(currentUserId)
             .collection("friends")

@@ -9,8 +9,8 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.toDomain
@@ -37,8 +37,8 @@ class SearchViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val trackingService: TrackingService,
-    private val authService: AuthService,
+    private val trackingRepository: TrackingRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -140,7 +140,7 @@ class SearchViewModel(
     }
 
     private fun observeUserTrackings() {
-        trackingService.fetchTrackings(authService.currentUserId)
+        trackingRepository.fetchTrackings(authRepository.currentUserId)
             .onEach { trackings ->
                 _uiState.update { it.copy(trackings = trackings.map { it.toDomain() }) }
             }

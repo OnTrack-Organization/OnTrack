@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.EmptyContent
@@ -45,7 +45,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    authService: AuthService,
+    authRepository: AuthRepository,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
@@ -57,7 +57,7 @@ fun SearchScreen(
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 coroutineScope.launch {
-                    authService.updateFcmToken(token)
+                    authRepository.updateFcmToken(token)
                 }
                 println("onNewToken: $token")
             }

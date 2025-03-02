@@ -1,6 +1,5 @@
 package de.ashman.ontrack.db
 
-import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.entity.toEntity
@@ -13,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlin.collections.map
 
-interface FriendService {
+interface FriendRepository {
     suspend fun searchForNewFriends(query: String): List<FriendEntity>
     suspend fun getFriends(): Flow<List<FriendEntity>>
     suspend fun getReceivedRequests(): Flow<List<FriendRequestEntity>>
@@ -27,10 +26,10 @@ interface FriendService {
     suspend fun cancelRequest(friendRequest: FriendRequest)
 }
 
-class FriendServiceImpl(
+class FriendRepositoryImpl(
     firestore: FirebaseFirestore,
-    private val authService: AuthService,
-) : FriendService {
+    private val authRepository: AuthRepository,
+) : FriendRepository {
     private val userCollection = firestore.collection("users")
 
     override suspend fun searchForNewFriends(query: String): List<FriendEntity> {
@@ -38,19 +37,19 @@ class FriendServiceImpl(
 
         // TODO definitely other way
         val existingFriends = userCollection
-            .document(authService.currentUserId)
+            .document(authRepository.currentUserId)
             .collection("friends")
             .get()
             .documents.map { it.id }
 
         val existingReceived = userCollection
-            .document(authService.currentUserId)
+            .document(authRepository.currentUserId)
             .collection("receivedRequests")
             .get()
             .documents.map { it.id }
 
         val existingSent = userCollection
-            .document(authService.currentUserId)
+            .document(authRepository.currentUserId)
             .collection("sentRequests")
             .get()
             .documents.map { it.id }
@@ -65,7 +64,7 @@ class FriendServiceImpl(
 
         for (document in snapshot.documents) {
             val user = document.data<UserEntity>()
-            if (user.id != authService.currentUserId && user.id !in notVisibleUsers) {
+            if (user.id != authRepository.currentUserId && user.id !in notVisibleUsers) {
                 results.add(
                     FriendEntity(
                         id = user.id,
@@ -81,84 +80,84 @@ class FriendServiceImpl(
     }
 
     override suspend fun getFriends(): Flow<List<FriendEntity>> {
-        return userCollection.document(authService.currentUserId)
+        return userCollection.document(authRepository.currentUserId)
             .collection("friends")
             .snapshots
             .mapNotNull { it.documents.map { it.data<FriendEntity>() } }
     }
 
     override suspend fun getReceivedRequests(): Flow<List<FriendRequestEntity>> {
-        return userCollection.document(authService.currentUserId)
+        return userCollection.document(authRepository.currentUserId)
             .collection("receivedRequests")
             .snapshots
             .mapNotNull { it.documents.map { it.data<FriendRequestEntity>() } }
     }
 
     override suspend fun getSentRequests(): Flow<List<FriendRequestEntity>> {
-        return userCollection.document(authService.currentUserId)
+        return userCollection.document(authRepository.currentUserId)
             .collection("sentRequests")
             .snapshots
             .mapNotNull { it.documents.map { it.data<FriendRequestEntity>() } }
     }
 
     override suspend fun removeFriend(friend: Friend) {
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("friends").document(friend.id).delete()
 
         userCollection.document(friend.id)
-            .collection("friends").document(authService.currentUserId).delete()
+            .collection("friends").document(authRepository.currentUserId).delete()
     }
 
     override suspend fun sendRequest(friendRequest: FriendRequest, myRequest: FriendRequest) {
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("sentRequests")
             .document(friendRequest.userId).set(friendRequest.toEntity())
 
         userCollection.document(friendRequest.userId)
             .collection("receivedRequests")
-            .document(authService.currentUserId).set(myRequest.toEntity())
+            .document(authRepository.currentUserId).set(myRequest.toEntity())
     }
 
     override suspend fun acceptRequest(friendRequest: FriendRequest) {
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("receivedRequests")
             .document(friendRequest.userId).delete()
 
         userCollection.document(friendRequest.userId)
             .collection("sentRequests")
-            .document(authService.currentUserId).delete()
+            .document(authRepository.currentUserId).delete()
 
         val friendRequestEntity = friendRequest.toFriendEntity()
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("friends").document(friendRequestEntity.id).set(friendRequestEntity)
 
         val myself = FriendEntity(
-            id = authService.currentUserId,
-            username = authService.currentUserName,
-            name = authService.currentUserName,
-            imageUrl = authService.currentUserImage
+            id = authRepository.currentUserId,
+            username = authRepository.currentUserName,
+            name = authRepository.currentUserName,
+            imageUrl = authRepository.currentUserImage
         )
         userCollection.document(friendRequest.userId)
-            .collection("friends").document(authService.currentUserId).set(myself)
+            .collection("friends").document(authRepository.currentUserId).set(myself)
     }
 
     override suspend fun declineRequest(friendRequest: FriendRequest) {
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("receivedRequests")
             .document(friendRequest.userId).delete()
 
         userCollection.document(friendRequest.userId)
             .collection("sentRequests")
-            .document(authService.currentUserId).delete()
+            .document(authRepository.currentUserId).delete()
     }
 
     override suspend fun cancelRequest(friendRequest: FriendRequest) {
-        userCollection.document(authService.currentUserId)
+        userCollection.document(authRepository.currentUserId)
             .collection("sentRequests")
             .document(friendRequest.userId).delete()
 
         userCollection.document(friendRequest.userId)
             .collection("receivedRequests")
-            .document(authService.currentUserId).delete()
+            .document(authRepository.currentUserId).delete()
     }
 }

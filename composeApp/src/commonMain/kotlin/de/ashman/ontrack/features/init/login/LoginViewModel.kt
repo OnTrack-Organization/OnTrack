@@ -3,7 +3,7 @@ package de.ashman.ontrack.features.init.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import ontrack.composeapp.generated.resources.login_error
 import org.jetbrains.compose.resources.getString
 
 class LoginViewModel(
-    private val authService: AuthService,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -31,7 +31,7 @@ class LoginViewModel(
         result.fold(
             onSuccess = { user ->
                 if (user != null) {
-                    authService.createUser(user.toEntity())
+                    authRepository.createUser(user.toEntity())
                     onSuccess()
                 }
             },

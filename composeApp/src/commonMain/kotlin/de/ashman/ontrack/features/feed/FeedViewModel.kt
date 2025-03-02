@@ -2,7 +2,7 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.FeedService
+import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.toDomain
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val feedService: FeedService,
+    private val feedRepository: FeedRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -32,7 +32,7 @@ class FeedViewModel(
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
 
-        feedService.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
+        feedRepository.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
             if (feedTrackings.isEmpty()) {
                 _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
             } else {
@@ -51,13 +51,13 @@ class FeedViewModel(
         val like = Like()
 
         if (tracking.isLikedByCurrentUser) {
-            feedService.unlikeTracking(
+            feedRepository.unlikeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
                 like = like.toEntity()
             )
         } else {
-            feedService.likeTracking(
+            feedRepository.likeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
                 like = like.toEntity()
@@ -69,7 +69,7 @@ class FeedViewModel(
         val newComment = Comment(comment = comment)
 
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedService.addComment(
+            feedRepository.addComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = newComment.toEntity(),
@@ -79,7 +79,7 @@ class FeedViewModel(
 
     fun removeComment(comment: Comment) = viewModelScope.launch {
         _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedService.removeComment(
+            feedRepository.removeComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = comment.toEntity(),

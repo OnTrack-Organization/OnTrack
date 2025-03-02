@@ -3,7 +3,7 @@ package de.ashman.ontrack.features.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.authentication.AuthService
+import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.toEntity
@@ -19,7 +19,7 @@ import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
-    private val authService: AuthService
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -30,7 +30,7 @@ class SettingsViewModel(
         )
 
     fun observeUser(userId: String) = viewModelScope.launch {
-        authService.observeUser(userId)
+        authRepository.observeUser(userId)
             .collect { user ->
                 _uiState.update {
                     it.copy(
@@ -43,7 +43,7 @@ class SettingsViewModel(
     }
 
     fun deleteAccount() = viewModelScope.launch {
-        authService.removeUser()
+        authRepository.removeUser()
     }
 
     fun onNameChange(name: String) {
@@ -76,13 +76,13 @@ class SettingsViewModel(
                 return@launch
             }
 
-            if (authService.isUsernameTaken(newUsername)) {
+            if (authRepository.isUsernameTaken(newUsername)) {
                 _uiState.update { it.copy(usernameError = UsernameError.TAKEN) }
                 return@launch
             }
         }
 
-        authService.updateUser(
+        authRepository.updateUser(
             currentUser.copy(
                 name = newName,
                 username = newUsername
@@ -94,7 +94,7 @@ class SettingsViewModel(
 
     fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
         try {
-            authService.signOut()
+            authRepository.signOut()
             onSuccess()
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")

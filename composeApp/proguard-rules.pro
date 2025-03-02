@@ -33,8 +33,7 @@
 -keep class de.ashman.ontrack.domain.** { *; }
 -keep class de.ashman.ontrack.navigation.* { *; }
 -keep class de.ashman.ontrack.api.** { *; }
--keep class de.ashman.ontrack.db.** { *; }
--keep class de.ashman.ontrack.db.entity.** { *; }
+-keep class de.ashman.ontrack.entity.** { *; }
 
 # Prevent obfuscation of @Serializable classes
 -keepattributes *Annotation*

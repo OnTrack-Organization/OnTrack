@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShelfViewModel(
-    private val trackingService: TrackingService,
-    private val authService: AuthService,
+    private val trackingRepository: TrackingRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
@@ -36,7 +36,7 @@ class ShelfViewModel(
 
     fun observeUser(userId: String) {
         viewModelScope.launch {
-            authService.observeUser(userId)
+            authRepository.observeUser(userId)
                 .collect { user ->
                     _uiState.update { it.copy(user = user?.toDomain()) }
                 }
@@ -44,7 +44,7 @@ class ShelfViewModel(
     }
 
     fun observeUserTrackings(userId: String) {
-        trackingService.fetchTrackings(userId)
+        trackingRepository.fetchTrackings(userId)
             .onEach { trackings ->
                 _uiState.update {
                     it.copy(trackings = trackings.map { it.toDomain() })

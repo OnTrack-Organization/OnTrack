@@ -8,15 +8,15 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.authentication.AuthServiceImpl
+import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.AuthRepositoryImpl
 import de.ashman.ontrack.features.init.login.LoginViewModel
-import de.ashman.ontrack.db.FeedService
-import de.ashman.ontrack.db.FeedServiceImpl
-import de.ashman.ontrack.db.FriendService
-import de.ashman.ontrack.db.FriendServiceImpl
-import de.ashman.ontrack.db.TrackingService
-import de.ashman.ontrack.db.TrackingServiceImpl
+import de.ashman.ontrack.db.FeedRepository
+import de.ashman.ontrack.db.FeedRepositoryImpl
+import de.ashman.ontrack.db.FriendRepository
+import de.ashman.ontrack.db.FriendRepositoryImpl
+import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.db.TrackingRepositoryImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
@@ -214,16 +214,16 @@ val appModule = module {
 
     // AUTH
     single { Firebase.auth }
-    single<AuthService> { AuthServiceImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
     // DATABASE
     single { Firebase.firestore }
     single { Firebase.storage }
-    single<FriendService> { FriendServiceImpl(get(), get()) }
-    single<FeedService> { FeedServiceImpl(get(), get()) }
-    single<TrackingService> { TrackingServiceImpl(get(), get()) }
+    single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
+    single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
+    single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }

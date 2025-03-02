@@ -1,9 +1,8 @@
 package de.ashman.ontrack.db
 
-import de.ashman.ontrack.authentication.AuthService
 import de.ashman.ontrack.entity.feed.CommentEntity
-import de.ashman.ontrack.entity.tracking.TrackingEntity
 import de.ashman.ontrack.entity.feed.LikeEntity
+import de.ashman.ontrack.entity.tracking.TrackingEntity
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
-interface FeedService {
+interface FeedRepository {
     suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>>
     suspend fun likeTracking(friendId: String, trackingId: String, like: LikeEntity)
     suspend fun unlikeTracking(friendId: String, trackingId: String, like: LikeEntity)
@@ -22,16 +21,16 @@ interface FeedService {
     suspend fun removeComment(friendId: String, trackingId: String, comment: CommentEntity)
 }
 
-class FeedServiceImpl(
+class FeedRepositoryImpl(
     firestore: FirebaseFirestore,
-    private val authService: AuthService,
-) : FeedService {
+    private val authRepository: AuthRepository,
+) : FeedRepository {
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>> {
-        val currentUserId = authService.currentUserId
+        val currentUserId = authRepository.currentUserId
 
         val friendsFlow = userCollection.document(currentUserId)
             .collection("friends")

@@ -9,8 +9,8 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.authentication.AuthService
-import de.ashman.ontrack.db.TrackingService
+import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
@@ -32,8 +32,8 @@ class DetailViewModel(
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val trackingService: TrackingService,
-    private val authService: AuthService,
+    private val trackingRepository: TrackingRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -75,18 +75,18 @@ class DetailViewModel(
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
         val trackingEntity = tracking.toEntity()
-        trackingService.saveTracking(trackingEntity)
+        trackingRepository.saveTracking(trackingEntity)
 
         _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
-        trackingService.removeTracking(trackingId)
+        trackingRepository.removeTracking(trackingId)
         _uiState.update { it.copy(selectedTracking = null) }
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchTrackings(authService.currentUserId)
+        trackingRepository.fetchTrackings(authRepository.currentUserId)
             .collect { trackings ->
                 val tracking = trackings.find { it.mediaId == mediaId }
                 _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
@@ -94,7 +94,7 @@ class DetailViewModel(
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        trackingService.fetchFriendTrackings(mediaId).collect { feedTrackings ->
+        trackingRepository.fetchFriendTrackings(mediaId).collect { feedTrackings ->
             _uiState.update { state ->
                 state.copy(
                     friendTrackings = feedTrackings.map { it.toDomain() }
