@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.detail.recommendation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,9 +58,13 @@ fun RecommendSheet(
 
         if (selectableFriends.isEmpty()) {
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 text = stringResource(Res.string.detail_recommend_friends_empty),
-                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             return@Column
         }

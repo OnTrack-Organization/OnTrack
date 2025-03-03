@@ -176,21 +176,19 @@ fun FeedCardContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
-                        imageVector = mediaType.getMediaTypeUi().icon,
+                        imageVector = mediaType.getMediaTypeUi().outlinedIcon,
                         contentDescription = null,
                     )
-                    mediaTitle?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                lineBreak = LineBreak.Simple,
-                            ),
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            softWrap = true,
-                        )
-                    }
+                    Text(
+                        text = mediaTitle,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            lineBreak = LineBreak.Simple,
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        softWrap = true,
+                    )
                 }
 
                 trackStatus?.let {
