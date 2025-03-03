@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
+import de.ashman.ontrack.features.detail.components.DetailDropDown
 import de.ashman.ontrack.features.detail.components.StickyMainContent
 import de.ashman.ontrack.features.detail.tracking.CurrentBottomSheetContent
 import de.ashman.ontrack.features.detail.tracking.DetailSheet
@@ -103,10 +103,13 @@ fun DetailScreen(
                     }
                 },
                 actions = {
-                    // TODO show actions (delete for example)
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.MoreVert, "More Icon")
-                    }
+                    DetailDropDown(
+                        isTrackingAvailable = uiState.selectedTracking != null,
+                        onClickRemove = {
+                            currentBottomSheet = CurrentBottomSheetContent.REMOVE
+                            showBottomSheet = true
+                        }
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )
