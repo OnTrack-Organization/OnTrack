@@ -1,9 +1,5 @@
 package de.ashman.ontrack.features.shelflist
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.TrackingRepository
@@ -29,15 +25,13 @@ class ShelfListViewModel(
             _uiState.value,
         )
 
-    var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
-
     fun observeUserTrackings(userId: String) {
         trackingRepository.fetchTrackings(userId)
             .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
             .launchIn(viewModelScope)
     }
 
-    fun updateSelectedTrackType(trackStatus: TrackStatus?) {
+    fun updateSelectedStatus(trackStatus: TrackStatus?) {
         _uiState.update {
             it.copy(selectedStatus = trackStatus)
         }

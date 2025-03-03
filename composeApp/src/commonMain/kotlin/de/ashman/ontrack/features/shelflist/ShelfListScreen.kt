@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -110,8 +109,7 @@ fun ShelfListScreen(
             TrackStatusFilterChips(
                 mediaType = mediaType,
                 selectedTrackStatus = uiState.selectedStatus,
-                onTrackStatusSelected = viewModel::updateSelectedTrackType,
-                listState = viewModel.listState,
+                onTrackStatusSelected = viewModel::updateSelectedStatus,
             )
 
             AnimatedContent(
@@ -160,14 +158,12 @@ fun TrackStatusFilterChips(
     mediaType: MediaType,
     selectedTrackStatus: TrackStatus?,
     onTrackStatusSelected: (TrackStatus?) -> Unit,
-    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        state = listState,
     ) {
         item {
             val isSelected = selectedTrackStatus == null
@@ -183,7 +179,6 @@ fun TrackStatusFilterChips(
                         contentDescription = "All Trackings",
                     )
                 },
-                // TODO maybe different color
                 colors = FilterChipDefaults.filterChipColors(
                     labelColor = contentColorFor(TrackStatus.CATALOG.getColor()),
                     iconColor = contentColorFor(TrackStatus.CATALOG.getColor()),
