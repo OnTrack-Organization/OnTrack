@@ -50,7 +50,7 @@ fun FriendsActivitySheet(
     onAddToCatalogClick: () -> Unit,
     onPassClick: () -> Unit,
 ) {
-    val buttonsEnabled = recommendations.isNotEmpty() || friendTrackings.isNotEmpty()
+    val buttonsVisible = recommendations.isNotEmpty()
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -120,23 +120,23 @@ fun FriendsActivitySheet(
             }
         }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            OnTrackButton(
-                modifier = Modifier.weight(1f),
-                text = Res.string.recommendations_add_to_catalog_button,
-                icon = Icons.Default.Bookmark,
-                enabled = buttonsEnabled,
-                onClick = onAddToCatalogClick,
-            )
+        if (buttonsVisible) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                OnTrackButton(
+                    modifier = Modifier.weight(1f),
+                    text = Res.string.recommendations_add_to_catalog_button,
+                    icon = Icons.Default.Bookmark,
+                    onClick = onAddToCatalogClick,
+                )
 
-            OnTrackOutlinedIconButton(
-                icon = Icons.Outlined.DoNotDisturb,
-                color = TrackStatus.CATALOG.getColor(),
-                enabled = buttonsEnabled,
-                onClick = onPassClick,
-            )
+                OnTrackOutlinedIconButton(
+                    icon = Icons.Outlined.DoNotDisturb,
+                    color = TrackStatus.CATALOG.getColor(),
+                    onClick = onPassClick,
+                )
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -72,6 +73,7 @@ fun DetailScreen(
         viewModel.observeTracking(mediaNavItems.id)
         viewModel.observeFriendTrackings(mediaNavItems.id)
         viewModel.observeFriendRecommendations(mediaNavItems.id)
+        viewModel.fetchFriends()
     }
 
     Scaffold(
@@ -97,7 +99,13 @@ fun DetailScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back Icon")
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, "Back Icon")
+                    }
+                },
+                actions = {
+                    // TODO show actions (delete for example)
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Default.MoreVert, "More Icon")
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -119,8 +127,8 @@ fun DetailScreen(
                     currentBottomSheet = CurrentBottomSheetContent.TRACKING
                     showBottomSheet = true
                 },
-                onClickRemoveTracking = {
-                    currentBottomSheet = CurrentBottomSheetContent.REMOVE
+                onClickRecommend = {
+                    currentBottomSheet = CurrentBottomSheetContent.RECOMMEND
                     showBottomSheet = true
                 },
             )
@@ -164,6 +172,7 @@ fun DetailScreen(
                     tracking = uiState.selectedTracking,
                     recommendations = uiState.recommendations,
                     friendTrackings = uiState.friendTrackings,
+                    friends = uiState.friends,
                     onSaveTracking = {
                         viewModel.saveTracking(it)
                         showBottomSheet = false
@@ -189,6 +198,9 @@ fun DetailScreen(
                     },
                     onPass = {
                         viewModel.passRecommendation()
+                    },
+                    onSendRecommendation = {
+                        viewModel.sendRecommendation()
                     },
                     onUserClick = onUserClick,
                 )

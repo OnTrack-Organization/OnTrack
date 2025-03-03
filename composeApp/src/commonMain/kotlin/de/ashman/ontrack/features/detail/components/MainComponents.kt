@@ -1,6 +1,5 @@
 package de.ashman.ontrack.features.detail.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
@@ -15,7 +14,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.VolunteerActivism
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,7 +41,7 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
-import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
+import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.detail.tracking.getColor
 import de.ashman.ontrack.features.detail.tracking.getIcon
@@ -63,7 +62,7 @@ fun StickyMainContent(
     status: TrackStatus? = null,
     scrollBehavior: TopAppBarScrollBehavior,
     onClickAddTracking: () -> Unit,
-    onClickRemoveTracking: () -> Unit,
+    onClickRecommend: () -> Unit,
 ) {
     var mainInfoItems by remember { mutableStateOf(emptyList<String>()) }
 
@@ -110,15 +109,11 @@ fun StickyMainContent(
                 onClick = onClickAddTracking,
             )
 
-            AnimatedVisibility(
-                visible = status != null,
-            ) {
-                OnTrackOutlinedIconButton(
-                    icon = Icons.Outlined.Delete,
-                    color = status.getColor(),
-                    onClick = onClickRemoveTracking
-                )
-            }
+            OnTrackIconButton(
+                icon = Icons.Outlined.VolunteerActivism,
+                color = status.getColor(),
+                onClick = onClickRecommend
+            )
         }
     }
 }

@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
-import de.ashman.ontrack.features.common.OnTrackUserTextField
+import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.RemoveSheetContent
 import de.ashman.ontrack.features.init.start.ApiContributions
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
@@ -137,13 +137,13 @@ fun SettingsScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    OnTrackUserTextField(
+                    OnTrackUsernameTextField(
                         placeholder = "Name",
                         support = Res.string.settings_name_hint,
                         value = uiState.name,
                         onValueChange = viewModel::onNameChange,
                     )
-                    OnTrackUserTextField(
+                    OnTrackUsernameTextField(
                         placeholder = "Username",
                         support = Res.string.settings_username_hint,
                         value = uiState.username,

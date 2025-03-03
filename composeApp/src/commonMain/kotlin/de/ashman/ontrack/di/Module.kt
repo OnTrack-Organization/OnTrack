@@ -242,7 +242,7 @@ val appModule = module {
     viewModelDefinition { FeedViewModel(get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get()) }

@@ -18,8 +18,10 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.features.common.RemoveSheetContent
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
+import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
@@ -46,14 +48,17 @@ fun DetailSheet(
     tracking: Tracking?,
     recommendations: List<Recommendation>,
     friendTrackings: List<Tracking>,
+    friends: List<Friend>,
     onSaveTracking: (Tracking) -> Unit,
     onRemoveTracking: (String) -> Unit,
     onCancel: () -> Unit,
     goToReview: () -> Unit,
     onAddToCatalog: () -> Unit,
     onPass: () -> Unit,
+    onSendRecommendation: () -> Unit,
     onUserClick: (String) -> Unit,
 ) {
+    // TODO move into own methods...
     val localFocusManager = LocalFocusManager.current
     // Copy previous tracking with new id and timestamp or create new tracking with filled media data
     var tracking by remember {
@@ -129,7 +134,10 @@ fun DetailSheet(
                 onPassClick = onPass,
             )
 
-            CurrentBottomSheetContent.RECOMMEND -> TODO()
+            CurrentBottomSheetContent.RECOMMEND -> RecommendSheet(
+                selectableFriends = friends,
+                onSendRecommendation = onSendRecommendation
+            )
         }
     }
 }

@@ -204,7 +204,7 @@ fun OnTrackOutlinedIconButton(
         enabled = enabled,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = animatedContentColor,
-        )
+        ),
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
@@ -235,49 +235,6 @@ fun OnTrackCommentTextField(
     )
 }
 
-/*@Composable
-fun OnTrackCommentTextField(
-    modifier: Modifier = Modifier,
-    placeholder: String,
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-) {
-    BasicTextField(
-        modifier = modifier
-            .height(48.dp)
-            .background(
-                MaterialTheme.colorScheme.surface,
-                MaterialTheme.shapes.small,
-            )
-            .fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colorScheme.onSurface,
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier.padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(Modifier.weight(1f)) {
-                    if (value.text.isEmpty()) {
-                        Text(
-                            text = placeholder,
-                            style = LocalTextStyle.current.copy(
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                            )
-                        )
-                    }
-                    innerTextField()
-                }
-            }
-        }
-    )
-}*/
-
 @Composable
 fun OnTrackTextField(
     modifier: Modifier = Modifier,
@@ -300,7 +257,7 @@ fun OnTrackTextField(
 }
 
 @Composable
-fun OnTrackUserTextField(
+fun OnTrackUsernameTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
     support: StringResource,

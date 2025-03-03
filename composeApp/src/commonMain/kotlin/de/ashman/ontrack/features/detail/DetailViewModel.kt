@@ -10,6 +10,7 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.FriendRepository
 import de.ashman.ontrack.db.RecommendationRepository
 import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
@@ -17,6 +18,7 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +39,7 @@ class DetailViewModel(
     private val trackingRepository: TrackingRepository,
     private val authRepository: AuthRepository,
     private val recommendationRepository: RecommendationRepository,
+    private val friendRepository: FriendRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -124,6 +127,16 @@ class DetailViewModel(
         recommendationRepository.passRecommendation(_uiState.value.selectedMedia?.id!!)
     }
 
+    fun sendRecommendation() = viewModelScope.launch {
+        //recommendationRepository.sendRecommendation()
+    }
+
+    fun fetchFriends() = viewModelScope.launch {
+        friendRepository.getFriends().collect { friends ->
+            _uiState.update { it.copy(friends = friends.map { it.toDomain() }) }
+        }
+    }
+
     fun clearViewModel() {
         _uiState.update { DetailUiState() }
     }
@@ -142,6 +155,7 @@ data class DetailUiState(
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
     val friendTrackings: List<Tracking> = emptyList(),
+    val friends: List<Friend> = emptyList(),
     val recommendations: List<Recommendation> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,
