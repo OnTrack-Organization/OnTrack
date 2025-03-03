@@ -25,12 +25,11 @@ fun User.toEntity() = UserEntity(
 )
 
 fun Tracking.toEntity() = TrackingEntity(
-    id = id,
     mediaId = mediaId,
     mediaType = mediaType,
     mediaTitle = mediaTitle,
     mediaCoverUrl = mediaCoverUrl,
-    status = status,
+    status = status!!,
     rating = rating,
     reviewTitle = reviewTitle,
     reviewDescription = reviewDescription,

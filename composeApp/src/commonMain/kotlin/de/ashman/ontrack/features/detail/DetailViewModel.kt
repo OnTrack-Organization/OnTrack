@@ -10,12 +10,14 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.db.RecommendationRepository
 import de.ashman.ontrack.db.TrackingRepository
-import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +36,7 @@ class DetailViewModel(
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
     private val authRepository: AuthRepository,
+    private val recommendationRepository: RecommendationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -94,13 +97,31 @@ class DetailViewModel(
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        trackingRepository.fetchFriendTrackings(mediaId).collect { feedTrackings ->
+        trackingRepository.fetchFriendTrackings(mediaId).collect { friendTrackings ->
             _uiState.update { state ->
                 state.copy(
-                    friendTrackings = feedTrackings.map { it.toDomain() }
+                    friendTrackings = friendTrackings.map { it.toDomain() }
                 )
             }
         }
+    }
+
+    fun observeFriendRecommendations(mediaId: String) = viewModelScope.launch {
+        recommendationRepository.fetchRecommendations(mediaId).collect { recommendations ->
+            _uiState.update { state ->
+                state.copy(recommendations = recommendations)
+            }
+        }
+    }
+
+    fun addToCatalog() = viewModelScope.launch {
+        recommendationRepository.catalogRecommendation(_uiState.value.selectedMedia?.id!!)
+
+        // TODO save tracking to catalog here
+    }
+
+    fun passRecommendation() = viewModelScope.launch {
+        recommendationRepository.passRecommendation(_uiState.value.selectedMedia?.id!!)
     }
 
     fun clearViewModel() {
@@ -121,6 +142,7 @@ data class DetailUiState(
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
     val friendTrackings: List<Tracking> = emptyList(),
+    val recommendations: List<Recommendation> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,

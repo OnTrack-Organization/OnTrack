@@ -231,6 +231,13 @@
         <item quantity="other">%1$d Tracks</item>
     </plurals>
 
+    <!-- DETAIL FRIENDS ACTIVITY -->
+    <string name="detail_friends_activity_title">Friend's Activity</string>
+    <string name="recommendations_title">Recommendations</string>
+    <string name="trackings_title">Trackings</string>
+    <string name="recommendations_add_to_catalog_button">Add to Catalog</string>
+    <string name="detail_friends_activity_empty">No friend's activity yet</string>
+
     <!-- SHELF -->
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
     <string name="shelf_other_empty">This shelf is looking pretty empty, recommend them something!</string>

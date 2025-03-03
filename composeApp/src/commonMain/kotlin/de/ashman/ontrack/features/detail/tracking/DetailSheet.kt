@@ -15,9 +15,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.RemoveSheetContent
+import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
@@ -26,7 +28,9 @@ import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 enum class CurrentBottomSheetContent {
     TRACKING,
     REVIEW,
-    REMOVE
+    REMOVE,
+    FRIEND_ACTIVITY,
+    RECOMMEND
 }
 
 // TODO add back handling
@@ -40,10 +44,15 @@ fun DetailSheet(
     mediaTitle: String,
     mediaCoverUrl: String?,
     tracking: Tracking?,
+    recommendations: List<Recommendation>,
+    friendTrackings: List<Tracking>,
     onSaveTracking: (Tracking) -> Unit,
     onRemoveTracking: (String) -> Unit,
     onCancel: () -> Unit,
     goToReview: () -> Unit,
+    onAddToCatalog: () -> Unit,
+    onPass: () -> Unit,
+    onUserClick: (String) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     // Copy previous tracking with new id and timestamp or create new tracking with filled media data
@@ -56,6 +65,9 @@ fun DetailSheet(
                 mediaType = mediaType,
                 mediaTitle = mediaTitle,
                 mediaCoverUrl = mediaCoverUrl,
+                // TODO probably different
+                id = "",
+                timestamp = 0,
             )
         )
     }
@@ -108,6 +120,16 @@ fun DetailSheet(
                 onConfirm = { onRemoveTracking(tracking.id) },
                 onCancel = onCancel,
             )
+
+            CurrentBottomSheetContent.FRIEND_ACTIVITY -> FriendsActivitySheet(
+                recommendations = recommendations,
+                friendTrackings = friendTrackings,
+                onUserClick = onUserClick,
+                onAddToCatalogClick = onAddToCatalog,
+                onPassClick = onPass,
+            )
+
+            CurrentBottomSheetContent.RECOMMEND -> TODO()
         }
     }
 }

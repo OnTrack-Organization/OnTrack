@@ -71,6 +71,7 @@ fun DetailScreen(
         viewModel.fetchDetails(mediaNavItems)
         viewModel.observeTracking(mediaNavItems.id)
         viewModel.observeFriendTrackings(mediaNavItems.id)
+        viewModel.observeFriendRecommendations(mediaNavItems.id)
     }
 
     Scaffold(
@@ -135,9 +136,14 @@ fun DetailScreen(
                         DetailContent(
                             media = it,
                             friendTrackings = uiState.friendTrackings,
+                            friendRecommendations = uiState.recommendations,
                             columnListState = listState,
                             onClickItem = onClickItem,
                             onUserClick = onUserClick,
+                            onShowFriendActivity = {
+                                currentBottomSheet = CurrentBottomSheetContent.FRIEND_ACTIVITY
+                                showBottomSheet = true
+                            },
                         )
                     }
                 }
@@ -156,6 +162,8 @@ fun DetailScreen(
                     mediaTitle = mediaNavItems.title,
                     mediaCoverUrl = mediaNavItems.coverUrl,
                     tracking = uiState.selectedTracking,
+                    recommendations = uiState.recommendations,
+                    friendTrackings = uiState.friendTrackings,
                     onSaveTracking = {
                         viewModel.saveTracking(it)
                         showBottomSheet = false
@@ -175,7 +183,14 @@ fun DetailScreen(
                     },
                     goToReview = {
                         currentBottomSheet = CurrentBottomSheetContent.REVIEW
-                    }
+                    },
+                    onAddToCatalog = {
+                        viewModel.addToCatalog()
+                    },
+                    onPass = {
+                        viewModel.passRecommendation()
+                    },
+                    onUserClick = onUserClick,
                 )
             }
         }

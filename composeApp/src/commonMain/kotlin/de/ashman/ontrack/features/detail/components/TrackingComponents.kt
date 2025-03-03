@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -96,7 +97,7 @@ fun ReviewCardContent(
                 )
                 MiniStarRatingBar(
                     rating = reviewRating,
-                    trackStatus = it
+                    starColor = contentColorFor(trackStatus.getColor())
                 )
             }
         }
@@ -131,7 +132,7 @@ fun ReviewCardContent(
 fun MiniStarRatingBar(
     modifier: Modifier = Modifier,
     rating: Double?,
-    trackStatus: TrackStatus,
+    starColor: Color,
 ) {
     Row(
         modifier = modifier
@@ -141,7 +142,7 @@ fun MiniStarRatingBar(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
                 tint = if (rating != null && i <= rating) {
-                    contentColorFor(trackStatus.getColor())
+                    starColor
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },

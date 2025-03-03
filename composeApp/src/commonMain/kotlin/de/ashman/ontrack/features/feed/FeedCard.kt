@@ -204,7 +204,7 @@ fun FeedCardContent(
                         )
                         MiniStarRatingBar(
                             rating = reviewRating,
-                            trackStatus = it
+                            starColor = contentColorFor(it.getColor())
                         )
                     }
                 }

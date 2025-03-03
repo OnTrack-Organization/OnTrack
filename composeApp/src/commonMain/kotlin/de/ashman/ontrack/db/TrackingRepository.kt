@@ -73,7 +73,9 @@ class TrackingRepositoryImpl(
     }
 
     override fun fetchTrackings(userId: String): Flow<List<TrackingEntity>> {
-        if (userId.isBlank()) { return flowOf(emptyList()) }
+        if (userId.isBlank()) {
+            return flowOf(emptyList())
+        }
 
         return userTrackingCollection(userId)
             .snapshots
@@ -88,7 +90,7 @@ class TrackingRepositoryImpl(
 
         val friendsFlow = userCollection.document(currentUserId)
             .collection("friends")
-            .snapshots()
+            .snapshots
             .map { snapshot -> snapshot.documents.map { it.id } + currentUserId }
 
         return friendsFlow.flatMapLatest { friends ->
@@ -102,11 +104,14 @@ class TrackingRepositoryImpl(
             if (allFlows.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                combine(allFlows) { trackingLists ->
-                    trackingLists
+                combine(allFlows) { trackingArrays ->
+                    trackingArrays
                         .toList()
                         .flatten()
-                        .distinctBy { it.id }
+                        .groupBy { it.userId }
+                        .mapValues { (_, trackings) -> trackings.maxByOrNull { it.timestamp } }
+                        .values
+                        .filterNotNull()
                         .sortedByDescending { it.timestamp }
                 }
             }

@@ -7,16 +7,12 @@ import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @CommonParcelize
 @Serializable
 data class Tracking(
-    @OptIn(ExperimentalUuidApi::class)
-    val id: String = Uuid.random().toString(),
+    val id: String,
 
     val mediaId: String,
     val mediaType: MediaType,
@@ -36,7 +32,7 @@ data class Tracking(
     val comments: List<Comment> = listOf(),
     val history: List<Entry> = listOf(),
 
-    val timestamp: Long = System.now().toEpochMilliseconds(),
+    val timestamp: Long,
 ) : CommonParcelable {
     val likeCount: Int
         get() = likes.size

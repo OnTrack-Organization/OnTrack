@@ -18,8 +18,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.ApiType
 import de.ashman.ontrack.api.utils.roundDecimals
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.ratings_overview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RatingCardRow(
@@ -27,25 +30,34 @@ fun RatingCardRow(
     rating: Double?,
     ratingCount: Int?,
 ) {
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        RatingCard(
-            modifier = Modifier.weight(1f),
-            icon = ApiType.OnTrack.icon,
-            rating = "0.0",
-            ratingCount = 0,
-            maxRating = ApiType.OnTrack.maxRating,
+        Text(
+            text = stringResource(Res.string.ratings_overview),
+            style = MaterialTheme.typography.titleMedium,
         )
 
-        RatingCard(
-            modifier = Modifier.weight(1f),
-            icon = apiType.icon,
-            rating = if (apiType == ApiType.Spotify) rating?.roundDecimals(0) else rating?.roundDecimals(1),
-            ratingCount = ratingCount,
-            maxRating = apiType.maxRating,
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            RatingCard(
+                modifier = Modifier.weight(1f),
+                icon = ApiType.OnTrack.icon,
+                rating = "0.0",
+                ratingCount = 0,
+                maxRating = ApiType.OnTrack.maxRating,
+            )
+
+            RatingCard(
+                modifier = Modifier.weight(1f),
+                icon = apiType.icon,
+                rating = if (apiType == ApiType.Spotify) rating?.roundDecimals(0) else rating?.roundDecimals(1),
+                ratingCount = ratingCount,
+                maxRating = apiType.maxRating,
+            )
+        }
     }
 }
 

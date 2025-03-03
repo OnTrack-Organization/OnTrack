@@ -10,16 +10,18 @@ import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.AuthRepositoryImpl
-import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.db.FeedRepositoryImpl
 import de.ashman.ontrack.db.FriendRepository
 import de.ashman.ontrack.db.FriendRepositoryImpl
+import de.ashman.ontrack.db.RecommendationRepository
+import de.ashman.ontrack.db.RecommendationRepositoryImpl
 import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.db.TrackingRepositoryImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
+import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
@@ -214,16 +216,17 @@ val appModule = module {
 
     // AUTH
     single { Firebase.auth }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
     // DATABASE
     single { Firebase.firestore }
     single { Firebase.storage }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
+    single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
@@ -239,7 +242,7 @@ val appModule = module {
     viewModelDefinition { FeedViewModel(get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get()) }

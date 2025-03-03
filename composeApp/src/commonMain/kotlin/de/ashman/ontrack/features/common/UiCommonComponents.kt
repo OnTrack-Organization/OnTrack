@@ -338,13 +338,14 @@ fun OnTrackUserTextField(
 fun PersonImage(
     userImageUrl: String?,
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier.size(42.dp),
+    modifier: Modifier = Modifier,
 ) {
     val painter = rememberAsyncImagePainter(userImageUrl)
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
         modifier = modifier
+            .size(48.dp)
             .clickable(
                 enabled = onClick != null,
                 onClick = { onClick?.invoke() },
