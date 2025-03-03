@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,8 +32,8 @@ class SettingsViewModel(
             .collect { user ->
                 _uiState.update {
                     it.copy(
-                        user = user?.toDomain(),
-                        name = user?.displayName.orEmpty(),
+                        user = user,
+                        name = user?.name.orEmpty(),
                         username = user?.username.orEmpty()
                     )
                 }
@@ -86,7 +84,7 @@ class SettingsViewModel(
             currentUser.copy(
                 name = newName,
                 username = newUsername
-            ).toEntity()
+            )
         )
 
         _uiState.update { it.copy(snackbarMessage = getString(Res.string.settings_account_data_saved)) }

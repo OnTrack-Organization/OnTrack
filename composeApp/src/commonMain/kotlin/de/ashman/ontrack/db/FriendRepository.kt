@@ -1,5 +1,6 @@
 package de.ashman.ontrack.db
 
+import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.entity.toEntity
@@ -13,10 +14,10 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlin.collections.map
 
 interface FriendRepository {
-    suspend fun searchForNewFriends(query: String): List<FriendEntity>
-    suspend fun getFriends(): Flow<List<FriendEntity>>
-    suspend fun getReceivedRequests(): Flow<List<FriendRequestEntity>>
-    suspend fun getSentRequests(): Flow<List<FriendRequestEntity>>
+    suspend fun searchForNewFriends(query: String): List<Friend>
+    suspend fun getFriends(): Flow<List<Friend>>
+    suspend fun getReceivedRequests(): Flow<List<FriendRequest>>
+    suspend fun getSentRequests(): Flow<List<FriendRequest>>
 
     suspend fun removeFriend(friend: Friend)
 
@@ -32,10 +33,9 @@ class FriendRepositoryImpl(
 ) : FriendRepository {
     private val userCollection = firestore.collection("users")
 
-    override suspend fun searchForNewFriends(query: String): List<FriendEntity> {
-        val results = mutableListOf<FriendEntity>()
+    override suspend fun searchForNewFriends(query: String): List<Friend> {
+        val results = mutableListOf<Friend>()
 
-        // TODO definitely other way
         val existingFriends = userCollection
             .document(authRepository.currentUserId)
             .collection("friends")
@@ -66,7 +66,7 @@ class FriendRepositoryImpl(
             val user = document.data<UserEntity>()
             if (user.id != authRepository.currentUserId && user.id !in notVisibleUsers) {
                 results.add(
-                    FriendEntity(
+                    Friend(
                         id = user.id,
                         username = user.username,
                         name = user.displayName,
@@ -79,25 +79,25 @@ class FriendRepositoryImpl(
         return results
     }
 
-    override suspend fun getFriends(): Flow<List<FriendEntity>> {
+    override suspend fun getFriends(): Flow<List<Friend>> {
         return userCollection.document(authRepository.currentUserId)
             .collection("friends")
             .snapshots
-            .mapNotNull { it.documents.map { it.data<FriendEntity>() } }
+            .mapNotNull { it.documents.map { it.data<FriendEntity>().toDomain() } }
     }
 
-    override suspend fun getReceivedRequests(): Flow<List<FriendRequestEntity>> {
+    override suspend fun getReceivedRequests(): Flow<List<FriendRequest>> {
         return userCollection.document(authRepository.currentUserId)
             .collection("receivedRequests")
             .snapshots
-            .mapNotNull { it.documents.map { it.data<FriendRequestEntity>() } }
+            .mapNotNull { it.documents.map { it.data<FriendRequestEntity>().toDomain() } }
     }
 
-    override suspend fun getSentRequests(): Flow<List<FriendRequestEntity>> {
+    override suspend fun getSentRequests(): Flow<List<FriendRequest>> {
         return userCollection.document(authRepository.currentUserId)
             .collection("sentRequests")
             .snapshots
-            .mapNotNull { it.documents.map { it.data<FriendRequestEntity>() } }
+            .mapNotNull { it.documents.map { it.data<FriendRequestEntity>().toDomain() } }
     }
 
     override suspend fun removeFriend(friend: Friend) {
@@ -137,6 +137,7 @@ class FriendRepositoryImpl(
             name = authRepository.currentUserName,
             imageUrl = authRepository.currentUserImage
         )
+
         userCollection.document(friendRequest.userId)
             .collection("friends").document(authRepository.currentUserId).set(myself)
     }

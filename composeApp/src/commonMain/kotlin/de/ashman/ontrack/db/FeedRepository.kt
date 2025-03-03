@@ -1,7 +1,10 @@
 package de.ashman.ontrack.db
 
-import de.ashman.ontrack.entity.feed.CommentEntity
-import de.ashman.ontrack.entity.feed.LikeEntity
+import de.ashman.ontrack.domain.feed.Comment
+import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.toDomain
+import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
@@ -14,11 +17,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 interface FeedRepository {
-    suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>>
-    suspend fun likeTracking(friendId: String, trackingId: String, like: LikeEntity)
-    suspend fun unlikeTracking(friendId: String, trackingId: String, like: LikeEntity)
-    suspend fun addComment(friendId: String, trackingId: String, comment: CommentEntity)
-    suspend fun removeComment(friendId: String, trackingId: String, comment: CommentEntity)
+    suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<Tracking>>
+    suspend fun likeTracking(friendId: String, trackingId: String, like: Like)
+    suspend fun unlikeTracking(friendId: String, trackingId: String, like: Like)
+    suspend fun addComment(friendId: String, trackingId: String, comment: Comment)
+    suspend fun removeComment(friendId: String, trackingId: String, comment: Comment)
 }
 
 class FeedRepositoryImpl(
@@ -29,7 +32,7 @@ class FeedRepositoryImpl(
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<TrackingEntity>> {
+    override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<Tracking>> {
         val currentUserId = authRepository.currentUserId
 
         val friendsFlow = userCollection.document(currentUserId)
@@ -47,7 +50,7 @@ class FeedRepositoryImpl(
                 }
 
                 query.snapshots()
-                    .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>() } }
+                    .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>().toDomain() } }
             }
 
             if (allFlows.isEmpty()) {
@@ -65,35 +68,35 @@ class FeedRepositoryImpl(
         }
     }
 
-    override suspend fun likeTracking(friendId: String, trackingId: String, like: LikeEntity) {
+    override suspend fun likeTracking(friendId: String, trackingId: String, like: Like) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayUnion(like.toMap())
+                "likes" to FieldValue.arrayUnion(like.toEntity())
             )
     }
 
-    override suspend fun unlikeTracking(friendId: String, trackingId: String, like: LikeEntity) {
+    override suspend fun unlikeTracking(friendId: String, trackingId: String, like: Like) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayRemove(like.toMap())
+                "likes" to FieldValue.arrayRemove(like.toEntity())
             )
     }
 
-    override suspend fun addComment(friendId: String, trackingId: String, comment: CommentEntity) {
+    override suspend fun addComment(friendId: String, trackingId: String, comment: Comment) {
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayUnion(comment.toMap())
+                "comments" to FieldValue.arrayUnion(comment.toEntity())
             )
     }
 
-    override suspend fun removeComment(userId: String, trackingId: String, comment: CommentEntity) {
+    override suspend fun removeComment(userId: String, trackingId: String, comment: Comment) {
         userTrackingCollection(userId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayRemove(comment.toMap())
+                "comments" to FieldValue.arrayRemove(comment.toEntity())
             )
     }
 }

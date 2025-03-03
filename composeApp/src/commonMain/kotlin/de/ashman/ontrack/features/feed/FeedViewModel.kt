@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +38,7 @@ class FeedViewModel(
                 _uiState.update { state ->
                     state.copy(
                         feedResultState = FeedResultState.Success,
-                        feedTrackings = feedTrackings.map { it.toDomain() }
+                        feedTrackings = feedTrackings
                     )
                 }
             }
@@ -54,13 +52,13 @@ class FeedViewModel(
             feedRepository.unlikeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
-                like = like.toEntity()
+                like = like
             )
         } else {
             feedRepository.likeTracking(
                 friendId = tracking.userId,
                 trackingId = tracking.id,
-                like = like.toEntity()
+                like = like
             )
         }
     }
@@ -72,7 +70,7 @@ class FeedViewModel(
             feedRepository.addComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
-                comment = newComment.toEntity(),
+                comment = newComment,
             )
         }
     }
@@ -82,7 +80,7 @@ class FeedViewModel(
             feedRepository.removeComment(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
-                comment = comment.toEntity(),
+                comment = comment,
             )
         }
     }

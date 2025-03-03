@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.FriendRepository
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import kotlinx.coroutines.FlowPreview
@@ -41,7 +40,8 @@ class FriendsViewModel(
     private var searchJob: Job? = null
 
     fun search(query: String) = viewModelScope.launch {
-        val potentialFriends = friendRepository.searchForNewFriends(query).map { it.toDomain() }
+        val potentialFriends = friendRepository.searchForNewFriends(query)
+
         _uiState.update {
             it.copy(
                 potentialFriends = potentialFriends,
@@ -102,18 +102,9 @@ class FriendsViewModel(
 
     private fun observeFriendsAndRequests() {
         viewModelScope.launch {
-            launch {
-                friendRepository.getFriends()
-                    .collect { friends -> _uiState.update { it.copy(friends = friends.map { it.toDomain() }) } }
-            }
-            launch {
-                friendRepository.getReceivedRequests()
-                    .collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests.map { it.toDomain() }) } }
-            }
-            launch {
-                friendRepository.getSentRequests()
-                    .collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests.map { it.toDomain() }) } }
-            }
+            launch { friendRepository.getFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } } }
+            launch { friendRepository.getReceivedRequests().collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests) } } }
+            launch { friendRepository.getSentRequests().collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests) } } }
         }.invokeOnCompletion {
             updateFriendsResultState()
         }

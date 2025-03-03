@@ -1,6 +1,8 @@
 package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
+import de.ashman.ontrack.domain.toDomain
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.user.UserEntity
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.firestore.FirebaseFirestore
@@ -12,10 +14,10 @@ interface AuthRepository {
     val currentUserImage: String
     val currentUserName: String
 
-    suspend fun observeUser(userId: String): Flow<UserEntity?>
-    suspend fun createUser(user: UserEntity): Boolean
+    suspend fun observeUser(userId: String): Flow<User?>
+    suspend fun createUser(user: User): Boolean
     suspend fun removeUser()
-    suspend fun updateUser(user: UserEntity)
+    suspend fun updateUser(user: User)
 
     suspend fun updateFcmToken(token: String)
 
@@ -38,7 +40,7 @@ class AuthRepositoryImpl(
     override val currentUserName: String
         get() = auth.currentUser?.displayName.orEmpty()
 
-    override suspend fun createUser(user: UserEntity): Boolean {
+    override suspend fun createUser(user: User): Boolean {
         val document = userCollection.document(user.id).get()
         if (!document.exists) {
             userCollection
@@ -66,7 +68,7 @@ class AuthRepositoryImpl(
             .update("fcmToken" to token)
     }
 
-    override suspend fun updateUser(user: UserEntity) {
+    override suspend fun updateUser(user: User) {
         userCollection
             .document(currentUserId)
             .set(
@@ -79,10 +81,10 @@ class AuthRepositoryImpl(
         auth.signOut()
     }
 
-    override suspend fun observeUser(userId: String): Flow<UserEntity?> {
+    override suspend fun observeUser(userId: String): Flow<User?> {
         return userCollection.document(userId).snapshots.map { documentSnapshot ->
             try {
-                documentSnapshot.data<UserEntity>()
+                documentSnapshot.data<UserEntity>().toDomain()
             } catch (e: Exception) {
                 Logger.e { "Error parsing user document: ${e.message}" }
                 null

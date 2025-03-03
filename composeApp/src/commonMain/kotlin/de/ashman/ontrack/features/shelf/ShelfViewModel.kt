@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.TrackingRepository
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +37,7 @@ class ShelfViewModel(
         viewModelScope.launch {
             authRepository.observeUser(userId)
                 .collect { user ->
-                    _uiState.update { it.copy(user = user?.toDomain()) }
+                    _uiState.update { it.copy(user = user) }
                 }
         }
     }

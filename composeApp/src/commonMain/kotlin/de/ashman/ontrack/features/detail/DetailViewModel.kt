@@ -16,7 +16,6 @@ import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -131,7 +130,7 @@ class DetailViewModel(
 
     fun fetchFriends() = viewModelScope.launch {
         friendRepository.getFriends().collect { friends ->
-            _uiState.update { it.copy(friends = friends.map { it.toDomain() }) }
+            _uiState.update { it.copy(friends = friends) }
         }
     }
 

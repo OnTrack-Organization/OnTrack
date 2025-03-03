@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.entity.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +30,7 @@ class LoginViewModel(
         result.fold(
             onSuccess = { user ->
                 if (user != null) {
-                    authRepository.createUser(user.toEntity())
+                    authRepository.createUser(user)
                     onSuccess()
                 }
             },
