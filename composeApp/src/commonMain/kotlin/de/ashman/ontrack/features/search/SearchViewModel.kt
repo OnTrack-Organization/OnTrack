@@ -13,7 +13,6 @@ import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -142,7 +141,7 @@ class SearchViewModel(
     private fun observeUserTrackings() {
         trackingRepository.fetchTrackings(authRepository.currentUserId)
             .onEach { trackings ->
-                _uiState.update { it.copy(trackings = trackings.map { it.toDomain() }) }
+                _uiState.update { it.copy(trackings = trackings) }
             }
             .launchIn(viewModelScope)
     }

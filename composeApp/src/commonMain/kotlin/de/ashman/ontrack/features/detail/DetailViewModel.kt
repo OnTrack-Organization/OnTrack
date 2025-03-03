@@ -19,7 +19,6 @@ import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -80,10 +79,9 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        val trackingEntity = tracking.toEntity()
-        trackingRepository.saveTracking(trackingEntity)
+        trackingRepository.saveTracking(tracking)
 
-        _uiState.update { it.copy(selectedTracking = trackingEntity.toDomain()) }
+        _uiState.update { it.copy(selectedTracking = tracking) }
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
@@ -95,15 +93,15 @@ class DetailViewModel(
         trackingRepository.fetchTrackings(authRepository.currentUserId)
             .collect { trackings ->
                 val tracking = trackings.find { it.mediaId == mediaId }
-                _uiState.update { it.copy(selectedTracking = tracking?.toDomain()) }
+                _uiState.update { it.copy(selectedTracking = tracking) }
             }
     }
 
     fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        trackingRepository.fetchFriendTrackings(mediaId).collect { friendTrackings ->
+        trackingRepository.fetchFriendTrackingsForMedia(mediaId).collect { friendTrackings ->
             _uiState.update { state ->
                 state.copy(
-                    friendTrackings = friendTrackings.map { it.toDomain() }
+                    friendTrackings = friendTrackings
                 )
             }
         }

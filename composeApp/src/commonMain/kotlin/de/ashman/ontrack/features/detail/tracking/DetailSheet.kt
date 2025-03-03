@@ -70,9 +70,7 @@ fun DetailSheet(
                 mediaType = mediaType,
                 mediaTitle = mediaTitle,
                 mediaCoverUrl = mediaCoverUrl,
-                // TODO probably different
-                id = "",
-                timestamp = 0,
+                timestamp = System.now().toEpochMilliseconds(),
             )
         )
     }

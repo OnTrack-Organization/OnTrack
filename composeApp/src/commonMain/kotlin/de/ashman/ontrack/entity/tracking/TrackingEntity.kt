@@ -6,13 +6,10 @@ import de.ashman.ontrack.entity.feed.CommentEntity
 import de.ashman.ontrack.entity.feed.LikeEntity
 import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @Serializable
 data class TrackingEntity(
-    @OptIn(ExperimentalUuidApi::class)
-    val id: String = Uuid.random().toString(),
+    val id: String,
 
     val mediaId: String,
     val mediaType: MediaType,
@@ -28,6 +25,7 @@ data class TrackingEntity(
     val username: String,
     val userImageUrl: String,
 
+    // TODO move into sub collection
     val likes: List<LikeEntity> = emptyList(),
     val comments: List<CommentEntity> = emptyList(),
     val history: List<EntryEntity> = emptyList(),

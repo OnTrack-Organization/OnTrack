@@ -45,11 +45,7 @@ class ShelfViewModel(
 
     fun observeUserTrackings(userId: String) {
         trackingRepository.fetchTrackings(userId)
-            .onEach { trackings ->
-                _uiState.update {
-                    it.copy(trackings = trackings.map { it.toDomain() })
-                }
-            }
+            .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
             .launchIn(viewModelScope)
     }
 

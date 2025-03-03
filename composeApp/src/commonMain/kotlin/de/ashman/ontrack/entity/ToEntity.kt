@@ -25,6 +25,7 @@ fun User.toEntity() = UserEntity(
 )
 
 fun Tracking.toEntity() = TrackingEntity(
+    id = id,
     mediaId = mediaId,
     mediaType = mediaType,
     mediaTitle = mediaTitle,
@@ -39,6 +40,11 @@ fun Tracking.toEntity() = TrackingEntity(
     likes = likes.map { it.toEntity() },
     comments = comments.map { it.toEntity() },
     history = history.map { it.toEntity() },
+    timestamp = timestamp,
+)
+
+fun TrackingEntity.toEntryEntity() = EntryEntity(
+    status = status,
     timestamp = timestamp,
 )
 

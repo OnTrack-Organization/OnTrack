@@ -10,8 +10,3 @@ data class FriendRequest(
     val imageUrl: String,
     val status: FriendRequestStatus = FriendRequestStatus.PENDING,
 )
-
-@Serializable
-enum class FriendRequestStatus {
-    PENDING, ACCEPTED, DECLINED, CANCELLED
-}

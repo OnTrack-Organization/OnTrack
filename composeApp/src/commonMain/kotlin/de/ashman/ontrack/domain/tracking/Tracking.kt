@@ -8,11 +8,14 @@ import de.ashman.ontrack.navigation.CommonParcelize
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.serialization.Serializable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @CommonParcelize
 @Serializable
 data class Tracking(
-    val id: String,
+    @OptIn(ExperimentalUuidApi::class)
+    val id: String = Uuid.random().toString(),
 
     val mediaId: String,
     val mediaType: MediaType,
