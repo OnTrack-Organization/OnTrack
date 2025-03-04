@@ -27,7 +27,7 @@ import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.TrackingCardHeader
+import de.ashman.ontrack.features.common.UserCardHeader
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
 import ontrack.composeapp.generated.resources.Res
@@ -187,7 +187,7 @@ private fun RecommendationCard(
 @Composable
 private fun TrackingCard(
     userImageUrl: String?,
-    username: String?,
+    username: String,
     timestamp: String,
     mediaType: MediaType,
     trackStatus: TrackStatus,
@@ -199,7 +199,7 @@ private fun TrackingCard(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TrackingCardHeader(
+        UserCardHeader(
             userImageUrl = userImageUrl,
             username = username,
             timestamp = timestamp,

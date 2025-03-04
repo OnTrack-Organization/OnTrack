@@ -22,9 +22,9 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun TrackingCardHeader(
+fun UserCardHeader(
     userImageUrl: String?,
-    username: String?,
+    username: String,
     timestamp: String,
     mediaType: MediaType,
     trackStatus: TrackStatus,
@@ -42,13 +42,11 @@ fun TrackingCardHeader(
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            username?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+            Text(
+                text = username,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

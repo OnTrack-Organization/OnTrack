@@ -45,7 +45,7 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.common.TrackingCardHeader
+import de.ashman.ontrack.features.common.UserCardHeader
 import de.ashman.ontrack.features.common.contentSizeAnimation
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
@@ -79,7 +79,7 @@ fun FeedCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
-                    TrackingCardHeader(
+                    UserCardHeader(
                         userImageUrl = tracking.userImageUrl,
                         username = tracking.username,
                         timestamp = tracking.timestamp.formatDateTime(),

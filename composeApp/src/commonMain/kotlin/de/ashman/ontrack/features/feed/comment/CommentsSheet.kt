@@ -45,6 +45,7 @@ import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.features.common.OnTrackCommentTextField
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.common.formatDateTime
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
@@ -96,7 +97,7 @@ fun CommentsSheet(
             label = "Comment List Animation"
         ) { hasComments ->
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 state = listState,
             ) {
                 if (!hasComments) {
@@ -118,6 +119,7 @@ fun CommentsSheet(
                             userId = it.userId,
                             userImageUrl = it.userImageUrl,
                             username = it.username,
+                            timestamp = it.timestamp.formatDateTime(),
                             comment = it.comment,
                             onShowRemoveCommentConfirmDialog = {
                                 showCommentRemoveConfirmDialog = true
@@ -130,7 +132,7 @@ fun CommentsSheet(
                                 )
                                 focusRequester.requestFocus()
                             },
-                            onClickUser = { onClickUser(it.userId) },
+                            onUserClick = { onClickUser(it.userId) },
                             isScrolling = listState.isScrollInProgress,
                         )
 
@@ -183,10 +185,11 @@ fun FeedComment(
     userId: String,
     userImageUrl: String,
     username: String,
+    timestamp: String,
     comment: String,
     onShowRemoveCommentConfirmDialog: () -> Unit,
     onReply: () -> Unit,
-    onClickUser: () -> Unit,
+    onUserClick: () -> Unit,
     isScrolling: Boolean,
 ) {
     val isOwnComment = userId == Firebase.auth.currentUser?.uid
@@ -226,37 +229,56 @@ fun FeedComment(
                 ) else Modifier
             ),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.Top,
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            PersonImage(
-                userImageUrl = userImageUrl,
-                onClick = onClickUser,
-            )
-            Column(
-                modifier = Modifier.weight(1f),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    text = username,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                PersonImage(
+                    userImageUrl = userImageUrl,
+                    onClick = onUserClick
                 )
-                Text(
-                    text = annotatedString,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
 
-            if (!isOwnComment) {
-                IconButton(onClick = onReply) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Default.Reply,
-                        contentDescription = "Reply Icon",
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = username,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = timestamp,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                if (!isOwnComment) {
+                    IconButton(onClick = onReply) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.Reply,
+                            contentDescription = "Reply Icon",
+                        )
+                    }
                 }
             }
+
+            Text(
+                modifier = Modifier.padding(start = 56.dp),
+                text = annotatedString,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
