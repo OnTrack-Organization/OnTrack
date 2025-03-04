@@ -142,7 +142,7 @@ fun FeedScreen(
                 items(items = feedUiState.feedTrackings, key = { it.id }) {
                     FeedCard(
                         tracking = it,
-                        onClickLike = { feedViewModel.likeTracking(it) },
+                        onLike = { feedViewModel.likeTracking(it) },
                         onShowComments = {
                             currentSheetContent = SheetContent.COMMENTS
                             feedViewModel.selectTracking(it.id)
@@ -154,7 +154,7 @@ fun FeedScreen(
                             showBottomSheet = true
                         },
                         onClickCover = onClickCover,
-                        onUserClick = { onUserClick(it.userId) },
+                        onClickUser = { onUserClick(it.userId) },
                     )
 
                     if (it != feedUiState.feedTrackings.last()) {

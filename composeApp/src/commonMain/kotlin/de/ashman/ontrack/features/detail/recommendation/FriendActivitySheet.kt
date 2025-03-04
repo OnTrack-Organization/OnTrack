@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.DoNotDisturb
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
@@ -25,14 +23,13 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.common.TrackingCardHeader
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
-import de.ashman.ontrack.features.common.getIcon
-import de.ashman.ontrack.features.common.getLabel
-import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_friends_activity_empty
 import ontrack.composeapp.generated.resources.detail_friends_activity_title
@@ -202,41 +199,14 @@ private fun TrackingCard(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            PersonImage(
-                userImageUrl = userImageUrl,
-                onClick = onUserClick
-            )
-
-            Column {
-                username?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Icon(
-                        imageVector = trackStatus.getIcon(true), trackStatus.name,
-                        tint = contentColorFor(trackStatus.getColor()),
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Text(
-                        text = "${stringResource(trackStatus.getLabel(mediaType))} - $timestamp",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
+        TrackingCardHeader(
+            userImageUrl = userImageUrl,
+            username = username,
+            timestamp = timestamp,
+            mediaType = mediaType,
+            trackStatus = trackStatus,
+            onUserClick = onUserClick,
+        )
 
         Column(modifier = Modifier.padding(start = 56.dp)) {
             rating?.let {

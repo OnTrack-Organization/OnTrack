@@ -33,22 +33,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.TrackingCardHeader
 import de.ashman.ontrack.features.common.contentSizeAnimation
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
-import de.ashman.ontrack.features.common.getIcon
-import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
@@ -59,39 +59,62 @@ import org.jetbrains.compose.resources.pluralStringResource
 @Composable
 fun FeedCard(
     tracking: Tracking,
-    onClickLike: () -> Unit,
+    onLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
-    onUserClick: () -> Unit,
+    onClickUser: () -> Unit,
 ) {
     Card(
         modifier = Modifier.contentSizeAnimation(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = MaterialTheme.shapes.medium,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            FeedCardHeader(
-                userImageUrl = tracking.userImageUrl,
-                username = tracking.username,
-                timestamp = tracking.timestamp.formatDateTime(),
-                onUserClick = onUserClick,
-            )
+            Row {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    TrackingCardHeader(
+                        userImageUrl = tracking.userImageUrl,
+                        username = tracking.username,
+                        timestamp = tracking.timestamp.formatDateTime(),
+                        mediaType = tracking.mediaType,
+                        trackStatus = tracking.status!!,
+                        onUserClick = onClickUser,
+                    )
 
-            FeedCardContent(
-                mediaId = tracking.mediaId,
-                mediaType = tracking.mediaType,
-                mediaTitle = tracking.mediaTitle,
-                mediaCoverUrl = tracking.mediaCoverUrl,
+                    FeedCardMediaTitle(
+                        mediaType = tracking.mediaType,
+                        mediaTitle = tracking.mediaTitle,
+                    )
+                }
+
+                MediaPoster(
+                    modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                    coverUrl = tracking.mediaCoverUrl,
+                    onClick = {
+                        onClickCover(
+                            MediaNavigationItems(
+                                id = tracking.mediaId,
+                                mediaType = tracking.mediaType,
+                                title = tracking.mediaTitle,
+                                coverUrl = tracking.mediaCoverUrl,
+                            )
+                        )
+                    },
+                )
+            }
+
+            FeedCardReview(
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
-                trackStatus = tracking.status,
-                onClickCover = onClickCover,
+                starColor = contentColorFor(tracking.status.getColor()),
             )
 
             FeedCardFooter(
@@ -99,7 +122,7 @@ fun FeedCard(
                 likeCount = tracking.likeCount,
                 likeImages = tracking.likeImages,
                 commentCount = tracking.commentCount,
-                onLikeTracking = onClickLike,
+                onLikeTracking = onLike,
                 onShowComments = onShowComments,
                 onShowLikes = onShowLikes,
             )
@@ -108,150 +131,74 @@ fun FeedCard(
 }
 
 @Composable
-fun FeedCardHeader(
-    userImageUrl: String?,
-    username: String?,
-    timestamp: String,
-    onUserClick: () -> Unit,
+fun FeedCardMediaTitle(
+    mediaType: MediaType,
+    mediaTitle: String,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            PersonImage(
-                userImageUrl = userImageUrl,
-                onClick = onUserClick
-            )
-
-            Column {
-                username?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Text(
-                    text = timestamp,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        Icon(
+            imageVector = mediaType.getMediaTypeUi().outlinedIcon,
+            contentDescription = null,
+        )
+        Text(
+            text = mediaTitle,
+            style = MaterialTheme.typography.titleMedium.copy(
+                lineBreak = LineBreak.Simple,
+            ),
+            fontWeight = FontWeight.Bold,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
+            softWrap = true,
+        )
     }
 }
 
 @Composable
-fun FeedCardContent(
-    mediaId: String,
-    mediaType: MediaType,
-    mediaTitle: String,
-    mediaCoverUrl: String?,
-    trackStatus: TrackStatus?,
-    reviewRating: Double?,
+fun FeedCardReview(
     reviewTitle: String?,
     reviewDescription: String?,
-    onClickCover: (MediaNavigationItems) -> Unit,
+    reviewRating: Double?,
+    starColor: Color,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = mediaType.getMediaTypeUi().outlinedIcon,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = mediaTitle,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            lineBreak = LineBreak.Simple,
-                        ),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                        softWrap = true,
-                    )
-                }
+    reviewRating?.let {
+        MiniStarRatingBar(
+            rating = reviewRating,
+            starColor = starColor,
+        )
+    }
 
-                trackStatus?.let {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Icon(
-                            imageVector = it.getIcon(true), it.name,
-                            tint = contentColorFor(it.getColor()),
-                        )
-                        MiniStarRatingBar(
-                            rating = reviewRating,
-                            starColor = contentColorFor(it.getColor())
-                        )
-                    }
-                }
+    if (!reviewDescription.isNullOrBlank() || !reviewTitle.isNullOrBlank()) {
+        Column(
+            modifier = Modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { expanded = !expanded }
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (!reviewTitle.isNullOrBlank()) {
+                Text(
+                    text = reviewTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = if (expanded) Int.MAX_VALUE else 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
 
-            MediaPoster(
-                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                coverUrl = mediaCoverUrl,
-                onClick = {
-                    onClickCover(
-                        MediaNavigationItems(
-                            id = mediaId,
-                            mediaType = mediaType,
-                            title = mediaTitle,
-                            coverUrl = mediaCoverUrl
-                        )
-                    )
-                },
-            )
-        }
-
-        if (!reviewDescription.isNullOrBlank() || !reviewTitle.isNullOrBlank()) {
-            Column(
-                modifier = Modifier
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = { expanded = !expanded }
-                    ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (!reviewTitle.isNullOrBlank()) {
-                    Text(
-                        text = reviewTitle,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = if (expanded) Int.MAX_VALUE else 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-
-                if (!reviewDescription.isNullOrBlank()) {
-                    Text(
-                        text = reviewDescription,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = if (expanded) Int.MAX_VALUE else 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+            if (!reviewDescription.isNullOrBlank()) {
+                Text(
+                    text = reviewDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = if (expanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }
@@ -296,10 +243,20 @@ fun FeedCardFooter(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    LikeImages(
-                        imageUrls = likeImages,
-                        onClick = onShowLikes,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy((-8).dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        likeImages.forEachIndexed { index, imageUrl ->
+                            PersonImage(
+                                userImageUrl = imageUrl,
+                                onClick = onShowLikes,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .zIndex((likeImages.size - index).toFloat()),
+                            )
+                        }
+                    }
 
                     if (likeCount > 0) {
                         Text(
@@ -334,27 +291,6 @@ fun FeedCardFooter(
                     contentDescription = null,
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun LikeImages(
-    imageUrls: List<String>,
-    onClick: () -> Unit,
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy((-8).dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        imageUrls.forEachIndexed { index, imageUrl ->
-            PersonImage(
-                userImageUrl = imageUrl,
-                onClick = onClick,
-                modifier = Modifier
-                    .size(24.dp)
-                    .zIndex((imageUrls.size - index).toFloat()),
-            )
         }
     }
 }
