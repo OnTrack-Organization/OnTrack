@@ -26,6 +26,8 @@ import de.ashman.ontrack.domain.tracking.MAX_RATING
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTextField
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getRatingLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.review_description_label
 import ontrack.composeapp.generated.resources.review_title
@@ -34,7 +36,7 @@ import ontrack.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ReviewContent(
+fun ReviewSheet(
     mediaTitle: String?,
     rating: Double?,
     reviewTitle: String?,

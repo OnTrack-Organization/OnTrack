@@ -19,7 +19,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.entity.user.FriendEntity
+import de.ashman.ontrack.domain.toRequest
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.SearchBar
@@ -34,7 +34,7 @@ import ontrack.composeapp.generated.resources.feed_sent_requests
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun FriendsSheetContent(
+fun FriendsSheet(
     uiState: FriendsUiState,
     onRemoveFriend: () -> Unit,
     onSelectFriend: (Friend) -> Unit,
@@ -253,17 +253,3 @@ fun FriendsAndRequests(
         )
     }
 }
-
-fun Friend.toRequest() = FriendRequest(
-    userId = id,
-    name = name,
-    username = username,
-    imageUrl = imageUrl,
-)
-
-fun FriendRequest.toFriendEntity() = FriendEntity(
-    id = userId,
-    username = username,
-    name = name,
-    imageUrl = imageUrl,
-)

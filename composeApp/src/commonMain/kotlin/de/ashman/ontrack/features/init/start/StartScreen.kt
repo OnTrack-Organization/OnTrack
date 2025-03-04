@@ -194,7 +194,6 @@ fun AutoScrollPoster(
     }
 }
 
-
 @Composable
 fun ApiContributions() {
     val uriHandler = LocalUriHandler.current

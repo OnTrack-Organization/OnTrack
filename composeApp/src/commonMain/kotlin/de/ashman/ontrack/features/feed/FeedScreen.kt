@@ -39,10 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.features.feed.comment.CommentsSheetContent
-import de.ashman.ontrack.features.feed.friend.FriendsSheetContent
+import de.ashman.ontrack.features.feed.comment.CommentsSheet
+import de.ashman.ontrack.features.feed.friend.FriendsSheet
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
-import de.ashman.ontrack.features.feed.like.LikesSheetContent
+import de.ashman.ontrack.features.feed.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import kotlinx.coroutines.launch
@@ -69,7 +69,7 @@ fun FeedScreen(
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
 
-    var currentSheetContent by remember { mutableStateOf<SheetContent>(SheetContent.Comments) }
+    var currentSheetContent by remember { mutableStateOf<SheetContent>(SheetContent.COMMENTS) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -112,7 +112,7 @@ fun FeedScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            currentSheetContent = SheetContent.Friends
+                            currentSheetContent = SheetContent.FRIENDS
                             showBottomSheet = true
                         },
                     ) {
@@ -132,10 +132,9 @@ fun FeedScreen(
             onRefresh = { viewModel.fetchTrackingFeed() },
         ) {*/
         if (feedUiState.feedTrackings.isEmpty()) {
-            EmptyFeedContent()
+            EmptyFeed()
         } else {
             LazyColumn(
-                // TODO remove the bottom padding and handle nav bar differently
                 modifier = Modifier.padding(contentPadding).padding(bottom = 80.dp),
                 contentPadding = PaddingValues(16.dp),
                 state = listState,
@@ -145,12 +144,12 @@ fun FeedScreen(
                         tracking = it,
                         onClickLike = { feedViewModel.likeTracking(it) },
                         onShowComments = {
-                            currentSheetContent = SheetContent.Comments
+                            currentSheetContent = SheetContent.COMMENTS
                             feedViewModel.selectTracking(it.id)
                             showBottomSheet = true
                         },
                         onShowLikes = {
-                            currentSheetContent = SheetContent.Likes
+                            currentSheetContent = SheetContent.LIKES
                             feedViewModel.selectTracking(it.id)
                             showBottomSheet = true
                         },
@@ -171,7 +170,7 @@ fun FeedScreen(
                 sheetState = bottomSheetState,
             ) {
                 when (currentSheetContent) {
-                    SheetContent.Comments -> CommentsSheetContent(
+                    SheetContent.COMMENTS -> CommentsSheet(
                         comments = feedUiState.selectedTracking?.comments ?: emptyList(),
                         onAddComment = feedViewModel::addComment,
                         onRemoveComment = feedViewModel::removeComment,
@@ -181,7 +180,7 @@ fun FeedScreen(
                         },
                     )
 
-                    SheetContent.Likes -> LikesSheetContent(
+                    SheetContent.LIKES -> LikesSheet(
                         likes = feedUiState.selectedTracking?.likes ?: emptyList(),
                         onUserClick = {
                             showBottomSheet = false
@@ -189,8 +188,8 @@ fun FeedScreen(
                         },
                     )
 
-                    SheetContent.Friends -> {
-                        FriendsSheetContent(
+                    SheetContent.FRIENDS -> {
+                        FriendsSheet(
                             uiState = friendsUiState,
                             onRemoveFriend = {
                                 friendsViewModel.removeFriend()
@@ -242,7 +241,7 @@ fun FeedScreen(
 }
 
 @Composable
-fun EmptyFeedContent(
+fun EmptyFeed(
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -267,5 +266,5 @@ fun EmptyFeedContent(
 }
 
 enum class SheetContent {
-    Comments, Likes, Friends
+    COMMENTS, LIKES, FRIENDS
 }

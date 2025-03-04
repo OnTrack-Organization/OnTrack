@@ -34,7 +34,7 @@ import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.SearchBar
-import de.ashman.ontrack.features.detail.tracking.getIcon
+import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
@@ -117,7 +117,6 @@ fun SearchScreen(
 fun SuccessContent(
     uiState: SearchUiState,
     onClickItem: (MediaNavigationItems) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -78,7 +78,7 @@ fun ShelfScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         uiState.user?.let {
-                            AccountComponent(
+                            AccountHeader(
                                 name = it.name,
                                 accountName = it.username,
                                 imageUrl = it.imageUrl,
@@ -116,7 +116,7 @@ fun ShelfScreen(
         }
     ) { contentPadding ->
         if (uiState.trackings.isEmpty()) {
-            EmptyShelfContent(text = emptyText)
+            EmptyShelf(text = emptyText)
         } else {
             LazyColumn(
                 modifier = Modifier.padding(contentPadding).padding(bottom = if (onSettings != null) 80.dp else 0.dp),
@@ -146,7 +146,7 @@ fun ShelfScreen(
 }
 
 @Composable
-fun AccountComponent(
+fun AccountHeader(
     name: String?,
     accountName: String?,
     imageUrl: String?,
@@ -296,7 +296,7 @@ fun ShelfItem(
 }
 
 @Composable
-fun EmptyShelfContent(
+fun EmptyShelf(
     modifier: Modifier = Modifier,
     text: StringResource,
 ) {

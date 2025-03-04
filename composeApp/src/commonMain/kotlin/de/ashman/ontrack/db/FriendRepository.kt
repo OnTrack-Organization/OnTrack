@@ -4,10 +4,10 @@ import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.entity.toEntity
+import de.ashman.ontrack.entity.toFriendEntity
 import de.ashman.ontrack.entity.user.FriendEntity
 import de.ashman.ontrack.entity.user.FriendRequestEntity
 import de.ashman.ontrack.entity.user.UserEntity
-import de.ashman.ontrack.features.feed.friend.toFriendEntity
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull

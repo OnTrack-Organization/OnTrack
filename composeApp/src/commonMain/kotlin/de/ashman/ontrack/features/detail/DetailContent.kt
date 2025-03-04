@@ -20,14 +20,14 @@ import de.ashman.ontrack.domain.media.Show
 import de.ashman.ontrack.domain.media.Videogame
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.features.detail.components.FriendActivityRow
+import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.features.detail.components.RatingCardRow
-import de.ashman.ontrack.features.detail.content.AlbumDetailContent
-import de.ashman.ontrack.features.detail.content.BoardgameDetailContent
-import de.ashman.ontrack.features.detail.content.BookDetailContent
-import de.ashman.ontrack.features.detail.content.MovieDetailContent
-import de.ashman.ontrack.features.detail.content.ShowDetailContent
-import de.ashman.ontrack.features.detail.content.VideogameDetailContent
+import de.ashman.ontrack.features.detail.media.AlbumDetailContent
+import de.ashman.ontrack.features.detail.media.BoardgameDetailContent
+import de.ashman.ontrack.features.detail.media.BookDetailContent
+import de.ashman.ontrack.features.detail.media.MovieDetailContent
+import de.ashman.ontrack.features.detail.media.ShowDetailContent
+import de.ashman.ontrack.features.detail.media.VideogameDetailContent
 import de.ashman.ontrack.navigation.MediaNavigationItems
 
 @OptIn(ExperimentalMaterial3Api::class)

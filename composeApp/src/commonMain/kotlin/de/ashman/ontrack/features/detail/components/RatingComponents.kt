@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,15 +17,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.ApiType
 import de.ashman.ontrack.api.utils.roundDecimals
+import de.ashman.ontrack.domain.tracking.MAX_RATING
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.ratings_overview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun MiniStarRatingBar(
+    modifier: Modifier = Modifier,
+    rating: Double?,
+    starColor: Color,
+) {
+    Row(
+        modifier = modifier
+    ) {
+        for (i in 1..MAX_RATING) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = null,
+                tint = if (rating != null && i <= rating) {
+                    starColor
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
+        }
+    }
+}
 
 @Composable
 fun RatingCardRow(

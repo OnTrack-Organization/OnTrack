@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
-import de.ashman.ontrack.features.detail.tracking.getColor
-import de.ashman.ontrack.features.detail.tracking.getIcon
-import de.ashman.ontrack.features.detail.tracking.getLabel
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
@@ -118,7 +118,7 @@ fun ShelfListScreen(
             ) { (isEmpty, selectedStatus) ->
                 if (isEmpty) {
                     selectedStatus?.let {
-                        EmptyShelfListContent(
+                        EmptyShelfList(
                             text = it.getLabel(mediaType),
                             icon = it.getIcon(),
                         )
@@ -218,7 +218,7 @@ fun TrackStatusFilterChips(
 }
 
 @Composable
-fun EmptyShelfListContent(
+fun EmptyShelfList(
     modifier: Modifier = Modifier,
     text: StringResource,
     icon: ImageVector,

@@ -28,11 +28,11 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.common.formatDateTime
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
-import de.ashman.ontrack.features.detail.components.formatDateTime
-import de.ashman.ontrack.features.detail.tracking.getColor
-import de.ashman.ontrack.features.detail.tracking.getIcon
-import de.ashman.ontrack.features.detail.tracking.getLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_friends_activity_empty
 import ontrack.composeapp.generated.resources.detail_friends_activity_title

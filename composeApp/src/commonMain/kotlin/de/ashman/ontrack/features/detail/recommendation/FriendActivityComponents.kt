@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.components
+package de.ashman.ontrack.features.detail.recommendation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,7 @@ import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.detail.tracking.getIcon
+import de.ashman.ontrack.features.common.getIcon
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_friends_activity_title
 import org.jetbrains.compose.resources.stringResource

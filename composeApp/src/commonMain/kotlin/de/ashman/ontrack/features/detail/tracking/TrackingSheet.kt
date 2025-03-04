@@ -39,6 +39,10 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.common.getLabel
+import de.ashman.ontrack.features.common.getSublabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.review_button
 import ontrack.composeapp.generated.resources.save_button
@@ -47,7 +51,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun TrackingContent(
+fun TrackingSheet(
     mediaType: MediaType,
     mediaTitle: String?,
     selectedStatus: TrackStatus?,

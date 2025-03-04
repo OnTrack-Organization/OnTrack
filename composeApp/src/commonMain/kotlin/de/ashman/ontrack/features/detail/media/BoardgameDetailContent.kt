@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.content
+package de.ashman.ontrack.features.detail.media
 
 import androidx.compose.foundation.lazy.LazyListScope
 import de.ashman.ontrack.domain.media.Boardgame

@@ -36,9 +36,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.detail.components.DetailDropDown
-import de.ashman.ontrack.features.detail.components.StickyMainContent
-import de.ashman.ontrack.features.detail.tracking.CurrentBottomSheetContent
-import de.ashman.ontrack.features.detail.tracking.DetailSheet
+import de.ashman.ontrack.features.detail.components.StickyHeader
+import de.ashman.ontrack.features.detail.tracking.CurrentSheet
+import de.ashman.ontrack.features.detail.tracking.DetailBottomSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
@@ -63,7 +63,7 @@ fun DetailScreen(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
-    var currentBottomSheet by remember { mutableStateOf(CurrentBottomSheetContent.TRACKING) }
+    var currentBottomSheet by remember { mutableStateOf(CurrentSheet.TRACKING) }
     val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
@@ -106,7 +106,7 @@ fun DetailScreen(
                     DetailDropDown(
                         isTrackingAvailable = uiState.selectedTracking != null,
                         onClickRemove = {
-                            currentBottomSheet = CurrentBottomSheetContent.REMOVE
+                            currentBottomSheet = CurrentSheet.REMOVE
                             showBottomSheet = true
                         }
                     )
@@ -118,7 +118,7 @@ fun DetailScreen(
         Column(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
-            StickyMainContent(
+            StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
                 media = uiState.selectedMedia,
                 mediaType = mediaNavItems.mediaType,
@@ -127,11 +127,11 @@ fun DetailScreen(
                 status = uiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
-                    currentBottomSheet = CurrentBottomSheetContent.TRACKING
+                    currentBottomSheet = CurrentSheet.TRACKING
                     showBottomSheet = true
                 },
                 onClickRecommend = {
-                    currentBottomSheet = CurrentBottomSheetContent.RECOMMEND
+                    currentBottomSheet = CurrentSheet.RECOMMEND
                     showBottomSheet = true
                 },
             )
@@ -152,7 +152,7 @@ fun DetailScreen(
                             onClickItem = onClickItem,
                             onUserClick = onUserClick,
                             onShowFriendActivity = {
-                                currentBottomSheet = CurrentBottomSheetContent.FRIEND_ACTIVITY
+                                currentBottomSheet = CurrentSheet.FRIEND_ACTIVITY
                                 showBottomSheet = true
                             },
                         )
@@ -166,7 +166,7 @@ fun DetailScreen(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
             ) {
-                DetailSheet(
+                DetailBottomSheet(
                     currentContent = currentBottomSheet,
                     mediaId = mediaNavItems.id,
                     mediaType = mediaNavItems.mediaType,
@@ -194,7 +194,7 @@ fun DetailScreen(
                         showBottomSheet = false
                     },
                     goToReview = {
-                        currentBottomSheet = CurrentBottomSheetContent.REVIEW
+                        currentBottomSheet = CurrentSheet.REVIEW
                     },
                     onAddToCatalog = {
                         viewModel.addToCatalog()

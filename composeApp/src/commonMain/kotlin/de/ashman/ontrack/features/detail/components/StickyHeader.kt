@@ -43,9 +43,9 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.detail.tracking.getColor
-import de.ashman.ontrack.features.detail.tracking.getIcon
-import de.ashman.ontrack.features.detail.tracking.getLabel
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.common.getLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.no_title
 import ontrack.composeapp.generated.resources.track_button
@@ -53,7 +53,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StickyMainContent(
+fun StickyHeader(
     imageModifier: Modifier = Modifier,
     media: Media?,
     mediaType: MediaType,

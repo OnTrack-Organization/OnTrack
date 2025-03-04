@@ -23,7 +23,7 @@ import ontrack.composeapp.generated.resources.feed_likes
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun LikesSheetContent(
+fun LikesSheet(
     likes: List<Like>,
     onUserClick: (String) -> Unit,
 ) {
@@ -62,7 +62,7 @@ fun FeedLike(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() } // Move clickable here
+            .clickable { onClick() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,

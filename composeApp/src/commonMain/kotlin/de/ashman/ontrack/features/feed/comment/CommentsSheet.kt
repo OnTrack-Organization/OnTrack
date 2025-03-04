@@ -54,7 +54,7 @@ import ontrack.composeapp.generated.resources.feed_no_comments
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun CommentsSheetContent(
+fun CommentsSheet(
     comments: List<Comment>,
     onAddComment: (String) -> Unit,
     onRemoveComment: (Comment) -> Unit,
@@ -77,7 +77,6 @@ fun CommentsSheetContent(
 
     Column(
         modifier = Modifier
-            //.fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { localFocusManager.clearFocus() })
             },

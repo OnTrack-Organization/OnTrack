@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun RemoveSheetContent(
+fun RemoveSheet(
     title: StringResource,
     text: StringResource,
     onConfirm: () -> Unit,

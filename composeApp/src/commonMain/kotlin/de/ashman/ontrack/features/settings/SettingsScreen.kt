@@ -13,7 +13,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,11 +40,9 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
-import de.ashman.ontrack.features.common.RemoveSheetContent
+import de.ashman.ontrack.features.common.RemoveSheet
+import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
-import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.core.PickerMode
-import io.github.vinceglb.filekit.core.PickerType
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.save_button
 import ontrack.composeapp.generated.resources.settings_logout
@@ -54,12 +51,7 @@ import ontrack.composeapp.generated.resources.settings_remove
 import ontrack.composeapp.generated.resources.settings_remove_confirm_text
 import ontrack.composeapp.generated.resources.settings_remove_confirm_title
 import ontrack.composeapp.generated.resources.settings_title
-import ontrack.composeapp.generated.resources.settings_username_empty
 import ontrack.composeapp.generated.resources.settings_username_hint
-import ontrack.composeapp.generated.resources.settings_username_taken
-import ontrack.composeapp.generated.resources.settings_username_too_long
-import ontrack.composeapp.generated.resources.settings_username_too_short
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -192,7 +184,7 @@ fun SettingsScreen(
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    RemoveSheetContent(
+                    RemoveSheet(
                         title = Res.string.settings_remove_confirm_title,
                         text = Res.string.settings_remove_confirm_text,
                         onConfirm = {
@@ -205,34 +197,5 @@ fun SettingsScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ImagePicker(
-    modifier: Modifier = Modifier,
-) {
-    val launcher = rememberFilePickerLauncher(
-        type = PickerType.Image,
-        mode = PickerMode.Single,
-    ) { file ->
-        // TODO somehow save the image to the db?
-        // Handle the picked files
-    }
-
-    Button(
-        modifier = modifier,
-        onClick = { launcher.launch() },
-    ) {
-        Text(text = "Pick an image")
-    }
-}
-
-fun UsernameError.getLabel(): StringResource {
-    return when (this) {
-        UsernameError.EMPTY -> Res.string.settings_username_empty
-        UsernameError.TAKEN -> Res.string.settings_username_taken
-        UsernameError.TOO_LONG -> Res.string.settings_username_too_long
-        UsernameError.TOO_SHORT -> Res.string.settings_username_too_short
     }
 }

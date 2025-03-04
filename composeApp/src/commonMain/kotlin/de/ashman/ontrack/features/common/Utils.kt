@@ -1,5 +1,10 @@
-package de.ashman.ontrack.features.detail.tracking
+package de.ashman.ontrack.features.common
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Cancel
@@ -11,10 +16,19 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.features.settings.UsernameError
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
+import kotlinx.datetime.toLocalDateTime
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.album_status_catalog_label
 import ontrack.composeapp.generated.resources.album_status_catalog_sublabel
@@ -55,6 +69,10 @@ import ontrack.composeapp.generated.resources.rating_one
 import ontrack.composeapp.generated.resources.rating_subtitle
 import ontrack.composeapp.generated.resources.rating_three
 import ontrack.composeapp.generated.resources.rating_two
+import ontrack.composeapp.generated.resources.settings_username_empty
+import ontrack.composeapp.generated.resources.settings_username_taken
+import ontrack.composeapp.generated.resources.settings_username_too_long
+import ontrack.composeapp.generated.resources.settings_username_too_short
 import ontrack.composeapp.generated.resources.show_status_catalog_label
 import ontrack.composeapp.generated.resources.show_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.show_status_consumed_label
@@ -73,6 +91,33 @@ import ontrack.composeapp.generated.resources.videogame_status_dropped_label
 import ontrack.composeapp.generated.resources.videogame_status_dropped_sublabel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
+// Default Poster Size ist 2:3 Ratio
+val DEFAULT_POSTER_HEIGHT = 224.dp
+val SMALL_POSTER_HEIGHT = 112.dp
+
+@Composable
+fun keyboardAsState(): State<Boolean> {
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    return rememberUpdatedState(isImeVisible)
+}
+
+fun Modifier.contentSizeAnimation(): Modifier =
+    this then Modifier.animateContentSize(
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
+
+fun UsernameError.getLabel(): StringResource {
+    return when (this) {
+        UsernameError.EMPTY -> Res.string.settings_username_empty
+        UsernameError.TAKEN -> Res.string.settings_username_taken
+        UsernameError.TOO_LONG -> Res.string.settings_username_too_long
+        UsernameError.TOO_SHORT -> Res.string.settings_username_too_short
+    }
+}
 
 @Composable
 fun TrackStatus.getLabel(mediaType: MediaType): StringResource {
@@ -206,4 +251,14 @@ fun getRatingLabel(rating: Int?, maxRating: Int): String {
     } else {
         stringResource(Res.string.rating_subtitle, rating, maxRating, ratingLabel)
     }
+}
+
+fun Long.formatDateTime(): String {
+    val instant = Instant.fromEpochMilliseconds(this)
+    val dateTime = instant.toLocalDateTime(currentSystemDefault())
+
+    val date = "${dateTime.dayOfMonth.toString().padStart(2, '0')}.${dateTime.monthNumber.toString().padStart(2, '0')}.${dateTime.year}"
+    val time = "${dateTime.hour.toString().padStart(2, '0')}:${dateTime.minute.toString().padStart(2, '0')}"
+
+    return "$date, $time"
 }

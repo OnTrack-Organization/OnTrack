@@ -91,24 +91,12 @@ fun LoginScreen(
             verticalArrangement = Arrangement.SpaceAround,
         ) {
 
-            //MailLogin()
-
             GoogleAppleLogin(
                 onClickContinue = { result ->
                     viewModel.signIn(result, onNavigateAfterLogin)
                 }
             )
         }
-    }
-}
-
-@Composable
-fun MailLogin() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // TODO add
     }
 }
 

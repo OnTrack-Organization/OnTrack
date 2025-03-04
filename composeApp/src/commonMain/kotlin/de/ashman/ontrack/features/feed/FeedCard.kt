@@ -45,10 +45,10 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.contentSizeAnimation
+import de.ashman.ontrack.features.common.formatDateTime
+import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.detail.components.MiniStarRatingBar
-import de.ashman.ontrack.features.detail.components.formatDateTime
-import de.ashman.ontrack.features.detail.tracking.getColor
-import de.ashman.ontrack.features.detail.tracking.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res

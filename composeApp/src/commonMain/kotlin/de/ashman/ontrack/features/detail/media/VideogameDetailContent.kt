@@ -1,47 +1,42 @@
-package de.ashman.ontrack.features.detail.content
+package de.ashman.ontrack.features.detail.media
 
 import androidx.compose.foundation.lazy.LazyListScope
-import de.ashman.ontrack.api.utils.getLivingDates
-import de.ashman.ontrack.domain.media.Movie
+import de.ashman.ontrack.domain.media.Videogame
 import de.ashman.ontrack.features.common.MediaPosterRow
-import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaChips
 import de.ashman.ontrack.features.detail.components.MediaDescription
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_collection
 import ontrack.composeapp.generated.resources.detail_description
-import ontrack.composeapp.generated.resources.detail_director
+import ontrack.composeapp.generated.resources.detail_franchise
 import ontrack.composeapp.generated.resources.detail_genres
+import ontrack.composeapp.generated.resources.detail_platforms
 import ontrack.composeapp.generated.resources.detail_similar
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
-fun LazyListScope.MovieDetailContent(
-    movie: Movie,
+fun LazyListScope.VideogameDetailContent(
+    videogame: Videogame,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     item {
         MediaDescription(
             title = stringResource(Res.string.detail_description),
-            description = movie.description,
+            description = videogame.description,
         )
     }
 
-    movie.director?.let {
+    videogame.getPlatformNames()?.let {
         item {
-            CreatorCard(
-                title = Res.string.detail_director,
-                name = it.name,
-                subInfo = getLivingDates(it.birthDate, it.deathDate),
-                imageUrl = it.imageUrl,
-                description = it.bio,
+            MediaChips(
+                title = stringResource(Res.string.detail_platforms),
+                items = it,
             )
         }
     }
 
-    movie.genres?.let {
+    videogame.genres?.let {
         item {
             MediaChips(
                 title = stringResource(Res.string.detail_genres),
@@ -50,20 +45,19 @@ fun LazyListScope.MovieDetailContent(
         }
     }
 
-    movie.collection?.movies?.let {
+    videogame.franchises?.let {
         item {
             MediaPosterRow(
-                title = stringResource(Res.string.detail_collection),
+                title = stringResource(Res.string.detail_franchise),
                 items = it,
-                onClickItem = onClickItem,
             )
         }
     }
 
-    movie.similarMovies?.let {
+    videogame.similarGames?.let {
         item {
             MediaPosterRow(
-                title = stringResource(Res.string.detail_similar, pluralStringResource(movie.mediaType.getMediaTypeUi().title, 2)),
+                title = stringResource(Res.string.detail_similar, pluralStringResource(videogame.mediaType.getMediaTypeUi().title, 2)),
                 items = it,
                 onClickItem = onClickItem,
             )

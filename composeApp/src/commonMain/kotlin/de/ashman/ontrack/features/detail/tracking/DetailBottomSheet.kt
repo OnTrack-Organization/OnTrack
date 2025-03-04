@@ -19,7 +19,7 @@ import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.features.common.RemoveSheetContent
+import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import kotlinx.datetime.Clock.System
@@ -27,7 +27,7 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
 import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 
-enum class CurrentBottomSheetContent {
+enum class CurrentSheet {
     TRACKING,
     REVIEW,
     REMOVE,
@@ -39,8 +39,8 @@ enum class CurrentBottomSheetContent {
 // Back Handling is being worked on rn
 // https://youtrack.jetbrains.com/issue/CMP-4419
 @Composable
-fun DetailSheet(
-    currentContent: CurrentBottomSheetContent,
+fun DetailBottomSheet(
+    currentContent: CurrentSheet,
     mediaId: String,
     mediaType: MediaType,
     mediaTitle: String,
@@ -87,7 +87,7 @@ fun DetailSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         when (currentContent) {
-            CurrentBottomSheetContent.TRACKING -> TrackingContent(
+            CurrentSheet.TRACKING -> TrackingSheet(
                 mediaType = mediaType,
                 mediaTitle = mediaTitle,
                 selectedStatus = tracking.status,
@@ -105,7 +105,7 @@ fun DetailSheet(
                 onToReview = goToReview,
             )
 
-            CurrentBottomSheetContent.REVIEW -> ReviewContent(
+            CurrentSheet.REVIEW -> ReviewSheet(
                 mediaTitle = mediaTitle,
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
@@ -117,14 +117,14 @@ fun DetailSheet(
                 onSave = { onSaveTracking(tracking) },
             )
 
-            CurrentBottomSheetContent.REMOVE -> RemoveSheetContent(
+            CurrentSheet.REMOVE -> RemoveSheet(
                 title = Res.string.detail_remove_confirm_title,
                 text = Res.string.detail_remove_confirm_text,
                 onConfirm = { onRemoveTracking(tracking.id) },
                 onCancel = onCancel,
             )
 
-            CurrentBottomSheetContent.FRIEND_ACTIVITY -> FriendsActivitySheet(
+            CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
                 recommendations = recommendations,
                 friendTrackings = friendTrackings,
                 onUserClick = onUserClick,
@@ -132,7 +132,7 @@ fun DetailSheet(
                 onPassClick = onPass,
             )
 
-            CurrentBottomSheetContent.RECOMMEND -> RecommendSheet(
+            CurrentSheet.RECOMMEND -> RecommendSheet(
                 selectableFriends = friends,
                 onSendRecommendation = onSendRecommendation
             )
