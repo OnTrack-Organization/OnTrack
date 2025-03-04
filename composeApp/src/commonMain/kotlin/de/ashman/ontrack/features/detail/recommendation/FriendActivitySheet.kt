@@ -43,6 +43,7 @@ fun FriendsActivitySheet(
     recommendations: List<Recommendation>,
     // TODO maybe new FriendTracking domain
     friendTrackings: List<Tracking>,
+    hasTracking: Boolean,
     onUserClick: (String) -> Unit,
     onAddToCatalogClick: () -> Unit,
     onPassClick: () -> Unit,
@@ -125,12 +126,14 @@ fun FriendsActivitySheet(
                     modifier = Modifier.weight(1f),
                     text = Res.string.recommendations_add_to_catalog_button,
                     icon = Icons.Default.Bookmark,
+                    enabled = !hasTracking,
                     onClick = onAddToCatalogClick,
                 )
 
                 OnTrackOutlinedIconButton(
                     icon = Icons.Outlined.DoNotDisturb,
                     color = TrackStatus.CATALOG.getColor(),
+                    enabled = !hasTracking,
                     onClick = onPassClick,
                 )
             }

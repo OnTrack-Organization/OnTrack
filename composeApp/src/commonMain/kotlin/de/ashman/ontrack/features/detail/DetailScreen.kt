@@ -43,6 +43,8 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommendation_added_to_catalog
+import ontrack.composeapp.generated.resources.detail_recommendation_passed
 import ontrack.composeapp.generated.resources.detail_recommendation_sent
 import ontrack.composeapp.generated.resources.tracking_removed
 import ontrack.composeapp.generated.resources.tracking_saved
@@ -199,9 +201,17 @@ fun DetailScreen(
                     },
                     onAddToCatalog = {
                         viewModel.addToCatalog()
+                        showBottomSheet = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
+                        }
                     },
                     onPass = {
                         viewModel.passRecommendation()
+                        showBottomSheet = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_passed))
+                        }
                     },
                     onSendRecommendation = { friendId, message ->
                         viewModel.sendRecommendation(friendId, message)

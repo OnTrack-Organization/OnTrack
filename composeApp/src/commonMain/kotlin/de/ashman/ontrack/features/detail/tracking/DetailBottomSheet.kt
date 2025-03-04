@@ -127,6 +127,7 @@ fun DetailBottomSheet(
             CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
                 recommendations = recommendations,
                 friendTrackings = friendTrackings,
+                hasTracking = tracking.status != null,
                 onUserClick = onUserClick,
                 onAddToCatalogClick = onAddToCatalog,
                 onPassClick = onPass,
