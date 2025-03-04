@@ -46,6 +46,7 @@ firebase-gitlive-firestore = { module = "dev.gitlive:firebase-firestore", versio
 firebase-gitlive-storage = { module = "dev.gitlive:firebase-storage", version.ref = "firebaseSdk" }
 firebase-gitlive-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebaseSdk" }
 firebase-gitlive-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebaseSdk" }
+firebase-gitlive-functions = { module = "dev.gitlive:firebase-functions", version.ref = "firebaseSdk" }
 firebase-gitlive-common = { module = "dev.gitlive:firebase-common", version.ref = "firebaseSdk" }
 
 kmpnotifier = { module = "io.github.mirzemehdi:kmpnotifier", version.ref = "kmpnotifier" }
@@ -81,8 +82,15 @@ xmlutil-serialization = { module = "io.github.pdvrieze.xmlutil:serialization", v
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [bundles]
-firebase = ["firebase-gitlive-common", "firebase-gitlive-auth", "firebase-gitlive-firestore",
-    "firebase-gitlive-crashlytics", "firebase-gitlive-analytics", "firebase-gitlive-storage"]
+firebase = [
+    "firebase-gitlive-common",
+    "firebase-gitlive-auth",
+    "firebase-gitlive-firestore",
+    "firebase-gitlive-crashlytics",
+    "firebase-gitlive-analytics",
+    "firebase-gitlive-storage",
+    "firebase-gitlive-functions"
+]
 kmpauth = ["kmpauth-firebase", "kmpauth-google", "kmpauth-uihelper"]
 ksoup = ["ksoup", "ksoup-kotlinx", "ksoup-network"]
 

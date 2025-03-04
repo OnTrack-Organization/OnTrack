@@ -27,10 +27,13 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import de.ashman.ontrack.notification.NotificationService
+import de.ashman.ontrack.notification.NotificationServiceImpl
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -219,6 +222,10 @@ val appModule = module {
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
 
+    // NOTIFICATIONS
+    single { Firebase.functions }
+    single<NotificationService> { NotificationServiceImpl(get(), get()) }
+
     // DATABASE
     single { Firebase.firestore }
     single { Firebase.storage }
@@ -239,10 +246,10 @@ val appModule = module {
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get()) }
-    viewModelDefinition { FeedViewModel(get()) }
-    viewModelDefinition { FriendsViewModel(get(), get()) }
+    viewModelDefinition { FeedViewModel(get(), get()) }
+    viewModelDefinition { FriendsViewModel(get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get()) }

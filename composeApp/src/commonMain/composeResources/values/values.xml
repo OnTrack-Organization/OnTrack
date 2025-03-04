@@ -272,6 +272,22 @@
     <string name="settings_remove_confirm_title">Remove account?</string>
     <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
 
+    <!-- NOTIFICATIONS -->
+    <string name="notifications_new_recommendation_title">New Recommendation</string>
+    <string name="notifications_new_recommendation_body">%1$s sent you a recommendation for "%2$s"</string>
+
+    <string name="notifications_new_request_title">New Friend Request</string>
+    <string name="notifications_new_request_body">%1$s sent you a friend request</string>
+
+    <string name="notifications_request_accepted_title">Friend Request Accepted</string>
+    <string name="notifications_request_accepted_body">%1$s accepted your friend request</string>
+
+    <string name="notifications_like_title">New Like</string>
+    <string name="notifications_like_body">%1$s liked your tracking</string>
+
+    <string name="notifications_comment_title">New Comment</string>
+    <string name="notifications_comment_body">%1$s commented on your tracking</string>
+
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
     <string name="remove_button">Remove</string>

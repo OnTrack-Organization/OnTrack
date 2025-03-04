@@ -21,6 +21,7 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.notification.NotificationService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock.System
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.notifications_new_recommendation_body
+import ontrack.composeapp.generated.resources.notifications_new_recommendation_title
+import org.jetbrains.compose.resources.getString
 import kotlin.time.measureTime
 
 class DetailViewModel(
@@ -41,6 +46,7 @@ class DetailViewModel(
     private val authRepository: AuthRepository,
     private val recommendationRepository: RecommendationRepository,
     private val friendRepository: FriendRepository,
+    private val notificationService: NotificationService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -154,6 +160,12 @@ class DetailViewModel(
         )
 
         recommendationRepository.sendRecommendation(friendId, recommendation)
+
+        notificationService.sendPushNotification(
+            userId = friendId,
+            title = getString(Res.string.notifications_new_recommendation_title),
+            body = getString(Res.string.notifications_new_recommendation_body, authRepository.currentUserName, media.title),
+        )
     }
 
 

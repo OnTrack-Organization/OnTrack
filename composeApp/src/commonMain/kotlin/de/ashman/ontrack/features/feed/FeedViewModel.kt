@@ -6,15 +6,23 @@ import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.notification.NotificationService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.notifications_comment_body
+import ontrack.composeapp.generated.resources.notifications_comment_title
+import ontrack.composeapp.generated.resources.notifications_like_body
+import ontrack.composeapp.generated.resources.notifications_like_title
+import org.jetbrains.compose.resources.getString
 
 class FeedViewModel(
     private val feedRepository: FeedRepository,
+    private val notificationService: NotificationService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -60,6 +68,12 @@ class FeedViewModel(
                 trackingId = tracking.id,
                 like = like
             )
+
+            notificationService.sendPushNotification(
+                userId = tracking.userId,
+                title = getString(Res.string.notifications_like_title),
+                body = getString(Res.string.notifications_like_body, like.username),
+            )
         }
     }
 
@@ -71,6 +85,12 @@ class FeedViewModel(
                 friendId = selectedTracking.userId,
                 trackingId = selectedTracking.id,
                 comment = newComment,
+            )
+
+            notificationService.sendPushNotification(
+                userId = selectedTracking.userId,
+                title = getString(Res.string.notifications_comment_title),
+                body = getString(Res.string.notifications_comment_body, newComment.username),
             )
         }
     }
