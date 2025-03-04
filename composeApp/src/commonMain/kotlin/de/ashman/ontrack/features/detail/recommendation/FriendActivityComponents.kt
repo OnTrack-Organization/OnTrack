@@ -67,12 +67,16 @@ fun FriendActivityRow(
     ) {
         items(uniqueFriends) { userId ->
             val userTracking = friendTrackings.find { it.userId == userId }
-            val isRecommended = friendRecommendations.any { it.userId == userId }
+            val userRecommendation = friendRecommendations.find { it.userId == userId }
+
+            val userImageUrl = userTracking?.userImageUrl ?: userRecommendation?.userImageUrl
+            val status = userTracking?.status
+            val isRecommended = userRecommendation != null
 
             FriendActivityIcon(
                 userId = userId,
-                imageUrl = userTracking?.userImageUrl,
-                status = userTracking?.status,
+                imageUrl = userImageUrl,
+                status = status,
                 isRecommended = isRecommended,
                 onUserClick = onUserClick
             )

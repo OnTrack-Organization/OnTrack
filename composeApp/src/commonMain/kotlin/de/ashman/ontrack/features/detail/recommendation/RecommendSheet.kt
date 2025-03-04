@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun RecommendSheet(
     selectableFriends: List<Friend>,
-    onSendRecommendation: () -> Unit
+    onSendRecommendation: (String, String?) -> Unit
 ) {
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     val isAnyUserSelected = selectedUserId != null
@@ -93,7 +93,7 @@ fun RecommendSheet(
             text = Res.string.detail_recommend_send_button,
             icon = Icons.AutoMirrored.Default.Send,
             enabled = isAnyUserSelected,
-            onClick = onSendRecommendation,
+            onClick = { onSendRecommendation(selectedUserId!!, message) },
         )
     }
 }

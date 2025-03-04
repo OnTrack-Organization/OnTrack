@@ -16,6 +16,7 @@ import de.ashman.ontrack.db.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.recommendation.RecommendationStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -124,9 +125,24 @@ class DetailViewModel(
         recommendationRepository.passRecommendation(_uiState.value.selectedMedia?.id!!)
     }
 
-    fun sendRecommendation() = viewModelScope.launch {
-        //recommendationRepository.sendRecommendation()
+    fun sendRecommendation(friendId: String, message: String?) = viewModelScope.launch {
+        val media = _uiState.value.selectedMedia ?: return@launch
+
+        val recommendation = Recommendation(
+            userId = authRepository.currentUserId,
+            username = authRepository.currentUserName,
+            userImageUrl = authRepository.currentUserImage,
+            mediaId = media.id,
+            mediaType = media.mediaType,
+            mediaTitle = media.title,
+            mediaCoverUrl = media.coverUrl,
+            message = message,
+            status = RecommendationStatus.PENDING
+        )
+
+        recommendationRepository.sendRecommendation(friendId, recommendation)
     }
+
 
     fun fetchFriends() = viewModelScope.launch {
         friendRepository.getFriends().collect { friends ->

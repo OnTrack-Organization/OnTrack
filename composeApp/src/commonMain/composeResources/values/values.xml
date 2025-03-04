@@ -245,6 +245,7 @@
     <string name="detail_recommend_send_button">Send</string>
     <string name="detail_recommend_previous">Previous recommendations</string>
     <string name="detail_recommend_friends_empty">No friends to recommend to</string>
+    <string name="detail_recommendation_sent">Recommendation sent</string>
 
     <!-- SHELF -->
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>

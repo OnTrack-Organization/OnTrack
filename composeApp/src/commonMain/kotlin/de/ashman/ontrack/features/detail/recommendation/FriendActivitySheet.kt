@@ -150,7 +150,7 @@ private fun RecommendationCard(
     onUserClick: () -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -179,9 +179,9 @@ private fun RecommendationCard(
 
         message?.let {
             Text(
+                modifier = Modifier.padding(start = 56.dp),
                 text = it,
                 style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
             )
         }
     }

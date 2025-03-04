@@ -55,7 +55,7 @@ fun DetailBottomSheet(
     goToReview: () -> Unit,
     onAddToCatalog: () -> Unit,
     onPass: () -> Unit,
-    onSendRecommendation: () -> Unit,
+    onSendRecommendation: (String, String?) -> Unit,
     onUserClick: (String) -> Unit,
 ) {
     // TODO move into own methods...
