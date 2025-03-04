@@ -17,16 +17,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.EmptyContent
@@ -37,7 +33,6 @@ import de.ashman.ontrack.features.common.SearchBar
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,24 +40,10 @@ import org.jetbrains.compose.resources.pluralStringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    authRepository: AuthRepository,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(true) {
-        NotifierManager.addListener(object : NotifierManager.Listener {
-            override fun onNewToken(token: String) {
-                coroutineScope.launch {
-                    authRepository.updateFcmToken(token)
-                }
-                println("onNewToken: $token")
-            }
-        })
-    }
 
     Column(
         modifier = modifier

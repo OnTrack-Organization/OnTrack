@@ -21,7 +21,8 @@ fun App() {
     OnTrackTheme {
         GoogleAuthProvider.create(GoogleAuthCredentials(BuildKonfig.GOOGLE_AUTH_CLIENT_ID))
 
-        startNotificationManager()
+        notificationInit()
+        //startNotificationManager()
 
         setSingletonImageLoaderFactory { context ->
             getAsyncImageLoader(context)
@@ -52,14 +53,8 @@ fun getAsyncImageLoader(context: PlatformContext) =
         .logger(DebugLogger())
         .build()
 
-fun startNotificationManager() {
-    notificationInit()
-
+private fun startNotificationManager() {
     NotifierManager.addListener(object : NotifierManager.Listener {
-        override fun onNewToken(token: String) {
-            println("Push Notification onNewToken: $token")
-        }
-
         override fun onPushNotification(title: String?, body: String?) {
             super.onPushNotification(title, body)
             println("Push Notification notification type message is received: Title: $title and Body: $body")

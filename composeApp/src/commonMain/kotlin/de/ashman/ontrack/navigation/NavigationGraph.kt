@@ -64,7 +64,7 @@ fun NavigationGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (authRepository.currentUserId.isNotBlank()) Route.Feed else Route.Start,
+            startDestination = if (authRepository.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -176,7 +176,6 @@ fun NavGraphBuilder.mainGraph(
         SearchScreen(
             modifier = modifier,
             viewModel = searchViewModel,
-            authRepository = authRepository,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
     }

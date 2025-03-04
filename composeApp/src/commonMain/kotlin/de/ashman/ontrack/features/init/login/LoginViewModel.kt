@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.init.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.user.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,27 @@ class LoginViewModel(
                 if (user != null) {
                     authRepository.createUser(user)
                     onSuccess()
+
+                    // Create the first FCM token
+                    viewModelScope.launch {
+                        val token = NotifierManager.getPushNotifier().getToken()
+                        if (token != null) {
+                            Logger.i("Push Notification Token: $token")
+                            authRepository.updateFcmToken(token)
+                        } else {
+                            Logger.w("FCM Token is null at login")
+                        }
+                    }
+
+                    // Also add a listener for future token changes
+                    NotifierManager.addListener(object : NotifierManager.Listener {
+                        override fun onNewToken(token: String) {
+                            Logger.i("Push Notification onNewToken: $token")
+                            viewModelScope.launch {
+                                authRepository.updateFcmToken(token)
+                            }
+                        }
+                    })
                 }
             },
             onFailure = { error ->

@@ -93,7 +93,7 @@ fun LoginScreen(
 
             GoogleAppleLogin(
                 onClickContinue = { result ->
-                    viewModel.signIn(result, onNavigateAfterLogin)
+                    viewModel.signIn(result = result, onSuccess = onNavigateAfterLogin)
                 }
             )
         }
