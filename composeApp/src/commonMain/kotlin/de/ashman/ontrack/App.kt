@@ -1,6 +1,8 @@
 package de.ashman.ontrack
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
@@ -19,16 +21,17 @@ import de.ashman.ontrack.theme.OnTrackTheme
 @Composable
 fun App() {
     OnTrackTheme {
+        val navController = rememberNavController()
         GoogleAuthProvider.create(GoogleAuthCredentials(BuildKonfig.GOOGLE_AUTH_CLIENT_ID))
 
         notificationInit()
-        //startNotificationManager()
+        startNotificationManager(navController)
 
         setSingletonImageLoaderFactory { context ->
             getAsyncImageLoader(context)
         }
 
-        NavigationGraph()
+        NavigationGraph(navController)
     }
 }
 
@@ -53,7 +56,9 @@ fun getAsyncImageLoader(context: PlatformContext) =
         .logger(DebugLogger())
         .build()
 
-private fun startNotificationManager() {
+private fun startNotificationManager(
+    navController: NavHostController,
+) {
     NotifierManager.addListener(object : NotifierManager.Listener {
         override fun onPushNotification(title: String?, body: String?) {
             super.onPushNotification(title, body)
@@ -68,6 +73,16 @@ private fun startNotificationManager() {
         override fun onNotificationClicked(data: PayloadData) {
             super.onNotificationClicked(data)
             println("Notification clicked, Notification payloadData: $data")
+
+            // TODO maybe later
+            /*val mediaNav = MediaNavigationItems(
+                id = data["mediaId"].toString(),
+                title = "",
+                coverUrl = "",
+                mediaType = MediaType.MOVIE,
+            )
+
+            navController.navigate(Route.Detail(mediaNav))*/
         }
     }
     )

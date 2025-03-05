@@ -165,6 +165,8 @@ class DetailViewModel(
             userId = friendId,
             title = getString(Res.string.notifications_new_recommendation_title),
             body = getString(Res.string.notifications_new_recommendation_body, authRepository.currentUserName, media.title),
+            mediaId = media.id,
+            imageUrl = media.coverUrl,
         )
     }
 

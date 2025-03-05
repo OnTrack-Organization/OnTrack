@@ -8,6 +8,7 @@ actual fun notificationInit() {
         NotificationPlatformConfiguration.Ios(
             showPushNotification = true,
             askNotificationPermissionOnStart = true,
+            notificationSoundName = "default",
         )
     )
 }

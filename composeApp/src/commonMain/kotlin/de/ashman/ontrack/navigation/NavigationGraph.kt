@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
@@ -40,7 +39,7 @@ import kotlin.reflect.typeOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationGraph(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     startViewModel: StartViewModel = koinInject(),
     loginViewModel: LoginViewModel = koinInject(),
     feedViewModel: FeedViewModel = koinInject(),

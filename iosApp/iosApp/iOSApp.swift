@@ -32,29 +32,33 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         FirebaseApp.configure()
         
-        NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(
+        NotificationInitKt.notificationInit()
+        
+        NotifierManager.shared.initialize(
+            configuration: NotificationPlatformConfigurationIos(
                     showPushNotification: true,
                     askNotificationPermissionOnStart: true,
-                    notificationSoundName: "default"
+                    notificationSoundName: "default")
         )
-              )
         }
     
     func application(
       _ app: UIApplication,
       open url: URL, 
-      options: [UIApplication.OpenURLOptionsKey : Any] = [:],
-      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+      options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-        Messaging.messaging().apnsToken = deviceToken
-        
       var handled: Bool
 
       handled = GIDSignIn.sharedInstance.handle(url)
+        
       if handled {
         return true
       }
 
       return false
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+            Messaging.messaging().apnsToken = deviceToken
+      }
 }

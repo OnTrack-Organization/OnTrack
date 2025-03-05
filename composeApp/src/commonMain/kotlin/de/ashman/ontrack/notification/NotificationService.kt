@@ -5,20 +5,28 @@ import de.ashman.ontrack.db.AuthRepository
 import dev.gitlive.firebase.functions.FirebaseFunctions
 
 interface NotificationService {
-    suspend fun sendPushNotification(userId: String, title: String, body: String)
+    suspend fun sendPushNotification(
+        userId: String,
+        title: String,
+        body: String,
+        mediaId: String? = null,
+        imageUrl: String? = null
+    )
 }
 
 class NotificationServiceImpl(
     private val functions: FirebaseFunctions,
     private val authRepository: AuthRepository,
 ) : NotificationService {
-    override suspend fun sendPushNotification(userId: String, title: String, body: String) {
+    override suspend fun sendPushNotification(userId: String, title: String, body: String, mediaId: String?, imageUrl: String?) {
         // Only send notification to other users
         if (authRepository.currentUserId != userId) {
             val data = hashMapOf(
                 "userId" to userId,
                 "title" to title,
                 "body" to body,
+                "mediaId" to mediaId,
+                "image" to imageUrl,
             )
 
             try {
