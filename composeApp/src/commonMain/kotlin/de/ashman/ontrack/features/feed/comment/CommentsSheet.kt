@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -196,21 +197,21 @@ fun FeedComment(
 
     val annotatedString = buildAnnotatedString {
         append(comment)
-        val startIndex = comment.indexOf("@$username")
-        if (startIndex != -1) {
+        val regex = "@\\S+".toRegex()
+        regex.findAll(comment).forEach { matchResult ->
             addStyle(
                 style = SpanStyle(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 ),
-                start = startIndex,
-                end = startIndex + username.length + 1
+                start = matchResult.range.first,
+                end = matchResult.range.last + 1
             )
             addStringAnnotation(
                 tag = "USERNAME",
-                annotation = username,
-                start = startIndex,
-                end = startIndex + username.length + 1
+                annotation = matchResult.value,
+                start = matchResult.range.first,
+                end = matchResult.range.last + 1
             )
         }
     }
@@ -262,6 +263,8 @@ fun FeedComment(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
 
                 if (!isOwnComment) {
                     IconButton(onClick = onReply) {

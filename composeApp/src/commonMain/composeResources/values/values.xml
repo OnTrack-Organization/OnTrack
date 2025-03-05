@@ -30,11 +30,10 @@
 
     <string name="feed_friends">Friends</string>
     <string name="feed_received_requests">Received friend requests</string>
-    <string name="feed_current_friends">Current friends</string>
     <string name="feed_sent_requests">Sent friend requests</string>
     <string name="feed_potential_friends">Potential friends</string>
     <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
-    <string name="feed_no_potential_friends">No potential friends found, sad.</string>
+    <string name="feed_no_potential_friends">No potential friends found, sad</string>
     <string name="feed_request_sent">Friend request sent</string>
     <string name="feed_request_accepted">Friend request accepted</string>
     <string name="feed_request_declined">Friend request declined</string>
@@ -151,7 +150,7 @@
     <string name="album_status_dropped_label">Dropped</string>
     <string name="album_status_dropped_sublabel">Stopped listening</string>
 
-    <string name="no_title">No title found</string>
+    <string name="no_title">No title</string>
     <string name="movie_network_error">This movie has been delayed… by bad internet.</string>
     <string name="show_network_error">The next episode is buffering… forever.</string>
     <string name="book_network_error">This book is still being written - try again later.</string>
@@ -162,14 +161,17 @@
     <!-- DETAIL TRACKING -->
     <string name="track_button">Track</string>
     <string name="review_button">Review</string>
-    <string name="remove_tracking_button">Remove tracking</string>
 
-    <string name="detail_tracked_by">Tracked by</string>
-
-    <string name="review_title">Review of "%1$s"</string>
-    <string name="track_title">Track status of "%1$s"</string>
+    <string name="remove_tracking_button">Remove Tracking</string>
     <string name="detail_remove_confirm_title">Remove tracking?</string>
     <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>
+
+    <string name="tracking_saved">Tracking saved</string>
+    <string name="tracking_removed">Tracking removed</string>
+
+    <!-- DETAIL REVIEW -->
+    <string name="review_title">Review of "%1$s"</string>
+    <string name="track_title">Track status of "%1$s"</string>
 
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>
@@ -182,12 +184,9 @@
     <string name="review_title_label">Write a review title...</string>
     <string name="review_description_label">Write a review...</string>
 
-    <string name="tracking_saved">Tracking saved</string>
-    <string name="tracking_removed">Tracking removed</string>
-
+    <!-- DETAIL CONTENT -->
     <string name="ratings_overview">Ratings</string>
 
-    <!-- DETAIL CONTENT -->
     <string name="detail_description">Description</string>
 
     <plurals name="detail_seasons">
@@ -198,6 +197,7 @@
         <item quantity="one">%1$d Episode</item>
         <item quantity="other">%1$d Episodes</item>
     </plurals>
+
     <string name="detail_similar">Similar %1$s</string>
 
     <string name="detail_platforms">Platforms</string>
@@ -244,7 +244,6 @@
     <!-- DETAIL RECOMMEND -->
     <string name="detail_recommend_title">Recommend</string>
     <string name="detail_recommend_textfield_placeholder">Send a message…</string>
-    <string name="detail_recommend_send_button">Send</string>
     <string name="detail_recommend_previous">Previous recommendations</string>
     <string name="detail_recommend_friends_empty">No friends to recommend to</string>
     <string name="detail_recommendation_sent">Recommendation sent</string>
@@ -292,4 +291,5 @@
     <string name="cancel_button">Cancel</string>
     <string name="remove_button">Remove</string>
     <string name="save_button">Save</string>
+    <string name="send_button">Send</string>
 </resources>

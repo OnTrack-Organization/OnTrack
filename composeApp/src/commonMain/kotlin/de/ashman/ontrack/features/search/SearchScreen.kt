@@ -60,7 +60,7 @@ fun SearchScreen(
             SearchBar(
                 query = uiState.query,
                 onQueryChanged = viewModel::onQueryChanged,
-                placeholder = uiState.selectedMediaType.name.lowercase(),
+                placeholder = pluralStringResource(uiState.selectedMediaType.getMediaTypeUi().title, 2).lowercase(),
                 closeKeyboard = { localFocusManager.clearFocus() }
             )
 

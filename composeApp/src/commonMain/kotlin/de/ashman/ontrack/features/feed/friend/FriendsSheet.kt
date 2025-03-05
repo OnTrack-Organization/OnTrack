@@ -24,7 +24,6 @@ import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.SearchBar
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_current_friends
 import ontrack.composeapp.generated.resources.feed_friends
 import ontrack.composeapp.generated.resources.feed_no_friends_and_potential
 import ontrack.composeapp.generated.resources.feed_no_potential_friends
@@ -60,12 +59,6 @@ fun FriendsSheet(
             },
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_friends),
-            style = MaterialTheme.typography.titleMedium,
-        )
-
         SearchBar(
             query = uiState.query,
             onQueryChanged = onQueryChanged,
@@ -208,7 +201,7 @@ fun FriendsAndRequests(
     if (friends.isNotEmpty()) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_current_friends),
+            text = stringResource(Res.string.feed_friends),
             style = MaterialTheme.typography.titleMedium,
         )
 

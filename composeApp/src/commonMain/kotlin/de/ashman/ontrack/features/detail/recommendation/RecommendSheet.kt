@@ -18,8 +18,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -33,9 +36,9 @@ import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.PersonImage
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_recommend_friends_empty
-import ontrack.composeapp.generated.resources.detail_recommend_send_button
 import ontrack.composeapp.generated.resources.detail_recommend_textfield_placeholder
 import ontrack.composeapp.generated.resources.detail_recommend_title
+import ontrack.composeapp.generated.resources.send_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -90,7 +93,7 @@ fun RecommendSheet(
         )
 
         OnTrackButton(
-            text = Res.string.detail_recommend_send_button,
+            text = Res.string.send_button,
             icon = Icons.AutoMirrored.Default.Send,
             enabled = isAnyUserSelected,
             onClick = { onSendRecommendation(selectedUserId!!, message) },
