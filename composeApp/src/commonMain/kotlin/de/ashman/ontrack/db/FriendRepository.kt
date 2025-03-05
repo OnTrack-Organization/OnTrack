@@ -69,7 +69,7 @@ class FriendRepositoryImpl(
                     Friend(
                         id = user.id,
                         username = user.username,
-                        name = user.displayName,
+                        name = user.name,
                         imageUrl = user.imageUrl,
                     )
                 )

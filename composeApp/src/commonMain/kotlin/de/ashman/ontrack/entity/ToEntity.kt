@@ -19,7 +19,7 @@ fun User.toEntity() = UserEntity(
     id = id,
     fcmToken = fcmToken,
     email = email,
-    displayName = name,
+    name = this@toEntity.name,
     username = username,
     imageUrl = imageUrl,
 )

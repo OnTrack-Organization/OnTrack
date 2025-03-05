@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class UserEntity(
     val id: String,
     val fcmToken: String,
-    val displayName: String,
+    val name: String,
     val username: String,
     val email: String,
     val imageUrl: String,

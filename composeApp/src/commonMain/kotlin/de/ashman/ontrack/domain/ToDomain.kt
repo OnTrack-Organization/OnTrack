@@ -31,7 +31,7 @@ fun UserEntity.toDomain() =
         id = id,
         fcmToken = fcmToken,
         email = email,
-        name = displayName,
+        name = name,
         username = username,
         imageUrl = imageUrl,
     )
