@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LikeEntity(
     val userId: String,
+    val name: String,
     val username: String,
     val userImageUrl: String,
 ) {

@@ -72,6 +72,7 @@ fun EntryEntity.toDomain() = Entry(
 fun LikeEntity.toDomain() = Like(
     userId = userId,
     username = username,
+    name = name,
     userImageUrl = userImageUrl,
 )
 

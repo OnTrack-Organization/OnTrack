@@ -2,14 +2,19 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.notification.NotificationService
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,10 +28,12 @@ import org.jetbrains.compose.resources.getString
 class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val notificationService: NotificationService,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState
+        .onStart { observeUser() }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -54,26 +61,33 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        val like = Like()
-
-        if (tracking.isLikedByCurrentUser) {
-            feedRepository.unlikeTracking(
-                friendId = tracking.userId,
-                trackingId = tracking.id,
-                like = like
-            )
-        } else {
-            feedRepository.likeTracking(
-                friendId = tracking.userId,
-                trackingId = tracking.id,
-                like = like
+        _uiState.value.user?.let { user ->
+            val like = Like(
+                userId = user.id,
+                username = user.username,
+                name = user.name,
+                userImageUrl = user.imageUrl,
             )
 
-            notificationService.sendPushNotification(
-                userId = tracking.userId,
-                title = getString(Res.string.notifications_like_title),
-                body = getString(Res.string.notifications_like_body, like.username),
-            )
+            if (tracking.isLikedByCurrentUser) {
+                feedRepository.unlikeTracking(
+                    friendId = tracking.userId,
+                    trackingId = tracking.id,
+                    like = like
+                )
+            } else {
+                feedRepository.likeTracking(
+                    friendId = tracking.userId,
+                    trackingId = tracking.id,
+                    like = like
+                )
+
+                notificationService.sendPushNotification(
+                    userId = tracking.userId,
+                    title = getString(Res.string.notifications_like_title),
+                    body = getString(Res.string.notifications_like_body, like.username),
+                )
+            }
         }
     }
 
@@ -109,6 +123,15 @@ class FeedViewModel(
         _uiState.update { it.copy(selectedTrackingId = trackingId) }
     }
 
+    fun observeUser() {
+        viewModelScope.launch {
+            authRepository.observeUser(Firebase.auth.currentUser?.uid.orEmpty())
+                .collect { user ->
+                    _uiState.update { it.copy(user = user) }
+                }
+        }
+    }
+
     fun clearViewModel() {
         _uiState.update {
             it.copy(
@@ -122,6 +145,7 @@ class FeedViewModel(
 }
 
 data class FeedUiState(
+    val user: User? = null,
     val feedTrackings: List<Tracking> = emptyList(),
     val selectedTrackingId: String? = null,
     val feedResultState: FeedResultState = FeedResultState.Loading,

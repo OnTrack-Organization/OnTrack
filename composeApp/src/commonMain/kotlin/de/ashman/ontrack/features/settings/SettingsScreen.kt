@@ -134,7 +134,7 @@ fun SettingsScreen(
                         support = Res.string.settings_name_hint,
                         value = uiState.name,
                         onValueChange = viewModel::onNameChange,
-                        enabled = false,
+                        enabled = true,
                     )
                     OnTrackUsernameTextField(
                         placeholder = "Username",
@@ -148,7 +148,7 @@ fun SettingsScreen(
                         text = Res.string.save_button,
                         icon = Icons.Default.Save,
                         onClick = viewModel::onUpdateUser,
-                        enabled = false
+                        enabled = true
                     )
                 }
             }

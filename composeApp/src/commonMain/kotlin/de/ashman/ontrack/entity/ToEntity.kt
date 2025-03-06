@@ -65,6 +65,7 @@ fun Entry.toEntity() = EntryEntity(
 fun Like.toEntity() = LikeEntity(
     userId = userId,
     username = username,
+    name = name,
     userImageUrl = userImageUrl,
 )
 

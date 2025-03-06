@@ -45,7 +45,7 @@ fun LikesSheet(
             items(items = likes, key = { it.userId }) {
                 FeedLike(
                     userImageUrl = it.userImageUrl,
-                    username = it.username,
+                    name = it.name,
                     onClick = { onUserClick(it.userId) },
                 )
             }
@@ -56,7 +56,7 @@ fun LikesSheet(
 @Composable
 fun FeedLike(
     userImageUrl: String,
-    username: String,
+    name: String,
     onClick: () -> Unit,
 ) {
     Row(
@@ -73,7 +73,7 @@ fun FeedLike(
             onClick = onClick,
         )
         Text(
-            text = username,
+            text = name,
             style = MaterialTheme.typography.labelLarge,
         )
     }
