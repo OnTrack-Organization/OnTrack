@@ -130,8 +130,8 @@ android {
         applicationId = "de.ashman.ontrack"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 6
+        versionName = "1.5"
     }
     packaging {
         resources {
@@ -146,11 +146,17 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 file("proguard-rules.pro")
             )
+
             signingConfig = signingConfigs.getByName("debug")
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
     compileOptions {
