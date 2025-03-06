@@ -19,6 +19,7 @@ import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
@@ -41,6 +42,7 @@ enum class CurrentSheet {
 @Composable
 fun DetailBottomSheet(
     currentContent: CurrentSheet,
+    user: User?,
     mediaId: String,
     mediaType: MediaType,
     mediaTitle: String,
@@ -66,6 +68,9 @@ fun DetailBottomSheet(
             tracking?.copy(
                 timestamp = System.now().toEpochMilliseconds(),
             ) ?: Tracking(
+                userId = user?.id.orEmpty(),
+                username = user?.name.orEmpty(),
+                userImageUrl = user?.imageUrl.orEmpty(),
                 mediaId = mediaId,
                 mediaType = mediaType,
                 mediaTitle = mediaTitle,

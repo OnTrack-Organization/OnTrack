@@ -171,6 +171,7 @@ fun DetailScreen(
             ) {
                 DetailBottomSheet(
                     currentContent = currentBottomSheet,
+                    user = uiState.user,
                     mediaId = mediaNavItems.id,
                     mediaType = mediaNavItems.mediaType,
                     mediaTitle = mediaNavItems.title,

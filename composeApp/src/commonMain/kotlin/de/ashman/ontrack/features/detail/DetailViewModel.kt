@@ -20,11 +20,15 @@ import de.ashman.ontrack.domain.recommendation.RecommendationStatus
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.notification.NotificationService
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,6 +55,7 @@ class DetailViewModel(
 
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState
+        .onStart { observeUser() }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -127,16 +132,20 @@ class DetailViewModel(
         val media = _uiState.value.selectedMedia ?: return@launch
         recommendationRepository.catalogRecommendation(media.id)
 
-        val catalogTracking = Tracking(
-            mediaId = media.id,
-            mediaType = media.mediaType,
-            mediaTitle = media.title,
-            mediaCoverUrl = media.coverUrl,
-            status = TrackStatus.CATALOG,
-            timestamp = System.now().toEpochMilliseconds(),
-        )
-
-        saveTracking(catalogTracking)
+        _uiState.value.user?.let { user ->
+            val catalogTracking = Tracking(
+                userId = user.id,
+                username = user.name,
+                userImageUrl = user.imageUrl,
+                mediaId = media.id,
+                mediaType = media.mediaType,
+                mediaTitle = media.title,
+                mediaCoverUrl = media.coverUrl,
+                status = TrackStatus.CATALOG,
+                timestamp = System.now().toEpochMilliseconds(),
+            )
+            saveTracking(catalogTracking)
+        }
     }
 
     fun passRecommendation() = viewModelScope.launch {
@@ -177,6 +186,15 @@ class DetailViewModel(
         }
     }
 
+    fun observeUser() {
+        viewModelScope.launch {
+            authRepository.observeUser(Firebase.auth.currentUser?.uid.orEmpty())
+                .collect { user ->
+                    _uiState.update { it.copy(user = user) }
+                }
+        }
+    }
+
     fun clearViewModel() {
         _uiState.update { DetailUiState() }
     }
@@ -192,6 +210,7 @@ class DetailViewModel(
 }
 
 data class DetailUiState(
+    val user: User? = null,
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
     val friendTrackings: List<Tracking> = emptyList(),
