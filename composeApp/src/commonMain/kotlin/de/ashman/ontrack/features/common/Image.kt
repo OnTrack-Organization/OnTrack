@@ -55,7 +55,7 @@ fun MediaPoster(
     title: String? = null,
     coverUrl: String?,
     trackStatusIcon: ImageVector? = null,
-    trackStatusRating: Int? = null,
+    trackStatusRating: Double? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     onClick: (() -> Unit)? = null,
 ) {
@@ -126,7 +126,7 @@ fun MediaPoster(
 @Composable
 fun TrackOverlay(
     trackStatusIcon: ImageVector?,
-    trackStatusRating: Int?,
+    trackStatusRating: Double?,
 ) {
     Column(
         modifier = Modifier.padding(4.dp),
@@ -142,10 +142,12 @@ fun TrackOverlay(
                     modifier = Modifier.size(36.dp),
                     imageVector = Icons.Default.Star,
                     contentDescription = "Status Icon",
+                    tint = Color.White,
                 )
                 Text(
-                    text = "$trackStatusRating",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = "${trackStatusRating.toInt()}",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.Black,
                 )
             }
         }

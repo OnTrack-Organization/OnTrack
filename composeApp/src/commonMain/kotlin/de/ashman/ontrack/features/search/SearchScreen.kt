@@ -112,6 +112,7 @@ fun SuccessContent(
                 title = media.title,
                 coverUrl = media.coverUrl,
                 trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
+                trackStatusRating = tracking[media.id]?.rating,
                 onClick = {
                     onClickItem(
                         MediaNavigationItems(
