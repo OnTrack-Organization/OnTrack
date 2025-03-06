@@ -28,11 +28,16 @@ class TrackingRepositoryImpl(
     firestore: FirebaseFirestore,
     private val authRepository: AuthRepository,
 ) : TrackingRepository {
+    private val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
+
     private val userCollection = firestore.collection("users")
     private fun trackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     override suspend fun saveTracking(tracking: Tracking) {
-        val trackingRef = trackingCollection(authRepository.currentUserId).document(tracking.id)
+        val trackingRef = trackingCollection(currentUser.id).document(tracking.id)
         val snapshot = trackingRef.get()
 
         val existingTracking = snapshot.takeIf { it.exists }?.data<TrackingEntity>()
@@ -47,13 +52,13 @@ class TrackingRepositoryImpl(
     }
 
     override suspend fun removeTracking(trackingId: String) {
-        trackingCollection(authRepository.currentUserId)
+        trackingCollection(currentUser.id)
             .document(trackingId)
             .delete()
     }
 
     override fun fetchTracking(trackingId: String): Flow<Tracking?> {
-        return trackingCollection(authRepository.currentUserId)
+        return trackingCollection(currentUser.id)
             .document(trackingId)
             .snapshots
             .map { snapshot ->
@@ -75,9 +80,7 @@ class TrackingRepositoryImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun fetchFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>> {
-        val currentUserId = authRepository.currentUserId
-
-        return userCollection.document(currentUserId)
+        return userCollection.document(currentUser.id)
             .collection("friends")
             .snapshots
             .map { it.documents.map { doc -> doc.id } }

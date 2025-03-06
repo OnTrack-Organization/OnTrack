@@ -27,9 +27,9 @@ data class Tracking(
     val reviewTitle: String? = null,
     val reviewDescription: String? = null,
 
-    val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
-    val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
-    val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
+    val userId: String,
+    val username: String,
+    val userImageUrl: String,
 
     val likes: List<Like> = listOf(),
     val comments: List<Comment> = listOf(),

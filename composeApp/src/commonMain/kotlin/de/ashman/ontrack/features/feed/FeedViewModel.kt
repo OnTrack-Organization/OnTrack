@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.getString
 class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val notificationService: NotificationService,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -34,6 +36,11 @@ class FeedViewModel(
         )
 
     private var lastTimestamp: Long? = null
+
+    private val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
 
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
@@ -54,7 +61,11 @@ class FeedViewModel(
     }
 
     fun likeTracking(tracking: Tracking) = viewModelScope.launch {
-        val like = Like()
+        val like = Like(
+            userId = currentUser.id,
+            username = currentUser.username,
+            userImageUrl = currentUser.imageUrl
+        )
 
         if (tracking.isLikedByCurrentUser) {
             feedRepository.unlikeTracking(
@@ -78,7 +89,12 @@ class FeedViewModel(
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
-        val newComment = Comment(comment = comment)
+        val newComment = Comment(
+            comment = comment,
+            userId = currentUser.id,
+            username = currentUser.username,
+            userImageUrl = currentUser.imageUrl,
+        )
 
         _uiState.value.selectedTracking?.let { selectedTracking ->
             feedRepository.addComment(

@@ -221,6 +221,7 @@ val appModule = module {
     single { Firebase.auth }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(TWITCH_TOKEN_CLIENT_NAME)), BuildKonfig.TWITCH_CLIENT_ID, BuildKonfig.TWITCH_CLIENT_SECRET) }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { AccessTokenManager(get(named(SPOTIFY_TOKEN_CLIENT_NAME)), BuildKonfig.SPOTIFY_CLIENT_ID, BuildKonfig.SPOTIFY_CLIENT_SECRET) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 
     // NOTIFICATIONS
     single { Firebase.functions }
@@ -229,7 +230,6 @@ val appModule = module {
     // DATABASE
     single { Firebase.firestore }
     single { Firebase.storage }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
@@ -246,7 +246,7 @@ val appModule = module {
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get()) }
-    viewModelDefinition { FeedViewModel(get(), get()) }
+    viewModelDefinition { FeedViewModel(get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }

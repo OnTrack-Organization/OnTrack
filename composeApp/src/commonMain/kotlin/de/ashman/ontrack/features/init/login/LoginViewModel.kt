@@ -39,7 +39,7 @@ class LoginViewModel(
                         val token = NotifierManager.getPushNotifier().getToken()
                         if (token != null) {
                             Logger.i("Push Notification Token: $token")
-                            authRepository.updateFcmToken(token)
+                            authRepository.updateUser(user.copy(fcmToken = token))
                         } else {
                             Logger.w("FCM Token is null at login")
                         }
@@ -50,7 +50,7 @@ class LoginViewModel(
                         override fun onNewToken(token: String) {
                             Logger.i("Push Notification onNewToken: $token")
                             viewModelScope.launch {
-                                authRepository.updateFcmToken(token)
+                                authRepository.updateUser(user.copy(fcmToken = token))
                             }
                         }
                     })

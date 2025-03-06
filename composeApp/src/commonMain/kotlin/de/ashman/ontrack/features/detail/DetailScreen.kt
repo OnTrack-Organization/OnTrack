@@ -170,6 +170,7 @@ fun DetailScreen(
                 sheetState = sheetState,
             ) {
                 DetailBottomSheet(
+                    user = viewModel.currentUser,
                     currentContent = currentBottomSheet,
                     mediaId = mediaNavItems.id,
                     mediaType = mediaNavItems.mediaType,

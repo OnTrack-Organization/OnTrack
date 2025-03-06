@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
@@ -31,8 +30,10 @@ import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.Event
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
+import dev.gitlive.firebase.auth.auth
 import org.koin.compose.koinInject
 import kotlin.reflect.typeOf
 
@@ -49,7 +50,6 @@ fun NavigationGraph(
     shelfViewModel: ShelfViewModel = koinInject(),
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
-    authRepository: AuthRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
     MainScaffold(
@@ -63,7 +63,7 @@ fun NavigationGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (authRepository.currentUserId.isNotBlank()) Route.Search else Route.Start,
+            startDestination = if (Firebase.auth.currentUser?.uid != null) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -78,21 +78,20 @@ fun NavigationGraph(
                 friendsViewModel = friendsViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
-                authRepository = authRepository,
             )
             mediaGraph(
                 detailViewModel = detailViewModel,
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
-                authRepository = authRepository,
-                navController = navController
+                navController = navController,
+                currentUserId = Firebase.auth.currentUser?.uid.orEmpty(),
             )
 
             composable<Route.Settings> {
                 SettingsScreen(
                     viewModel = settingsViewModel,
                     onBack = { navController.popBackStack() },
-                    userId = authRepository.currentUserId,
+                    userId = Firebase.auth.currentUser?.uid.orEmpty(),
                     onLogout = {
                         friendsViewModel.clearViewModel()
                         feedViewModel.clearViewModel()
@@ -156,7 +155,7 @@ fun NavGraphBuilder.mainGraph(
     friendsViewModel: FriendsViewModel,
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
-    authRepository: AuthRepository,
+    currentUserId: String = Firebase.auth.currentUser?.uid.orEmpty(),
 ) {
     composable<Route.Feed> {
         FeedScreen(
@@ -166,7 +165,7 @@ fun NavGraphBuilder.mainGraph(
                 navController.navigate(Route.Detail(mediaNav))
             },
             onUserClick = { userId ->
-                navController.navigate(if (userId == authRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                navController.navigate(if (userId == Firebase.auth.currentUser?.uid) Route.Shelf else Route.OtherShelf(userId))
             },
         )
     }
@@ -181,9 +180,9 @@ fun NavGraphBuilder.mainGraph(
 
     composable<Route.Shelf> {
         ShelfScreen(
+            userId = currentUserId,
             viewModel = shelfViewModel,
-            userId = authRepository.currentUserId,
-            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(authRepository.currentUserId, mediaType)) },
+            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onSettings = { navController.navigate(Route.Settings) },
         )
@@ -194,7 +193,7 @@ fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
-    authRepository: AuthRepository,
+    currentUserId: String,
     navController: NavHostController,
 ) {
     composable<Route.Detail>(
@@ -216,7 +215,7 @@ fun NavGraphBuilder.mediaGraph(
                 }
             },
             onUserClick = { userId ->
-                navController.navigate(if (userId == authRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                navController.navigate(if (userId == currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
             onBack = {
                 navController.popBackStack()

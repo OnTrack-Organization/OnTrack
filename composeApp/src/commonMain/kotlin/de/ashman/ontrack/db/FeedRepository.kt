@@ -31,14 +31,17 @@ class FeedRepositoryImpl(
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
+    private val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<Tracking>> {
-        val currentUserId = authRepository.currentUserId
-
-        val friendsFlow = userCollection.document(currentUserId)
+        val friendsFlow = userCollection.document(currentUser.id)
             .collection("friends")
             .snapshots()
-            .map { snapshot -> snapshot.documents.map { it.id } + currentUserId }
+            .map { snapshot -> snapshot.documents.map { it.id } + currentUser.id }
 
         return friendsFlow.flatMapLatest { friends ->
             val allFlows = friends.map { friendId ->

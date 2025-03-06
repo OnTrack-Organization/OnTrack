@@ -19,6 +19,7 @@ import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
@@ -40,6 +41,7 @@ enum class CurrentSheet {
 // https://youtrack.jetbrains.com/issue/CMP-4419
 @Composable
 fun DetailBottomSheet(
+    user: User,
     currentContent: CurrentSheet,
     mediaId: String,
     mediaType: MediaType,
@@ -71,6 +73,9 @@ fun DetailBottomSheet(
                 mediaTitle = mediaTitle,
                 mediaCoverUrl = mediaCoverUrl,
                 timestamp = System.now().toEpochMilliseconds(),
+                userId = user.id,
+                username = user.username,
+                userImageUrl = user.imageUrl,
             )
         )
     }

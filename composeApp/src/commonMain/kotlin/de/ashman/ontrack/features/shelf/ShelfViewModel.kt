@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class ShelfViewModel(
     private val trackingRepository: TrackingRepository,
@@ -32,14 +31,13 @@ class ShelfViewModel(
         )
 
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
-
-    fun observeUser(userId: String) {
-        viewModelScope.launch {
-            authRepository.observeUser(userId)
-                .collect { user ->
-                    _uiState.update { it.copy(user = user) }
-                }
-        }
+    
+    init {
+        authRepository.currentUser
+            .onEach { user ->
+                _uiState.update { it.copy(user = user) }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun observeUserTrackings(userId: String) {

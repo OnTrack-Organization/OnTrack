@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.search
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
@@ -53,9 +54,21 @@ class SearchViewModel(
         )
 
     private var searchJob: Job? = null
+    private val currentUser = authRepository.currentUser
 
     init {
-        fetchAllTrending()
+        // Wait for the currentUser to be initialized
+        viewModelScope.launch {
+            currentUser.collect { user ->
+                user?.let {
+                    // Proceed with the logic only if the user is available
+                    fetchAllTrending()
+                } ?: run {
+                    // Handle case where no user is logged in
+                    Logger.e { "No current user found during SearchViewModel initialization." }
+                }
+            }
+        }
     }
 
     private fun fetchAllTrending() {
@@ -139,7 +152,7 @@ class SearchViewModel(
     }
 
     private fun observeUserTrackings() {
-        trackingRepository.fetchTrackings(authRepository.currentUserId)
+        trackingRepository.fetchTrackings(currentUser.value?.id!!)
             .onEach { trackings ->
                 _uiState.update { it.copy(trackings = trackings) }
             }

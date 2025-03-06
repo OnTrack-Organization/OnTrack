@@ -18,9 +18,11 @@ class NotificationServiceImpl(
     private val functions: FirebaseFunctions,
     private val authRepository: AuthRepository,
 ) : NotificationService {
+    private val currentUser = authRepository.currentUser.value
+
     override suspend fun sendPushNotification(userId: String, title: String, body: String, mediaId: String?, imageUrl: String?) {
         // Only send notification to other users
-        if (authRepository.currentUserId != userId) {
+        if (currentUser?.id != userId) {
             val data = hashMapOf(
                 "userId" to userId,
                 "title" to title,

@@ -17,7 +17,7 @@ import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -28,16 +28,12 @@ class SettingsViewModel(
         )
 
     fun observeUser(userId: String) = viewModelScope.launch {
-        authRepository.observeUser(userId)
-            .collect { user ->
-                _uiState.update {
-                    it.copy(
-                        user = user,
-                        name = user?.name.orEmpty(),
-                        username = user?.username.orEmpty()
-                    )
-                }
+        authRepository.currentUser.collect { currentUser ->
+            if (currentUser?.id == userId) {
+                _uiState.update { it.copy(user = currentUser) }
+                authRepository.observeUser(userId)
             }
+        }
     }
 
     fun deleteAccount() = viewModelScope.launch {

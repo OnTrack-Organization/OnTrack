@@ -46,6 +46,10 @@ class FriendsViewModel(
         )
 
     private var searchJob: Job? = null
+    private val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
 
     fun search(query: String) = viewModelScope.launch {
         val potentialFriends = friendRepository.searchForNewFriends(query)
@@ -72,10 +76,10 @@ class FriendsViewModel(
 
     fun sendRequest(otherRequest: FriendRequest) = viewModelScope.launch {
         val myRequest = FriendRequest(
-            userId = authRepository.currentUserId,
-            username = authRepository.currentUserName,
-            name = authRepository.currentUserName,
-            imageUrl = authRepository.currentUserImage,
+            userId = currentUser.id,
+            username = currentUser.username,
+            name = currentUser.name,
+            imageUrl = currentUser.imageUrl,
         )
 
         friendRepository.sendRequest(otherRequest, myRequest)
@@ -83,7 +87,7 @@ class FriendsViewModel(
         notificationService.sendPushNotification(
             userId = otherRequest.userId,
             title = getString(Res.string.notifications_new_request_title),
-            body = getString(Res.string.notifications_new_request_body, authRepository.currentUserName),
+            body = getString(Res.string.notifications_new_request_body, currentUser.username),
         )
     }
 
@@ -93,7 +97,7 @@ class FriendsViewModel(
         notificationService.sendPushNotification(
             userId = friendRequest.userId,
             title = getString(Res.string.notifications_request_accepted_title),
-            body = getString(Res.string.notifications_request_accepted_body, authRepository.currentUserName),
+            body = getString(Res.string.notifications_request_accepted_body, currentUser.username),
         )
     }
 

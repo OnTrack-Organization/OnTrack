@@ -23,6 +23,11 @@ class RecommendationRepositoryImpl(
 
     private fun recommendationsCollection(userId: String) = firestore.collection("users").document(userId).collection("recommendations")
 
+    private val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
+
     override suspend fun sendRecommendation(friendId: String, recommendation: Recommendation) {
         recommendationsCollection(friendId)
             .document(recommendation.id)
@@ -36,7 +41,7 @@ class RecommendationRepositoryImpl(
     }
 
     override fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>> {
-        return recommendationsCollection(authRepository.currentUserId)
+        return recommendationsCollection(currentUser.id)
             .where { "mediaId" equalTo mediaId }
             .snapshots.map { snapshot ->
                 snapshot.documents.map { it.data<Recommendation>() }
@@ -45,7 +50,7 @@ class RecommendationRepositoryImpl(
 
     // TODO maybe change...
     override suspend fun catalogRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(authRepository.currentUserId)
+        val snapshot = recommendationsCollection(currentUser.id)
             .where { "mediaId" equalTo mediaId }
             .get()
 
@@ -55,7 +60,7 @@ class RecommendationRepositoryImpl(
     }
 
     override suspend fun passRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(authRepository.currentUserId)
+        val snapshot = recommendationsCollection(currentUser.id)
             .where { "mediaId" equalTo mediaId }
             .get()
 

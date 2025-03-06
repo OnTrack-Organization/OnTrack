@@ -67,7 +67,6 @@ fun ShelfScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LaunchedEffect(userId) {
-        viewModel.observeUser(userId)
         viewModel.observeUserTrackings(userId)
     }
 

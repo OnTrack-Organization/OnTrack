@@ -43,10 +43,10 @@ class DetailViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
-    private val authRepository: AuthRepository,
     private val recommendationRepository: RecommendationRepository,
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -56,6 +56,11 @@ class DetailViewModel(
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
+
+    val currentUser by lazy {
+        authRepository.currentUser.value
+            ?: throw IllegalStateException("Current user is not available. This should not happen if the user is logged in.")
+    }
 
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
         measureTime {
@@ -98,7 +103,7 @@ class DetailViewModel(
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingRepository.fetchTrackings(authRepository.currentUserId)
+        trackingRepository.fetchTrackings(currentUser.id)
             .collect { trackings ->
                 val tracking = trackings.find { it.mediaId == mediaId }
                 _uiState.update { it.copy(selectedTracking = tracking) }
@@ -133,6 +138,9 @@ class DetailViewModel(
             mediaTitle = media.title,
             mediaCoverUrl = media.coverUrl,
             status = TrackStatus.CATALOG,
+            userId = currentUser.id,
+            username = currentUser.username,
+            userImageUrl = currentUser.imageUrl,
             timestamp = System.now().toEpochMilliseconds(),
         )
 
@@ -148,9 +156,9 @@ class DetailViewModel(
         val media = _uiState.value.selectedMedia ?: return@launch
 
         val recommendation = Recommendation(
-            userId = authRepository.currentUserId,
-            username = authRepository.currentUserName,
-            userImageUrl = authRepository.currentUserImage,
+            userId = currentUser.id,
+            username = currentUser.username,
+            userImageUrl = currentUser.imageUrl,
             mediaId = media.id,
             mediaType = media.mediaType,
             mediaTitle = media.title,
@@ -164,7 +172,7 @@ class DetailViewModel(
         notificationService.sendPushNotification(
             userId = friendId,
             title = getString(Res.string.notifications_new_recommendation_title),
-            body = getString(Res.string.notifications_new_recommendation_body, authRepository.currentUserName, media.title),
+            body = getString(Res.string.notifications_new_recommendation_body, currentUser.username, media.title),
             mediaId = media.id,
             imageUrl = media.coverUrl,
         )
