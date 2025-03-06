@@ -141,6 +141,7 @@ fun OnTrackUsernameTextField(
     errorSupport: StringResource? = null,
     prefix: StringResource? = null,
     value: String?,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
@@ -158,6 +159,7 @@ fun OnTrackUsernameTextField(
         prefix = { prefix?.let { Text(text = stringResource(it)) } },
         singleLine = true,
         isError = errorSupport != null,
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
