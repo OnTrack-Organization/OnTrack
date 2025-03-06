@@ -60,6 +60,7 @@ fun CommentEntity.toDomain() = Comment(
     userId = userId,
     userImageUrl = userImageUrl,
     username = username,
+    name = name,
     comment = comment,
     timestamp = timestamp,
 )

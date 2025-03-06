@@ -19,7 +19,7 @@ fun User.toEntity() = UserEntity(
     id = id,
     fcmToken = fcmToken,
     email = email,
-    name = this@toEntity.name,
+    name = name,
     username = username,
     imageUrl = imageUrl,
 )
@@ -53,6 +53,7 @@ fun Comment.toEntity() = CommentEntity(
     userId = userId,
     userImageUrl = userImageUrl,
     username = username,
+    name = name,
     comment = comment,
     timestamp = timestamp,
 )

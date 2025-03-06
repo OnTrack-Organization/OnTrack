@@ -14,9 +14,10 @@ import kotlin.uuid.Uuid
 data class Comment(
     @OptIn(ExperimentalUuidApi::class)
     val id: String = Uuid.random().toString(),
-    val userId: String = Firebase.auth.currentUser?.uid.orEmpty(),
-    val username: String = Firebase.auth.currentUser?.displayName.orEmpty(),
-    val userImageUrl: String = Firebase.auth.currentUser?.photoURL.orEmpty(),
+    val userId: String,
+    val name: String,
+    val username: String,
+    val userImageUrl: String,
     val comment: String,
     val timestamp: Long = System.now().toEpochMilliseconds(),
 ) : CommonParcelable

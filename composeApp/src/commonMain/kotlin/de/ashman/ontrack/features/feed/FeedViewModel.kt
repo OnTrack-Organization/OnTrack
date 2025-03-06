@@ -92,20 +92,28 @@ class FeedViewModel(
     }
 
     fun addComment(comment: String) = viewModelScope.launch {
-        val newComment = Comment(comment = comment)
-
-        _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedRepository.addComment(
-                friendId = selectedTracking.userId,
-                trackingId = selectedTracking.id,
-                comment = newComment,
+        _uiState.value.user?.let { user ->
+            val newComment = Comment(
+                comment = comment,
+                userId = user.id,
+                username = user.username,
+                name = user.name,
+                userImageUrl = user.imageUrl,
             )
 
-            notificationService.sendPushNotification(
-                userId = selectedTracking.userId,
-                title = getString(Res.string.notifications_comment_title),
-                body = getString(Res.string.notifications_comment_body, newComment.username),
-            )
+            _uiState.value.selectedTracking?.let { selectedTracking ->
+                feedRepository.addComment(
+                    friendId = selectedTracking.userId,
+                    trackingId = selectedTracking.id,
+                    comment = newComment,
+                )
+
+                notificationService.sendPushNotification(
+                    userId = selectedTracking.userId,
+                    title = getString(Res.string.notifications_comment_title),
+                    body = getString(Res.string.notifications_comment_body, newComment.username),
+                )
+            }
         }
     }
 

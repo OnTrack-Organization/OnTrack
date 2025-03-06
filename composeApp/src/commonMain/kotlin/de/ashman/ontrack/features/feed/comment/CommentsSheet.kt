@@ -119,14 +119,14 @@ fun CommentsSheet(
                             modifier = Modifier.animateItem(),
                             userId = it.userId,
                             userImageUrl = it.userImageUrl,
-                            username = it.username,
+                            name = it.name,
                             timestamp = it.timestamp.formatDateTime(),
                             comment = it.comment,
                             onShowRemoveCommentConfirmDialog = {
                                 showCommentRemoveConfirmDialog = true
                             },
                             onReply = {
-                                val newText = "@${it.username} "
+                                val newText = "@${it.name} "
                                 commentText = TextFieldValue(
                                     text = newText,
                                     selection = TextRange(newText.length)
@@ -185,7 +185,7 @@ fun FeedComment(
     modifier: Modifier = Modifier,
     userId: String,
     userImageUrl: String,
-    username: String,
+    name: String,
     timestamp: String,
     comment: String,
     onShowRemoveCommentConfirmDialog: () -> Unit,
@@ -247,7 +247,7 @@ fun FeedComment(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = username,
+                        text = name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                     )

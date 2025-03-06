@@ -7,8 +7,8 @@ data class CommentEntity(
     val id: String,
     val userId: String,
     val userImageUrl: String,
+    val name: String,
     val username: String,
-
     val comment: String,
     val timestamp: Long,
 ) {
