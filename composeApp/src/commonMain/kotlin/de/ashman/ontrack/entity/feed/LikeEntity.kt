@@ -12,6 +12,7 @@ data class LikeEntity(
     fun toMap(): Map<String, Any> {
         return mapOf(
             "userId" to userId,
+            "name" to name,
             "username" to username,
             "userImageUrl" to userImageUrl,
         )

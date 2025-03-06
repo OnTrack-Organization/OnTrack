@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.common
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,15 +36,18 @@ fun SearchBar(
     onQueryChanged: (String) -> Unit,
     placeholder: String,
     closeKeyboard: () -> Unit,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
     modifier: Modifier = Modifier,
 ) {
     val isKeyboardOpen by keyboardAsState()
 
     SearchBar(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         inputField = {
             SearchBarDefaults.InputField(
+                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = MaterialTheme.shapes.medium),
                 query = query,
                 onQueryChange = { newQuery ->
                     onQueryChanged(newQuery)

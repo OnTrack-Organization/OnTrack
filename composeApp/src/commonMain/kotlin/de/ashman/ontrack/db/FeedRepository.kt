@@ -72,7 +72,7 @@ class FeedRepositoryImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayUnion(like.toEntity())
+                "likes" to FieldValue.arrayUnion(like.toEntity().toMap())
             )
     }
 
@@ -80,7 +80,7 @@ class FeedRepositoryImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "likes" to FieldValue.arrayRemove(like.toEntity())
+                "likes" to FieldValue.arrayRemove(like.toEntity().toMap())
             )
     }
 
@@ -88,7 +88,7 @@ class FeedRepositoryImpl(
         userTrackingCollection(friendId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayUnion(comment.toEntity())
+                "comments" to FieldValue.arrayUnion(comment.toEntity().toMap())
             )
     }
 
@@ -96,7 +96,7 @@ class FeedRepositoryImpl(
         userTrackingCollection(userId)
             .document(trackingId)
             .update(
-                "comments" to FieldValue.arrayRemove(comment.toEntity())
+                "comments" to FieldValue.arrayRemove(comment.toEntity().toMap())
             )
     }
 }

@@ -1,10 +1,7 @@
 package de.ashman.ontrack.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -72,7 +69,6 @@ fun NavigationGraph(
                 analytics = analytics,
             )
             mainGraph(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
                 navController = navController,
                 feedViewModel = feedViewModel,
                 friendsViewModel = friendsViewModel,
@@ -150,7 +146,6 @@ fun NavGraphBuilder.initGraph(
 }
 
 fun NavGraphBuilder.mainGraph(
-    modifier: Modifier,
     navController: NavHostController,
     feedViewModel: FeedViewModel,
     friendsViewModel: FriendsViewModel,
@@ -173,7 +168,6 @@ fun NavGraphBuilder.mainGraph(
 
     composable<Route.Search> {
         SearchScreen(
-            modifier = modifier,
             viewModel = searchViewModel,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )

@@ -19,6 +19,7 @@ data class CommentEntity(
             "userId" to userId,
             "userImageUrl" to userImageUrl,
             "username" to username,
+            "name" to name,
             "comment" to comment,
             "timestamp" to timestamp,
         )

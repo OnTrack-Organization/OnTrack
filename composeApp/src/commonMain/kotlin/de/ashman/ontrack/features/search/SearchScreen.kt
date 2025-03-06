@@ -4,23 +4,28 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
@@ -33,7 +38,10 @@ import de.ashman.ontrack.features.common.SearchBar
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_nav_title
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,51 +53,68 @@ fun SearchScreen(
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    localFocusManager.clearFocus()
-                })
-            },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    Scaffold(
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                localFocusManager.clearFocus()
+            })
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(Res.string.search_nav_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+            )
+        },
+    ) { contentPadding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .padding(bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            SearchBar(
-                query = uiState.query,
-                onQueryChanged = viewModel::onQueryChanged,
-                placeholder = pluralStringResource(uiState.selectedMediaType.getMediaTypeUi().title, 2).lowercase(),
-                closeKeyboard = { localFocusManager.clearFocus() }
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                SearchBar(
+                    query = uiState.query,
+                    onQueryChanged = viewModel::onQueryChanged,
+                    placeholder = pluralStringResource(uiState.selectedMediaType.getMediaTypeUi().title, 2).lowercase(),
+                    closeKeyboard = { localFocusManager.clearFocus() }
+                )
 
-            FilterChips(
-                selectedMediaType = uiState.selectedMediaType,
-                onMediaTypeSelected = viewModel::onMediaTypeSelected,
-                listState = uiState.chipRowState,
-            )
-        }
-
-        when (uiState.resultStates[uiState.selectedMediaType]) {
-            SearchResultState.Empty -> EmptyContent(
-                mediaType = uiState.selectedMediaType,
-            )
-
-            SearchResultState.Loading -> LoadingContent()
-
-            SearchResultState.Error -> ErrorContent(
-                text = uiState.selectedMediaType.getMediaTypeUi().error,
-            )
-
-            SearchResultState.Success -> {
-                SuccessContent(
-                    uiState = uiState,
-                    onClickItem = onClickItem,
+                FilterChips(
+                    selectedMediaType = uiState.selectedMediaType,
+                    onMediaTypeSelected = viewModel::onMediaTypeSelected,
+                    listState = uiState.chipRowState,
                 )
             }
 
-            else -> {}
+            when (uiState.resultStates[uiState.selectedMediaType]) {
+                SearchResultState.Empty -> EmptyContent(
+                    mediaType = uiState.selectedMediaType,
+                )
+
+                SearchResultState.Loading -> LoadingContent()
+
+                SearchResultState.Error -> ErrorContent(
+                    text = uiState.selectedMediaType.getMediaTypeUi().error,
+                )
+
+                SearchResultState.Success -> {
+                    SuccessContent(
+                        uiState = uiState,
+                        onClickItem = onClickItem,
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
 }

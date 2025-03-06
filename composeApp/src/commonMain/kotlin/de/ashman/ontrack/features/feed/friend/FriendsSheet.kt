@@ -63,6 +63,7 @@ fun FriendsSheet(
             query = uiState.query,
             onQueryChanged = onQueryChanged,
             placeholder = stringResource(Res.string.feed_friends).lowercase(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
             closeKeyboard = { localFocusManager.clearFocus() },
         )
 

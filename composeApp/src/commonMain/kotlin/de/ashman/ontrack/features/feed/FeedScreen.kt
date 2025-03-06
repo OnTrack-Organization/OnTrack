@@ -135,7 +135,9 @@ fun FeedScreen(
             EmptyFeed()
         } else {
             LazyColumn(
-                modifier = Modifier.padding(contentPadding).padding(bottom = 80.dp),
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .padding(bottom = 80.dp),
                 contentPadding = PaddingValues(16.dp),
                 state = listState,
             ) {
@@ -168,6 +170,7 @@ fun FeedScreen(
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = bottomSheetState,
+                tonalElevation = 0.dp,
             ) {
                 when (currentSheetContent) {
                     SheetContent.COMMENTS -> CommentsSheet(
