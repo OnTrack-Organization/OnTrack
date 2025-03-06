@@ -6,7 +6,10 @@ import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.FriendRepository
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.notification.NotificationService
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +41,7 @@ class FriendsViewModel(
         .onStart {
             observeSearchQuery()
             observeFriendsAndRequests()
+            observeUser()
         }
         .stateIn(
             viewModelScope,
@@ -71,30 +75,36 @@ class FriendsViewModel(
     }
 
     fun sendRequest(otherRequest: FriendRequest) = viewModelScope.launch {
-        val myRequest = FriendRequest(
-            userId = authRepository.currentUserId,
-            username = authRepository.currentUserName,
-            name = authRepository.currentUserName,
-            imageUrl = authRepository.currentUserImage,
-        )
+        _uiState.value.user?.let { user ->
 
-        friendRepository.sendRequest(otherRequest, myRequest)
+            val myRequest = FriendRequest(
+                userId = user.id,
+                username = user.username,
+                name = user.name,
+                imageUrl = user.imageUrl,
+            )
 
-        notificationService.sendPushNotification(
-            userId = otherRequest.userId,
-            title = getString(Res.string.notifications_new_request_title),
-            body = getString(Res.string.notifications_new_request_body, authRepository.currentUserName),
-        )
+            friendRepository.sendRequest(otherRequest, myRequest)
+
+            notificationService.sendPushNotification(
+                userId = otherRequest.userId,
+                title = getString(Res.string.notifications_new_request_title),
+                body = getString(Res.string.notifications_new_request_body, user.name),
+            )
+        }
     }
 
     fun acceptRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        friendRepository.acceptRequest(friendRequest)
+        _uiState.value.user?.let { user ->
 
-        notificationService.sendPushNotification(
-            userId = friendRequest.userId,
-            title = getString(Res.string.notifications_request_accepted_title),
-            body = getString(Res.string.notifications_request_accepted_body, authRepository.currentUserName),
-        )
+            friendRepository.acceptRequest(friendRequest)
+
+            notificationService.sendPushNotification(
+                userId = friendRequest.userId,
+                title = getString(Res.string.notifications_request_accepted_title),
+                body = getString(Res.string.notifications_request_accepted_body, user.name),
+            )
+        }
     }
 
     fun declineRequest(friendRequest: FriendRequest) = viewModelScope.launch {
@@ -132,6 +142,15 @@ class FriendsViewModel(
         }
     }
 
+    fun observeUser() {
+        viewModelScope.launch {
+            authRepository.observeUser(Firebase.auth.currentUser?.uid.orEmpty())
+                .collect { user ->
+                    _uiState.update { it.copy(user = user) }
+                }
+        }
+    }
+
     @OptIn(FlowPreview::class)
     private fun observeSearchQuery() {
         uiState
@@ -163,6 +182,7 @@ class FriendsViewModel(
 }
 
 data class FriendsUiState(
+    val user: User? = null,
     val query: String = "",
     val friends: List<Friend> = emptyList(),
     val receivedRequests: List<FriendRequest> = emptyList(),
