@@ -177,10 +177,10 @@ private fun RecommendationCard(
             }
         }
 
-        message?.let {
+        if (!message.isNullOrEmpty()) {
             Text(
                 modifier = Modifier.padding(start = 56.dp),
-                text = it,
+                text = message,
                 style = MaterialTheme.typography.bodySmall,
             )
         }

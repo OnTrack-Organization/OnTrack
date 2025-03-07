@@ -167,27 +167,29 @@ class DetailViewModel(
     fun sendRecommendation(friendId: String, message: String?) = viewModelScope.launch {
         val media = _uiState.value.selectedMedia ?: return@launch
 
-        val recommendation = Recommendation(
-            userId = authRepository.currentUserId,
-            username = authRepository.currentUserName,
-            userImageUrl = authRepository.currentUserImage,
-            mediaId = media.id,
-            mediaType = media.mediaType,
-            mediaTitle = media.title,
-            mediaCoverUrl = media.coverUrl,
-            message = message,
-            status = RecommendationStatus.PENDING
-        )
+        _uiState.value.user?.let { user ->
+            val recommendation = Recommendation(
+                userId = user.id,
+                userImageUrl = user.imageUrl,
+                username = user.name,
+                mediaId = media.id,
+                mediaType = media.mediaType,
+                mediaTitle = media.title,
+                mediaCoverUrl = media.coverUrl,
+                message = message,
+                status = RecommendationStatus.PENDING
+            )
 
-        recommendationRepository.sendRecommendation(friendId, recommendation)
+            recommendationRepository.sendRecommendation(friendId, recommendation)
 
-        notificationService.sendPushNotification(
-            userId = friendId,
-            title = getString(Res.string.notifications_new_recommendation_title),
-            body = getString(Res.string.notifications_new_recommendation_body, authRepository.currentUserName, media.title),
-            mediaId = media.id,
-            imageUrl = media.coverUrl,
-        )
+            notificationService.sendPushNotification(
+                userId = friendId,
+                title = getString(Res.string.notifications_new_recommendation_title),
+                body = getString(Res.string.notifications_new_recommendation_body, user.name, media.title),
+                mediaId = media.id,
+                imageUrl = media.coverUrl,
+            )
+        }
     }
 
 

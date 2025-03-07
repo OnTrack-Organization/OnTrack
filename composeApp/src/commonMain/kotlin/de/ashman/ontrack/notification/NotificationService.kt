@@ -29,6 +29,9 @@ class NotificationServiceImpl(
                 "image" to imageUrl,
             )
 
+            Logger.d("Sending notification to user: $userId")
+            Logger.d("Notification data: $data")
+
             try {
                 val result = functions
                     .httpsCallable("sendPushNotification")

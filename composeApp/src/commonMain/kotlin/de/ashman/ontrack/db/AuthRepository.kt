@@ -61,7 +61,6 @@ class AuthRepositoryImpl(
             .delete()
     }
 
-    // TODO make this work
     override suspend fun updateFcmToken(token: String) {
         userCollection
             .document(currentUserId)
@@ -78,6 +77,9 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun signOut() {
+        // TODO needed so that no notifications appear when logged out. maybe change later
+        updateFcmToken("")
+
         auth.signOut()
     }
 

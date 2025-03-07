@@ -2,11 +2,14 @@ package de.ashman.ontrack.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
+import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.detail.DetailScreen
@@ -28,8 +31,11 @@ import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.Event
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
+import dev.gitlive.firebase.auth.auth
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.reflect.typeOf
 
@@ -49,6 +55,8 @@ fun NavigationGraph(
     authRepository: AuthRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     MainScaffold(
         navController = navController,
         onBottomNavigation = { route ->
@@ -107,6 +115,18 @@ fun NavigationGraph(
             }
         }
     }
+
+    // Listener for token changes
+    NotifierManager.addListener(object : NotifierManager.Listener {
+        override fun onNewToken(token: String) {
+            Logger.i("Push Notification onNewToken: $token")
+            if (Firebase.auth.currentUser == null) return
+
+            coroutineScope.launch {
+                authRepository.updateFcmToken(token)
+            }
+        }
+    })
 }
 
 fun NavGraphBuilder.initGraph(

@@ -44,16 +44,6 @@ class LoginViewModel(
                             Logger.w("FCM Token is null at login")
                         }
                     }
-
-                    // Also add a listener for future token changes
-                    NotifierManager.addListener(object : NotifierManager.Listener {
-                        override fun onNewToken(token: String) {
-                            Logger.i("Push Notification onNewToken: $token")
-                            viewModelScope.launch {
-                                authRepository.updateFcmToken(token)
-                            }
-                        }
-                    })
                 }
             },
             onFailure = { error ->
