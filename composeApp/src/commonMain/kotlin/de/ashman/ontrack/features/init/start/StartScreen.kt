@@ -43,6 +43,7 @@ import kotlinx.coroutines.delay
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.api_powered_by
 import ontrack.composeapp.generated.resources.app_name
+import ontrack.composeapp.generated.resources.app_subtitle
 import ontrack.composeapp.generated.resources.intro_button
 import ontrack.composeapp.generated.resources.login_button
 import ontrack.composeapp.generated.resources.shelves_filled
@@ -74,32 +75,41 @@ fun StartScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(color = MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.shelves_filled),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.fillMaxSize().padding(8.dp),
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(color = MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.shelves_filled),
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.fillMaxSize().padding(8.dp),
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(Res.string.app_name),
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
-
                     Text(
-                        text = stringResource(Res.string.app_name),
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        text = stringResource(Res.string.app_subtitle),
+                        style = MaterialTheme.typography.headlineSmall,
                     )
                 }
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {

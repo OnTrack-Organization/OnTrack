@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">OnTrack</string>
+    <string name="app_subtitle">Shelf &amp; Share Media</string>
+
     <string name="feed_nav_title">Share</string>
     <string name="search_nav_title">Search</string>
     <string name="shelf_nav_title">Shelf</string>
