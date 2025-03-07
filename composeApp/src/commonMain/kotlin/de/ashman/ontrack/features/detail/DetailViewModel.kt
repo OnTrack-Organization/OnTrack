@@ -13,6 +13,7 @@ import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.db.FriendRepository
 import de.ashman.ontrack.db.RecommendationRepository
 import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.Recommendation
@@ -28,6 +29,7 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -64,7 +66,13 @@ class DetailViewModel(
 
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
         measureTime {
-            _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+            _uiState.update {
+                it.copy(
+                    resultState = DetailResultState.Loading,
+                    selectedMedia = null,
+                    ratingStats = RatingStats(),
+                )
+            }
 
             mediaNavItems.mediaType.getRepository().fetchDetails(mediaNavItems.id).fold(
                 onSuccess = { result ->
@@ -98,7 +106,10 @@ class DetailViewModel(
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
-        trackingRepository.removeTracking(trackingId)
+        val media = _uiState.value.selectedMedia ?: return@launch
+
+        trackingRepository.removeTracking(trackingId, "${media.mediaType}_${media.id}")
+
         _uiState.update { it.copy(selectedTracking = null) }
     }
 
@@ -199,6 +210,14 @@ class DetailViewModel(
         _uiState.update { DetailUiState() }
     }
 
+    fun observeRatingStats(mediaId: String, mediaType: MediaType) = viewModelScope.launch {
+        trackingRepository.observeRatingStats("${mediaType}_$mediaId").collectLatest { ratingStats ->
+            ratingStats?.let {
+                _uiState.update { it.copy(ratingStats = ratingStats) }
+            }
+        }
+    }
+
     private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository
@@ -213,6 +232,7 @@ data class DetailUiState(
     val user: User? = null,
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
+    val ratingStats: RatingStats = RatingStats(),
     val friendTrackings: List<Tracking> = emptyList(),
     val friends: List<Friend> = emptyList(),
     val recommendations: List<Recommendation> = emptyList(),

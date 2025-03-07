@@ -1,8 +1,11 @@
 package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
+import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.entity.globalrating.RatingEntity
+import de.ashman.ontrack.entity.globalrating.RatingStatsEntity
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.toEntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
@@ -16,12 +19,14 @@ import kotlinx.coroutines.flow.map
 
 interface TrackingRepository {
     suspend fun saveTracking(tracking: Tracking)
-    suspend fun removeTracking(trackingId: String)
+    suspend fun removeTracking(trackingId: String, ratingId: String)
 
     fun fetchTrackings(userId: String): Flow<List<Tracking>>
     fun fetchTracking(trackingId: String): Flow<Tracking?>
 
     suspend fun fetchFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>>
+
+    fun observeRatingStats(id: String): Flow<RatingStats?>
 }
 
 class TrackingRepositoryImpl(
@@ -30,6 +35,9 @@ class TrackingRepositoryImpl(
 ) : TrackingRepository {
     private val userCollection = firestore.collection("users")
     private fun trackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
+
+    private val ratingsCollection = firestore.collection("ratings")
+    private val ratingStatsCollection = firestore.collection("ratingStats")
 
     override suspend fun saveTracking(tracking: Tracking) {
         val trackingRef = trackingCollection(authRepository.currentUserId).document(tracking.id)
@@ -44,12 +52,20 @@ class TrackingRepositoryImpl(
             tracking.toEntity().copy(history = updatedHistory),
             merge = true
         )
+
+        // If tracking has a rating, save it
+        tracking.rating?.let {
+            saveRating(id = "${tracking.mediaType}_${tracking.mediaId}", rating = it)
+        }
     }
 
-    override suspend fun removeTracking(trackingId: String) {
+    override suspend fun removeTracking(trackingId: String, ratingId: String) {
         trackingCollection(authRepository.currentUserId)
             .document(trackingId)
             .delete()
+
+        // Remove rating as well
+        removeRating(ratingId)
     }
 
     override fun fetchTracking(trackingId: String): Flow<Tracking?> {
@@ -98,6 +114,62 @@ class TrackingRepositoryImpl(
                                 .sortedByDescending { it.timestamp }
                         }
                     }
+            }
+    }
+
+    private suspend fun saveRating(id: String, rating: Double) {
+        val userId = authRepository.currentUserId
+        val ratingRef = ratingsCollection
+            .document(id)
+            .collection("userRatings")
+            .document(userId)
+
+        ratingRef.set(
+            RatingEntity(userId = userId, rating = rating)
+        )
+
+        // Now, update the rating stats
+        updateRatingStats(id)
+    }
+
+    private suspend fun updateRatingStats(id: String) {
+        val ratingsRef = ratingsCollection.document(id).collection("userRatings")
+        val ratings = ratingsRef.get().documents.map { it.data<RatingEntity>() }
+
+        val ratingCount = ratings.size
+        val averageRating = if (ratingCount > 0) ratings.map { it.rating }.average() else 0.0
+
+        val statsRef = ratingStatsCollection.document(id)
+        statsRef.set(
+            RatingStatsEntity(
+                averageRating = averageRating,
+                ratingCount = ratingCount
+            )
+        )
+    }
+
+    private suspend fun removeRating(id: String) {
+        val userId = authRepository.currentUserId
+        val ratingDocRef = ratingsCollection
+            .document(id)
+            .collection("userRatings")
+            .document(userId)
+
+        ratingDocRef.delete()
+
+        updateRatingStats(id)
+    }
+
+    override fun observeRatingStats(id: String): Flow<RatingStats?> {
+        return ratingStatsCollection
+            .document(id)
+            .snapshots
+            .map { snapshot ->
+                if (snapshot.exists) {
+                    snapshot.data<RatingStatsEntity>().toDomain()
+                } else {
+                    null
+                }
             }
     }
 }

@@ -2,6 +2,7 @@ package de.ashman.ontrack.domain
 
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.tracking.Entry
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
@@ -9,6 +10,7 @@ import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.feed.CommentEntity
 import de.ashman.ontrack.entity.feed.LikeEntity
+import de.ashman.ontrack.entity.globalrating.RatingStatsEntity
 import de.ashman.ontrack.entity.tracking.EntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
 import de.ashman.ontrack.entity.user.FriendEntity
@@ -53,6 +55,11 @@ fun TrackingEntity.toDomain() = Tracking(
     comments = comments.map { it.toDomain() },
     history = history.map { it.toDomain() },
     timestamp = timestamp,
+)
+
+fun RatingStatsEntity.toDomain() = RatingStats(
+    averageRating = averageRating,
+    ratingCount = ratingCount
 )
 
 fun CommentEntity.toDomain() = Comment(

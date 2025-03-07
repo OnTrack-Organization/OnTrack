@@ -7,29 +7,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.ApiType
 import de.ashman.ontrack.api.utils.roundDecimals
-import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.MAX_RATING
-import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.getColor
-import de.ashman.ontrack.features.common.getIcon
-import de.ashman.ontrack.features.common.getLabel
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.ratings_overview
 import org.jetbrains.compose.resources.DrawableResource
@@ -41,6 +29,8 @@ fun RatingCardRow(
     apiType: ApiType,
     rating: Double?,
     ratingCount: Int?,
+    appRating: Double?,
+    appRatingCount: Int,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -57,8 +47,8 @@ fun RatingCardRow(
             RatingCard(
                 modifier = Modifier.weight(1f),
                 icon = ApiType.OnTrack.icon,
-                rating = "0.0",
-                ratingCount = 0,
+                rating = appRating?.roundDecimals(1),
+                ratingCount = appRatingCount,
                 maxRating = ApiType.OnTrack.maxRating,
             )
 

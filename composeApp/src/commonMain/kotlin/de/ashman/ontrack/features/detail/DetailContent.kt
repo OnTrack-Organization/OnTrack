@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.getRatingType
+import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Album
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.domain.media.Book
@@ -20,7 +21,6 @@ import de.ashman.ontrack.domain.media.Show
 import de.ashman.ontrack.domain.media.Videogame
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.media.AlbumDetailContent
 import de.ashman.ontrack.features.detail.media.BoardgameDetailContent
@@ -28,12 +28,14 @@ import de.ashman.ontrack.features.detail.media.BookDetailContent
 import de.ashman.ontrack.features.detail.media.MovieDetailContent
 import de.ashman.ontrack.features.detail.media.ShowDetailContent
 import de.ashman.ontrack.features.detail.media.VideogameDetailContent
+import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.navigation.MediaNavigationItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailContent(
     media: Media,
+    appRatingStats: RatingStats,
     friendTrackings: List<Tracking>,
     friendRecommendations: List<Recommendation>,
     columnListState: LazyListState,
@@ -62,7 +64,9 @@ fun DetailContent(
             RatingCardRow(
                 apiType = media.mediaType.getRatingType(),
                 rating = media.apiRating,
-                ratingCount = media.apiRatingCount
+                ratingCount = media.apiRatingCount,
+                appRating = appRatingStats.averageRating,
+                appRatingCount = appRatingStats.ratingCount
             )
         }
 

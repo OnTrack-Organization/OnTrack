@@ -74,6 +74,7 @@ fun DetailScreen(
     LaunchedEffect(mediaNavItems.id) {
         viewModel.fetchDetails(mediaNavItems)
         viewModel.observeTracking(mediaNavItems.id)
+        viewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
         viewModel.observeFriendTrackings(mediaNavItems.id)
         viewModel.observeFriendRecommendations(mediaNavItems.id)
         viewModel.fetchFriends()
@@ -149,6 +150,7 @@ fun DetailScreen(
                     uiState.selectedMedia?.let {
                         DetailContent(
                             media = it,
+                            appRatingStats = uiState.ratingStats,
                             friendTrackings = uiState.friendTrackings,
                             friendRecommendations = uiState.recommendations,
                             columnListState = listState,
