@@ -80,7 +80,7 @@ fun RecommendSheet(
                     username = friend.username,
                     isSelected = selectedUserId == friend.id,
                     isAnyUserSelected = isAnyUserSelected,
-                    onSelectUser = { selectedUserId = friend.id }
+                    onSelectUser = { id -> selectedUserId = id }
                 )
             }
         }
@@ -96,7 +96,7 @@ fun RecommendSheet(
             text = Res.string.send_button,
             icon = Icons.AutoMirrored.Default.Send,
             enabled = isAnyUserSelected,
-            onClick = { onSendRecommendation(selectedUserId!!, message) },
+            onClick = { onSendRecommendation(selectedUserId.orEmpty(), message) },
         )
     }
 }
@@ -108,7 +108,7 @@ fun FriendRecommendSelectorIcon(
     username: String,
     isSelected: Boolean,
     isAnyUserSelected: Boolean,
-    onSelectUser: (String) -> Unit,
+    onSelectUser: (String?) -> Unit, // Accepts null to deselect
 ) {
     val shouldDim = isAnyUserSelected && !isSelected
 
@@ -123,7 +123,13 @@ fun FriendRecommendSelectorIcon(
                     .align(Alignment.Center)
                     .graphicsLayer { alpha = if (shouldDim) 0.5f else 1f },
                 userImageUrl = imageUrl,
-                onClick = { onSelectUser(userId) }
+                onClick = {
+                    if (isSelected) {
+                        onSelectUser(null) // Deselect if currently selected
+                    } else {
+                        onSelectUser(userId) // Select if not selected
+                    }
+                }
             )
 
             if (isSelected) {
@@ -151,10 +157,8 @@ fun FriendRecommendSelectorIcon(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .graphicsLayer { alpha = if (shouldDim) 0.5f else 1f }
-                .width(64.dp), // Ensures text wraps inside the column
+                .width(64.dp),
             textAlign = TextAlign.Center,
         )
     }
 }
-
-
