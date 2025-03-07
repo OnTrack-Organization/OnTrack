@@ -1,6 +1,7 @@
 package de.ashman.ontrack.db
 
 import co.touchlab.kermit.Logger
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.entity.toEntity
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
 
 interface TrackingRepository {
     suspend fun saveTracking(tracking: Tracking)
@@ -22,6 +24,11 @@ interface TrackingRepository {
     fun fetchTracking(trackingId: String): Flow<Tracking?>
 
     suspend fun fetchFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>>
+
+    suspend fun saveRating(mediaId: String, mediaType: MediaType, rating: Double)
+    suspend fun removeUserRating(mediaId: String, mediaType: MediaType, userId: String)
+
+    fun fetchRatingStats(mediaId: String, mediaType: MediaType): Flow<RatingStats?>
 }
 
 class TrackingRepositoryImpl(
@@ -30,6 +37,9 @@ class TrackingRepositoryImpl(
 ) : TrackingRepository {
     private val userCollection = firestore.collection("users")
     private fun trackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
+
+    private val ratingsCollection = firestore.collection("ratings")
+    private val ratingStatsCollection = firestore.collection("ratingStats")
 
     override suspend fun saveTracking(tracking: Tracking) {
         val trackingRef = trackingCollection(authRepository.currentUserId).document(tracking.id)
@@ -44,6 +54,11 @@ class TrackingRepositoryImpl(
             tracking.toEntity().copy(history = updatedHistory),
             merge = true
         )
+
+        // If tracking has a rating, save it
+        tracking.rating?.let {
+            saveRating(mediaId = tracking.mediaId, mediaType = tracking.mediaType, rating = it)
+        }
     }
 
     override suspend fun removeTracking(trackingId: String) {
@@ -100,4 +115,98 @@ class TrackingRepositoryImpl(
                     }
             }
     }
+
+    override suspend fun saveRating(mediaId: String, mediaType: MediaType, rating: Double) {
+        val userId = authRepository.currentUserId
+        val ratingRef = ratingsCollection
+            .document(mediaType.name)
+            .collection(mediaId)
+            .document(userId)
+
+        ratingRef.set(
+            data = RatingEntity(userId = userId, rating = rating)
+        )
+
+        updateRatingStats(mediaId, mediaType)
+    }
+
+    override suspend fun removeUserRating(mediaId: String, mediaType: MediaType, userId: String) {
+        val ratingDocRef = ratingsCollection
+            .document(mediaType.name)
+            .collection(mediaId)
+            .document(userId)
+
+        ratingDocRef.delete()
+
+        updateRatingStats(mediaId, mediaType)
+    }
+
+    override fun fetchRatingStats(mediaId: String, mediaType: MediaType): Flow<RatingStats?> {
+        return ratingStatsCollection.document(mediaType.name)
+            .collection(mediaId)
+            .snapshots
+            .map { snapshot ->
+                // If there are no documents, return null
+                if (snapshot.documents.isEmpty()) {
+                    Logger.w("No RatingStats document found for mediaId: $mediaId of type $mediaType")
+                    null
+                } else {
+                    // Fetch the first document in the snapshot
+                    val document = snapshot.documents.firstOrNull()
+
+                    // If the document exists, convert its data to RatingStatsEntity and then to RatingStats
+                    document?.let {
+                        try {
+                            it.data<RatingStatsEntity>().toDomain()
+                        } catch (e: Exception) {
+                            Logger.e("Error decoding RatingStatsEntity: ${e.message}")
+                            null
+                        }
+                    }
+                }
+            }
+    }
+
+    private suspend fun updateRatingStats(mediaId: String, mediaType: MediaType) {
+        val ratingsSnapshot = ratingsCollection.document(mediaType.name)
+            .collection(mediaId)
+            .get()
+
+        val ratings = ratingsSnapshot.documents.map { it.data<RatingEntity>() }
+        val count = ratings.size
+        val avg = if (count > 0) ratings.map { it.rating }.average() else 0.0
+
+        ratingStatsCollection.document(mediaType.name)
+            .collection(mediaId)
+            .document("stats")
+            .set(
+                RatingStatsEntity(
+                    averageRating = avg,
+                    ratingCount = count
+                )
+            )
+    }
 }
+
+@Serializable
+data class RatingStats(
+    val averageRating: Double = 0.0,
+    val ratingCount: Int = 0
+)
+
+fun RatingStatsEntity.toDomain() = RatingStats(
+    averageRating = averageRating,
+    ratingCount = ratingCount
+)
+
+@Serializable
+data class RatingEntity(
+    val userId: String,
+    val rating: Double
+)
+
+@Serializable
+data class RatingStatsEntity(
+    val averageRating: Double,
+    val ratingCount: Int,
+)
