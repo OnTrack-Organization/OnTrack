@@ -57,7 +57,7 @@ fun DetailScreen(
     mediaNavItems: MediaNavigationItems,
     viewModel: DetailViewModel,
     onClickItem: (MediaNavigationItems) -> Unit,
-    onUserClick: (String) -> Unit,
+    onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -155,7 +155,7 @@ fun DetailScreen(
                             friendRecommendations = uiState.recommendations,
                             columnListState = listState,
                             onClickItem = onClickItem,
-                            onUserClick = onUserClick,
+                            onUserClick = onClickUser,
                             onShowFriendActivity = {
                                 currentBottomSheet = CurrentSheet.FRIEND_ACTIVITY
                                 showBottomSheet = true
@@ -180,6 +180,7 @@ fun DetailScreen(
                     mediaCoverUrl = mediaNavItems.coverUrl,
                     tracking = uiState.selectedTracking,
                     recommendations = uiState.recommendations,
+                    previousSentRecommendations = uiState.previousSentRecommendations,
                     friendTrackings = uiState.friendTrackings,
                     friends = uiState.friends,
                     onSaveTracking = {
@@ -223,7 +224,8 @@ fun DetailScreen(
                             snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_sent))
                         }
                     },
-                    onUserClick = onUserClick,
+                    getPreviousSentRecommendations = { viewModel.getPreviousSentRecommendations(it) },
+                    onClickUser = onClickUser,
                 )
             }
         }

@@ -49,6 +49,7 @@ fun DetailBottomSheet(
     mediaCoverUrl: String?,
     tracking: Tracking?,
     recommendations: List<Recommendation>,
+    previousSentRecommendations: List<Recommendation>,
     friendTrackings: List<Tracking>,
     friends: List<Friend>,
     onSaveTracking: (Tracking) -> Unit,
@@ -58,7 +59,8 @@ fun DetailBottomSheet(
     onAddToCatalog: () -> Unit,
     onPass: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
-    onUserClick: (String) -> Unit,
+    getPreviousSentRecommendations: (String) -> Unit,
+    onClickUser: (String) -> Unit,
 ) {
     // TODO move into own methods...
     val localFocusManager = LocalFocusManager.current
@@ -133,14 +135,17 @@ fun DetailBottomSheet(
                 recommendations = recommendations,
                 friendTrackings = friendTrackings,
                 hasTracking = tracking.status != null,
-                onUserClick = onUserClick,
+                onUserClick = onClickUser,
                 onAddToCatalogClick = onAddToCatalog,
                 onPassClick = onPass,
             )
 
             CurrentSheet.RECOMMEND -> RecommendSheet(
                 selectableFriends = friends,
-                onSendRecommendation = onSendRecommendation
+                onSendRecommendation = onSendRecommendation,
+                previousSentRecommendations = previousSentRecommendations,
+                getPreviousSentRecommendations = getPreviousSentRecommendations,
+                onClickUser = onClickUser,
             )
         }
     }

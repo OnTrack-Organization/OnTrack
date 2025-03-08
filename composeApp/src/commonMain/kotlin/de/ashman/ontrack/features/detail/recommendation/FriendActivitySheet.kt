@@ -87,7 +87,7 @@ fun FriendsActivitySheet(
                         username = it.username,
                         timestamp = it.timestamp.formatDateTime(),
                         message = it.message,
-                        onUserClick = { onUserClick(it.userId) },
+                        onClickUser = { onUserClick(it.userId) },
                     )
                 }
             }
@@ -142,12 +142,12 @@ fun FriendsActivitySheet(
 }
 
 @Composable
-private fun RecommendationCard(
+fun RecommendationCard(
     userImageUrl: String?,
     username: String?,
     timestamp: String,
     message: String?,
-    onUserClick: () -> Unit,
+    onClickUser: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -158,7 +158,7 @@ private fun RecommendationCard(
         ) {
             PersonImage(
                 userImageUrl = userImageUrl,
-                onClick = onUserClick
+                onClick = onClickUser
             )
 
             Column {

@@ -220,6 +220,11 @@ class DetailViewModel(
         }
     }
 
+    fun getPreviousSentRecommendations(friendId: String) = viewModelScope.launch {
+        val previousSentRecommendations = recommendationRepository.getPreviousSentRecommendations(friendId)
+        _uiState.update { it.copy(previousSentRecommendations = previousSentRecommendations) }
+    }
+
     private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository
@@ -238,6 +243,7 @@ data class DetailUiState(
     val friendTrackings: List<Tracking> = emptyList(),
     val friends: List<Friend> = emptyList(),
     val recommendations: List<Recommendation> = emptyList(),
+    val previousSentRecommendations: List<Recommendation> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,

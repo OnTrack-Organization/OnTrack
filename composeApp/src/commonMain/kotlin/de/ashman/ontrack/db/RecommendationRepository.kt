@@ -12,6 +12,8 @@ interface RecommendationRepository {
 
     fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>>
 
+    suspend fun getPreviousSentRecommendations(friendId: String): List<Recommendation>
+
     suspend fun catalogRecommendation(mediaId: String)
     suspend fun passRecommendation(mediaId: String)
 }
@@ -41,6 +43,16 @@ class RecommendationRepositoryImpl(
             .snapshots.map { snapshot ->
                 snapshot.documents.map { it.data<Recommendation>() }
             }
+    }
+
+    override suspend fun getPreviousSentRecommendations(friendId: String): List<Recommendation> {
+        val snapshot = recommendationsCollection(friendId)
+            .where { "userId" equalTo authRepository.currentUserId }
+            .get()
+
+        return snapshot.documents
+            .map { it.data<Recommendation>() }
+            .sortedByDescending { it.timestamp }
     }
 
     // TODO maybe change...

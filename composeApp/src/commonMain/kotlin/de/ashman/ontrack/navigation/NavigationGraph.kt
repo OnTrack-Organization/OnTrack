@@ -253,7 +253,7 @@ fun NavGraphBuilder.mediaGraph(
                     }
                 }
             },
-            onUserClick = { userId ->
+            onClickUser = { userId ->
                 navController.navigate(if (userId == authRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
             onBack = {
