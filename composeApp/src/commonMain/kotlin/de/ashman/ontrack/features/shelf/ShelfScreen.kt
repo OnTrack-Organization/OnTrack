@@ -47,6 +47,7 @@ import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_nav_title
 import ontrack.composeapp.generated.resources.shelf_own_empty
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
@@ -77,13 +78,11 @@ fun ShelfScreen(
             Column {
                 CenterAlignedTopAppBar(
                     title = {
-                        uiState.user?.let {
-                            AccountHeader(
-                                name = it.name,
-                                accountName = it.username,
-                                imageUrl = it.imageUrl,
-                            )
-                        }
+                        Text(
+                            text = stringResource(Res.string.shelf_nav_title),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
                     },
                     navigationIcon = {
                         onBack?.let {
@@ -109,7 +108,6 @@ fun ShelfScreen(
                             }
                         }
                     },
-                    expandedHeight = 110.dp,
                     scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
                 )
             }
@@ -119,11 +117,24 @@ fun ShelfScreen(
             EmptyShelf(text = emptyText)
         } else {
             LazyColumn(
-                modifier = Modifier.padding(contentPadding).padding(bottom = if (onSettings != null) 80.dp else 0.dp),
-                verticalArrangement = Arrangement.spacedBy(32.dp),
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .padding(bottom = if (onSettings != null) 80.dp else 0.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(bottom = 16.dp),
                 state = viewModel.listState,
             ) {
+                uiState.user?.let {
+                    item {
+                        UserHeader(
+                            name = it.name,
+                            username = it.username,
+                            imageUrl = it.imageUrl,
+                        )
+                    }
+                    item { HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) }
+                }
+
                 item { MediaCounts(trackings = uiState.trackings) }
 
                 MediaType.entries.forEach { mediaType ->
@@ -146,30 +157,30 @@ fun ShelfScreen(
 }
 
 @Composable
-fun AccountHeader(
-    name: String?,
-    accountName: String?,
+fun UserHeader(
+    name: String,
+    username: String,
     imageUrl: String?,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PersonImage(
-            modifier = Modifier.size(42.dp),
+            modifier = Modifier.size(56.dp),
             userImageUrl = imageUrl,
         )
 
-        name?.let {
+        Column {
             Text(
                 text = name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
-        }
-        accountName?.let {
             Text(
-                text = accountName,
-                style = MaterialTheme.typography.bodyMedium,
+                text = username,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -199,7 +210,6 @@ fun MediaCounts(
                 )
             }
         }
-        HorizontalDivider()
     }
 }
 
@@ -265,7 +275,7 @@ fun ShelfItem(
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
                         text = pluralStringResource(mediaType.getMediaTypeUi().title, 2),
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
                 }
