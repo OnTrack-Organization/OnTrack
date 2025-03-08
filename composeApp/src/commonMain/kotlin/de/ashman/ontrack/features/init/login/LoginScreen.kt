@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,7 @@ import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.OnTrackButton
+import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.apple
 import ontrack.composeapp.generated.resources.apple_login_button
@@ -48,11 +50,13 @@ import org.jetbrains.compose.resources.vectorResource
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel,
-    onNavigateAfterLogin: () -> Unit,
+    onNavigateAfterLogin: (Boolean, User?) -> Unit,
     onBack: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.uiState.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.snackbarMessage) {
         uiState.snackbarMessage?.let {
@@ -93,7 +97,14 @@ fun LoginScreen(
 
             GoogleAppleLogin(
                 onClickContinue = { result ->
-                    viewModel.signIn(result = result, onSuccess = onNavigateAfterLogin)
+                    coroutineScope.launch {
+                        val userExist = viewModel.doesUserExist(result.getOrNull()?.id)
+
+                        viewModel.signIn(
+                            loginResult = result,
+                            onSuccess = { user -> onNavigateAfterLogin(userExist, user) }
+                        )
+                    }
                 }
             )
         }

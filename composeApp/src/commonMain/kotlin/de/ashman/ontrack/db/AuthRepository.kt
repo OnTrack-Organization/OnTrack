@@ -23,6 +23,8 @@ interface AuthRepository {
 
     suspend fun isUsernameTaken(username: String): Boolean
     suspend fun signOut()
+
+    suspend fun doesUserExist(userId: String): Boolean
 }
 
 class AuthRepositoryImpl(
@@ -42,15 +44,21 @@ class AuthRepositoryImpl(
 
     override suspend fun createUser(user: User): Boolean {
         val document = userCollection.document(user.id).get()
-        if (!document.exists) {
-            userCollection
-                .document(user.id)
-                .set(user)
 
-            Logger.d("User with ID ${user.id} successfully added.")
-            return true
-        } else {
-            Logger.w("User with ID ${user.id} already exists.")
+        try {
+            if (!document.exists) {
+                userCollection
+                    .document(user.id)
+                    .set(user)
+
+                Logger.d("User with ID ${user.id} successfully added.")
+                return true
+            } else {
+                Logger.d("User with ID ${user.id} already exists.")
+                return false
+            }
+        } catch (e: Exception) {
+            Logger.e { "Error creating user: ${e.message}" }
             return false
         }
     }
@@ -62,6 +70,8 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun updateFcmToken(token: String) {
+        if (userCollection.document(currentUserId).get().exists.not()) return
+
         userCollection
             .document(currentUserId)
             .update("fcmToken" to token)
@@ -103,6 +113,16 @@ class AuthRepositoryImpl(
             !querySnapshot.documents.isEmpty()
         } catch (e: Exception) {
             Logger.e { "Error checking username availability: ${e.message}" }
+            false
+        }
+    }
+
+    override suspend fun doesUserExist(userId: String): Boolean {
+        return try {
+            val document = userCollection.document(userId).get()
+            document.exists
+        } catch (e: Exception) {
+            Logger.e { "Error checking user existence: ${e.message}" }
             false
         }
     }

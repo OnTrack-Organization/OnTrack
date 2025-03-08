@@ -12,6 +12,7 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
@@ -20,6 +21,8 @@ import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
 import de.ashman.ontrack.features.init.login.LoginViewModel
+import de.ashman.ontrack.features.init.setup.SetupScreen
+import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchScreen
@@ -52,6 +55,7 @@ fun NavigationGraph(
     shelfViewModel: ShelfViewModel = koinInject(),
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
+    setupViewModel: SetupViewModel = koinInject(),
     authRepository: AuthRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
@@ -74,6 +78,7 @@ fun NavigationGraph(
                 startViewModel = startViewModel,
                 loginViewModel = loginViewModel,
                 navController = navController,
+                setupViewModel = setupViewModel,
                 analytics = analytics,
             )
             mainGraph(
@@ -132,6 +137,7 @@ fun NavigationGraph(
 fun NavGraphBuilder.initGraph(
     startViewModel: StartViewModel,
     loginViewModel: LoginViewModel,
+    setupViewModel: SetupViewModel,
     navController: NavHostController,
     analytics: FirebaseAnalytics,
 ) {
@@ -153,14 +159,32 @@ fun NavGraphBuilder.initGraph(
     composable<Route.Login> {
         LoginScreen(
             viewModel = loginViewModel,
-            onNavigateAfterLogin = {
+            onNavigateAfterLogin = { userExists, user ->
                 analytics.logEvent(analytics.Event.LOGIN)
 
-                navController.navigate(Route.Search) {
+                navController.navigate(if (userExists) Route.Search else Route.Setup(user)) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
             },
             onBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<Route.Setup>(
+        typeMap = mapOf(
+            typeOf<User?>() to CustomNavType.UserType,
+        )
+    ) { backStackEntry ->
+        val setup: Route.Setup = backStackEntry.toRoute()
+
+        SetupScreen(
+            viewModel = setupViewModel,
+            user = setup.user,
+            onGoToApp = {
+                navController.navigate(Route.Search) {
+                    popUpTo<Route.Setup> { inclusive = true }
+                }
+            }
         )
     }
 }

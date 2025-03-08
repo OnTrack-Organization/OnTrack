@@ -27,30 +27,23 @@ class LoginViewModel(
             _uiState.value,
         )
 
-    fun signIn(result: Result<User?>, onSuccess: () -> Unit) = viewModelScope.launch {
-        result.fold(
+    fun signIn(
+        loginResult: Result<User?>,
+        onSuccess: (User?) -> Unit
+    ) = viewModelScope.launch {
+        loginResult.fold(
             onSuccess = { user ->
-                if (user != null) {
-                    authRepository.createUser(user)
-                    onSuccess()
+                onSuccess(user)
 
-                    // Create the first FCM token
-                    viewModelScope.launch {
-                        val token = NotifierManager.getPushNotifier().getToken()
-                        if (token != null) {
-                            Logger.i("Push Notification Token: $token")
-                            authRepository.updateFcmToken(token)
-                        } else {
-                            Logger.w("FCM Token is null at login")
-                        }
-                    }
+                val fcmToken = NotifierManager.getPushNotifier().getToken()
+                fcmToken?.let {
+                    authRepository.updateFcmToken(fcmToken)
                 }
             },
             onFailure = { error ->
                 Logger.e("Login failed: ${error.message}")
 
                 if (error.message == "Idtoken is null") return@launch
-
                 _uiState.update { it.copy(snackbarMessage = getString(Res.string.login_offline_error)) }
             }
         )
@@ -62,6 +55,16 @@ class LoginViewModel(
 
     fun clearViewModel() {
         _uiState.update { LoginUiState() }
+    }
+
+    suspend fun doesUserExist(userId: String?): Boolean {
+        if (userId == null) return false
+        return try {
+            authRepository.doesUserExist(userId)
+        } catch (e: Exception) {
+            Logger.e("Error checking if user exists: ${e.message}")
+            false
+        }
     }
 }
 
