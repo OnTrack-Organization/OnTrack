@@ -5,6 +5,13 @@ import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
+import de.ashman.ontrack.api.clients.createBGGClient
+import de.ashman.ontrack.api.clients.createIGDBClient
+import de.ashman.ontrack.api.clients.createOpenLibraryClient
+import de.ashman.ontrack.api.clients.createSpotifyClient
+import de.ashman.ontrack.api.clients.createSpotifyTokenClient
+import de.ashman.ontrack.api.clients.createTMDBClient
+import de.ashman.ontrack.api.clients.createTwitchTokenClient
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
@@ -38,184 +45,28 @@ import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.headers
-import io.ktor.http.ContentType
-import io.ktor.http.URLProtocol
-import io.ktor.http.contentType
-import io.ktor.http.path
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNamingStrategy
 import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-@OptIn(ExperimentalSerializationApi::class)
 val appModule = module {
-    single(named(TMDB_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = TMDB_URL
-                    path(TMDB_PATH_URL)
-                    parameters.append("api_key", BuildKonfig.TMDB_API_KEY)
-                }
-            }
+    // API
+    single(named(TMDB_CLIENT_NAME)) { createTMDBClient() }
+    single(named(OPEN_LIB_CLIENT_NAME)) { createOpenLibraryClient() }
+    single(named(BGG_CLIENT_NAME)) { createBGGClient() }
+    single(named(IGDB_CLIENT_NAME)) { createIGDBClient() }
+    single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
+    single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
+    single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
 
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-
-    single(named(OPEN_LIB_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = OPEN_LIB_URL
-                }
-            }
-
-            install(UserAgent) {
-                agent = "OnTrack/1.0 (ashkan.haghighifashi@gmail.com)"
-            }
-
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-
-    single(named(BGG_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = BGG_URL
-                    path(BGG_PATH)
-                }
-            }
-
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-
-    single(named(IGDB_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = IGDB_URL
-                    path(IGDB_PATH)
-                }
-                headers {
-                    append("Client-ID", BuildKonfig.TWITCH_CLIENT_ID)
-                }
-            }
-
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-    single(named(TWITCH_TOKEN_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = TWITCH_TOKEN_URL
-                    path(TWITCH_TOKEN_PATH)
-                }
-            }
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-
-    single(named(SPOTIFY_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = SPOTIFY_URL
-                    path(SPOTIFY_PATH)
-                    contentType(ContentType.Application.FormUrlEncoded)
-                }
-            }
-
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
-    single(named(SPOTIFY_TOKEN_CLIENT_NAME)) {
-        HttpClient {
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = SPOTIFY_TOKEN_URL
-                    path(SPOTIFY_TOKEN_PATH)
-                    contentType(ContentType.Application.FormUrlEncoded)
-                }
-            }
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        namingStrategy = JsonNamingStrategy.SnakeCase
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
+    // API
+    single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
+    single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
+    single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
+    single { BoardgameRepository(get(named(BGG_CLIENT_NAME))) }
+    single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
+    single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -232,20 +83,13 @@ val appModule = module {
     // DATABASE
     single { Firebase.firestore }
     single { Firebase.storage }
+
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
-
-    // API
-    single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
-    single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
-    single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
-    single { BoardgameRepository(get(named(BGG_CLIENT_NAME))) }
-    single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
-    single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }

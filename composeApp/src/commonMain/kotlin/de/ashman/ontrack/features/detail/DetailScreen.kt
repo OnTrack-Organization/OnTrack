@@ -140,6 +140,7 @@ fun DetailScreen(
                 },
             )
 
+            Text(text = uiState.searchDuration.toString())
 
             when (uiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()

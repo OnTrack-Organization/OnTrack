@@ -59,9 +59,9 @@ class DetailViewModel(
     val uiState: StateFlow<DetailUiState> = _uiState
         .onStart { observeUser() }
         .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            _uiState.value,
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = _uiState.value,
         )
 
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
@@ -74,24 +74,18 @@ class DetailViewModel(
                 )
             }
 
-            mediaNavItems.mediaType.getRepository().fetchDetails(mediaNavItems.id).fold(
-                onSuccess = { result ->
+            getRepository(mediaNavItems.mediaType).fetchDetails(mediaNavItems.id).fold(
+                onSuccess = { media ->
                     _uiState.update {
                         it.copy(
                             resultState = DetailResultState.Success,
-                            selectedMedia = result,
+                            selectedMedia = media,
                         )
                     }
                 },
                 onFailure = { exception ->
-                    val errorMessage = "Failed to fetch details: ${exception.message}"
-                    _uiState.update {
-                        it.copy(
-                            resultState = DetailResultState.Error,
-                            errorMessage = errorMessage
-                        )
-                    }
-                    Logger.e { errorMessage }
+                    _uiState.update { it.copy(resultState = DetailResultState.Error) }
+                    Logger.e { "FAILED TO FETCH MEDIA DETAILS: ${exception.message}" }
                 }
             )
         }.also { duration ->
@@ -131,6 +125,7 @@ class DetailViewModel(
         }
     }
 
+    // TODO move recommendation stuff into its own viewmodel or use cases
     fun observeFriendRecommendations(mediaId: String) = viewModelScope.launch {
         recommendationRepository.fetchRecommendations(mediaId).collect { recommendations ->
             _uiState.update { state ->
@@ -225,7 +220,7 @@ class DetailViewModel(
         _uiState.update { it.copy(previousSentRecommendations = previousSentRecommendations) }
     }
 
-    private fun MediaType.getRepository() = when (this) {
+    private fun getRepository(mediaType: MediaType) = when (mediaType) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository
         MediaType.BOOK -> bookRepository
@@ -246,7 +241,6 @@ data class DetailUiState(
     val previousSentRecommendations: List<Recommendation> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
     val isRefreshing: Boolean = false,
-    val errorMessage: String? = null,
     val searchDuration: Long = 0L,
 )
 
