@@ -25,7 +25,9 @@ data class ShowDto(
     val popularity: Double? = null,
     val seasons: List<SeasonDto>? = null,
     val status: String? = null,
+
     val credits: CreditsDto? = null,
+    val similar: ShowResponseDto? = null,
 )
 
 @Serializable

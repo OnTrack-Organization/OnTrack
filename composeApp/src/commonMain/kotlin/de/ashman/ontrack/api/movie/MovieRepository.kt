@@ -36,7 +36,7 @@ class MovieRepository(
 
     override suspend fun fetchDetails(mediaId: String): Result<Movie> = safeApiCall {
         val response: MovieDto = httpClient.get("movie/$mediaId") {
-            parameter("append_to_response", "credits, similar")
+            parameter("append_to_response", "credits,similar")
         }.body()
 
         val director = getDirector(response.credits?.crew)

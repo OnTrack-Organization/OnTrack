@@ -1,6 +1,7 @@
 package de.ashman.ontrack.api.show
 
 import de.ashman.ontrack.api.MediaRepository
+import de.ashman.ontrack.api.movie.dto.CrewMemberDto
 import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.movie.toDomain
 import de.ashman.ontrack.api.show.dto.ShowDto
@@ -17,51 +18,40 @@ import io.ktor.client.request.parameter
 class ShowRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository {
-    override suspend fun fetchByQuery(query: String): Result<List<Show>> = safeApiCall {
-        val response: ShowResponseDto = httpClient.get("search/tv") {
-            parameter("query", query)
-            parameter("include_adult", false)
+    override suspend fun fetchTrending(): Result<List<Show>> = safeApiCall {
+        val response: ShowResponseDto = httpClient.get("trending/tv/week") {
             parameter("limit", DEFAULT_FETCH_LIMIT)
         }.body()
         response.shows.map { it.toDomain() }
     }
 
-    override suspend fun fetchTrending(): Result<List<Show>> = safeApiCall {
-        val response: ShowResponseDto = httpClient.get("trending/tv/week") {
-            parameter("include_adult", false)
+    override suspend fun fetchByQuery(query: String): Result<List<Show>> = safeApiCall {
+        val response: ShowResponseDto = httpClient.get("search/tv") {
+            parameter("query", query)
             parameter("limit", DEFAULT_FETCH_LIMIT)
         }.body()
         response.shows.map { it.toDomain() }
     }
 
     override suspend fun fetchDetails(mediaId: String): Result<Show> = safeApiCall {
-        val showDto = fetchShowDetails(mediaId)
-        val director = fetchDirector(showDto)
-        val similar = fetchSimilar(mediaId)
-
-        showDto.toDomain().copy(similarShows = similar, director = director)
-    }
-
-    private suspend fun fetchShowDetails(mediaId: String): ShowDto {
-        val castAppend = "?append_to_response=credits"
-        return httpClient.get("tv/${mediaId}$castAppend").body()
-    }
-
-    private suspend fun fetchDirector(showDto: ShowDto): Director? {
-        val directorId = showDto.credits?.crew?.firstOrNull { it.job == "Director" }?.id ?: return null
-        return fetchPersonDetails(directorId)?.toDomain()
-    }
-
-    private suspend fun fetchPersonDetails(personId: Int): PersonDetailsDto? {
-        return runCatching { httpClient.get("person/$personId").body<PersonDetailsDto>() }.getOrNull()
-    }
-
-    private suspend fun fetchSimilar(id: String): List<Show>? {
-        val similarResponse: ShowResponseDto = httpClient.get("tv/$id/similar") {
-            parameter("include_adult", false)
-            parameter("limit", DEFAULT_FETCH_LIMIT)
+        val response: ShowDto = httpClient.get("tv/$mediaId") {
+            parameter("append_to_response", "credits,similar")
         }.body()
 
-        return similarResponse.shows.takeIf { it.isNotEmpty() }?.map { it.toDomain() }
+        val director = getDirector(response.credits?.crew)
+        val similarShows = response.similar?.shows?.map { it.toDomain() }
+
+        response.toDomain().copy(
+            similarShows = similarShows,
+            director = director
+        )
+    }
+
+    private suspend fun getDirector(crew: List<CrewMemberDto>?): Director? {
+        val director = crew?.firstOrNull { it.job == "Director" }
+        return director?.id?.let {
+            val directorResponse: PersonDetailsDto = httpClient.get("person/$it").body()
+            directorResponse.toDomain()
+        }
     }
 }
