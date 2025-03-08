@@ -30,8 +30,11 @@ fun createTMDBClient(): HttpClient = HttpClient {
         url {
             protocol = URLProtocol.HTTPS
             host = TMDB_URL
+
             path(TMDB_PATH_URL)
+
             parameters.append("api_key", BuildKonfig.TMDB_API_KEY)
+            parameters.append("include_adult", "false")
         }
     }
 }

@@ -22,7 +22,9 @@ data class MovieDto(
     val revenue: Long? = null,
     val runtime: Int? = null,
     val status: String? = null,
+
     val credits: CreditsDto? = null,
+    val similar: MovieResponseDto? = null,
 )
 
 @Serializable
