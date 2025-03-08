@@ -115,7 +115,7 @@ fun CommentsSheet(
                     }
                 } else {
                     items(items = comments, key = { it.id }) {
-                        FeedComment(
+                        CommentCard(
                             modifier = Modifier.animateItem(),
                             userId = it.userId,
                             userImageUrl = it.userImageUrl,
@@ -181,7 +181,7 @@ fun CommentsSheet(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FeedComment(
+fun CommentCard(
     modifier: Modifier = Modifier,
     userId: String,
     userImageUrl: String,
@@ -252,16 +252,11 @@ fun FeedComment(
                         fontWeight = FontWeight.Bold,
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Text(
-                            text = timestamp,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    Text(
+                        text = timestamp,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -280,7 +275,6 @@ fun FeedComment(
                 modifier = Modifier.padding(start = 56.dp),
                 text = annotatedString,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

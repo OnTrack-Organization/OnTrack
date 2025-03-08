@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.features.common.PersonImage
@@ -31,7 +32,7 @@ fun LikesSheet(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -43,7 +44,7 @@ fun LikesSheet(
             state = listState,
         ) {
             items(items = likes, key = { it.userId }) {
-                FeedLike(
+                LikeCard(
                     userImageUrl = it.userImageUrl,
                     name = it.name,
                     onClick = { onUserClick(it.userId) },
@@ -54,7 +55,7 @@ fun LikesSheet(
 }
 
 @Composable
-fun FeedLike(
+fun LikeCard(
     userImageUrl: String,
     name: String,
     onClick: () -> Unit,
@@ -64,7 +65,7 @@ fun FeedLike(
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         PersonImage(
@@ -74,7 +75,8 @@ fun FeedLike(
         )
         Text(
             text = name,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
         )
     }
 }
