@@ -40,16 +40,13 @@ class FeedViewModel(
             _uiState.value,
         )
 
-    private var lastTimestamp: Long? = null
-
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
 
-        feedRepository.getTrackingFeed(lastTimestamp = lastTimestamp, limit = 10).collect { feedTrackings ->
+        feedRepository.getTrackingFeed().collect { feedTrackings ->
             if (feedTrackings.isEmpty()) {
                 _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
             } else {
-                lastTimestamp = feedTrackings.last().timestamp
                 _uiState.update { state ->
                     state.copy(
                         feedResultState = FeedResultState.Success,

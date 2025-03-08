@@ -6,7 +6,6 @@ import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
-import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 interface FeedRepository {
-    suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<Tracking>>
+    suspend fun getTrackingFeed(): Flow<List<Tracking>>
     suspend fun likeTracking(friendId: String, trackingId: String, like: Like)
     suspend fun unlikeTracking(friendId: String, trackingId: String, like: Like)
     suspend fun addComment(friendId: String, trackingId: String, comment: Comment)
@@ -32,7 +31,7 @@ class FeedRepositoryImpl(
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getTrackingFeed(lastTimestamp: Long?, limit: Int): Flow<List<Tracking>> {
+    override suspend fun getTrackingFeed(): Flow<List<Tracking>> {
         val currentUserId = authRepository.currentUserId
 
         val friendsFlow = userCollection.document(currentUserId)
@@ -43,14 +42,8 @@ class FeedRepositoryImpl(
         return friendsFlow.flatMapLatest { friends ->
             val allFlows = friends.map { friendId ->
                 var query = userTrackingCollection(friendId)
-                    .orderBy("timestamp", Direction.DESCENDING)
 
-                if (lastTimestamp != null) {
-                    query = query.startAfter(lastTimestamp)
-                }
-
-                query.snapshots()
-                    .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>().toDomain() } }
+                query.snapshots().map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>().toDomain() } }
             }
 
             if (allFlows.isEmpty()) {
@@ -62,7 +55,6 @@ class FeedRepositoryImpl(
                         .flatten()
                         .distinctBy { it.id }
                         .sortedByDescending { it.timestamp }
-                        .take(limit)
                 }
             }
         }
