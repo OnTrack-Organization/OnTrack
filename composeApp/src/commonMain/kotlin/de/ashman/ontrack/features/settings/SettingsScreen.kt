@@ -32,11 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.features.common.ImagePicker
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
@@ -128,7 +130,13 @@ fun SettingsScreen(
             item {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = CenterHorizontally
                 ) {
+                    ImagePicker(
+                        imageUrl = uiState.imageUrl,
+                        onImagePicked = viewModel::onImagePicked,
+                    )
+
                     OnTrackUsernameTextField(
                         placeholder = "Name",
                         support = Res.string.settings_name_hint,

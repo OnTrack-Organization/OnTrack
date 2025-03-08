@@ -30,6 +30,8 @@ import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
+import de.ashman.ontrack.storage.StorageRepository
+import de.ashman.ontrack.storage.StorageRepositoryImpl
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
@@ -235,6 +237,7 @@ val appModule = module {
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
+    single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
@@ -253,8 +256,8 @@ val appModule = module {
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
-    viewModelDefinition { SettingsViewModel(get()) }
-    viewModelDefinition { SetupViewModel(get()) }
+    viewModelDefinition { SettingsViewModel(get(), get()) }
+    viewModelDefinition { SetupViewModel(get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

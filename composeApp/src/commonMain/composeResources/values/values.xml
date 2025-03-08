@@ -34,7 +34,7 @@
 
     <!-- SETUP -->
     <string name="setup_title">Setup</string>
-    <string name="setup_username">Enter your personal info to get started</string>
+    <string name="setup_username">Enter some personal info to get started!</string>
 
     <!-- FEED -->
     <string name="feed_empty">Add some friends or track some media to share it in your feed!</string>

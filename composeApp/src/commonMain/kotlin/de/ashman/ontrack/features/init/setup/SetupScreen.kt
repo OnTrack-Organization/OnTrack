@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.ImagePicker
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.getLabel
@@ -99,6 +100,11 @@ fun SetupScreen(
                     text = stringResource(Res.string.setup_username),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
+                )
+
+                ImagePicker(
+                    imageUrl = uiState.imageUrl,
+                    onImagePicked = viewModel::onImagePicked,
                 )
 
                 OnTrackUsernameTextField(

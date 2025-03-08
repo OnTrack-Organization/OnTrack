@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.db.AuthRepository
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,8 @@ import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val storageRepository: StorageRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -34,7 +36,8 @@ class SettingsViewModel(
                     it.copy(
                         user = user,
                         name = user?.name.orEmpty(),
-                        username = user?.username.orEmpty()
+                        username = user?.username.orEmpty(),
+                        imageUrl = user?.imageUrl,
                     )
                 }
             }
@@ -101,6 +104,19 @@ class SettingsViewModel(
         }
     }
 
+    fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        val currentUser = _uiState.value.user ?: return@launch
+        bytes ?: return@launch
+
+        val imageUrl = storageRepository.uploadUserImage(bytes)
+
+        authRepository.updateUser(
+            currentUser.copy(imageUrl = imageUrl)
+        )
+
+        _uiState.update { it.copy(imageUrl = imageUrl) }
+    }
+
     fun clearUnsavedChanges() {
         _uiState.update { it.copy(name = it.user?.name.orEmpty(), username = it.user?.username.orEmpty()) }
     }
@@ -118,6 +134,7 @@ data class SettingsUiState(
     val user: User? = null,
     val name: String = "",
     val username: String = "",
+    val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
     val snackbarMessage: String? = null,
 )

@@ -22,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +49,7 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
+import kotlinx.coroutines.launch
 
 @Composable
 fun MediaPoster(
@@ -279,20 +281,42 @@ fun PersonImage(
 
 @Composable
 fun ImagePicker(
-    modifier: Modifier = Modifier,
+    imageUrl: String?,
+    onImagePicked: (ByteArray?) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val launcher = rememberFilePickerLauncher(
         type = PickerType.Image,
         mode = PickerMode.Single,
     ) { file ->
-        // TODO somehow save the image to the db?
-        // Handle the picked files
+        coroutineScope.launch {
+            val fileBytes = file?.readBytes()
+            onImagePicked(fileBytes)
+        }
     }
 
-    Button(
-        modifier = modifier,
-        onClick = { launcher.launch() },
+    Box(
+        modifier = Modifier
+            .size(124.dp),
     ) {
-        Text(text = "Pick an image")
+        PersonImage(
+            modifier = Modifier.size(100.dp).align(Alignment.Center),
+            userImageUrl = imageUrl,
+            onClick = { launcher.launch() },
+        )
+
+        Surface(
+            modifier = Modifier.size(42.dp).align(Alignment.BottomEnd),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primary,
+            onClick = { launcher.launch() }
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+        }
     }
 }
