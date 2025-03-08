@@ -75,39 +75,38 @@ fun StartScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                                .background(color = MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.shelves_filled),
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.fillMaxSize().padding(8.dp),
-                            )
-                        }
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(color = MaterialTheme.colorScheme.primary),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.shelves_filled),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.fillMaxSize().padding(8.dp),
+                        )
+                    }
+
+                    Column {
                         Text(
                             text = stringResource(Res.string.app_name),
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
                         )
+                        Text(
+                            text = stringResource(Res.string.app_subtitle),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
                     }
-                    Text(
-                        text = stringResource(Res.string.app_subtitle),
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
                 }
 
                 Column(

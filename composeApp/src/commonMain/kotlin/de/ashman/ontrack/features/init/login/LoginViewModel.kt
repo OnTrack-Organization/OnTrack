@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.login_error
+import ontrack.composeapp.generated.resources.login_offline_error
 import org.jetbrains.compose.resources.getString
 
 class LoginViewModel(
@@ -48,7 +48,10 @@ class LoginViewModel(
             },
             onFailure = { error ->
                 Logger.e("Login failed: ${error.message}")
-                _uiState.update { it.copy(snackbarMessage = getString(Res.string.login_error)) }
+
+                if (error.message == "Idtoken is null") return@launch
+
+                _uiState.update { it.copy(snackbarMessage = getString(Res.string.login_offline_error)) }
             }
         )
     }

@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.init.intro
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,9 +35,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.OnTrackButton
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.intro_title
 import ontrack.composeapp.generated.resources.login_button
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -51,13 +54,20 @@ fun IntroScreen(
         IntroPage.FIRST_PAGE,
         IntroPage.SECOND_PAGE,
         IntroPage.THIRD_PAGE,
+        IntroPage.FOURTH_PAGE,
     )
     val pagerState = rememberPagerState(initialPage = 0) { pages.size }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {},
+                title = {
+                    Text(
+                        text = stringResource(Res.string.intro_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
@@ -102,6 +112,8 @@ fun IntroContent(
     showLogin: Boolean,
     onGoToLogin: () -> Unit,
 ) {
+    val isDark = isSystemInDarkTheme()
+
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -117,27 +129,29 @@ fun IntroContent(
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
-                    painter = painterResource(introPage.image),
+                    painter = painterResource(if (isDark) introPage.imageDark else introPage.imageLight),
                     contentDescription = null,
                     contentScale = ContentScale.Fit
                 )
             }
 
             Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
                     text = stringResource(introPage.title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = stringResource(introPage.description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                 )
             }
         }

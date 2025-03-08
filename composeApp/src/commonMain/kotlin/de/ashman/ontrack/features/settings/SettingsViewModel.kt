@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.logout_error
+import ontrack.composeapp.generated.resources.logout_offline_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
@@ -97,7 +97,7 @@ class SettingsViewModel(
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")
 
-            _uiState.update { it.copy(snackbarMessage = getString(Res.string.logout_error)) }
+            _uiState.update { it.copy(snackbarMessage = getString(Res.string.logout_offline_error)) }
         }
     }
 

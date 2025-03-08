@@ -16,16 +16,21 @@
     <string name="google_login_button">Continue with Google</string>
     <string name="apple_login_button">Continue with Apple</string>
     <string name="or_divider">or</string>
-    <string name="login_error">Couldn't log in, are you offline?</string>
-    <string name="logout_error">Couldn't log out, are you offline?</string>
 
     <!-- INTRO -->
-    <string name="intro_first_page_title">Track all of your media - in one place</string>
-    <string name="intro_second_page_title">Share your shelf with the world</string>
-    <string name="intro_third_page_title">Keep on track with your friends feed</string>
-    <string name="intro_first_page_description">Movies, shows, books, videogames, boardgames and albums. Track all of it in one central place.</string>
-    <string name="intro_second_page_description">Keep track of your shelf and share it with the world, or just your friends.</string>
-    <string name="intro_third_page_description">Never miss what your friends are into right now, you're gonna have something to talk about at the next party.</string>
+    <string name="intro_title">Introduction</string>
+
+    <string name="intro_first_page_title">Search all media types</string>
+    <string name="intro_first_page_description">Movies, shows, books, videogames, boardgames and albums. All in one central place.</string>
+
+    <string name="intro_second_page_title">Track what you consume</string>
+    <string name="intro_second_page_description">Track your favorite media in their current status: Catalog, Consuming, Consumed and Dropped.</string>
+
+    <string name="intro_third_page_title">Your own media shelf</string>
+    <string name="intro_third_page_description">Like to be organized? Want to display your likings? Do it with your own shelf.</string>
+
+    <string name="intro_fourth_page_title">Share &amp; recommend</string>
+    <string name="intro_fourth_page_description">Keep it social. Share your trackings in a feed and recommend media to your friends.</string>
 
     <!-- FEED -->
     <string name="feed_empty">Add some friends or track some media to share it in your feed!</string>
@@ -288,6 +293,11 @@
 
     <string name="notifications_comment_title">New Comment</string>
     <string name="notifications_comment_body">%1$s commented on your tracking</string>
+
+    <!-- ERROR -->
+    <string name="unknown_error">An unknown error occurred, sorry!</string>
+    <string name="login_offline_error">Couldn't log in, are you offline?</string>
+    <string name="logout_offline_error">Couldn't log out, are you offline?</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
