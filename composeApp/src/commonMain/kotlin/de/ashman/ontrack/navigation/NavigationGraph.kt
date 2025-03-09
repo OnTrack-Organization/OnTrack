@@ -10,11 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
@@ -52,11 +53,12 @@ fun NavigationGraph(
     friendsViewModel: FriendsViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
+    recommendationViewModel: RecommendationViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
-    authRepository: AuthRepository = koinInject(),
+    firestoreUserRepository: FirestoreUserRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -72,7 +74,7 @@ fun NavigationGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (authRepository.currentUserId.isNotBlank()) Route.Search else Route.Start,
+            startDestination = if (firestoreUserRepository.currentUserId.isNotBlank()) Route.Search else Route.Start,
         ) {
             initGraph(
                 startViewModel = startViewModel,
@@ -87,13 +89,14 @@ fun NavigationGraph(
                 friendsViewModel = friendsViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
-                authRepository = authRepository,
+                firestoreUserRepository = firestoreUserRepository,
             )
             mediaGraph(
                 detailViewModel = detailViewModel,
+                recommendationViewModel = recommendationViewModel,
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
-                authRepository = authRepository,
+                firestoreUserRepository = firestoreUserRepository,
                 navController = navController
             )
 
@@ -101,7 +104,6 @@ fun NavigationGraph(
                 SettingsScreen(
                     viewModel = settingsViewModel,
                     onBack = { navController.popBackStack() },
-                    userId = authRepository.currentUserId,
                     onLogout = {
                         friendsViewModel.clearViewModel()
                         feedViewModel.clearViewModel()
@@ -128,7 +130,7 @@ fun NavigationGraph(
             if (Firebase.auth.currentUser == null) return
 
             coroutineScope.launch {
-                authRepository.updateFcmToken(token)
+                firestoreUserRepository.updateFcmToken(token)
             }
         }
     })
@@ -195,7 +197,7 @@ fun NavGraphBuilder.mainGraph(
     friendsViewModel: FriendsViewModel,
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
-    authRepository: AuthRepository,
+    firestoreUserRepository: FirestoreUserRepository,
 ) {
     composable<Route.Feed> {
         FeedScreen(
@@ -205,13 +207,14 @@ fun NavGraphBuilder.mainGraph(
                 navController.navigate(Route.Detail(mediaNav))
             },
             onUserClick = { userId ->
-                navController.navigate(if (userId == authRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
         )
     }
 
     composable<Route.Search> {
         SearchScreen(
+            userId = Firebase.auth.currentUser?.uid.orEmpty(),
             viewModel = searchViewModel,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
@@ -220,8 +223,8 @@ fun NavGraphBuilder.mainGraph(
     composable<Route.Shelf> {
         ShelfScreen(
             viewModel = shelfViewModel,
-            userId = authRepository.currentUserId,
-            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(authRepository.currentUserId, mediaType)) },
+            userId = firestoreUserRepository.currentUserId,
+            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(firestoreUserRepository.currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onSettings = { navController.navigate(Route.Settings) },
         )
@@ -230,9 +233,10 @@ fun NavGraphBuilder.mainGraph(
 
 fun NavGraphBuilder.mediaGraph(
     detailViewModel: DetailViewModel,
+    recommendationViewModel: RecommendationViewModel,
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
-    authRepository: AuthRepository,
+    firestoreUserRepository: FirestoreUserRepository,
     navController: NavHostController,
 ) {
     composable<Route.Detail>(
@@ -244,7 +248,8 @@ fun NavGraphBuilder.mediaGraph(
 
         DetailScreen(
             mediaNavItems = detail.mediaNavItems,
-            viewModel = detailViewModel,
+            detailViewModel = detailViewModel,
+            recommendationViewModel = recommendationViewModel,
             onClickItem = { mediaNavItems ->
                 // Remove all the Detail Navigations from graph before navigating
                 navController.navigate(Route.Detail(mediaNavItems)) {
@@ -254,7 +259,7 @@ fun NavGraphBuilder.mediaGraph(
                 }
             },
             onClickUser = { userId ->
-                navController.navigate(if (userId == authRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
             onBack = {
                 navController.popBackStack()

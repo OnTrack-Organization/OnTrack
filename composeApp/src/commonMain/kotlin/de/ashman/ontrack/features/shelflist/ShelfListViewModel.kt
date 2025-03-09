@@ -2,7 +2,7 @@ package de.ashman.ontrack.features.shelflist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
@@ -26,7 +26,7 @@ class ShelfListViewModel(
         )
 
     fun observeUserTrackings(userId: String) {
-        trackingRepository.fetchTrackings(userId)
+        trackingRepository.observeTrackings(userId)
             .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
             .launchIn(viewModelScope)
     }

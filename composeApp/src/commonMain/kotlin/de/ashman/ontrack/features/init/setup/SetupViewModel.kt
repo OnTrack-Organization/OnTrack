@@ -3,7 +3,7 @@ package de.ashman.ontrack.features.init.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.settings.UsernameError
 import de.ashman.ontrack.storage.StorageRepository
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SetupViewModel(
-    private val authRepository: AuthRepository,
+    private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SetupUiState())
@@ -57,7 +57,7 @@ class SetupViewModel(
             return false
         }
 
-        if (authRepository.isUsernameTaken(newUsername)) {
+        if (firestoreUserRepository.isUsernameTaken(newUsername)) {
             _uiState.update { it.copy(usernameError = UsernameError.TAKEN) }
             return false
         }
@@ -72,7 +72,7 @@ class SetupViewModel(
         )
 
         return newUser?.let {
-            authRepository.createUser(it)
+            firestoreUserRepository.createUser(it)
             true
         } == true
     }

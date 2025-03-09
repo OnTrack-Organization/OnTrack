@@ -3,8 +3,9 @@ package de.ashman.ontrack.features.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,8 @@ import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
+    private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -29,9 +31,9 @@ class SettingsViewModel(
             _uiState.value,
         )
 
-    fun observeUser(userId: String) = viewModelScope.launch {
-        authRepository.observeUser(userId)
-            .collect { user ->
+    init {
+        viewModelScope.launch {
+            currentUserRepository.currentUser.collect { user ->
                 _uiState.update {
                     it.copy(
                         user = user,
@@ -41,10 +43,7 @@ class SettingsViewModel(
                     )
                 }
             }
-    }
-
-    fun deleteAccount() = viewModelScope.launch {
-        authRepository.removeUser()
+        }
     }
 
     fun onNameChange(name: String) {
@@ -77,13 +76,13 @@ class SettingsViewModel(
                 return@launch
             }
 
-            if (authRepository.isUsernameTaken(newUsername)) {
+            if (firestoreUserRepository.isUsernameTaken(newUsername)) {
                 _uiState.update { it.copy(usernameError = UsernameError.TAKEN) }
                 return@launch
             }
         }
 
-        authRepository.updateUser(
+        firestoreUserRepository.updateUser(
             currentUser.copy(
                 name = newName,
                 username = newUsername
@@ -95,7 +94,7 @@ class SettingsViewModel(
 
     fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
         try {
-            authRepository.signOut()
+            firestoreUserRepository.signOut()
             onSuccess()
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")
@@ -104,13 +103,18 @@ class SettingsViewModel(
         }
     }
 
+    fun removeUser() = viewModelScope.launch {
+        firestoreUserRepository.removeUser()
+        firestoreUserRepository.signOut()
+    }
+
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
         val currentUser = _uiState.value.user ?: return@launch
         bytes ?: return@launch
 
         val imageUrl = storageRepository.uploadUserImage(bytes)
 
-        authRepository.updateUser(
+        firestoreUserRepository.updateUser(
             currentUser.copy(imageUrl = imageUrl)
         )
 

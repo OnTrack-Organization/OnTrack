@@ -9,11 +9,12 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.repository.CurrentUserRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,14 +38,14 @@ class SearchViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
-    private val authRepository: AuthRepository,
+    private val firestoreUserRepository: FirestoreUserRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState
         .onStart {
             observeSearchQuery()
-            observeUserTrackings()
         }
         .stateIn(
             viewModelScope,
@@ -56,6 +57,23 @@ class SearchViewModel(
 
     init {
         fetchAllTrending()
+    }
+
+    fun getUserAfterLogin(userId: String) = viewModelScope.launch {
+        firestoreUserRepository.getUser(userId).collect { user ->
+            if (user != null) {
+                currentUserRepository.setCurrentUser(user)
+                observeUserTrackings()
+            }
+        }
+    }
+
+    private fun observeUserTrackings() {
+        trackingRepository.observeTrackings(currentUserRepository.currentUserId)
+            .onEach { trackings ->
+                _uiState.update { it.copy(trackings = trackings) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun fetchAllTrending() {
@@ -134,14 +152,6 @@ class SearchViewModel(
                         searchJob = search(query)
                     }
                 }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun observeUserTrackings() {
-        trackingRepository.fetchTrackings(authRepository.currentUserId)
-            .onEach { trackings ->
-                _uiState.update { it.copy(trackings = trackings) }
             }
             .launchIn(viewModelScope)
     }

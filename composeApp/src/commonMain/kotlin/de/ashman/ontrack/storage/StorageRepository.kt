@@ -1,6 +1,6 @@
 package de.ashman.ontrack.storage
 
-import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.repository.CurrentUserRepository
 import dev.gitlive.firebase.storage.FirebaseStorage
 
 interface StorageRepository {
@@ -9,10 +9,10 @@ interface StorageRepository {
 
 class StorageRepositoryImpl(
     private val storage: FirebaseStorage,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ): StorageRepository {
     override suspend fun uploadUserImage(bytes: ByteArray): String {
-        val ref = storage.reference.child("users/${authRepository.currentUserId}/userImage")
+        val ref = storage.reference.child("users/${currentUserRepository.currentUserId}/userImage")
 
         val data = createDataFromBytes(bytes)
         ref.putData(data)

@@ -1,7 +1,8 @@
-package de.ashman.ontrack.db
+package de.ashman.ontrack.repository.firestore
 
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
+import de.ashman.ontrack.repository.CurrentUserRepository
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,7 @@ interface RecommendationRepository {
 
 class RecommendationRepositoryImpl(
     private val firestore: FirebaseFirestore,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : RecommendationRepository {
 
     private fun recommendationsCollection(userId: String) = firestore.collection("users").document(userId).collection("recommendations")
@@ -39,7 +40,7 @@ class RecommendationRepositoryImpl(
     }
 
     override fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>> {
-        return recommendationsCollection(authRepository.currentUserId)
+        return recommendationsCollection(currentUserRepository.currentUserId)
             .where { "mediaId" equalTo mediaId }
             .snapshots.map { snapshot ->
                 snapshot.documents.map { it.data<Recommendation>() }
@@ -48,7 +49,7 @@ class RecommendationRepositoryImpl(
 
     override suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation> {
         val snapshot = recommendationsCollection(friendId)
-            .where { "userId" equalTo authRepository.currentUserId }
+            .where { "userId" equalTo currentUserRepository.currentUserId }
             .where { "mediaId" equalTo mediaId }
             .orderBy("timestamp", Direction.DESCENDING)
             .limit(5)
@@ -59,7 +60,7 @@ class RecommendationRepositoryImpl(
 
     // TODO maybe change...
     override suspend fun catalogRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(authRepository.currentUserId)
+        val snapshot = recommendationsCollection(currentUserRepository.currentUserId)
             .where { "mediaId" equalTo mediaId }
             .get()
 
@@ -69,7 +70,7 @@ class RecommendationRepositoryImpl(
     }
 
     override suspend fun passRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(authRepository.currentUserId)
+        val snapshot = recommendationsCollection(currentUserRepository.currentUserId)
             .where { "mediaId" equalTo mediaId }
             .get()
 

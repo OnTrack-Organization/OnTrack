@@ -15,17 +15,22 @@ import de.ashman.ontrack.api.clients.createTwitchTokenClient
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.db.AuthRepositoryImpl
-import de.ashman.ontrack.db.FeedRepository
-import de.ashman.ontrack.db.FeedRepositoryImpl
-import de.ashman.ontrack.db.FriendRepository
-import de.ashman.ontrack.db.FriendRepositoryImpl
-import de.ashman.ontrack.db.RecommendationRepository
-import de.ashman.ontrack.db.RecommendationRepositoryImpl
-import de.ashman.ontrack.db.TrackingRepository
-import de.ashman.ontrack.db.TrackingRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FeedRepository
+import de.ashman.ontrack.repository.firestore.FeedRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FriendRepository
+import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
+import de.ashman.ontrack.repository.firestore.RecommendationRepository
+import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
+import de.ashman.ontrack.repository.firestore.TrackingRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
+import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.CurrentUserRepositoryImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.repository.SelectedMediaRepository
+import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
+import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.login.LoginViewModel
@@ -84,23 +89,26 @@ val appModule = module {
     single { Firebase.firestore }
     single { Firebase.storage }
 
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<FirestoreUserRepository> { FirestoreUserRepositoryImpl(get(), get(), get()) }
+    single<CurrentUserRepository> { CurrentUserRepositoryImpl() }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
+    single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get()) }
+    viewModelDefinition { LoginViewModel(get(), get()) }
     viewModelDefinition { FeedViewModel(get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get()) }
-    viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { RecommendationViewModel(get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
-    viewModelDefinition { SettingsViewModel(get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get()) }
 }
 

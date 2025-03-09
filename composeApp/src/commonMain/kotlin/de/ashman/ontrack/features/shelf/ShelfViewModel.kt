@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.db.TrackingRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class ShelfViewModel(
     private val trackingRepository: TrackingRepository,
-    private val authRepository: AuthRepository,
+    private val firestoreUserRepository: FirestoreUserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
@@ -35,15 +35,13 @@ class ShelfViewModel(
 
     fun observeUser(userId: String) {
         viewModelScope.launch {
-            authRepository.observeUser(userId)
-                .collect { user ->
-                    _uiState.update { it.copy(user = user) }
-                }
+            firestoreUserRepository.getUser(userId)
+                .collect { user -> _uiState.update { it.copy(user = user) } }
         }
     }
 
     fun observeUserTrackings(userId: String) {
-        trackingRepository.fetchTrackings(userId)
+        trackingRepository.observeTrackings(userId)
             .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
             .launchIn(viewModelScope)
     }

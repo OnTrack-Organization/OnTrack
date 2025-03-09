@@ -1,4 +1,4 @@
-package de.ashman.ontrack.db
+package de.ashman.ontrack.repository.firestore
 
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
@@ -6,6 +6,7 @@ import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
+import de.ashman.ontrack.repository.CurrentUserRepository
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,14 +26,14 @@ interface FeedRepository {
 
 class FeedRepositoryImpl(
     firestore: FirebaseFirestore,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : FeedRepository {
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTrackingFeed(): Flow<List<Tracking>> {
-        val currentUserId = authRepository.currentUserId
+        val currentUserId = currentUserRepository.currentUserId
 
         val friendsFlow = userCollection.document(currentUserId)
             .collection("friends")

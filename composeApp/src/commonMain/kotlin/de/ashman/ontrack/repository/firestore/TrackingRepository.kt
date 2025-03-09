@@ -1,4 +1,4 @@
-package de.ashman.ontrack.db
+package de.ashman.ontrack.repository.firestore
 
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.globalrating.RatingStats
@@ -9,6 +9,7 @@ import de.ashman.ontrack.entity.globalrating.RatingStatsEntity
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.toEntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
+import de.ashman.ontrack.repository.CurrentUserRepository
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,17 +22,17 @@ interface TrackingRepository {
     suspend fun saveTracking(tracking: Tracking)
     suspend fun removeTracking(trackingId: String, ratingId: String)
 
-    fun fetchTrackings(userId: String): Flow<List<Tracking>>
-    fun fetchTracking(trackingId: String): Flow<Tracking?>
+    fun observeTrackings(userId: String): Flow<List<Tracking>>
+    fun observeTracking(trackingId: String): Flow<Tracking?>
 
-    suspend fun fetchFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>>
+    suspend fun observeFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>>
 
     fun observeRatingStats(id: String): Flow<RatingStats?>
 }
 
 class TrackingRepositoryImpl(
     firestore: FirebaseFirestore,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : TrackingRepository {
     private val userCollection = firestore.collection("users")
     private fun trackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
@@ -40,7 +41,7 @@ class TrackingRepositoryImpl(
     private val ratingStatsCollection = firestore.collection("ratingStats")
 
     override suspend fun saveTracking(tracking: Tracking) {
-        val trackingRef = trackingCollection(authRepository.currentUserId).document(tracking.id)
+        val trackingRef = trackingCollection(currentUserRepository.currentUserId).document(tracking.id)
         val snapshot = trackingRef.get()
 
         val existingTracking = snapshot.takeIf { it.exists }?.data<TrackingEntity>()
@@ -60,7 +61,7 @@ class TrackingRepositoryImpl(
     }
 
     override suspend fun removeTracking(trackingId: String, ratingId: String) {
-        trackingCollection(authRepository.currentUserId)
+        trackingCollection(currentUserRepository.currentUserId)
             .document(trackingId)
             .delete()
 
@@ -68,8 +69,8 @@ class TrackingRepositoryImpl(
         removeRating(ratingId)
     }
 
-    override fun fetchTracking(trackingId: String): Flow<Tracking?> {
-        return trackingCollection(authRepository.currentUserId)
+    override fun observeTracking(trackingId: String): Flow<Tracking?> {
+        return trackingCollection(currentUserRepository.currentUserId)
             .document(trackingId)
             .snapshots
             .map { snapshot ->
@@ -83,15 +84,15 @@ class TrackingRepositoryImpl(
             }
     }
 
-    override fun fetchTrackings(userId: String): Flow<List<Tracking>> {
+    override fun observeTrackings(userId: String): Flow<List<Tracking>> {
         return trackingCollection(userId)
             .snapshots
             .map { snapshot -> snapshot.documents.map { it.data<TrackingEntity>().toDomain() } }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun fetchFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>> {
-        val currentUserId = authRepository.currentUserId
+    override suspend fun observeFriendTrackingsForMedia(mediaId: String): Flow<List<Tracking>> {
+        val currentUserId = currentUserRepository.currentUserId
 
         return userCollection.document(currentUserId)
             .collection("friends")
@@ -118,7 +119,7 @@ class TrackingRepositoryImpl(
     }
 
     private suspend fun saveRating(id: String, rating: Double) {
-        val userId = authRepository.currentUserId
+        val userId = currentUserRepository.currentUserId
         val ratingRef = ratingsCollection
             .document(id)
             .collection("userRatings")
@@ -149,7 +150,7 @@ class TrackingRepositoryImpl(
     }
 
     private suspend fun removeRating(id: String) {
-        val userId = authRepository.currentUserId
+        val userId = currentUserRepository.currentUserId
         val ratingDocRef = ratingsCollection
             .document(id)
             .collection("userRatings")

@@ -60,7 +60,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    userId: String,
     onBack: () -> Unit,
     onLogout: () -> Unit,
 ) {
@@ -71,11 +70,6 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val localFocusManager = LocalFocusManager.current
-
-    // TODO maybe just pass the user from the shelf screen via nav param
-    LaunchedEffect(userId) {
-        if (userId.isNotBlank()) viewModel.observeUser(userId)
-    }
 
     LaunchedEffect(uiState.snackbarMessage) {
         uiState.snackbarMessage?.let {
@@ -200,7 +194,7 @@ fun SettingsScreen(
                         text = Res.string.settings_remove_confirm_text,
                         onConfirm = {
                             showBottomSheet = false
-                            viewModel.deleteAccount()
+                            viewModel.removeUser()
                             onLogout()
                         },
                         onCancel = { showBottomSheet = false },

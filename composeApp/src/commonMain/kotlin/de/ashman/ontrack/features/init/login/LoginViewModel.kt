@@ -4,8 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.db.AuthRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.repository.CurrentUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,8 @@ import ontrack.composeapp.generated.resources.login_offline_error
 import org.jetbrains.compose.resources.getString
 
 class LoginViewModel(
-    private val authRepository: AuthRepository,
+    private val firestoreUserRepository: FirestoreUserRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -37,7 +39,11 @@ class LoginViewModel(
 
                 val fcmToken = NotifierManager.getPushNotifier().getToken()
                 fcmToken?.let {
-                    authRepository.updateFcmToken(fcmToken)
+                    firestoreUserRepository.updateFcmToken(fcmToken)
+                }
+
+                if (!firestoreUserRepository.doesUserExist(user?.id!!)) {
+                    currentUserRepository.setCurrentUser(user)
                 }
             },
             onFailure = { error ->
@@ -60,7 +66,7 @@ class LoginViewModel(
     suspend fun doesUserExist(userId: String?): Boolean {
         if (userId == null) return false
         return try {
-            authRepository.doesUserExist(userId)
+            firestoreUserRepository.doesUserExist(userId)
         } catch (e: Exception) {
             Logger.e("Error checking if user exists: ${e.message}")
             false

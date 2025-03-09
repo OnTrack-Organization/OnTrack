@@ -37,6 +37,7 @@ import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.detail.components.DetailDropDown
 import de.ashman.ontrack.features.detail.components.StickyHeader
+import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.detail.tracking.CurrentSheet
 import de.ashman.ontrack.features.detail.tracking.DetailBottomSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -55,12 +56,15 @@ import org.jetbrains.compose.resources.pluralStringResource
 @Composable
 fun DetailScreen(
     mediaNavItems: MediaNavigationItems,
-    viewModel: DetailViewModel,
+    detailViewModel: DetailViewModel,
+    recommendationViewModel: RecommendationViewModel,
     onClickItem: (MediaNavigationItems) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val detailUiState by detailViewModel.uiState.collectAsStateWithLifecycle()
+    val recommendationUiState by recommendationViewModel.uiState.collectAsStateWithLifecycle()
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -72,12 +76,12 @@ fun DetailScreen(
     val listState = rememberLazyListState()
 
     LaunchedEffect(mediaNavItems.id) {
-        viewModel.fetchDetails(mediaNavItems)
-        viewModel.observeTracking(mediaNavItems.id)
-        viewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
-        viewModel.observeFriendTrackings(mediaNavItems.id)
-        viewModel.observeFriendRecommendations(mediaNavItems.id)
-        viewModel.fetchFriends()
+        detailViewModel.fetchDetails(mediaNavItems)
+        detailViewModel.observeTracking(mediaNavItems.id)
+        detailViewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
+        detailViewModel.observeFriendTrackings(mediaNavItems.id)
+        recommendationViewModel.observeFriendRecommendations(mediaNavItems.id)
+        recommendationViewModel.fetchFriends()
     }
 
     Scaffold(
@@ -108,7 +112,7 @@ fun DetailScreen(
                 },
                 actions = {
                     DetailDropDown(
-                        isTrackingAvailable = uiState.selectedTracking != null,
+                        isTrackingAvailable = detailUiState.selectedTracking != null,
                         onClickRemove = {
                             currentBottomSheet = CurrentSheet.REMOVE
                             showBottomSheet = true
@@ -124,11 +128,11 @@ fun DetailScreen(
         ) {
             StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
-                media = uiState.selectedMedia,
+                media = detailUiState.selectedMedia,
                 mediaType = mediaNavItems.mediaType,
                 mediaTitle = mediaNavItems.title,
                 mediaCoverUrl = mediaNavItems.coverUrl,
-                status = uiState.selectedTracking?.status,
+                status = detailUiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
                     currentBottomSheet = CurrentSheet.TRACK
@@ -140,18 +144,18 @@ fun DetailScreen(
                 },
             )
 
-            when (uiState.resultState) {
+            when (detailUiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()
 
                 DetailResultState.Error -> ErrorContent(text = mediaNavItems.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
-                    uiState.selectedMedia?.let {
+                    detailUiState.selectedMedia?.let {
                         DetailContent(
                             media = it,
-                            appRatingStats = uiState.ratingStats,
-                            friendTrackings = uiState.friendTrackings,
-                            friendRecommendations = uiState.recommendations,
+                            appRatingStats = detailUiState.ratingStats,
+                            friendTrackings = detailUiState.friendTrackings,
+                            friendRecommendations = recommendationUiState.receivedRecommendations,
                             columnListState = listState,
                             onClickItem = onClickItem,
                             onUserClick = onClickUser,
@@ -170,27 +174,28 @@ fun DetailScreen(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
             ) {
+                // TODO move when statement out of there and put here.
                 DetailBottomSheet(
                     currentContent = currentBottomSheet,
-                    user = uiState.user,
+                    user = detailUiState.user,
                     mediaId = mediaNavItems.id,
                     mediaType = mediaNavItems.mediaType,
                     mediaTitle = mediaNavItems.title,
                     mediaCoverUrl = mediaNavItems.coverUrl,
-                    tracking = uiState.selectedTracking,
-                    recommendations = uiState.recommendations,
-                    previousSentRecommendations = uiState.previousSentRecommendations,
-                    friendTrackings = uiState.friendTrackings,
-                    friends = uiState.friends,
+                    tracking = detailUiState.selectedTracking,
+                    recommendations = recommendationUiState.receivedRecommendations,
+                    previousSentRecommendations = recommendationUiState.previousSentRecommendations,
+                    friendTrackings = detailUiState.friendTrackings,
+                    friends = recommendationUiState.friends,
                     onSaveTracking = {
-                        viewModel.saveTracking(it)
+                        detailViewModel.saveTracking(it)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
                         }
                     },
                     onRemoveTracking = {
-                        viewModel.removeTracking(it)
+                        detailViewModel.removeTracking(it)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.tracking_removed))
@@ -203,27 +208,27 @@ fun DetailScreen(
                         currentBottomSheet = CurrentSheet.REVIEW
                     },
                     onAddToCatalog = {
-                        viewModel.addToCatalog()
+                        detailViewModel.addRecommendationToCatalog()
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
                         }
                     },
                     onPass = {
-                        viewModel.passRecommendation()
+                        recommendationViewModel.passRecommendation(mediaNavItems.id)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_passed))
                         }
                     },
                     onSendRecommendation = { friendId, message ->
-                        viewModel.sendRecommendation(friendId, message)
+                        recommendationViewModel.sendRecommendation(friendId, message, detailUiState.selectedMedia!!)
                         showBottomSheet = false
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_sent))
                         }
                     },
-                    selectUser = { viewModel.selectUser(it) },
+                    selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
                     onClickUser = onClickUser,
                 )
             }

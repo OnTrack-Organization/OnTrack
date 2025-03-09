@@ -2,19 +2,16 @@ package de.ashman.ontrack.features.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.db.FeedRepository
+import de.ashman.ontrack.repository.firestore.FeedRepository
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.notification.NotificationService
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,17 +25,24 @@ import org.jetbrains.compose.resources.getString
 class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val notificationService: NotificationService,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState
-        .onStart { observeUser() }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
+
+    init {
+        viewModelScope.launch {
+            currentUserRepository.currentUser.collect { user ->
+                _uiState.update { it.copy(user = user) }
+            }
+        }
+    }
 
     fun fetchTrackingFeed() = viewModelScope.launch {
         _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
@@ -126,15 +130,6 @@ class FeedViewModel(
 
     fun selectTracking(trackingId: String) {
         _uiState.update { it.copy(selectedTrackingId = trackingId) }
-    }
-
-    fun observeUser() {
-        viewModelScope.launch {
-            authRepository.observeUser(Firebase.auth.currentUser?.uid.orEmpty())
-                .collect { user ->
-                    _uiState.update { it.copy(user = user) }
-                }
-        }
     }
 
     fun clearViewModel() {

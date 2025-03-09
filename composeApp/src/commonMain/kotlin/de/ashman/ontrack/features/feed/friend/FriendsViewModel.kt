@@ -2,14 +2,12 @@ package de.ashman.ontrack.features.feed.friend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.db.AuthRepository
-import de.ashman.ontrack.db.FriendRepository
+import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.notification.NotificationService
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +31,7 @@ import org.jetbrains.compose.resources.getString
 
 class FriendsViewModel(
     private val friendRepository: FriendRepository,
-    private val authRepository: AuthRepository,
+    private val currentUserRepository: CurrentUserRepository,
     private val notificationService: NotificationService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
@@ -41,7 +39,6 @@ class FriendsViewModel(
         .onStart {
             observeSearchQuery()
             observeFriendsAndRequests()
-            observeUser()
         }
         .stateIn(
             viewModelScope,
@@ -50,6 +47,14 @@ class FriendsViewModel(
         )
 
     private var searchJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            currentUserRepository.currentUser.collect { user ->
+                _uiState.update { it.copy(user = user) }
+            }
+        }
+    }
 
     fun search(query: String) = viewModelScope.launch {
         val potentialFriends = friendRepository.searchForNewFriends(query)
@@ -139,15 +144,6 @@ class FriendsViewModel(
                     else -> FriendsResultState.FriendsEmpty
                 }
             )
-        }
-    }
-
-    fun observeUser() {
-        viewModelScope.launch {
-            authRepository.observeUser(Firebase.auth.currentUser?.uid.orEmpty())
-                .collect { user ->
-                    _uiState.update { it.copy(user = user) }
-                }
         }
     }
 

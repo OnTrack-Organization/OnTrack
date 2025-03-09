@@ -1,7 +1,6 @@
 package de.ashman.ontrack
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -25,7 +24,7 @@ fun App() {
         GoogleAuthProvider.create(GoogleAuthCredentials(BuildKonfig.GOOGLE_AUTH_CLIENT_ID))
 
         notificationInit()
-        startNotificationManager(navController)
+        startNotificationManager()
 
         setSingletonImageLoaderFactory { context ->
             getAsyncImageLoader(context)
@@ -56,9 +55,7 @@ fun getAsyncImageLoader(context: PlatformContext) =
         .logger(DebugLogger())
         .build()
 
-private fun startNotificationManager(
-    navController: NavHostController,
-) {
+private fun startNotificationManager() {
     NotifierManager.addListener(object : NotifierManager.Listener {
         override fun onPushNotification(title: String?, body: String?) {
             super.onPushNotification(title, body)

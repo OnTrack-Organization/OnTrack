@@ -2,8 +2,6 @@ package de.ashman.ontrack.domain.feed
 
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
