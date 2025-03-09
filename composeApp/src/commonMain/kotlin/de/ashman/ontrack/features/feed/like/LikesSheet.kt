@@ -26,7 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun LikesSheet(
     likes: List<Like>,
-    onUserClick: (String) -> Unit,
+    onClickUser: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -47,7 +47,7 @@ fun LikesSheet(
                 LikeCard(
                     userImageUrl = it.userImageUrl,
                     name = it.name,
-                    onClick = { onUserClick(it.userId) },
+                    onClick = { onClickUser(it.userId) },
                 )
             }
         }

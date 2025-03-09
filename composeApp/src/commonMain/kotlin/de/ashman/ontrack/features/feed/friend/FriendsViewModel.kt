@@ -2,12 +2,13 @@ package de.ashman.ontrack.features.feed.friend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.notification.NotificationService
+import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.firestore.FriendRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_friend_removed
+import ontrack.composeapp.generated.resources.feed_request_accepted
+import ontrack.composeapp.generated.resources.feed_request_cancelled
+import ontrack.composeapp.generated.resources.feed_request_declined
+import ontrack.composeapp.generated.resources.feed_request_sent
 import ontrack.composeapp.generated.resources.notifications_new_request_body
 import ontrack.composeapp.generated.resources.notifications_new_request_title
 import ontrack.composeapp.generated.resources.notifications_request_accepted_body
@@ -32,6 +38,7 @@ import org.jetbrains.compose.resources.getString
 class FriendsViewModel(
     private val friendRepository: FriendRepository,
     private val currentUserRepository: CurrentUserRepository,
+    private val sharedUiManager: SharedUiManager,
     private val notificationService: NotificationService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
@@ -69,9 +76,8 @@ class FriendsViewModel(
 
     fun removeFriend() {
         viewModelScope.launch {
-            _uiState.value.selectedFriend?.let {
-                friendRepository.removeFriend(it)
-            }
+            _uiState.value.selectedFriend?.let { friendRepository.removeFriend(it) }
+            sharedUiManager.showSnackbar(Res.string.feed_friend_removed)
         }
     }
 
@@ -91,6 +97,8 @@ class FriendsViewModel(
 
             friendRepository.sendRequest(otherRequest, myRequest)
 
+            sharedUiManager.showSnackbar(Res.string.feed_request_sent)
+
             notificationService.sendPushNotification(
                 userId = otherRequest.userId,
                 title = getString(Res.string.notifications_new_request_title),
@@ -104,6 +112,8 @@ class FriendsViewModel(
 
             friendRepository.acceptRequest(friendRequest)
 
+            sharedUiManager.showSnackbar(Res.string.feed_request_accepted)
+
             notificationService.sendPushNotification(
                 userId = friendRequest.userId,
                 title = getString(Res.string.notifications_request_accepted_title),
@@ -114,10 +124,12 @@ class FriendsViewModel(
 
     fun declineRequest(friendRequest: FriendRequest) = viewModelScope.launch {
         friendRepository.declineRequest(friendRequest)
+        sharedUiManager.showSnackbar(Res.string.feed_request_declined)
     }
 
     fun cancelRequest(friendRequest: FriendRequest) = viewModelScope.launch {
         friendRepository.cancelRequest(friendRequest)
+        sharedUiManager.showSnackbar(Res.string.feed_request_cancelled)
     }
 
     fun clearViewModel() {

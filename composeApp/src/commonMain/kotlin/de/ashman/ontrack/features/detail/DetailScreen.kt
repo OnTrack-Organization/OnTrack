@@ -258,7 +258,7 @@ fun DetailScreen(
                             onClickUser = onClickUser,
                         )
 
-                        null -> {}
+                        else -> {}
                     }
                 }
             }

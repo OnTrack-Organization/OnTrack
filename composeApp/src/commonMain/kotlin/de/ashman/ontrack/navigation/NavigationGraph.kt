@@ -91,6 +91,7 @@ fun NavigationGraph(
                 friendsViewModel = friendsViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
+                sharedUiManager = sharedUiManager,
                 firestoreUserRepository = firestoreUserRepository,
             )
             mediaGraph(
@@ -201,16 +202,18 @@ fun NavGraphBuilder.mainGraph(
     friendsViewModel: FriendsViewModel,
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
+    sharedUiManager: SharedUiManager,
     firestoreUserRepository: FirestoreUserRepository,
 ) {
     composable<Route.Feed> {
         FeedScreen(
             feedViewModel = feedViewModel,
             friendsViewModel = friendsViewModel,
+            sharedUiManager = sharedUiManager,
             onClickCover = { mediaNav ->
                 navController.navigate(Route.Detail(mediaNav))
             },
-            onUserClick = { userId ->
+            onClickUser = { userId ->
                 navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
         )

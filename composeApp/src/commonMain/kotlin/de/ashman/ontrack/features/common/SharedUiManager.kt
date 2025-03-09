@@ -37,6 +37,10 @@ class SharedUiManager() {
         _uiState.update { it.copy(snackbarMessage = null) }
     }
 
+    suspend fun showSnackbar(message: StringResource) {
+        _uiState.update { it.copy(snackbarMessage = getString(message)) }
+    }
+
 }
 
 data class SharedUiState(
@@ -54,4 +58,7 @@ enum class CurrentSheet {
     REMOVE,
     FRIEND_ACTIVITY,
     RECOMMEND,
+    COMMENTS,
+    LIKES,
+    FRIENDS,
 }

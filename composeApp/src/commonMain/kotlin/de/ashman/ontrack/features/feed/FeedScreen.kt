@@ -28,10 +28,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,22 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.features.common.CurrentSheet
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.feed.comment.CommentsSheet
 import de.ashman.ontrack.features.feed.friend.FriendsSheet
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.feed.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_empty
-import ontrack.composeapp.generated.resources.feed_friend_removed
 import ontrack.composeapp.generated.resources.feed_nav_title
-import ontrack.composeapp.generated.resources.feed_request_accepted
-import ontrack.composeapp.generated.resources.feed_request_cancelled
-import ontrack.composeapp.generated.resources.feed_request_declined
-import ontrack.composeapp.generated.resources.feed_request_sent
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,23 +54,28 @@ import org.jetbrains.compose.resources.stringResource
 fun FeedScreen(
     feedViewModel: FeedViewModel,
     friendsViewModel: FriendsViewModel,
+    sharedUiManager: SharedUiManager,
     onClickCover: (MediaNavigationItems) -> Unit,
-    onUserClick: (String) -> Unit,
+    onClickUser: (String) -> Unit,
 ) {
+    val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
     val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
+    val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
+
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
-
-    var currentSheetContent by remember { mutableStateOf<SheetContent>(SheetContent.COMMENTS) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         feedViewModel.fetchTrackingFeed()
+    }
+
+    LaunchedEffect(sharedUiState.snackbarMessage) {
+        sharedUiState.snackbarMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            sharedUiManager.clearSnackbarMessage()
+        }
     }
 
     // TODO add again when using pagination and pull to refresh
@@ -110,10 +107,7 @@ fun FeedScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = {
-                            currentSheetContent = SheetContent.FRIENDS
-                            showBottomSheet = true
-                        },
+                        onClick = { sharedUiManager.showSheet(CurrentSheet.FRIENDS) },
                     ) {
                         Icon(
                             imageVector = Icons.Default.Group,
@@ -144,18 +138,10 @@ fun FeedScreen(
                     FeedCard(
                         tracking = it,
                         onLike = { feedViewModel.likeTracking(it) },
-                        onShowComments = {
-                            currentSheetContent = SheetContent.COMMENTS
-                            feedViewModel.selectTracking(it.id)
-                            showBottomSheet = true
-                        },
-                        onShowLikes = {
-                            currentSheetContent = SheetContent.LIKES
-                            feedViewModel.selectTracking(it.id)
-                            showBottomSheet = true
-                        },
+                        onShowComments = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.COMMENTS) },
+                        onShowLikes = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.LIKES) },
                         onClickCover = onClickCover,
-                        onClickUser = { onUserClick(it.userId) },
+                        onClickUser = { onClickUser(it.userId) },
                     )
 
                     if (it != feedUiState.feedTrackings.last()) {
@@ -165,77 +151,40 @@ fun FeedScreen(
             }
         }
 
-        if (showBottomSheet) {
+        if (sharedUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { sharedUiManager.hideSheet() },
                 sheetState = bottomSheetState,
                 tonalElevation = 0.dp,
             ) {
-                when (currentSheetContent) {
-                    SheetContent.COMMENTS -> CommentsSheet(
+                when (sharedUiState.currentSheet) {
+                    CurrentSheet.COMMENTS -> CommentsSheet(
                         comments = feedUiState.selectedTracking?.comments ?: emptyList(),
                         onAddComment = feedViewModel::addComment,
                         onRemoveComment = feedViewModel::removeComment,
-                        onClickUser = {
-                            showBottomSheet = false
-                            onUserClick(it)
-                        },
+                        onClickUser = { onClickUser(it) },
                     )
 
-                    SheetContent.LIKES -> LikesSheet(
+                    CurrentSheet.LIKES -> LikesSheet(
                         likes = feedUiState.selectedTracking?.likes ?: emptyList(),
-                        onUserClick = {
-                            showBottomSheet = false
-                            onUserClick(it)
-                        },
+                        onClickUser = { onClickUser(it) },
                     )
 
-                    SheetContent.FRIENDS -> {
+                    CurrentSheet.FRIENDS -> {
                         FriendsSheet(
                             uiState = friendsUiState,
-                            onRemoveFriend = {
-                                friendsViewModel.removeFriend()
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(getString(Res.string.feed_friend_removed))
-                                }
-                            },
-                            onAcceptRequest = {
-                                friendsViewModel.acceptRequest(it)
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_accepted))
-                                }
-                            },
-                            onDeclineRequest = {
-                                friendsViewModel.declineRequest(it)
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_declined))
-                                }
-                            },
-                            onCancelRequest = {
-                                friendsViewModel.cancelRequest(it)
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_cancelled))
-                                }
-                            },
-                            onSendRequest = {
-                                friendsViewModel.sendRequest(it)
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(getString(Res.string.feed_request_sent))
-                                }
-                            },
-                            onClickUser = {
-                                showBottomSheet = false
-                                onUserClick(it)
-                            },
+                            onRemoveFriend = friendsViewModel::removeFriend,
+                            onAcceptRequest = friendsViewModel::acceptRequest,
+                            onDeclineRequest = friendsViewModel::declineRequest,
+                            onCancelRequest = friendsViewModel::cancelRequest,
+                            onSendRequest = friendsViewModel::sendRequest,
+                            onClickUser = { onClickUser(it) },
                             onQueryChanged = friendsViewModel::onQueryChanged,
                             onSelectFriend = friendsViewModel::selectFriend,
                         )
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -265,8 +214,4 @@ fun EmptyFeed(
             textAlign = TextAlign.Center,
         )
     }
-}
-
-enum class SheetContent {
-    COMMENTS, LIKES, FRIENDS
 }
