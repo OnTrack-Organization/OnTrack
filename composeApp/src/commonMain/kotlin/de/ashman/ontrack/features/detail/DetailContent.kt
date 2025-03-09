@@ -34,7 +34,7 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailContent(
-    media: Media,
+    media: Media?,
     appRatingStats: RatingStats,
     friendTrackings: List<Tracking>,
     friendRecommendations: List<Recommendation>,
@@ -43,40 +43,42 @@ fun DetailContent(
     onUserClick: (String) -> Unit,
     onShowFriendActivity: () -> Unit,
 ) {
-    LazyColumn(
-        state = columnListState,
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        if (friendTrackings.isNotEmpty() || friendRecommendations.isNotEmpty()) {
+    media?.let {
+        LazyColumn(
+            state = columnListState,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            if (friendTrackings.isNotEmpty() || friendRecommendations.isNotEmpty()) {
+                item {
+                    FriendActivityRow(
+                        friendTrackings = friendTrackings,
+                        friendRecommendations = friendRecommendations,
+                        onUserClick = onUserClick,
+                        onMoreClick = onShowFriendActivity
+                    )
+                }
+            }
+
             item {
-                FriendActivityRow(
-                    friendTrackings = friendTrackings,
-                    friendRecommendations = friendRecommendations,
-                    onUserClick = onUserClick,
-                    onMoreClick = onShowFriendActivity
+                RatingCardRow(
+                    apiType = media.mediaType.getRatingType(),
+                    rating = media.apiRating,
+                    ratingCount = media.apiRatingCount,
+                    appRating = appRatingStats.averageRating,
+                    appRatingCount = appRatingStats.ratingCount
                 )
             }
-        }
 
-        item {
-            RatingCardRow(
-                apiType = media.mediaType.getRatingType(),
-                rating = media.apiRating,
-                ratingCount = media.apiRatingCount,
-                appRating = appRatingStats.averageRating,
-                appRatingCount = appRatingStats.ratingCount
-            )
-        }
-
-        when (media.mediaType) {
-            MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
-            MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
-            MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
-            MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
-            MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
-            MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
+            when (media.mediaType) {
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
+            }
         }
     }
 }

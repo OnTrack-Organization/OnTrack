@@ -53,7 +53,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TrackSheet(
     mediaType: MediaType,
-    mediaTitle: String?,
     selectedStatus: TrackStatus?,
     onSelectStatus: (TrackStatus) -> Unit,
     onSave: () -> Unit,
@@ -175,4 +174,15 @@ fun TrackStatusButton(
             Spacer(modifier = Modifier.size(42.dp))
         }
     }
+}
+
+// TODO add back handling
+// Back Handling is being worked on rn
+// https://youtrack.jetbrains.com/issue/CMP-4419
+enum class CurrentSheet {
+    TRACK,
+    REVIEW,
+    REMOVE,
+    FRIEND_ACTIVITY,
+    RECOMMEND
 }

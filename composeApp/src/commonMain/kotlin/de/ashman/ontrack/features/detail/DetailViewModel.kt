@@ -9,17 +9,18 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.repository.firestore.RecommendationRepository
-import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.detail.tracking.CurrentSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.SelectedMediaRepository
+import de.ashman.ontrack.repository.firestore.RecommendationRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock.System
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommendation_added_to_catalog
+import ontrack.composeapp.generated.resources.tracking_removed
+import ontrack.composeapp.generated.resources.tracking_saved
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import kotlin.time.measureTime
 
 class DetailViewModel(
@@ -123,6 +130,7 @@ class DetailViewModel(
         trackingRepository.saveTracking(tracking)
 
         _uiState.update { it.copy(selectedTracking = tracking) }
+        hideSheetAndShowSnackbar(Res.string.tracking_saved)
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
@@ -131,6 +139,7 @@ class DetailViewModel(
         trackingRepository.removeTracking(trackingId, "${media.mediaType}_${media.id}")
 
         _uiState.update { it.copy(selectedTracking = null) }
+        hideSheetAndShowSnackbar(Res.string.tracking_removed)
     }
 
     fun addRecommendationToCatalog() = viewModelScope.launch {
@@ -151,10 +160,33 @@ class DetailViewModel(
             )
             saveTracking(catalogTracking)
         }
+
+        hideSheetAndShowSnackbar(Res.string.detail_recommendation_added_to_catalog)
     }
 
     fun clearViewModel() {
         _uiState.update { DetailUiState() }
+    }
+
+    fun showBottomSheet(
+        sheet: CurrentSheet?,
+        boolean: Boolean = true,
+    ) {
+        _uiState.update { it.copy(showSheet = boolean, currentSheet = sheet) }
+    }
+
+    fun hideSheetAndShowSnackbar(message: StringResource) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                snackbarMessage = getString(message),
+                currentSheet = null,
+                showSheet = false,
+            )
+        }
+    }
+
+    fun clearSnackbarMessage() {
+        _uiState.update { it.copy(snackbarMessage = null) }
     }
 
     private fun getRepository(mediaType: MediaType) = when (mediaType) {
@@ -174,6 +206,9 @@ data class DetailUiState(
     val ratingStats: RatingStats = RatingStats(),
     val friendTrackings: List<Tracking> = emptyList(),
     val resultState: DetailResultState = DetailResultState.Loading,
+    val currentSheet: CurrentSheet? = null,
+    val showSheet: Boolean = false,
+    val snackbarMessage: String? = null,
     val isRefreshing: Boolean = false,
     val searchDuration: Long = 0L,
 )

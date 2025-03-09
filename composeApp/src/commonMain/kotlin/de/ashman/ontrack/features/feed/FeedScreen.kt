@@ -91,7 +91,6 @@ fun FeedScreen(
             }
     }*/
 
-    // TODO maybe use BottomSheetScaffold?
     Scaffold(
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         snackbarHost = {

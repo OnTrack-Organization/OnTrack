@@ -85,7 +85,7 @@ fun RecommendSheet(
                 FriendRecommendSelectorIcon(
                     userId = friend.id,
                     imageUrl = friend.imageUrl,
-                    username = friend.username,
+                    name = friend.name,
                     isSelected = selectedUserId == friend.id,
                     isAnyUserSelected = isAnyUserSelected,
                     onSelectUser = { id ->
@@ -156,7 +156,7 @@ fun RecommendSheet(
 fun FriendRecommendSelectorIcon(
     userId: String,
     imageUrl: String?,
-    username: String,
+    name: String,
     isSelected: Boolean,
     isAnyUserSelected: Boolean,
     onSelectUser: (String?) -> Unit, // Accepts null to deselect
@@ -201,7 +201,7 @@ fun FriendRecommendSelectorIcon(
         }
 
         Text(
-            text = username,
+            text = name,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,

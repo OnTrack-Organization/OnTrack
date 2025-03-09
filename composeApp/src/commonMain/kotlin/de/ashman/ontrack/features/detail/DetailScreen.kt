@@ -1,9 +1,11 @@
 package de.ashman.ontrack.features.detail
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -25,31 +27,36 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
+import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.detail.components.DetailDropDown
 import de.ashman.ontrack.features.detail.components.StickyHeader
+import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
+import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.detail.tracking.CurrentSheet
-import de.ashman.ontrack.features.detail.tracking.DetailBottomSheet
+import de.ashman.ontrack.features.detail.tracking.ReviewSheet
+import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_recommendation_added_to_catalog
 import ontrack.composeapp.generated.resources.detail_recommendation_passed
 import ontrack.composeapp.generated.resources.detail_recommendation_sent
-import ontrack.composeapp.generated.resources.tracking_removed
-import ontrack.composeapp.generated.resources.tracking_saved
-import org.jetbrains.compose.resources.getString
+import ontrack.composeapp.generated.resources.detail_remove_confirm_text
+import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,12 +74,7 @@ fun DetailScreen(
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
-
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var currentBottomSheet by remember { mutableStateOf(CurrentSheet.TRACK) }
-    val coroutineScope = rememberCoroutineScope()
-
     val listState = rememberLazyListState()
 
     LaunchedEffect(mediaNavItems.id) {
@@ -82,6 +84,13 @@ fun DetailScreen(
         detailViewModel.observeFriendTrackings(mediaNavItems.id)
         recommendationViewModel.observeFriendRecommendations(mediaNavItems.id)
         recommendationViewModel.fetchFriends()
+    }
+
+    LaunchedEffect(detailUiState.snackbarMessage) {
+        detailUiState.snackbarMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            detailViewModel.clearSnackbarMessage()
+        }
     }
 
     Scaffold(
@@ -113,10 +122,7 @@ fun DetailScreen(
                 actions = {
                     DetailDropDown(
                         isTrackingAvailable = detailUiState.selectedTracking != null,
-                        onClickRemove = {
-                            currentBottomSheet = CurrentSheet.REMOVE
-                            showBottomSheet = true
-                        }
+                        onClickRemove = { detailViewModel.showBottomSheet(CurrentSheet.REMOVE) }
                     )
                 },
                 scrollBehavior = scrollBehavior,
@@ -134,14 +140,8 @@ fun DetailScreen(
                 mediaCoverUrl = mediaNavItems.coverUrl,
                 status = detailUiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
-                onClickAddTracking = {
-                    currentBottomSheet = CurrentSheet.TRACK
-                    showBottomSheet = true
-                },
-                onClickRecommend = {
-                    currentBottomSheet = CurrentSheet.RECOMMEND
-                    showBottomSheet = true
-                },
+                onClickAddTracking = { detailViewModel.showBottomSheet(CurrentSheet.TRACK) },
+                onClickRecommend = { detailViewModel.showBottomSheet(CurrentSheet.RECOMMEND) },
             )
 
             when (detailUiState.resultState) {
@@ -150,87 +150,119 @@ fun DetailScreen(
                 DetailResultState.Error -> ErrorContent(text = mediaNavItems.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
-                    detailUiState.selectedMedia?.let {
-                        DetailContent(
-                            media = it,
-                            appRatingStats = detailUiState.ratingStats,
-                            friendTrackings = detailUiState.friendTrackings,
-                            friendRecommendations = recommendationUiState.receivedRecommendations,
-                            columnListState = listState,
-                            onClickItem = onClickItem,
-                            onUserClick = onClickUser,
-                            onShowFriendActivity = {
-                                currentBottomSheet = CurrentSheet.FRIEND_ACTIVITY
-                                showBottomSheet = true
-                            },
-                        )
-                    }
+                    DetailContent(
+                        media = detailUiState.selectedMedia,
+                        appRatingStats = detailUiState.ratingStats,
+                        friendTrackings = detailUiState.friendTrackings,
+                        friendRecommendations = recommendationUiState.receivedRecommendations,
+                        columnListState = listState,
+                        onClickItem = onClickItem,
+                        onUserClick = onClickUser,
+                        onShowFriendActivity = { detailViewModel.showBottomSheet(CurrentSheet.FRIEND_ACTIVITY) },
+                    )
                 }
             }
         }
 
-        if (showBottomSheet) {
+        if (detailUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { detailViewModel.showBottomSheet(null, false) },
                 sheetState = sheetState,
             ) {
-                // TODO move when statement out of there and put here.
-                DetailBottomSheet(
-                    currentContent = currentBottomSheet,
-                    user = detailUiState.user,
-                    mediaId = mediaNavItems.id,
-                    mediaType = mediaNavItems.mediaType,
-                    mediaTitle = mediaNavItems.title,
-                    mediaCoverUrl = mediaNavItems.coverUrl,
-                    tracking = detailUiState.selectedTracking,
-                    recommendations = recommendationUiState.receivedRecommendations,
-                    previousSentRecommendations = recommendationUiState.previousSentRecommendations,
-                    friendTrackings = detailUiState.friendTrackings,
-                    friends = recommendationUiState.friends,
-                    onSaveTracking = {
-                        detailViewModel.saveTracking(it)
-                        showBottomSheet = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.tracking_saved))
-                        }
-                    },
-                    onRemoveTracking = {
-                        detailViewModel.removeTracking(it)
-                        showBottomSheet = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.tracking_removed))
-                        }
-                    },
-                    onCancel = {
-                        showBottomSheet = false
-                    },
-                    goToReview = {
-                        currentBottomSheet = CurrentSheet.REVIEW
-                    },
-                    onAddToCatalog = {
-                        detailViewModel.addRecommendationToCatalog()
-                        showBottomSheet = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
-                        }
-                    },
-                    onPass = {
-                        recommendationViewModel.passRecommendation(mediaNavItems.id)
-                        showBottomSheet = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_passed))
-                        }
-                    },
-                    onSendRecommendation = { friendId, message ->
-                        recommendationViewModel.sendRecommendation(friendId, message, detailUiState.selectedMedia!!)
-                        showBottomSheet = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_sent))
-                        }
-                    },
-                    selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
-                    onClickUser = onClickUser,
-                )
+                val localFocusManager = LocalFocusManager.current
+                // Copy previous tracking with new id and timestamp or create new tracking with filled media data
+                // TODO move out into vm
+                var tracking by remember {
+                    mutableStateOf(
+                        detailUiState.selectedTracking?.copy(
+                            timestamp = System.now().toEpochMilliseconds(),
+                        ) ?: Tracking(
+                            userId = detailUiState.user?.id.orEmpty(),
+                            username = detailUiState.user?.name.orEmpty(),
+                            userImageUrl = detailUiState.user?.imageUrl.orEmpty(),
+                            mediaId = mediaNavItems.id,
+                            mediaType = mediaNavItems.mediaType,
+                            mediaTitle = mediaNavItems.title,
+                            mediaCoverUrl = mediaNavItems.coverUrl,
+                            timestamp = System.now().toEpochMilliseconds(),
+                        )
+                    )
+                }
+
+                // TODO add bottom sheet ui wrapper that holds the title and handles spacing
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onTap = {
+                                localFocusManager.clearFocus()
+                            })
+                        },
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    when (detailUiState.currentSheet) {
+                        CurrentSheet.TRACK -> TrackSheet(
+                            mediaType = mediaNavItems.mediaType,
+                            selectedStatus = tracking.status,
+                            onSelectStatus = { tracking = tracking.copy(status = it) },
+                            onSave = {
+                                tracking = tracking.copy(
+                                    rating = if (tracking.status == TrackStatus.CATALOG) null else tracking.rating,
+                                    reviewTitle = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewTitle,
+                                    reviewDescription = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewDescription,
+                                    timestamp = System.now().toEpochMilliseconds()
+                                ).also {
+                                    detailViewModel.saveTracking(it)
+                                }
+                            },
+                            onToReview = { detailViewModel.showBottomSheet(CurrentSheet.REVIEW) },
+                        )
+
+                        CurrentSheet.REVIEW -> ReviewSheet(
+                            reviewTitle = tracking.reviewTitle,
+                            reviewDescription = tracking.reviewDescription,
+                            rating = tracking.rating,
+                            trackStatus = tracking.status,
+                            onReviewTitleChange = { tracking = tracking.copy(reviewTitle = it) },
+                            onReviewDescriptionChange = { tracking = tracking.copy(reviewDescription = it) },
+                            onRatingChange = { tracking = tracking.copy(rating = it) },
+                            onSave = { detailViewModel.saveTracking(tracking) },
+                        )
+
+                        CurrentSheet.REMOVE -> RemoveSheet(
+                            title = Res.string.detail_remove_confirm_title,
+                            text = Res.string.detail_remove_confirm_text,
+                            onConfirm = { detailViewModel.removeTracking(tracking.id) },
+                            onCancel = { detailViewModel.showBottomSheet(null, false) },
+                        )
+
+                        CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
+                            recommendations = recommendationUiState.receivedRecommendations,
+                            friendTrackings = detailUiState.friendTrackings,
+                            hasTracking = tracking.status != null,
+                            onUserClick = onClickUser,
+                            onAddToCatalogClick = detailViewModel::addRecommendationToCatalog,
+                            onPassClick = {
+                                recommendationViewModel.passRecommendation(mediaNavItems.id)
+                                detailViewModel.hideSheetAndShowSnackbar(Res.string.detail_recommendation_passed)
+                            },
+                        )
+
+                        CurrentSheet.RECOMMEND -> RecommendSheet(
+                            selectableFriends = recommendationUiState.friends,
+                            previousSentRecommendations = recommendationUiState.previousSentRecommendations,
+                            onSendRecommendation = { friendId, message ->
+                                recommendationViewModel.sendRecommendation(friendId, message, detailUiState.selectedMedia!!)
+                                detailViewModel.hideSheetAndShowSnackbar(Res.string.detail_recommendation_sent)
+                            },
+                            selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
+                            onClickUser = onClickUser,
+                        )
+
+                        null -> {}
+                    }
+                }
             }
         }
     }
