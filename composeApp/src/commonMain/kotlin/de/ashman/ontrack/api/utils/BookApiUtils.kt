@@ -1,5 +1,7 @@
 package de.ashman.ontrack.api.utils
 
+import de.ashman.ontrack.api.book.dto.BookEditionsEntry
+
 fun Int?.getOpenLibraryCoverUrl(): String = this?.let { "https://covers.openlibrary.org/b/id/${it}-L.jpg" }.orEmpty()
 
 fun String.cleanupBookKey(): String = this.substringAfter("/works/")
@@ -45,3 +47,6 @@ fun String.extractYear(): String? {
     val regex = """\b\d{4}\b""".toRegex()
     return regex.find(this)?.value
 }
+
+fun List<BookEditionsEntry>.extractPageCount(): Int? = this.firstNotNullOfOrNull { it.numberOfPages }
+fun List<BookEditionsEntry>.extractPublishYear(): String? = this.firstNotNullOfOrNull { it.publishDate?.extractYear() }

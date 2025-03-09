@@ -20,18 +20,16 @@ class MovieRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository {
     override suspend fun fetchTrending(): Result<List<Movie>> = safeApiCall {
-        val response: MovieResponseDto = httpClient.get("trending/movie/week") {
+        httpClient.get("trending/movie/week") {
             parameter("limit", DEFAULT_FETCH_LIMIT)
-        }.body()
-        response.movies.map { it.toDomain() }
+        }.body<MovieResponseDto>().movies.map { it.toDomain() }
     }
 
     override suspend fun fetchByQuery(query: String): Result<List<Movie>> = safeApiCall {
-        val response: MovieResponseDto = httpClient.get("search/movie") {
+        httpClient.get("search/movie") {
             parameter("query", query)
             parameter("limit", DEFAULT_FETCH_LIMIT)
-        }.body()
-        response.movies.map { it.toDomain() }
+        }.body<MovieResponseDto>().movies.map { it.toDomain() }
     }
 
     override suspend fun fetchDetails(mediaId: String): Result<Movie> = safeApiCall {

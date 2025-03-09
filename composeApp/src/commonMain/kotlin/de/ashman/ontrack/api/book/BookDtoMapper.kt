@@ -30,10 +30,9 @@ fun BookWorksResponse.toDomain(): Book =
     Book(
         id = key.cleanupBookKey(),
         title = title,
-        coverUrl = covers?.firstOrNull()?.getOpenLibraryCoverUrl().orEmpty(),
-        author = authors?.first()?.author?.toDomain() ?: Author(id = ""),
-        apiRating = null,
-        apiRatingCount = null,
+        coverUrl = covers?.firstOrNull()?.getOpenLibraryCoverUrl(),
+        author = authors?.first()?.author?.toDomain(),
+        description = description?.cleanupDescription(),
     )
 
 fun AuthorDto.toDomain(): Author =

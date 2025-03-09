@@ -93,7 +93,14 @@ fun RatingCard(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                rating?.let {
+                if (rating == null) {
+                    Text(
+                        text = "0 / $maxRating",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                } else {
                     Text(
                         text = "$rating / $maxRating",
                         fontWeight = FontWeight.Bold,
@@ -101,6 +108,7 @@ fun RatingCard(
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
+
                 ratingCount?.let {
                     Text(
                         text = "($ratingCount)",

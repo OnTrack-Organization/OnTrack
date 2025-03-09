@@ -46,6 +46,8 @@ fun createOpenLibraryClient(): HttpClient = HttpClient {
         url {
             protocol = URLProtocol.HTTPS
             host = OPEN_LIB_URL
+
+            parameters.append("language", "eng")
         }
     }
 

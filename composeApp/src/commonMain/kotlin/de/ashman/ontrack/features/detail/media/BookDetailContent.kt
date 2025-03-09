@@ -26,14 +26,16 @@ fun LazyListScope.BookDetailContent(
         )
     }
 
-    item {
-        CreatorCard(
-            title = Res.string.detail_author,
-            name = book.author?.name,
-            subInfo = getLivingDates(book.author?.birthDate, book.author?.deathDate),
-            description = book.author?.bio,
-            imageUrl = book.author?.imageUrl,
-        )
+    book.author?.let {
+        item {
+            CreatorCard(
+                title = Res.string.detail_author,
+                name = it.name,
+                description = it.bio,
+                imageUrl = it.imageUrl,
+                subInfo = getLivingDates(it.birthDate, it.deathDate),
+            )
+        }
     }
 
     book.genres?.let {

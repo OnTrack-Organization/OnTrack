@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AuthorDto(
     val key: String = "",
-    val name: String = "",
+    val name: String? = null,
     val birthDate: String? = null,
     val deathDate: String? = null,
     @Serializable(with = BookSerializer::class)

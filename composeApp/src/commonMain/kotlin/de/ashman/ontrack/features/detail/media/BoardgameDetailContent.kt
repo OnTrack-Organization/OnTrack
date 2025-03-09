@@ -23,14 +23,16 @@ fun LazyListScope.BoardgameDetailContent(
         )
     }
 
-    item {
-        CreatorCard(
-            title = Res.string.detail_designer,
-            name = boardgame.designer?.name,
-            imageUrl = boardgame.designer?.imageUrl,
-            description = boardgame.designer?.bio,
-            subInfo = null,
-        )
+    boardgame.designer?.let {
+        item {
+            CreatorCard(
+                title = Res.string.detail_designer,
+                name = it.name,
+                imageUrl = boardgame.designer.imageUrl,
+                description = boardgame.designer.bio,
+                subInfo = null,
+            )
+        }
     }
 
     boardgame.franchise?.let {

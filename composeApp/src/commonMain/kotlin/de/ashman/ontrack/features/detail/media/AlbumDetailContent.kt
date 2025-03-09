@@ -25,14 +25,16 @@ fun LazyListScope.AlbumDetailContent(
         )
     }
 
-    item {
-        CreatorCard(
-            title = Res.string.detail_artist,
-            name = album.mainArtist?.name,
-            imageUrl = album.mainArtist?.imageUrl,
-            subInfo = album.mainArtist?.popularity?.let { stringResource(Res.string.detail_artist_popularity, it) },
-            description = null,
-        )
+    album.mainArtist?.let {
+        item {
+            CreatorCard(
+                title = Res.string.detail_artist,
+                name = it.name,
+                imageUrl = it.imageUrl,
+                subInfo = it.popularity?.let { stringResource(Res.string.detail_artist_popularity, it) },
+                description = null,
+            )
+        }
     }
 
     album.mainArtist?.artistAlbums?.let {
