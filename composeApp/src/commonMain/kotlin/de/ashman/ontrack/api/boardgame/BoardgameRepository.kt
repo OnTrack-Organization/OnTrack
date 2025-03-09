@@ -14,28 +14,25 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import kotlin.collections.contains
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class BoardgameRepository(
     private val httpClient: HttpClient,
 ) : MediaRepository {
 
+    override suspend fun fetchTrending(): Result<List<Boardgame>> = safeApiCall {
+        val boardgameIds = fetchBoardgameIds("hot")
+        if (boardgameIds.isEmpty()) return@safeApiCall emptyList()
+
+        fetchBoardgamesByIds(boardgameIds)
+    }
+
     override suspend fun fetchByQuery(query: String): Result<List<Boardgame>> = safeApiCall {
-        val simpleResponse: String = httpClient.get("search") {
-            parameter("type", "boardgame")
-            parameter("query", query)
-        }.body()
+        val boardgameIds = fetchBoardgameIds("search", query)
+        if (boardgameIds.isEmpty()) return@safeApiCall emptyList()
 
-        val boardgameIds = convertXmlToResponse(simpleResponse).boardgames.map { it.id }
-        if (boardgameIds.isEmpty()) {
-            return@safeApiCall emptyList()
-        }
-
-        val detailedResponse: String = httpClient.get("thing") {
-            parameter("id", boardgameIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
-        }.body()
-
-        convertXmlToResponse(detailedResponse).boardgames.map { it.toDomain() }
+        fetchBoardgamesByIds(boardgameIds)
     }
 
     override suspend fun fetchDetails(mediaId: String): Result<Boardgame> = safeApiCall {
@@ -45,46 +42,56 @@ class BoardgameRepository(
         }.body()
 
         val boardgame = convertXmlToResponse(response).boardgames.first().toDomain()
-        val designer = scrapeDesigner(boardgame.designer?.id)
 
-        val franchiseItems = boardgame.franchise
-            ?.filter { it.boardgameType in setOf("boardgameimplementation", "boardgameexpansion", "boardgameintegration", "boardgamecompilation") }
-            ?.take(10)
-            ?.map {
-                val franchiseResponse: String = httpClient.get("thing") {
-                    parameter("id", it.id)
-                }.body()
+        coroutineScope {
+            val designerDeferred = async { boardgame.designer?.let { scrapeDesigner(it.id) } }
+            val franchiseItemsDeferred = async { fetchFranchiseItems(boardgame.franchise) }
 
-                val boardgameDto = convertXmlToResponse(franchiseResponse).boardgames.firstOrNull()
-                it.copy(coverUrl = boardgameDto?.image.orEmpty())
-            }
-            ?.takeIf { it.isNotEmpty() }
+            val designer = designerDeferred.await()
+            val franchiseItems = franchiseItemsDeferred.await()
 
-        boardgame.copy(franchise = franchiseItems, designer = designer)
-    }
-
-    override suspend fun fetchTrending(): Result<List<Boardgame>> = safeApiCall {
-        val simpleResponse: String = httpClient.get("hot") {
-            parameter("type", "boardgame")
-        }.body()
-
-        val boardgameIds = convertXmlToResponse(simpleResponse).boardgames.map { it.id }
-        if (boardgameIds.isEmpty()) {
-            return@safeApiCall emptyList()
+            boardgame.copy(franchise = franchiseItems, designer = designer)
         }
-
-        val detailedResponse: String = httpClient.get("thing") {
-            parameter("id", boardgameIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
-        }.body()
-
-        convertXmlToResponse(detailedResponse).boardgames.map { it.toDomain() }
     }
 
-    private suspend fun scrapeDesigner(id: String?): BoardgameDesigner {
+    private suspend fun fetchFranchiseItems(franchise: List<Boardgame>?) : List<Boardgame>? {
+        return franchise?.filter { it.boardgameType in setOf("boardgameimplementation", "boardgameexpansion", "boardgameintegration", "boardgamecompilation") }
+            ?.take(10)
+            ?.map { fetchFranchiseCoverUrl(it) }
+            ?.takeIf { it.isNotEmpty() }
+    }
+
+    private suspend fun fetchFranchiseCoverUrl(boardgameItem: Boardgame): Boardgame {
+        val franchiseResponse: String = httpClient.get("thing") {
+            parameter("id", boardgameItem.id)
+        }.body()
+
+        val boardgameDto = convertXmlToResponse(franchiseResponse).boardgames.firstOrNull()
+        return boardgameItem.copy(coverUrl = boardgameDto?.image.orEmpty())
+    }
+
+    private suspend fun fetchBoardgameIds(type: String, query: String? = null): List<String> {
+        val response: String = httpClient.get(type) {
+            parameter("type", "boardgame")
+            query?.let { parameter("query", it) }
+        }.body()
+
+        return convertXmlToResponse(response).boardgames.mapNotNull { it.id }
+    }
+
+    private suspend fun fetchBoardgamesByIds(bgIds: List<String>): List<Boardgame> {
+        val response: String = httpClient.get("thing") {
+            parameter("id", bgIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
+        }.body()
+
+        return convertXmlToResponse(response).boardgames.map { it.toDomain() }
+    }
+
+    private suspend fun scrapeDesigner(id: String): BoardgameDesigner {
         val document: Document = Ksoup.parseGetRequest("https://boardgamegeek.com/boardgamedesigner/$id")
 
         return BoardgameDesigner(
-            id = id.orEmpty(),
+            id = id,
             name = document.select("meta[name=title]").attr("content"),
             imageUrl = document.select("link[rel=preload][as=image]").firstOrNull()?.attr("href"),
             bio = document.select("meta[name=description]").attr("content").decodeHtmlManually()
