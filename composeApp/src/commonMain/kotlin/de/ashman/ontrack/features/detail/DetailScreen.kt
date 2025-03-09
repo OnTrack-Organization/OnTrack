@@ -66,7 +66,7 @@ fun DetailScreen(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
-    var currentBottomSheet by remember { mutableStateOf(CurrentSheet.TRACKING) }
+    var currentBottomSheet by remember { mutableStateOf(CurrentSheet.TRACK) }
     val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
@@ -131,7 +131,7 @@ fun DetailScreen(
                 status = uiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = {
-                    currentBottomSheet = CurrentSheet.TRACKING
+                    currentBottomSheet = CurrentSheet.TRACK
                     showBottomSheet = true
                 },
                 onClickRecommend = {

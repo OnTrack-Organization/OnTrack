@@ -51,7 +51,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun TrackingSheet(
+fun TrackSheet(
     mediaType: MediaType,
     mediaTitle: String?,
     selectedStatus: TrackStatus?,
@@ -59,12 +59,10 @@ fun TrackingSheet(
     onSave: () -> Unit,
     onToReview: () -> Unit,
 ) {
-    mediaTitle?.let {
-        Text(
-            text = stringResource(Res.string.track_title, it),
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
+    Text(
+        text = stringResource(Res.string.track_title),
+        style = MaterialTheme.typography.titleMedium,
+    )
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

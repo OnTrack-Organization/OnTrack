@@ -181,8 +181,8 @@
     <string name="tracking_removed">Tracking removed</string>
 
     <!-- DETAIL REVIEW -->
-    <string name="review_title">Review of "%1$s"</string>
-    <string name="track_title">Track status of "%1$s"</string>
+    <string name="review_title">Review</string>
+    <string name="track_title">Track Status</string>
 
     <string name="no_rating">No rating</string>
     <string name="rating_one">Trash</string>

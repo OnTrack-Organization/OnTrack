@@ -29,7 +29,7 @@ import ontrack.composeapp.generated.resources.detail_remove_confirm_text
 import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 
 enum class CurrentSheet {
-    TRACKING,
+    TRACK,
     REVIEW,
     REMOVE,
     FRIEND_ACTIVITY,
@@ -94,7 +94,7 @@ fun DetailBottomSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         when (currentContent) {
-            CurrentSheet.TRACKING -> TrackingSheet(
+            CurrentSheet.TRACK -> TrackSheet(
                 mediaType = mediaType,
                 mediaTitle = mediaTitle,
                 selectedStatus = tracking.status,
@@ -113,7 +113,6 @@ fun DetailBottomSheet(
             )
 
             CurrentSheet.REVIEW -> ReviewSheet(
-                mediaTitle = mediaTitle,
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 rating = tracking.rating,

@@ -37,7 +37,6 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ReviewSheet(
-    mediaTitle: String?,
     rating: Double?,
     reviewTitle: String?,
     reviewDescription: String?,
@@ -47,12 +46,10 @@ fun ReviewSheet(
     onReviewDescriptionChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    mediaTitle?.let {
-        Text(
-            text = stringResource(Res.string.review_title, it),
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
+    Text(
+        text = stringResource(Res.string.review_title),
+        style = MaterialTheme.typography.titleMedium,
+    )
 
     SelectableStarRatingBar(
         rating = rating,
