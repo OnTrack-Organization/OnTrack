@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,11 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.login_offline_error
-import org.jetbrains.compose.resources.getString
 
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
+    private val sharedUiManager: SharedUiManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -50,13 +51,9 @@ class LoginViewModel(
                 Logger.e("Login failed: ${error.message}")
 
                 if (error.message == "Idtoken is null") return@launch
-                _uiState.update { it.copy(snackbarMessage = getString(Res.string.login_offline_error)) }
+                sharedUiManager.showSnackbar(Res.string.login_offline_error)
             }
         )
-    }
-
-    fun clearSnackbarMessage() {
-        _uiState.update { it.copy(snackbarMessage = null) }
     }
 
     fun clearViewModel() {
@@ -75,5 +72,5 @@ class LoginViewModel(
 }
 
 data class LoginUiState(
-    val snackbarMessage: String? = null,
+    val errorMessage: String? = null,
 )
