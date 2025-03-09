@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.RemoveSheet
@@ -47,7 +48,6 @@ import de.ashman.ontrack.features.detail.components.StickyHeader
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.detail.tracking.CurrentSheet
 import de.ashman.ontrack.features.detail.tracking.ReviewSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -69,7 +69,7 @@ fun DetailScreen(
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
-    val sharedUiState by sharedUiManager.sharedUiState.collectAsStateWithLifecycle()
+    val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
     val detailUiState by detailViewModel.uiState.collectAsStateWithLifecycle()
     val recommendationUiState by recommendationViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -98,6 +98,7 @@ fun DetailScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
+            // TODO common topbar
             CenterAlignedTopAppBar(
                 title = {
                     Row(
@@ -123,7 +124,7 @@ fun DetailScreen(
                 actions = {
                     DetailDropDown(
                         isTrackingAvailable = detailUiState.selectedTracking != null,
-                        onClickRemove = { sharedUiManager.showBottomSheet(CurrentSheet.REMOVE) }
+                        onClickRemove = { sharedUiManager.showSheet(CurrentSheet.REMOVE) }
                     )
                 },
                 scrollBehavior = scrollBehavior,
@@ -141,8 +142,8 @@ fun DetailScreen(
                 mediaCoverUrl = mediaNavItems.coverUrl,
                 status = detailUiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
-                onClickAddTracking = { sharedUiManager.showBottomSheet(CurrentSheet.TRACK) },
-                onClickRecommend = { sharedUiManager.showBottomSheet(CurrentSheet.RECOMMEND) },
+                onClickAddTracking = { sharedUiManager.showSheet(CurrentSheet.TRACK) },
+                onClickRecommend = { sharedUiManager.showSheet(CurrentSheet.RECOMMEND) },
             )
 
             when (detailUiState.resultState) {
@@ -153,13 +154,13 @@ fun DetailScreen(
                 DetailResultState.Success -> {
                     DetailContent(
                         media = detailUiState.selectedMedia,
-                        appRatingStats = detailUiState.ratingStats,
+                        ratingStats = detailUiState.ratingStats,
                         friendTrackings = detailUiState.friendTrackings,
-                        friendRecommendations = recommendationUiState.receivedRecommendations,
+                        receivedRecommendations = recommendationUiState.receivedRecommendations,
                         columnListState = listState,
                         onClickItem = onClickItem,
                         onUserClick = onClickUser,
-                        onShowFriendActivity = { sharedUiManager.showBottomSheet(CurrentSheet.FRIEND_ACTIVITY) },
+                        onShowFriendActivity = { sharedUiManager.showSheet(CurrentSheet.FRIEND_ACTIVITY) },
                     )
                 }
             }
@@ -167,7 +168,7 @@ fun DetailScreen(
 
         if (sharedUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { sharedUiManager.hideBottomSheet() },
+                onDismissRequest = { sharedUiManager.hideSheet() },
                 sheetState = sheetState,
             ) {
                 val localFocusManager = LocalFocusManager.current
@@ -217,7 +218,7 @@ fun DetailScreen(
                                     detailViewModel.saveTracking(it)
                                 }
                             },
-                            onToReview = { sharedUiManager.showBottomSheet(CurrentSheet.REVIEW) },
+                            onToReview = { sharedUiManager.showSheet(CurrentSheet.REVIEW) },
                         )
 
                         CurrentSheet.REVIEW -> ReviewSheet(
@@ -235,7 +236,7 @@ fun DetailScreen(
                             title = Res.string.detail_remove_confirm_title,
                             text = Res.string.detail_remove_confirm_text,
                             onConfirm = { detailViewModel.removeTracking(tracking.id) },
-                            onCancel = { sharedUiManager.hideBottomSheet() },
+                            onCancel = { sharedUiManager.hideSheet() },
                         )
 
                         CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(

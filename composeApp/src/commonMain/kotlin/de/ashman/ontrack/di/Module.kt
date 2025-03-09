@@ -15,8 +15,8 @@ import de.ashman.ontrack.api.clients.createTwitchTokenClient
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
@@ -110,7 +110,7 @@ val appModule = module {
     viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
-    viewModelDefinition { SettingsViewModel(get(), get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get()) }
 }
 

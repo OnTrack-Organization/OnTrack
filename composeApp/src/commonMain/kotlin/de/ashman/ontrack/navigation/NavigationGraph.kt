@@ -12,9 +12,9 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
-import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
 import de.ashman.ontrack.features.feed.FeedViewModel
@@ -106,8 +106,9 @@ fun NavigationGraph(
             composable<Route.Settings> {
                 SettingsScreen(
                     viewModel = settingsViewModel,
+                    sharedUiManager = sharedUiManager,
                     onBack = { navController.popBackStack() },
-                    onLogout = {
+                    clearAndNavigateOnLogout = {
                         friendsViewModel.clearViewModel()
                         feedViewModel.clearViewModel()
                         detailViewModel.clearViewModel()

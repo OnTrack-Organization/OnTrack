@@ -1,6 +1,5 @@
 package de.ashman.ontrack.features.common
 
-import de.ashman.ontrack.features.detail.tracking.CurrentSheet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -9,19 +8,23 @@ import org.jetbrains.compose.resources.getString
 
 class SharedUiManager() {
 
-    private val _sharedUiState = MutableStateFlow(SharedUiState())
-    val sharedUiState: StateFlow<SharedUiState> = _sharedUiState
+    private val _uiState = MutableStateFlow(SharedUiState())
+    val uiState: StateFlow<SharedUiState> = _uiState
 
-    fun showBottomSheet(sheet: CurrentSheet) {
-        _sharedUiState.update { it.copy(showSheet = true, currentSheet = sheet) }
+    fun showSheet(sheet: CurrentSheet) {
+        _uiState.update { it.copy(showSheet = true, currentSheet = sheet) }
     }
 
-    fun hideBottomSheet() {
-        _sharedUiState.update { it.copy(showSheet = false, currentSheet = null) }
+    fun showSheet() {
+        _uiState.update { it.copy(showSheet = true) }
+    }
+
+    fun hideSheet() {
+        _uiState.update { it.copy(showSheet = false, currentSheet = null) }
     }
 
     suspend fun hideSheetAndShowSnackbar(message: StringResource) {
-        _sharedUiState.update {
+        _uiState.update {
             it.copy(
                 snackbarMessage = getString(message),
                 currentSheet = null,
@@ -31,7 +34,7 @@ class SharedUiManager() {
     }
 
     fun clearSnackbarMessage() {
-        _sharedUiState.update { it.copy(snackbarMessage = null) }
+        _uiState.update { it.copy(snackbarMessage = null) }
     }
 
 }
@@ -41,3 +44,14 @@ data class SharedUiState(
     val showSheet: Boolean = false,
     val snackbarMessage: String? = null,
 )
+
+// TODO add back handling
+// Back Handling is being worked on rn
+// https://youtrack.jetbrains.com/issue/CMP-4419
+enum class CurrentSheet {
+    TRACK,
+    REVIEW,
+    REMOVE,
+    FRIEND_ACTIVITY,
+    RECOMMEND,
+}

@@ -175,14 +175,3 @@ fun TrackStatusButton(
         }
     }
 }
-
-// TODO add back handling
-// Back Handling is being worked on rn
-// https://youtrack.jetbrains.com/issue/CMP-4419
-enum class CurrentSheet {
-    TRACK,
-    REVIEW,
-    REMOVE,
-    FRIEND_ACTIVITY,
-    RECOMMEND
-}

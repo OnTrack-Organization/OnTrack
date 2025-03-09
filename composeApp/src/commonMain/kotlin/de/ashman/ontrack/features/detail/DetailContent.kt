@@ -35,9 +35,9 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 @Composable
 fun DetailContent(
     media: Media?,
-    appRatingStats: RatingStats,
+    ratingStats: RatingStats,
     friendTrackings: List<Tracking>,
-    friendRecommendations: List<Recommendation>,
+    receivedRecommendations: List<Recommendation>,
     columnListState: LazyListState,
     onClickItem: (MediaNavigationItems) -> Unit,
     onUserClick: (String) -> Unit,
@@ -50,11 +50,11 @@ fun DetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            if (friendTrackings.isNotEmpty() || friendRecommendations.isNotEmpty()) {
+            if (friendTrackings.isNotEmpty() || receivedRecommendations.isNotEmpty()) {
                 item {
                     FriendActivityRow(
                         friendTrackings = friendTrackings,
-                        friendRecommendations = friendRecommendations,
+                        friendRecommendations = receivedRecommendations,
                         onUserClick = onUserClick,
                         onMoreClick = onShowFriendActivity
                     )
@@ -66,8 +66,8 @@ fun DetailContent(
                     apiType = media.mediaType.getRatingType(),
                     rating = media.apiRating,
                     ratingCount = media.apiRatingCount,
-                    appRating = appRatingStats.averageRating,
-                    appRatingCount = appRatingStats.ratingCount
+                    appRating = ratingStats.averageRating,
+                    appRatingCount = ratingStats.ratingCount
                 )
             }
 

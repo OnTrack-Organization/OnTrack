@@ -29,9 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -43,6 +41,7 @@ import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.RemoveSheet
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
@@ -60,22 +59,22 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
+    sharedUiManager: SharedUiManager,
     onBack: () -> Unit,
-    onLogout: () -> Unit,
+    clearAndNavigateOnLogout: () -> Unit,
 ) {
+    val sharedUiState by sharedUiManager.uiState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
-
     val localFocusManager = LocalFocusManager.current
 
-    LaunchedEffect(uiState.snackbarMessage) {
-        uiState.snackbarMessage?.let {
+    LaunchedEffect(sharedUiState.snackbarMessage) {
+        sharedUiState.snackbarMessage?.let {
             localFocusManager.clearFocus()
             snackbarHostState.showSnackbar(it)
-            viewModel.clearSnackbarMessage()
+            sharedUiManager.clearSnackbarMessage()
         }
     }
 
@@ -164,23 +163,23 @@ fun SettingsScreen(
                         icon = Icons.AutoMirrored.Default.Logout,
                         onClick = {
                             viewModel.signOut(
-                                onSuccess = onLogout,
+                                onSuccess = clearAndNavigateOnLogout,
                             )
                         },
                     )
                     OnTrackOutlinedButton(
                         text = Res.string.settings_remove,
                         icon = Icons.Default.Delete,
-                        onClick = { showBottomSheet = true },
+                        onClick = { sharedUiManager.showSheet() },
                     )
                     ApiContributions()
                 }
             }
         }
 
-        if (showBottomSheet) {
+        if (sharedUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { sharedUiManager.hideSheet() },
                 sheetState = sheetState,
             ) {
                 Column(
@@ -193,11 +192,10 @@ fun SettingsScreen(
                         title = Res.string.settings_remove_confirm_title,
                         text = Res.string.settings_remove_confirm_text,
                         onConfirm = {
-                            showBottomSheet = false
                             viewModel.removeUser()
-                            onLogout()
+                            clearAndNavigateOnLogout()
                         },
-                        onCancel = { showBottomSheet = false },
+                        onCancel = { sharedUiManager.hideSheet() },
                     )
                 }
             }

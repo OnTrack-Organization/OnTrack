@@ -3,9 +3,10 @@ package de.ashman.ontrack.features.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,12 +17,12 @@ import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.logout_offline_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
-import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
     private val currentUserRepository: CurrentUserRepository,
     private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
+    private val sharedUiManager: SharedUiManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -89,7 +90,7 @@ class SettingsViewModel(
             )
         )
 
-        _uiState.update { it.copy(snackbarMessage = getString(Res.string.settings_account_data_saved)) }
+        sharedUiManager.hideSheetAndShowSnackbar(Res.string.settings_account_data_saved)
     }
 
     fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
@@ -99,11 +100,12 @@ class SettingsViewModel(
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")
 
-            _uiState.update { it.copy(snackbarMessage = getString(Res.string.logout_offline_error)) }
+            sharedUiManager.hideSheetAndShowSnackbar(Res.string.logout_offline_error)
         }
     }
 
     fun removeUser() = viewModelScope.launch {
+        sharedUiManager.hideSheet()
         firestoreUserRepository.removeUser()
         firestoreUserRepository.signOut()
     }
@@ -125,10 +127,6 @@ class SettingsViewModel(
         _uiState.update { it.copy(name = it.user?.name.orEmpty(), username = it.user?.username.orEmpty()) }
     }
 
-    fun clearSnackbarMessage() {
-        _uiState.update { it.copy(snackbarMessage = null) }
-    }
-
     fun clearViewModel() {
         _uiState.value = SettingsUiState()
     }
@@ -140,7 +138,6 @@ data class SettingsUiState(
     val username: String = "",
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
-    val snackbarMessage: String? = null,
 )
 
 enum class UsernameError {
