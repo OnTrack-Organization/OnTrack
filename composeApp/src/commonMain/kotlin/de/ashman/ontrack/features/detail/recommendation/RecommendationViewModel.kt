@@ -2,20 +2,23 @@ package de.ashman.ontrack.features.detail.recommendation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.repository.firestore.FriendRepository
-import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.notification.NotificationService
+import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.firestore.FriendRepository
+import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommendation_passed
+import ontrack.composeapp.generated.resources.detail_recommendation_sent
 import ontrack.composeapp.generated.resources.notifications_new_recommendation_body
 import ontrack.composeapp.generated.resources.notifications_new_recommendation_title
 import org.jetbrains.compose.resources.getString
@@ -25,6 +28,7 @@ class RecommendationViewModel(
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val currentUserRepository: CurrentUserRepository,
+    private val sharedUiManager: SharedUiManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecommendationUiState())
@@ -67,6 +71,8 @@ class RecommendationViewModel(
         previousRecommendationsCache[friendId] = updatedRecs
         _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
 
+        sharedUiManager.hideSheetAndShowSnackbar(Res.string.detail_recommendation_sent)
+
         notificationService.sendPushNotification(
             userId = friendId,
             title = getString(Res.string.notifications_new_recommendation_title),
@@ -78,6 +84,8 @@ class RecommendationViewModel(
 
     fun passRecommendation(mediaId: String) = viewModelScope.launch {
         recommendationRepository.passRecommendation(mediaId)
+
+        sharedUiManager.hideSheetAndShowSnackbar(Res.string.detail_recommendation_passed)
     }
 
     fun selectFriend(friendId: String, mediaId: String) {

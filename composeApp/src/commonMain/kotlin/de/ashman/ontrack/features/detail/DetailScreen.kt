@@ -41,6 +41,7 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.RemoveSheet
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.components.DetailDropDown
 import de.ashman.ontrack.features.detail.components.StickyHeader
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
@@ -53,8 +54,6 @@ import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_recommendation_passed
-import ontrack.composeapp.generated.resources.detail_recommendation_sent
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
 import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 import org.jetbrains.compose.resources.pluralStringResource
@@ -63,12 +62,14 @@ import org.jetbrains.compose.resources.pluralStringResource
 @Composable
 fun DetailScreen(
     mediaNavItems: MediaNavigationItems,
+    sharedUiManager: SharedUiManager,
     detailViewModel: DetailViewModel,
     recommendationViewModel: RecommendationViewModel,
     onClickItem: (MediaNavigationItems) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
+    val sharedUiState by sharedUiManager.sharedUiState.collectAsStateWithLifecycle()
     val detailUiState by detailViewModel.uiState.collectAsStateWithLifecycle()
     val recommendationUiState by recommendationViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -86,10 +87,10 @@ fun DetailScreen(
         recommendationViewModel.fetchFriends()
     }
 
-    LaunchedEffect(detailUiState.snackbarMessage) {
-        detailUiState.snackbarMessage?.let {
+    LaunchedEffect(sharedUiState.snackbarMessage) {
+        sharedUiState.snackbarMessage?.let {
             snackbarHostState.showSnackbar(it)
-            detailViewModel.clearSnackbarMessage()
+            sharedUiManager.clearSnackbarMessage()
         }
     }
 
@@ -122,7 +123,7 @@ fun DetailScreen(
                 actions = {
                     DetailDropDown(
                         isTrackingAvailable = detailUiState.selectedTracking != null,
-                        onClickRemove = { detailViewModel.showBottomSheet(CurrentSheet.REMOVE) }
+                        onClickRemove = { sharedUiManager.showBottomSheet(CurrentSheet.REMOVE) }
                     )
                 },
                 scrollBehavior = scrollBehavior,
@@ -140,8 +141,8 @@ fun DetailScreen(
                 mediaCoverUrl = mediaNavItems.coverUrl,
                 status = detailUiState.selectedTracking?.status,
                 scrollBehavior = scrollBehavior,
-                onClickAddTracking = { detailViewModel.showBottomSheet(CurrentSheet.TRACK) },
-                onClickRecommend = { detailViewModel.showBottomSheet(CurrentSheet.RECOMMEND) },
+                onClickAddTracking = { sharedUiManager.showBottomSheet(CurrentSheet.TRACK) },
+                onClickRecommend = { sharedUiManager.showBottomSheet(CurrentSheet.RECOMMEND) },
             )
 
             when (detailUiState.resultState) {
@@ -158,15 +159,15 @@ fun DetailScreen(
                         columnListState = listState,
                         onClickItem = onClickItem,
                         onUserClick = onClickUser,
-                        onShowFriendActivity = { detailViewModel.showBottomSheet(CurrentSheet.FRIEND_ACTIVITY) },
+                        onShowFriendActivity = { sharedUiManager.showBottomSheet(CurrentSheet.FRIEND_ACTIVITY) },
                     )
                 }
             }
         }
 
-        if (detailUiState.showSheet) {
+        if (sharedUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { detailViewModel.showBottomSheet(null, false) },
+                onDismissRequest = { sharedUiManager.hideBottomSheet() },
                 sheetState = sheetState,
             ) {
                 val localFocusManager = LocalFocusManager.current
@@ -201,7 +202,7 @@ fun DetailScreen(
                         },
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    when (detailUiState.currentSheet) {
+                    when (sharedUiState.currentSheet) {
                         CurrentSheet.TRACK -> TrackSheet(
                             mediaType = mediaNavItems.mediaType,
                             selectedStatus = tracking.status,
@@ -216,7 +217,7 @@ fun DetailScreen(
                                     detailViewModel.saveTracking(it)
                                 }
                             },
-                            onToReview = { detailViewModel.showBottomSheet(CurrentSheet.REVIEW) },
+                            onToReview = { sharedUiManager.showBottomSheet(CurrentSheet.REVIEW) },
                         )
 
                         CurrentSheet.REVIEW -> ReviewSheet(
@@ -234,7 +235,7 @@ fun DetailScreen(
                             title = Res.string.detail_remove_confirm_title,
                             text = Res.string.detail_remove_confirm_text,
                             onConfirm = { detailViewModel.removeTracking(tracking.id) },
-                            onCancel = { detailViewModel.showBottomSheet(null, false) },
+                            onCancel = { sharedUiManager.hideBottomSheet() },
                         )
 
                         CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
@@ -243,10 +244,7 @@ fun DetailScreen(
                             hasTracking = tracking.status != null,
                             onUserClick = onClickUser,
                             onAddToCatalogClick = detailViewModel::addRecommendationToCatalog,
-                            onPassClick = {
-                                recommendationViewModel.passRecommendation(mediaNavItems.id)
-                                detailViewModel.hideSheetAndShowSnackbar(Res.string.detail_recommendation_passed)
-                            },
+                            onPassClick = { recommendationViewModel.passRecommendation(mediaNavItems.id) },
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendSheet(
@@ -254,7 +252,6 @@ fun DetailScreen(
                             previousSentRecommendations = recommendationUiState.previousSentRecommendations,
                             onSendRecommendation = { friendId, message ->
                                 recommendationViewModel.sendRecommendation(friendId, message, detailUiState.selectedMedia!!)
-                                detailViewModel.hideSheetAndShowSnackbar(Res.string.detail_recommendation_sent)
                             },
                             selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
                             onClickUser = onClickUser,

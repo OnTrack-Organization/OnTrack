@@ -10,11 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedScreen
 import de.ashman.ontrack.features.feed.FeedViewModel
@@ -35,6 +35,7 @@ import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.Event
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
@@ -58,6 +59,7 @@ fun NavigationGraph(
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
+    sharedUiManager: SharedUiManager = koinInject(),
     firestoreUserRepository: FirestoreUserRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
@@ -96,6 +98,7 @@ fun NavigationGraph(
                 recommendationViewModel = recommendationViewModel,
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
+                sharedUiManager = sharedUiManager,
                 firestoreUserRepository = firestoreUserRepository,
                 navController = navController
             )
@@ -236,6 +239,7 @@ fun NavGraphBuilder.mediaGraph(
     recommendationViewModel: RecommendationViewModel,
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
+    sharedUiManager: SharedUiManager,
     firestoreUserRepository: FirestoreUserRepository,
     navController: NavHostController,
 ) {
@@ -250,6 +254,7 @@ fun NavGraphBuilder.mediaGraph(
             mediaNavItems = detail.mediaNavItems,
             detailViewModel = detailViewModel,
             recommendationViewModel = recommendationViewModel,
+            sharedUiManager = sharedUiManager,
             onClickItem = { mediaNavItems ->
                 // Remove all the Detail Navigations from graph before navigating
                 navController.navigate(Route.Detail(mediaNavItems)) {

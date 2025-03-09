@@ -15,21 +15,8 @@ import de.ashman.ontrack.api.clients.createTwitchTokenClient
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.repository.firestore.FeedRepository
-import de.ashman.ontrack.repository.firestore.FeedRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FriendRepository
-import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
-import de.ashman.ontrack.repository.firestore.RecommendationRepository
-import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
-import de.ashman.ontrack.repository.firestore.TrackingRepository
-import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
-import de.ashman.ontrack.repository.CurrentUserRepository
-import de.ashman.ontrack.repository.CurrentUserRepositoryImpl
 import de.ashman.ontrack.features.detail.DetailViewModel
-import de.ashman.ontrack.repository.SelectedMediaRepository
-import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.feed.FeedViewModel
 import de.ashman.ontrack.features.feed.friend.FriendsViewModel
@@ -42,6 +29,20 @@ import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
+import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.repository.CurrentUserRepositoryImpl
+import de.ashman.ontrack.repository.SelectedMediaRepository
+import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FeedRepository
+import de.ashman.ontrack.repository.firestore.FeedRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FriendRepository
+import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
+import de.ashman.ontrack.repository.firestore.RecommendationRepository
+import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
+import de.ashman.ontrack.repository.firestore.TrackingRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
 import dev.gitlive.firebase.Firebase
@@ -98,14 +99,15 @@ val appModule = module {
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
 
+    single { SharedUiManager() }
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get()) }
     viewModelDefinition { FeedViewModel(get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { RecommendationViewModel(get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get(), get(), get()) }
