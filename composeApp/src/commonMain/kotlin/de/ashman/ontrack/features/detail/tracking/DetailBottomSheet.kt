@@ -59,7 +59,7 @@ fun DetailBottomSheet(
     onAddToCatalog: () -> Unit,
     onPass: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
-    getPreviousSentRecommendations: (String) -> Unit,
+    selectUser: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     // TODO move into own methods...
@@ -143,7 +143,7 @@ fun DetailBottomSheet(
                 selectableFriends = friends,
                 onSendRecommendation = onSendRecommendation,
                 previousSentRecommendations = previousSentRecommendations,
-                getPreviousSentRecommendations = getPreviousSentRecommendations,
+                selectUser = selectUser,
                 onClickUser = onClickUser,
             )
         }

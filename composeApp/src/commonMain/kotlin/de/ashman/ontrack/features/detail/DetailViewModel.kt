@@ -64,6 +64,9 @@ class DetailViewModel(
             initialValue = _uiState.value,
         )
 
+    // TODO move recommendation stuff into its own viewmodel or use cases
+    private val previousRecommendationsCache = mutableMapOf<String, List<Recommendation>>()
+
     fun fetchDetails(mediaNavItems: MediaNavigationItems) = viewModelScope.launch {
         measureTime {
             _uiState.update {
@@ -125,7 +128,6 @@ class DetailViewModel(
         }
     }
 
-    // TODO move recommendation stuff into its own viewmodel or use cases
     fun observeFriendRecommendations(mediaId: String) = viewModelScope.launch {
         recommendationRepository.fetchRecommendations(mediaId).collect { recommendations ->
             _uiState.update { state ->
@@ -177,6 +179,11 @@ class DetailViewModel(
 
             recommendationRepository.sendRecommendation(friendId, recommendation)
 
+            // UPDATE THE PREVIOUS SENT CACHE
+            val updatedRecs = listOf(recommendation) + (previousRecommendationsCache[friendId] ?: emptyList()).take(4)
+            previousRecommendationsCache[friendId] = updatedRecs
+            _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
+
             notificationService.sendPushNotification(
                 userId = friendId,
                 title = getString(Res.string.notifications_new_recommendation_title),
@@ -215,9 +222,22 @@ class DetailViewModel(
         }
     }
 
+    fun selectUser(friendId: String) {
+        val cachedRecs = previousRecommendationsCache[friendId]
+        if (cachedRecs != null) {
+            _uiState.update { it.copy(previousSentRecommendations = cachedRecs) }
+        } else {
+            getPreviousSentRecommendations(friendId)
+        }
+    }
+
     fun getPreviousSentRecommendations(friendId: String) = viewModelScope.launch {
-        val previousSentRecommendations = recommendationRepository.getPreviousSentRecommendations(friendId)
-        _uiState.update { it.copy(previousSentRecommendations = previousSentRecommendations) }
+        val media = _uiState.value.selectedMedia ?: return@launch
+
+        val recs = recommendationRepository.getPreviousSentRecommendations(friendId, media.id)
+        previousRecommendationsCache[friendId] = recs
+
+        _uiState.update { it.copy(previousSentRecommendations = recs) }
     }
 
     private fun getRepository(mediaType: MediaType) = when (mediaType) {

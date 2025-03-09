@@ -255,7 +255,7 @@
     <!-- DETAIL RECOMMEND -->
     <string name="detail_recommend_title">Recommend</string>
     <string name="detail_recommend_textfield_placeholder">Send a message…</string>
-    <string name="detail_recommend_previous">Past Recommendations</string>
+    <string name="detail_recommend_previous">Recently Sent Recommendations</string>
     <string name="detail_recommend_friends_empty">No friends to recommend to</string>
     <string name="detail_recommendation_sent">Recommendation sent</string>
 

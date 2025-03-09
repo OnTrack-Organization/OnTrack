@@ -223,7 +223,7 @@ fun DetailScreen(
                             snackbarHostState.showSnackbar(getString(Res.string.detail_recommendation_sent))
                         }
                     },
-                    getPreviousSentRecommendations = { viewModel.getPreviousSentRecommendations(it) },
+                    selectUser = { viewModel.selectUser(it) },
                     onClickUser = onClickUser,
                 )
             }

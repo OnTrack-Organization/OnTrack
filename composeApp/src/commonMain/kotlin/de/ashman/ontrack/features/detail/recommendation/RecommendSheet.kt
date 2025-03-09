@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,7 +51,7 @@ fun RecommendSheet(
     selectableFriends: List<Friend>,
     previousSentRecommendations: List<Recommendation>,
     onSendRecommendation: (String, String?) -> Unit,
-    getPreviousSentRecommendations: (String) -> Unit,
+    selectUser: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var selectedUserId by remember { mutableStateOf<String?>(null) }
@@ -93,7 +92,7 @@ fun RecommendSheet(
                         selectedUserId = id
 
                         selectedUserId?.let {
-                            getPreviousSentRecommendations(it)
+                            selectUser(it)
                         }
                     }
                 )
@@ -115,7 +114,7 @@ fun RecommendSheet(
                 )
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     items(previousSentRecommendations) { recommendation ->

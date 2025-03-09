@@ -2,6 +2,7 @@ package de.ashman.ontrack.db
 
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
+import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,7 +13,7 @@ interface RecommendationRepository {
 
     fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>>
 
-    suspend fun getPreviousSentRecommendations(friendId: String): List<Recommendation>
+    suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation>
 
     suspend fun catalogRecommendation(mediaId: String)
     suspend fun passRecommendation(mediaId: String)
@@ -45,14 +46,15 @@ class RecommendationRepositoryImpl(
             }
     }
 
-    override suspend fun getPreviousSentRecommendations(friendId: String): List<Recommendation> {
+    override suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation> {
         val snapshot = recommendationsCollection(friendId)
             .where { "userId" equalTo authRepository.currentUserId }
+            .where { "mediaId" equalTo mediaId }
+            .orderBy("timestamp", Direction.DESCENDING)
+            .limit(5)
             .get()
 
-        return snapshot.documents
-            .map { it.data<Recommendation>() }
-            .sortedByDescending { it.timestamp }
+        return snapshot.documents.map { it.data<Recommendation>() }
     }
 
     // TODO maybe change...
