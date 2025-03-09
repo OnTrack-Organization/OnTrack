@@ -26,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -65,7 +63,6 @@ fun ShelfScreen(
     emptyText: StringResource = Res.string.shelf_own_empty,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LaunchedEffect(userId) {
         viewModel.observeUser(userId)
@@ -73,7 +70,6 @@ fun ShelfScreen(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {
                 CenterAlignedTopAppBar(
@@ -108,46 +104,53 @@ fun ShelfScreen(
                             }
                         }
                     },
-                    scrollBehavior = if (uiState.trackings.isEmpty()) null else scrollBehavior,
                 )
             }
         }
     ) { contentPadding ->
-        if (uiState.trackings.isEmpty()) {
-            EmptyShelf(text = emptyText)
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .padding(bottom = if (onSettings != null) 80.dp else 0.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 16.dp),
-                state = viewModel.listState,
-            ) {
-                uiState.user?.let {
-                    item {
-                        UserHeader(
-                            name = it.name,
-                            username = it.username,
-                            imageUrl = it.imageUrl,
-                        )
-                    }
-                    item { HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+        ) {
+            uiState.user?.let { user ->
+                Column {
+                    UserHeader(
+                        name = user.name,
+                        username = user.username,
+                        imageUrl = user.imageUrl,
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(16.dp))
                 }
+            }
 
-                item { MediaCounts(trackings = uiState.trackings) }
+            if (uiState.trackings.isEmpty()) {
+                EmptyShelf(text = emptyText)
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = if (onSettings != null) 80.dp else 0.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    state = viewModel.listState,
+                ) {
+                    item {
+                        MediaCounts(trackings = uiState.trackings)
+                    }
 
-                MediaType.entries.forEach { mediaType ->
-                    val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
+                    MediaType.entries.forEach { mediaType ->
+                        val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
 
-                    if (filteredTrackings.isNotEmpty()) {
-                        item(key = mediaType.name) {
-                            ShelfItem(
-                                mediaType = mediaType,
-                                items = filteredTrackings,
-                                onClickMore = { onClickMore(mediaType) },
-                                onClickItem = onClickItem,
-                            )
+                        if (filteredTrackings.isNotEmpty()) {
+                            item(key = mediaType.name) {
+                                ShelfItem(
+                                    mediaType = mediaType,
+                                    items = filteredTrackings,
+                                    onClickMore = { onClickMore(mediaType) },
+                                    onClickItem = onClickItem,
+                                )
+                            }
                         }
                     }
                 }
@@ -307,11 +310,13 @@ fun ShelfItem(
 
 @Composable
 fun EmptyShelf(
-    modifier: Modifier = Modifier,
     text: StringResource,
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 48.dp)
+            .padding(bottom = 145.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
