@@ -83,6 +83,7 @@ fun NavigationGraph(
                 loginViewModel = loginViewModel,
                 navController = navController,
                 setupViewModel = setupViewModel,
+                sharedUiManager = sharedUiManager,
                 analytics = analytics,
             )
             mainGraph(
@@ -145,6 +146,7 @@ fun NavGraphBuilder.initGraph(
     startViewModel: StartViewModel,
     loginViewModel: LoginViewModel,
     setupViewModel: SetupViewModel,
+    sharedUiManager: SharedUiManager,
     navController: NavHostController,
     analytics: FirebaseAnalytics,
 ) {
@@ -166,6 +168,7 @@ fun NavGraphBuilder.initGraph(
     composable<Route.Login> {
         LoginScreen(
             viewModel = loginViewModel,
+            sharedUiManager = sharedUiManager,
             onNavigateAfterLogin = { userExists, user ->
                 analytics.logEvent(analytics.Event.LOGIN)
 

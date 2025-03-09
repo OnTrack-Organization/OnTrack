@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,6 +39,7 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -72,38 +72,12 @@ fun ShelfScreen(
     Scaffold(
         topBar = {
             Column {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(Res.string.shelf_nav_title),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    },
-                    navigationIcon = {
-                        onBack?.let {
-                            IconButton(
-                                onClick = onBack,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                    contentDescription = "Back",
-                                )
-                            }
-                        }
-                    },
-                    actions = {
-                        onSettings?.let {
-                            IconButton(
-                                onClick = it,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings",
-                                )
-                            }
-                        }
-                    },
+                OnTrackTopBar(
+                    title = stringResource(Res.string.shelf_nav_title),
+                    navigationIcon = onBack?.let { Icons.AutoMirrored.Default.ArrowBack },
+                    onClickNavigation = { onBack?.invoke() },
+                    actionIcon = onSettings?.let { Icons.Default.Settings },
+                    onClickAction = { onSettings?.invoke() },
                 )
             }
         }
