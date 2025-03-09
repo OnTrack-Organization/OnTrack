@@ -14,6 +14,7 @@ import kotlinx.datetime.toLocalDateTime
 fun VideogameDto.toDomain(): Videogame =
     Videogame(
         id = id.toString(),
+        title = name,
         coverUrl = cover?.url.getIGDBCoverUrl(),
         releaseYear = firstReleaseDate?.let {
             Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.year.toString()
@@ -21,7 +22,6 @@ fun VideogameDto.toDomain(): Videogame =
         description = summary,
         genres = genres?.map { it.name },
         involvedCompanies = involvedCompanies?.map { it.company.name },
-        title = name.orEmpty(),
         platforms = platforms?.map { it.toDomain() },
         apiRating = totalRating,
         apiRatingCount = totalRatingCount,

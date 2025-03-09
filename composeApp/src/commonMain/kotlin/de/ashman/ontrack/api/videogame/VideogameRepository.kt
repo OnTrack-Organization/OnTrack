@@ -31,56 +31,6 @@ class VideogameRepository(
         }
     }
 
-    override suspend fun fetchByQuery(query: String): Result<List<Videogame>> = safeApiCall {
-        val response: List<VideogameDto> = httpClient.post(buildRequestWithToken {
-            url("games")
-            setBody(
-                """
-                    fields cover.url, name;
-                    search "$query";
-                    limit $DEFAULT_FETCH_LIMIT;
-                """
-            )
-        }).body()
-
-        response.map { it.toDomain() }
-    }
-
-    override suspend fun fetchDetails(mediaId: String): Result<Videogame> = safeApiCall {
-        val response: List<VideogameDto> = httpClient.post(buildRequestWithToken {
-            url("games")
-            setBody(
-                """
-                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
-                    where id = ${mediaId};
-                """
-            )
-        }).body()
-
-        val videogame = response.first()
-        val franchises = fetchFranchises(videogame.franchises)
-
-        videogame.toDomain().copy(franchises = franchises)
-    }
-
-    // TODO maybe use custom trending again, who knows
-    suspend fun fetchTrending2(): Result<List<Videogame>> = safeApiCall {
-        val response: List<VideogameDto> = httpClient.post(buildRequestWithToken {
-            url("games")
-            setBody(
-                """
-                    fields cover.url, name;
-                    sort first_release_date desc;
-                    where total_rating_count > 50 & total_rating > 80;
-                    limit $DEFAULT_FETCH_LIMIT;
-                """
-            )
-        }).body()
-
-        response.map { it.toDomain() }
-    }
-
-
     override suspend fun fetchTrending(): Result<List<Videogame>> = safeApiCall {
         val response: List<PopularityDto> = httpClient.post(buildRequestWithToken {
             url("popularity_primitives")
@@ -108,6 +58,36 @@ class VideogameRepository(
         }).body()
 
         response2.map { it.toDomain() }
+    }
+
+    override suspend fun fetchByQuery(query: String): Result<List<Videogame>> = safeApiCall {
+        httpClient.post(buildRequestWithToken {
+            url("games")
+            setBody(
+                """
+                    fields cover.url, name;
+                    search "$query";
+                    limit $DEFAULT_FETCH_LIMIT;
+                """
+            )
+        }).body<List<VideogameDto>>().map { it.toDomain() }
+    }
+
+    override suspend fun fetchDetails(mediaId: String): Result<Videogame> = safeApiCall {
+        val response: List<VideogameDto> = httpClient.post(buildRequestWithToken {
+            url("games")
+            setBody(
+                """
+                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
+                    where id = ${mediaId};
+                """
+            )
+        }).body()
+
+        val videogame = response.first()
+        val franchises = fetchFranchises(videogame.franchises)
+
+        videogame.toDomain().copy(franchises = franchises)
     }
 
     private suspend fun fetchFranchises(franchiseIds: List<Int>?): List<Franchise>? {
