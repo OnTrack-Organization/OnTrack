@@ -20,7 +20,6 @@ fun AlbumDto.toDomain(): Album =
         mainArtist = artists.first().toDomain(),
         label = label,
         apiRating = popularity?.toDouble(),
-        apiRatingCount = null,
         spotifyUrl = externalUrls.spotify,
         totalTracks = totalTracks,
         albumTracks = tracks?.items?.map { it.toDomain() } ?: emptyList(),
