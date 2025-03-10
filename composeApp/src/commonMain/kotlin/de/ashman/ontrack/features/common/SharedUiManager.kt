@@ -41,6 +41,9 @@ class SharedUiManager() {
         _uiState.update { it.copy(snackbarMessage = getString(message)) }
     }
 
+    fun resetUiState() {
+        _uiState.update { SharedUiState() }
+    }
 }
 
 data class SharedUiState(

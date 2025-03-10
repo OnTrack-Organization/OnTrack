@@ -77,6 +77,7 @@ fun SettingsScreen(
     DisposableEffect(Unit) {
         onDispose {
             viewModel.clearUnsavedChanges()
+            sharedUiManager.resetUiState()
         }
     }
 

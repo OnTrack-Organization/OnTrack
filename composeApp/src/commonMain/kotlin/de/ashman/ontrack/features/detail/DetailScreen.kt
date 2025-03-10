@@ -17,6 +17,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,6 +85,12 @@ fun DetailScreen(
         sharedUiState.snackbarMessage?.let {
             snackbarHostState.showSnackbar(it)
             sharedUiManager.clearSnackbarMessage()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            sharedUiManager.resetUiState()
         }
     }
 

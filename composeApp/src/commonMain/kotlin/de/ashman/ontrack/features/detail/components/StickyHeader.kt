@@ -67,6 +67,8 @@ fun StickyHeader(
     var mainInfoItems by remember { mutableStateOf(emptyList<String>()) }
 
     LaunchedEffect(media) {
+        mainInfoItems = emptyList()
+
         media?.let {
             mainInfoItems = it.getMainInfoItems()
         }
@@ -103,8 +105,8 @@ fun StickyHeader(
         ) {
             OnTrackButton(
                 modifier = Modifier.weight(1f).animateContentSize(),
-                text = if (status != null) status.getLabel(mediaType) else Res.string.track_button,
-                icon = if (status != null) status.getIcon(true) else Icons.Default.Add,
+                text = status?.getLabel(mediaType) ?: Res.string.track_button,
+                icon = status?.getIcon(true) ?: Icons.Default.Add,
                 color = status.getColor(),
                 onClick = onClickAddTracking,
             )
