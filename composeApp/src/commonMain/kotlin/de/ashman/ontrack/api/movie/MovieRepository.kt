@@ -39,7 +39,7 @@ class MovieRepository(
 
         val director = getDirector(response.credits?.crew)
         val collection = fetchMovieCollection(response.belongsToCollection?.id)
-        val similarMovies = response.similar?.movies?.map { it.toDomain() }
+        val similarMovies = response.similar?.movies?.map { it.toDomain() }?.takeIf { it.isNotEmpty() }
 
         response.toDomain().copy(
             similarMovies = similarMovies,
