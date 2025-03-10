@@ -57,9 +57,10 @@ class FriendRepositoryImpl(
         val notVisibleUsers = existingFriends + existingReceived + existingSent
 
         // Search for users matching the query
+        val normalizedQuery = query.trim().lowercase()
         val snapshot = userCollection
-            .where { "username" greaterThanOrEqualTo query }
-            .where { "username" lessThan query + "z" }
+            .where { "username" greaterThanOrEqualTo normalizedQuery }
+            .where { "username" lessThan normalizedQuery + "z" }
             .get()
 
         for (document in snapshot.documents) {
