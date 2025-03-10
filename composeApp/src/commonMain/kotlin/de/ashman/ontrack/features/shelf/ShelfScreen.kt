@@ -145,8 +145,8 @@ fun UserHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PersonImage(
-            modifier = Modifier.size(56.dp),
             userImageUrl = imageUrl,
+            size = 56.dp
         )
 
         Column {

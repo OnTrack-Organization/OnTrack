@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Favorite
@@ -252,8 +251,8 @@ fun FeedCardFooter(
                                 userImageUrl = imageUrl,
                                 onClick = onShowLikes,
                                 modifier = Modifier
-                                    .size(24.dp)
                                     .zIndex((likeImages.size - index).toFloat()),
+                                size = 24.dp,
                             )
                         }
                     }
@@ -261,7 +260,7 @@ fun FeedCardFooter(
                     if (likeCount > 0) {
                         Text(
                             text = pluralStringResource(Res.plurals.feed_likes_count, likeCount, likeCount),
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -278,7 +277,7 @@ fun FeedCardFooter(
             if (commentCount > 0) {
                 Text(
                     text = pluralStringResource(Res.plurals.feed_comments_count, commentCount, commentCount),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -235,19 +236,22 @@ fun PersonImage(
     userImageUrl: String?,
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    size: Dp = 48.dp,
 ) {
     val painter = rememberAsyncImagePainter(userImageUrl)
     val interactionSource = remember { MutableInteractionSource() }
 
+    val paddingFraction = 0.2f
+    val iconPadding = size * paddingFraction
+
     Surface(
         modifier = modifier
-            .size(48.dp)
+            .size(size)
             .clickable(
                 enabled = onClick != null,
                 onClick = { onClick?.invoke() },
                 interactionSource = interactionSource,
-                indication = null,
-                //indication = ripple(bounded = false, radius = 24.dp),
+                indication = null, // or ripple if you want
             ),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -255,9 +259,13 @@ fun PersonImage(
         val state = painter.state.collectAsState().value
 
         when (state) {
-            is AsyncImagePainter.State.Empty -> {}
+            is AsyncImagePainter.State.Empty -> Unit
             is AsyncImagePainter.State.Loading -> {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(iconPadding)
+                        .fillMaxSize()
+                )
             }
 
             is AsyncImagePainter.State.Success -> {
@@ -265,12 +273,15 @@ fun PersonImage(
                     painter = painter,
                     contentScale = ContentScale.Crop,
                     contentDescription = "Account Image",
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
             is AsyncImagePainter.State.Error -> {
                 Icon(
-                    modifier = Modifier.padding(8.dp),
+                    modifier = Modifier
+                        .padding(iconPadding)
+                        .fillMaxSize(),
                     imageVector = Icons.Default.Person,
                     contentDescription = "No Image",
                 )

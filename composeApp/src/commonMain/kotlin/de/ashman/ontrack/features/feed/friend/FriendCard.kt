@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -44,7 +43,6 @@ private fun FriendCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PersonImage(
-                modifier = Modifier.size(42.dp),
                 userImageUrl = imageUrl,
                 onClick = onClickUser,
             )
