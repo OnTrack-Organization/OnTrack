@@ -2,11 +2,13 @@ package de.ashman.ontrack.features.detail.recommendation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
@@ -70,12 +75,14 @@ fun FriendActivityRow(
             val userRecommendation = friendRecommendations.find { it.userId == userId }
 
             val userImageUrl = userTracking?.userImageUrl ?: userRecommendation?.userImageUrl
+            val name = userTracking?.username ?: userRecommendation?.username
             val status = userTracking?.status
             val isRecommended = userRecommendation != null
 
             FriendActivityIcon(
                 userId = userId,
                 imageUrl = userImageUrl,
+                name = name.orEmpty(),
                 status = status,
                 isRecommended = isRecommended,
                 onUserClick = onUserClick
@@ -88,46 +95,62 @@ fun FriendActivityRow(
 fun FriendActivityIcon(
     userId: String,
     imageUrl: String?,
+    name: String,
     status: TrackStatus?,
     isRecommended: Boolean,
     onUserClick: (String) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.size(64.dp),
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PersonImage(
-            modifier = Modifier.align(Alignment.Center),
-            userImageUrl = imageUrl,
-            onClick = { onUserClick(userId) }
-        )
-        status?.let {
-            Surface(
-                modifier = Modifier.size(24.dp).align(Alignment.BottomEnd),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary,
-            ) {
-                Icon(
-                    imageVector = it.getIcon(true),
-                    contentDescription = "Trackstatus Icon",
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
+        Box(
+            modifier = Modifier.size(64.dp),
+        ) {
+            PersonImage(
+                modifier = Modifier.align(Alignment.Center),
+                userImageUrl = imageUrl,
+                onClick = { onUserClick(userId) }
+            )
+            status?.let {
+                Surface(
+                    modifier = Modifier.size(24.dp).align(Alignment.BottomEnd),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        imageVector = it.getIcon(true),
+                        contentDescription = "Trackstatus Icon",
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                }
+            }
+
+            if (isRecommended) {
+                Surface(
+                    modifier = Modifier.size(24.dp).align(Alignment.BottomStart),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.VolunteerActivism,
+                        contentDescription = "Recommended Icon",
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                }
             }
         }
 
-        if (isRecommended) {
-            Surface(
-                modifier = Modifier.size(24.dp).align(Alignment.BottomStart),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.VolunteerActivism,
-                    contentDescription = "Recommended Icon",
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-            }
-        }
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .width(64.dp),
+            textAlign = TextAlign.Center,
+        )
     }
 }
