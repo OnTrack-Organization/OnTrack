@@ -41,6 +41,7 @@ class FriendsViewModel(
     private val sharedUiManager: SharedUiManager,
     private val notificationService: NotificationService,
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState
         .onStart {
@@ -54,108 +55,13 @@ class FriendsViewModel(
         )
 
     private var searchJob: Job? = null
+    private val searchCache = mutableMapOf<String, List<Friend>>()
 
     init {
         viewModelScope.launch {
             currentUserRepository.currentUser.collect { user ->
                 _uiState.update { it.copy(user = user) }
             }
-        }
-    }
-
-    fun search(query: String) = viewModelScope.launch {
-        val potentialFriends = friendRepository.searchForNewFriends(query)
-
-        _uiState.update {
-            it.copy(
-                potentialFriends = potentialFriends,
-                resultState = if (potentialFriends.isEmpty()) FriendsResultState.PotentialEmpty else FriendsResultState.Potential
-            )
-        }
-    }
-
-    fun removeFriend() {
-        viewModelScope.launch {
-            _uiState.value.selectedFriend?.let { friendRepository.removeFriend(it) }
-            sharedUiManager.showSnackbar(Res.string.feed_friend_removed)
-        }
-    }
-
-    fun selectFriend(friend: Friend) {
-        _uiState.update { it.copy(selectedFriend = friend) }
-    }
-
-    fun sendRequest(otherRequest: FriendRequest) = viewModelScope.launch {
-        _uiState.value.user?.let { user ->
-
-            val myRequest = FriendRequest(
-                userId = user.id,
-                username = user.username,
-                name = user.name,
-                imageUrl = user.imageUrl,
-            )
-
-            friendRepository.sendRequest(otherRequest, myRequest)
-
-            sharedUiManager.showSnackbar(Res.string.feed_request_sent)
-
-            notificationService.sendPushNotification(
-                userId = otherRequest.userId,
-                title = getString(Res.string.notifications_new_request_title),
-                body = getString(Res.string.notifications_new_request_body, user.name),
-            )
-        }
-    }
-
-    fun acceptRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        _uiState.value.user?.let { user ->
-
-            friendRepository.acceptRequest(friendRequest)
-
-            sharedUiManager.showSnackbar(Res.string.feed_request_accepted)
-
-            notificationService.sendPushNotification(
-                userId = friendRequest.userId,
-                title = getString(Res.string.notifications_request_accepted_title),
-                body = getString(Res.string.notifications_request_accepted_body, user.name),
-            )
-        }
-    }
-
-    fun declineRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        friendRepository.declineRequest(friendRequest)
-        sharedUiManager.showSnackbar(Res.string.feed_request_declined)
-    }
-
-    fun cancelRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        friendRepository.cancelRequest(friendRequest)
-        sharedUiManager.showSnackbar(Res.string.feed_request_cancelled)
-    }
-
-    fun clearViewModel() {
-        _uiState.update { FriendsUiState() }
-    }
-
-    fun onQueryChanged(query: String) {
-        _uiState.update { it.copy(query = query) }
-    }
-
-    private fun observeFriendsAndRequests() = viewModelScope.launch {
-        launch { friendRepository.getFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } } }
-        launch { friendRepository.getReceivedRequests().collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests) } } }
-        launch { friendRepository.getSentRequests().collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests) } } }
-    }.invokeOnCompletion {
-        updateFriendsResultState()
-    }
-
-    private fun updateFriendsResultState() {
-        _uiState.update {
-            it.copy(
-                resultState = when {
-                    it.friends.isNotEmpty() || it.receivedRequests.isNotEmpty() || it.sentRequests.isNotEmpty() -> FriendsResultState.Friends
-                    else -> FriendsResultState.FriendsEmpty
-                }
-            )
         }
     }
 
@@ -187,7 +93,130 @@ class FriendsViewModel(
             }
             .launchIn(viewModelScope)
     }
+
+    private fun observeFriendsAndRequests() = viewModelScope.launch {
+        launch { friendRepository.getFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } } }
+        launch { friendRepository.getReceivedRequests().collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests) } } }
+        launch { friendRepository.getSentRequests().collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests) } } }
+    }.invokeOnCompletion {
+        updateFriendsResultState()
+    }
+
+    fun search(query: String) = viewModelScope.launch {
+        val normalizedQuery = query.trim().lowercase()
+
+        val cachedResult = searchCache[normalizedQuery]
+        if (cachedResult != null) {
+            _uiState.update {
+                it.copy(
+                    potentialFriends = cachedResult,
+                    resultState = if (cachedResult.isEmpty()) FriendsResultState.PotentialEmpty else FriendsResultState.Potential
+                )
+            }
+            return@launch
+        }
+
+        val potentialFriends = friendRepository.searchForNewFriends(normalizedQuery, _uiState.value.excludedIds)
+
+        searchCache[normalizedQuery] = potentialFriends
+
+        _uiState.update {
+            it.copy(
+                potentialFriends = potentialFriends,
+                resultState = if (potentialFriends.isEmpty()) FriendsResultState.PotentialEmpty else FriendsResultState.Potential
+            )
+        }
+    }
+
+    fun removeFriend() {
+        viewModelScope.launch {
+            _uiState.value.selectedFriend?.let { friendRepository.removeFriend(it) }
+            sharedUiManager.showSnackbar(Res.string.feed_friend_removed)
+
+            clearSearchCache()
+        }
+    }
+
+    fun sendRequest(otherRequest: FriendRequest) = viewModelScope.launch {
+        _uiState.value.user?.let { user ->
+            val myRequest = FriendRequest(
+                userId = user.id,
+                username = user.username,
+                name = user.name,
+                imageUrl = user.imageUrl,
+            )
+
+            friendRepository.sendRequest(otherRequest, myRequest)
+            sharedUiManager.showSnackbar(Res.string.feed_request_sent)
+
+            notificationService.sendPushNotification(
+                userId = otherRequest.userId,
+                title = getString(Res.string.notifications_new_request_title),
+                body = getString(Res.string.notifications_new_request_body, user.name),
+            )
+
+            clearSearchCache()
+        }
+    }
+
+    fun acceptRequest(friendRequest: FriendRequest) = viewModelScope.launch {
+        _uiState.value.user?.let { user ->
+            friendRepository.acceptRequest(friendRequest)
+            sharedUiManager.showSnackbar(Res.string.feed_request_accepted)
+
+            notificationService.sendPushNotification(
+                userId = friendRequest.userId,
+                title = getString(Res.string.notifications_request_accepted_title),
+                body = getString(Res.string.notifications_request_accepted_body, user.name),
+            )
+
+            clearSearchCache()
+        }
+    }
+
+    fun declineRequest(friendRequest: FriendRequest) = viewModelScope.launch {
+        friendRepository.declineRequest(friendRequest)
+        sharedUiManager.showSnackbar(Res.string.feed_request_declined)
+
+        clearSearchCache()
+    }
+
+    fun cancelRequest(friendRequest: FriendRequest) = viewModelScope.launch {
+        friendRepository.cancelRequest(friendRequest)
+        sharedUiManager.showSnackbar(Res.string.feed_request_cancelled)
+
+        clearSearchCache()
+    }
+
+    fun selectFriend(friend: Friend) {
+        _uiState.update { it.copy(selectedFriend = friend) }
+    }
+
+    fun onQueryChanged(query: String) {
+        _uiState.update { it.copy(query = query) }
+    }
+
+    private fun updateFriendsResultState() {
+        _uiState.update {
+            it.copy(
+                resultState = when {
+                    it.friends.isNotEmpty() || it.receivedRequests.isNotEmpty() || it.sentRequests.isNotEmpty() -> FriendsResultState.Friends
+                    else -> FriendsResultState.FriendsEmpty
+                }
+            )
+        }
+    }
+
+    private fun clearSearchCache() {
+        searchCache.clear()
+    }
+
+    fun clearViewModel() {
+        _uiState.update { FriendsUiState() }
+        clearSearchCache()
+    }
 }
+
 
 data class FriendsUiState(
     val user: User? = null,
@@ -198,7 +227,10 @@ data class FriendsUiState(
     val potentialFriends: List<Friend> = emptyList(),
     val resultState: FriendsResultState = FriendsResultState.Friends,
     val selectedFriend: Friend? = null,
-)
+) {
+    val excludedIds: List<String>
+        get() = friends.map { it.id } + receivedRequests.map { it.userId } + sentRequests.map { it.userId } + user?.id.orEmpty()
+}
 
 enum class FriendsResultState {
     Friends,

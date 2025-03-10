@@ -1,5 +1,6 @@
 package de.ashman.ontrack.repository.firestore
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 
 interface FriendRepository {
-    suspend fun searchForNewFriends(query: String): List<Friend>
+    suspend fun searchForNewFriends(query: String, existingFriendsAndRequestIds: List<String>): List<Friend>
     suspend fun getFriends(): Flow<List<Friend>>
     suspend fun getReceivedRequests(): Flow<List<FriendRequest>>
     suspend fun getSentRequests(): Flow<List<FriendRequest>>
@@ -33,39 +34,24 @@ class FriendRepositoryImpl(
 ) : FriendRepository {
     private val userCollection = firestore.collection("users")
 
-    override suspend fun searchForNewFriends(query: String): List<Friend> {
+    override suspend fun searchForNewFriends(query: String, excludedIds: List<String>): List<Friend> {
         val results = mutableListOf<Friend>()
 
-        val existingFriends = userCollection
-            .document(currentUserRepository.currentUserId)
-            .collection("friends")
-            .get()
-            .documents.map { it.id }
-
-        val existingReceived = userCollection
-            .document(currentUserRepository.currentUserId)
-            .collection("receivedRequests")
-            .get()
-            .documents.map { it.id }
-
-        val existingSent = userCollection
-            .document(currentUserRepository.currentUserId)
-            .collection("sentRequests")
-            .get()
-            .documents.map { it.id }
-
-        val notVisibleUsers = existingFriends + existingReceived + existingSent
-
-        // Search for users matching the query
         val normalizedQuery = query.trim().lowercase()
+
         val snapshot = userCollection
             .where { "username" greaterThanOrEqualTo normalizedQuery }
             .where { "username" lessThan normalizedQuery + "z" }
+            .where { "id" notInArray excludedIds }
             .get()
+
+        val readCount = snapshot.documents.size
+        Logger.d("Firestore reads for this query: $readCount")
 
         for (document in snapshot.documents) {
             val user = document.data<UserEntity>()
-            if (user.id != currentUserRepository.currentUserId && user.id !in notVisibleUsers) {
+
+            if (user.id !in excludedIds) {
                 results.add(
                     Friend(
                         id = user.id,
