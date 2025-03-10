@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.common
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import com.valentinilk.shimmer.shimmer
 import de.ashman.ontrack.domain.media.Franchise
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.Season
@@ -59,6 +61,7 @@ fun MediaPoster(
     trackStatusIcon: ImageVector? = null,
     trackStatusRating: Double? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    isLoadingShimmer: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     val painter = rememberAsyncImagePainter(coverUrl)
@@ -74,54 +77,67 @@ fun MediaPoster(
                 .aspectRatio(2f / 3f),
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.surface,
-            enabled = (onClick != null),
+            enabled = (onClick != null && !isLoadingShimmer),
             onClick = { onClick?.invoke() },
         ) {
-            AnimatedContent(
-                targetState = imageState,
-            ) { targetState ->
-                when (targetState) {
-                    is AsyncImagePainter.State.Loading -> {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is AsyncImagePainter.State.Success -> {
-                        Image(
-                            painter = painter,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Poster Image",
-                        )
-                        TrackOverlay(
-                            trackStatusIcon = trackStatusIcon,
-                            trackStatusRating = trackStatusRating,
-                        )
-                    }
-
-                    is AsyncImagePainter.State.Error -> {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                modifier = Modifier.fillMaxSize(0.5f),
-                                imageVector = Icons.Default.HideSource,
-                                contentDescription = "No Image",
+            if (isLoadingShimmer) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .shimmer()
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center
+                ) { }
+            } else {
+                AnimatedContent(
+                    targetState = imageState,
+                ) { targetState ->
+                    when (targetState) {
+                        is AsyncImagePainter.State.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .shimmer()
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
                             )
                         }
-                    }
 
-                    else -> {}
+                        is AsyncImagePainter.State.Success -> {
+                            Image(
+                                painter = painter,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Poster Image",
+                            )
+                            TrackOverlay(
+                                trackStatusIcon = trackStatusIcon,
+                                trackStatusRating = trackStatusRating,
+                            )
+                        }
+
+                        is AsyncImagePainter.State.Error -> {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.fillMaxSize(0.5f),
+                                    imageVector = Icons.Default.HideSource,
+                                    contentDescription = "No Image",
+                                )
+                            }
+                        }
+
+                        else -> { }
+                    }
                 }
             }
         }
-        MediaTitle(
-            title = title,
-            textStyle = textStyle,
-        )
+
+        if (!isLoadingShimmer) {
+            MediaTitle(
+                title = title,
+                textStyle = textStyle,
+            )
+        }
     }
 }
 

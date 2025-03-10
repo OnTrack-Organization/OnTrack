@@ -33,12 +33,12 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.EmptyContent
 import de.ashman.ontrack.features.common.ErrorContent
-import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.SearchBar
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.util.fakeItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.search_nav_title
@@ -101,16 +101,16 @@ fun SearchScreen(
                         mediaType = uiState.selectedMediaType,
                     )
 
-                    SearchResultState.Loading -> LoadingContent()
-
                     SearchResultState.Error -> ErrorContent(
                         text = uiState.selectedMediaType.getMediaTypeUi().error,
                     )
 
+                    SearchResultState.Loading,
                     SearchResultState.Success -> {
                         SuccessContent(
                             uiState = uiState,
                             onClickItem = onClickItem,
+                            isLoadingShimmer = state == SearchResultState.Loading
                         )
                     }
 
@@ -124,8 +124,11 @@ fun SearchScreen(
 @Composable
 fun SuccessContent(
     uiState: SearchUiState,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    isLoadingShimmer: Boolean = false,
+    onClickItem: (MediaNavigationItems) -> Unit = {},
 ) {
+    val itemsToDisplay = if (isLoadingShimmer) fakeItems() else uiState.searchResults
+
     val localFocusManager = LocalFocusManager.current
 
     LaunchedEffect(uiState.posterRowState) {
@@ -142,7 +145,7 @@ fun SuccessContent(
         contentPadding = PaddingValues(horizontal = 16.dp),
         state = uiState.posterRowState,
     ) {
-        items(items = uiState.searchResults, key = { it.id }) { media ->
+        items(items = itemsToDisplay, key = { it.id }) { media ->
             val tracking = uiState.trackings.associateBy { it.mediaId }
 
             MediaPoster(
@@ -151,6 +154,7 @@ fun SuccessContent(
                 coverUrl = media.coverUrl,
                 trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
                 trackStatusRating = tracking[media.id]?.rating,
+                isLoadingShimmer = isLoadingShimmer,
                 onClick = {
                     onClickItem(
                         MediaNavigationItems(

@@ -192,7 +192,7 @@ data class SearchUiState(
     val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
-    val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Empty },
+    val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Loading },
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val posterRowState: LazyListState = LazyListState(0, 0),
