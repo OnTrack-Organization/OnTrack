@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -119,6 +120,17 @@ fun SuccessContent(
     uiState: SearchUiState,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
+    val localFocusManager = LocalFocusManager.current
+
+    LaunchedEffect(uiState.posterRowState) {
+        snapshotFlow { uiState.posterRowState.isScrollInProgress }
+            .collect { isScrolling ->
+                if (isScrolling) {
+                    localFocusManager.clearFocus()
+                }
+            }
+    }
+
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),

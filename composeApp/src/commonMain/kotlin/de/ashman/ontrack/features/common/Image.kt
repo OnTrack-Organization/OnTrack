@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -136,7 +135,7 @@ fun TrackOverlay(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End,
     ) {
-        trackStatusRating?.let {
+        /*trackStatusRating?.let {
             Box(
                 modifier = Modifier.size(36.dp),
                 contentAlignment = Alignment.Center,
@@ -153,7 +152,7 @@ fun TrackOverlay(
                     color = Color.Black,
                 )
             }
-        }
+        }*/
 
         trackStatusIcon?.let {
             Icon(
