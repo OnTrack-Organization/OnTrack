@@ -16,11 +16,13 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
+import de.ashman.ontrack.util.getSingularTitle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,7 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_recommendation_added_to_catalog
 import ontrack.composeapp.generated.resources.tracking_removed
 import ontrack.composeapp.generated.resources.tracking_saved
+import org.jetbrains.compose.resources.getString
 import kotlin.time.measureTime
 
 class DetailViewModel(
@@ -128,17 +131,32 @@ class DetailViewModel(
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
         trackingRepository.saveTracking(tracking)
 
-        // TODO needed?
         _uiState.update { it.copy(selectedTracking = tracking) }
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.tracking_saved)
+
+        sharedUiManager.hideSheetAndShowSnackbar(
+            getString(
+                resource = Res.string.tracking_saved,
+                tracking.mediaType.getSingularTitle(),
+                getString(tracking.status?.getLabel(tracking.mediaType)!!)
+            )
+        )
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
         val media = _uiState.value.selectedMedia ?: return@launch
+        val tracking = _uiState.value.selectedTracking ?: return@launch
+
         trackingRepository.removeTracking(trackingId = trackingId, ratingId = "${media.mediaType}_${media.id}")
 
         _uiState.update { it.copy(selectedTracking = null) }
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.tracking_removed)
+
+        sharedUiManager.hideSheetAndShowSnackbar(
+            getString(
+                resource = Res.string.tracking_removed,
+                tracking.mediaType.getSingularTitle(),
+                getString(tracking.status?.getLabel(tracking.mediaType)!!)
+            )
+        )
     }
 
     fun addRecommendationToCatalog() = viewModelScope.launch {
@@ -160,7 +178,7 @@ class DetailViewModel(
             saveTracking(catalogTracking)
         }
 
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.detail_recommendation_added_to_catalog)
+        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
     }
 
     fun clearViewModel() {

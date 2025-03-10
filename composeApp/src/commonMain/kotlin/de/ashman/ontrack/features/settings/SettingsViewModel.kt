@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.logout_offline_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
+import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
     private val currentUserRepository: CurrentUserRepository,
@@ -95,7 +96,7 @@ class SettingsViewModel(
             )
         )
 
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.settings_account_data_saved)
+        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
     }
 
     fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
@@ -105,7 +106,7 @@ class SettingsViewModel(
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")
 
-            sharedUiManager.hideSheetAndShowSnackbar(Res.string.logout_offline_error)
+            sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.logout_offline_error))
         }
     }
 

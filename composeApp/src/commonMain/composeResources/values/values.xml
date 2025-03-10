@@ -177,8 +177,8 @@
     <string name="detail_remove_confirm_title">Remove tracking?</string>
     <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>
 
-    <string name="tracking_saved">Tracking saved</string>
-    <string name="tracking_removed">Tracking removed</string>
+    <string name="tracking_saved">%1$s added to %2$s</string>
+    <string name="tracking_removed">%1$s removed from %2$s</string>
 
     <!-- DETAIL REVIEW -->
     <string name="review_title">Review</string>

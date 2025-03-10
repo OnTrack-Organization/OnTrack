@@ -119,7 +119,6 @@ fun UsernameError.getLabel(): StringResource {
     }
 }
 
-@Composable
 fun TrackStatus.getLabel(mediaType: MediaType): StringResource {
     return when (mediaType) {
         MediaType.MOVIE -> when (this) {
@@ -166,7 +165,6 @@ fun TrackStatus.getLabel(mediaType: MediaType): StringResource {
     }
 }
 
-@Composable
 fun TrackStatus.getSublabel(mediaType: MediaType): StringResource {
     return when (mediaType) {
         MediaType.MOVIE -> when (this) {

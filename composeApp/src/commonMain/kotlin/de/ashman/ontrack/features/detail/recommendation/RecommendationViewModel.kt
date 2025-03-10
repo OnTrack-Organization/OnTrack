@@ -71,7 +71,7 @@ class RecommendationViewModel(
         previousRecommendationsCache[friendId] = updatedRecs
         _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
 
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.detail_recommendation_sent)
+        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_sent))
 
         notificationService.sendPushNotification(
             userId = friendId,
@@ -85,7 +85,7 @@ class RecommendationViewModel(
     fun passRecommendation(mediaId: String) = viewModelScope.launch {
         recommendationRepository.passRecommendation(mediaId)
 
-        sharedUiManager.hideSheetAndShowSnackbar(Res.string.detail_recommendation_passed)
+        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_passed))
     }
 
     fun selectFriend(friendId: String, mediaId: String) {

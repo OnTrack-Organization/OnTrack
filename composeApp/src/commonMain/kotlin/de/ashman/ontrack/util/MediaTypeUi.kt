@@ -31,6 +31,7 @@ import ontrack.composeapp.generated.resources.videogame
 import ontrack.composeapp.generated.resources.videogame_network_error
 import org.jetbrains.compose.resources.PluralStringResource
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getPluralString
 import org.jetbrains.compose.resources.vectorResource
 
 data class MediaTypeUi(
@@ -85,4 +86,18 @@ fun MediaType.getMediaTypeUi(): MediaTypeUi {
             error = Res.string.album_network_error,
         )
     }
+}
+
+suspend fun MediaType.getSingularTitle(): String {
+    return getPluralString(
+        when (this) {
+            MediaType.MOVIE -> Res.plurals.movie
+            MediaType.SHOW -> Res.plurals.show
+            MediaType.BOOK -> Res.plurals.book
+            MediaType.VIDEOGAME -> Res.plurals.videogame
+            MediaType.BOARDGAME -> Res.plurals.boardgame
+            MediaType.ALBUM -> Res.plurals.album
+        },
+        1
+    )
 }

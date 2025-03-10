@@ -23,10 +23,10 @@ class SharedUiManager() {
         _uiState.update { it.copy(showSheet = false, currentSheet = null) }
     }
 
-    suspend fun hideSheetAndShowSnackbar(message: StringResource) {
+    fun hideSheetAndShowSnackbar(message: String) {
         _uiState.update {
             it.copy(
-                snackbarMessage = getString(message),
+                snackbarMessage = message,
                 currentSheet = null,
                 showSheet = false,
             )
