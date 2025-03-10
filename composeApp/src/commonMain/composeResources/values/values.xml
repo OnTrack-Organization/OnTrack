@@ -270,6 +270,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_username_hint">Username</string>
     <string name="settings_name_hint">Name</string>
+    <string name="settings_email_hint">E-Mail</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_remove">Remove account</string>
 

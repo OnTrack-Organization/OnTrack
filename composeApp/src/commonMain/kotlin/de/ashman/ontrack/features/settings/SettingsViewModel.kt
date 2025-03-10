@@ -41,6 +41,7 @@ class SettingsViewModel(
                         name = user?.name.orEmpty(),
                         username = user?.username.orEmpty(),
                         imageUrl = user?.imageUrl,
+                        email = user?.email.orEmpty()
                     )
                 }
             }
@@ -53,6 +54,10 @@ class SettingsViewModel(
 
     fun onUsernameChange(username: String) {
         _uiState.update { it.copy(username = username, usernameError = null) }
+    }
+
+    fun onEmailChange(mail: String) {
+        _uiState.update { it.copy(email = mail) }
     }
 
     fun onUpdateUser() = viewModelScope.launch {
@@ -136,6 +141,7 @@ data class SettingsUiState(
     val user: User? = null,
     val name: String = "",
     val username: String = "",
+    val email: String = "",
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
 )

@@ -41,6 +41,7 @@ import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.save_button
+import ontrack.composeapp.generated.resources.settings_email_hint
 import ontrack.composeapp.generated.resources.settings_logout
 import ontrack.composeapp.generated.resources.settings_name_hint
 import ontrack.composeapp.generated.resources.settings_remove
@@ -112,18 +113,25 @@ fun SettingsScreen(
                     )
 
                     OnTrackUsernameTextField(
-                        placeholder = "Name",
+                        placeholder = stringResource(Res.string.settings_name_hint),
                         support = Res.string.settings_name_hint,
                         value = uiState.name,
                         onValueChange = viewModel::onNameChange,
                         enabled = true,
                     )
                     OnTrackUsernameTextField(
-                        placeholder = "Username",
+                        placeholder = stringResource(Res.string.settings_username_hint),
                         support = Res.string.settings_username_hint,
                         value = uiState.username,
                         errorSupport = uiState.usernameError?.getLabel(),
                         onValueChange = viewModel::onUsernameChange,
+                        enabled = false,
+                    )
+                    OnTrackUsernameTextField(
+                        placeholder = stringResource(Res.string.settings_email_hint),
+                        support = Res.string.settings_email_hint,
+                        value = uiState.email,
+                        onValueChange = viewModel::onEmailChange,
                         enabled = false,
                     )
                     OnTrackButton(
