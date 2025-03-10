@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -91,25 +92,30 @@ fun SearchScreen(
                 )
             }
 
-            when (uiState.resultStates[uiState.selectedMediaType]) {
-                SearchResultState.Empty -> EmptyContent(
-                    mediaType = uiState.selectedMediaType,
-                )
-
-                SearchResultState.Loading -> LoadingContent()
-
-                SearchResultState.Error -> ErrorContent(
-                    text = uiState.selectedMediaType.getMediaTypeUi().error,
-                )
-
-                SearchResultState.Success -> {
-                    SuccessContent(
-                        uiState = uiState,
-                        onClickItem = onClickItem,
+            AnimatedContent(
+                targetState = uiState.resultStates[uiState.selectedMediaType],
+                label = "ResultStateAnimation"
+            ) { state ->
+                when (state) {
+                    SearchResultState.Empty -> EmptyContent(
+                        mediaType = uiState.selectedMediaType,
                     )
-                }
 
-                else -> {}
+                    SearchResultState.Loading -> LoadingContent()
+
+                    SearchResultState.Error -> ErrorContent(
+                        text = uiState.selectedMediaType.getMediaTypeUi().error,
+                    )
+
+                    SearchResultState.Success -> {
+                        SuccessContent(
+                            uiState = uiState,
+                            onClickItem = onClickItem,
+                        )
+                    }
+
+                    else -> {}
+                }
             }
         }
     }
