@@ -3,9 +3,12 @@ package de.ashman.ontrack.features.detail
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,6 +32,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.api.getRatingType
+import de.ashman.ontrack.domain.globalrating.RatingStats
+import de.ashman.ontrack.domain.media.Album
+import de.ashman.ontrack.domain.media.Boardgame
+import de.ashman.ontrack.domain.media.Book
+import de.ashman.ontrack.domain.media.Media
+import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.media.Movie
+import de.ashman.ontrack.domain.media.Show
+import de.ashman.ontrack.domain.media.Videogame
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.CurrentSheet
@@ -38,7 +52,15 @@ import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.components.DetailDropDown
+import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.StickyHeader
+import de.ashman.ontrack.features.detail.media.AlbumDetailContent
+import de.ashman.ontrack.features.detail.media.BoardgameDetailContent
+import de.ashman.ontrack.features.detail.media.BookDetailContent
+import de.ashman.ontrack.features.detail.media.MovieDetailContent
+import de.ashman.ontrack.features.detail.media.ShowDetailContent
+import de.ashman.ontrack.features.detail.media.VideogameDetailContent
+import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
@@ -136,6 +158,7 @@ fun DetailScreen(
                 DetailResultState.Success -> {
                     DetailContent(
                         media = detailUiState.selectedMedia,
+                        selectedTracking = detailUiState.selectedTracking,
                         ratingStats = detailUiState.ratingStats,
                         friendTrackings = detailUiState.friendTrackings,
                         receivedRecommendations = recommendationUiState.receivedRecommendations,
@@ -243,6 +266,84 @@ fun DetailScreen(
                         else -> {}
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailContent(
+    media: Media?,
+    selectedTracking: Tracking?,
+    ratingStats: RatingStats,
+    friendTrackings: List<Tracking>,
+    receivedRecommendations: List<Recommendation>,
+    columnListState: LazyListState,
+    onClickItem: (MediaNavigationItems) -> Unit,
+    onUserClick: (String) -> Unit,
+    onShowFriendActivity: () -> Unit,
+) {
+    media?.let {
+        LazyColumn(
+            state = columnListState,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            /*item {
+                selectedTracking?.let {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.detail_current_tracking),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        TrackingCard(
+                            userImageUrl = it.userImageUrl,
+                            username = it.username,
+                            timestamp = it.timestamp.formatDateTime(),
+                            mediaType = it.mediaType,
+                            trackStatus = it.status!!,
+                            rating = it.rating,
+                            reviewTitle = it.reviewTitle,
+                            reviewDescription = it.reviewDescription,
+                            onUserClick = { onUserClick(it.userId) },
+                        )
+                    }
+                }
+            }*/
+
+            if (friendTrackings.isNotEmpty() || receivedRecommendations.isNotEmpty()) {
+                item {
+                    FriendActivityRow(
+                        friendTrackings = friendTrackings,
+                        friendRecommendations = receivedRecommendations,
+                        onUserClick = onUserClick,
+                        onMoreClick = onShowFriendActivity
+                    )
+                }
+            }
+
+            item {
+                RatingCardRow(
+                    apiType = media.mediaType.getRatingType(),
+                    rating = media.apiRating,
+                    ratingCount = media.apiRatingCount,
+                    appRating = ratingStats.averageRating,
+                    appRatingCount = ratingStats.ratingCount
+                )
+            }
+
+            when (media.mediaType) {
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
             }
         }
     }

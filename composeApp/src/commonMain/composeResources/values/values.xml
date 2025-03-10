@@ -173,6 +173,8 @@
     <string name="track_button">Track</string>
     <string name="review_button">Review</string>
 
+    <string name="detail_current_tracking">Current Tracking</string>
+
     <string name="remove_tracking_button">Remove Tracking</string>
     <string name="detail_remove_confirm_title">Remove tracking?</string>
     <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>

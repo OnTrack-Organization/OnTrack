@@ -188,7 +188,7 @@ fun RecommendationCard(
 }
 
 @Composable
-private fun TrackingCard(
+fun TrackingCard(
     userImageUrl: String?,
     username: String,
     timestamp: String,
