@@ -1,19 +1,24 @@
 package de.ashman.ontrack.features.feed
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.domain.feed.Comment
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FeedRepository
+import de.ashman.ontrack.repository.firestore.FriendRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,6 +31,7 @@ import org.jetbrains.compose.resources.getString
 
 class FeedViewModel(
     private val feedRepository: FeedRepository,
+    private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val currentUserRepository: CurrentUserRepository,
     private val sharedUiManager: SharedUiManager,
@@ -33,34 +39,71 @@ class FeedViewModel(
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState
+        .onStart {
+            viewModelScope.launch {
+                friendRepository.observeFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } }
+            }
+            viewModelScope.launch {
+                currentUserRepository.currentUser.collect { user -> _uiState.update { it.copy(user = user) } }
+            }
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _uiState.value,
         )
 
-    init {
-        viewModelScope.launch {
-            currentUserRepository.currentUser.collect { user ->
-                _uiState.update { it.copy(user = user) }
+    private var lastTimestamp: Long? = null
+    private val pageSize = 10
+
+    fun fetchInitialTrackingFeed() = viewModelScope.launch {
+        // Show loading state when refresh starts
+        _uiState.update { it.copy(feedResultState = FeedResultState.Loading, isFirstLaunch = false) }
+
+        // Optional: Introduce a small delay to simulate refreshing or wait for network calls
+        delay(1000L)
+
+        // Fetch the newest tracking item from the repository
+        val latestFeedItem = feedRepository.fetchNewestTracking(uiState.value.friendIds)
+
+        // If the list is empty or the latest item is different from the last item in the current list, proceed with fetch
+        if (_uiState.value.feedTrackings.isEmpty() || latestFeedItem?.id != _uiState.value.feedTrackings.firstOrNull()?.id) {
+            // Fetch the first page of the feed
+            val firstPage = feedRepository.fetchTrackingFeedPage(friendIds = uiState.value.friendIds, pageSize = pageSize)
+            lastTimestamp = if (firstPage.isNotEmpty()) firstPage.last().timestamp else null
+
+            // Update the state with the new data from the first page
+            _uiState.update {
+                it.copy(
+                    feedResultState = if (firstPage.isEmpty()) FeedResultState.Empty else FeedResultState.Success,
+                    feedTrackings = firstPage,
+                    canLoadMore = firstPage.size == pageSize,
+                )
             }
+        } else {
+            // If the list is not empty and the latest item matches, just set the result state to success
+            _uiState.update { it.copy(feedResultState = FeedResultState.Success) }
         }
     }
 
-    fun fetchTrackingFeed() = viewModelScope.launch {
-        _uiState.update { it.copy(feedResultState = FeedResultState.Loading) }
+    fun fetchNextPage() = viewModelScope.launch {
+        if (_uiState.value.feedResultState == FeedResultState.LoadingMore || lastTimestamp == null || !_uiState.value.canLoadMore) return@launch
 
-        feedRepository.getTrackingFeed().collect { feedTrackings ->
-            if (feedTrackings.isEmpty()) {
-                _uiState.update { it.copy(feedResultState = FeedResultState.Empty) }
-            } else {
-                _uiState.update { state ->
-                    state.copy(
-                        feedResultState = FeedResultState.Success,
-                        feedTrackings = feedTrackings
-                    )
-                }
-            }
+        _uiState.update { it.copy(feedResultState = FeedResultState.LoadingMore) }
+
+        // TODO remove later
+        delay(1000L)
+
+        val nextPage = feedRepository.fetchTrackingFeedPage(uiState.value.friendIds, pageSize, lastTimestamp)
+        lastTimestamp = if (nextPage.isNotEmpty()) nextPage.last().timestamp else null
+
+        // Append the next page to the feed trackings
+        _uiState.update {
+            it.copy(
+                feedTrackings = it.feedTrackings + nextPage,
+                feedResultState = FeedResultState.Success,
+                canLoadMore = nextPage.size == pageSize
+            )
         }
     }
 
@@ -73,19 +116,23 @@ class FeedViewModel(
                 userImageUrl = user.imageUrl,
             )
 
-            if (tracking.isLikedByCurrentUser) {
-                feedRepository.unlikeTracking(
-                    friendId = tracking.userId,
-                    trackingId = tracking.id,
-                    like = like
-                )
-            } else {
-                feedRepository.likeTracking(
-                    friendId = tracking.userId,
-                    trackingId = tracking.id,
-                    like = like
-                )
+            val updatedTrackings = _uiState.value.feedTrackings.map {
+                if (it.id == tracking.id) {
+                    if (tracking.isLikedByCurrentUser) {
+                        // Unlike case
+                        feedRepository.unlikeTracking(tracking.userId, tracking.id, like)
+                        it.copy(likes = it.likes - like)
+                    } else {
+                        // Like case
+                        feedRepository.likeTracking(tracking.userId, tracking.id, like)
+                        it.copy(likes = it.likes + like)
+                    }
+                } else it
+            }
 
+            _uiState.update { it.copy(feedTrackings = updatedTrackings) }
+
+            if (!tracking.isLikedByCurrentUser) {
                 notificationService.sendPushNotification(
                     userId = tracking.userId,
                     title = getString(Res.string.notifications_like_title),
@@ -105,30 +152,33 @@ class FeedViewModel(
                 userImageUrl = user.imageUrl,
             )
 
-            _uiState.value.selectedTracking?.let { selectedTracking ->
-                feedRepository.addComment(
-                    friendId = selectedTracking.userId,
-                    trackingId = selectedTracking.id,
-                    comment = newComment,
-                )
-
-                notificationService.sendPushNotification(
-                    userId = selectedTracking.userId,
-                    title = getString(Res.string.notifications_comment_title),
-                    body = getString(Res.string.notifications_comment_body, newComment.username),
-                )
+            val updatedTrackings = _uiState.value.feedTrackings.map {
+                if (it.id == _uiState.value.selectedTrackingId) {
+                    feedRepository.addComment(it.userId, it.id, newComment)
+                    it.copy(comments = it.comments + newComment)
+                } else it
             }
+
+            _uiState.update { it.copy(feedTrackings = updatedTrackings) }
+
+            // Send notification
+            notificationService.sendPushNotification(
+                userId = _uiState.value.selectedTracking?.userId ?: return@launch,
+                title = getString(Res.string.notifications_comment_title),
+                body = getString(Res.string.notifications_comment_body, newComment.username),
+            )
         }
     }
 
     fun removeComment(comment: Comment) = viewModelScope.launch {
-        _uiState.value.selectedTracking?.let { selectedTracking ->
-            feedRepository.removeComment(
-                friendId = selectedTracking.userId,
-                trackingId = selectedTracking.id,
-                comment = comment,
-            )
+        val updatedTrackings = _uiState.value.feedTrackings.map {
+            if (it.id == _uiState.value.selectedTrackingId) {
+                feedRepository.removeComment(it.userId, it.id, comment)
+                it.copy(comments = it.comments - comment)
+            } else it
         }
+
+        _uiState.update { it.copy(feedTrackings = updatedTrackings) }
     }
 
     fun selectTrackingAndShowSheet(trackingId: String, currentSheet: CurrentSheet) {
@@ -141,8 +191,7 @@ class FeedViewModel(
             it.copy(
                 feedTrackings = emptyList(),
                 selectedTrackingId = null,
-                feedResultState = FeedResultState.Loading,
-                isRefreshing = false,
+                feedResultState = FeedResultState.Empty,
             )
         }
     }
@@ -150,17 +199,24 @@ class FeedViewModel(
 
 data class FeedUiState(
     val user: User? = null,
+    val friends: List<Friend> = emptyList(),
     val feedTrackings: List<Tracking> = emptyList(),
     val selectedTrackingId: String? = null,
     val feedResultState: FeedResultState = FeedResultState.Loading,
-    val isRefreshing: Boolean = false,
+    val canLoadMore: Boolean = false,
+    val isFirstLaunch: Boolean = true,
+    val listState: LazyListState = LazyListState(0, 0),
 ) {
     val selectedTracking: Tracking?
         get() = feedTrackings.find { it.id == selectedTrackingId }
+
+    val friendIds: List<String>
+        get() = listOfNotNull(user?.id) + friends.map { it.id }
 }
 
 enum class FeedResultState {
     Loading,
     Success,
     Empty,
+    LoadingMore,
 }
