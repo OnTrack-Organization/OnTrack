@@ -124,7 +124,7 @@ class FeedViewModel(
                 notificationService.sendPushNotification(
                     userId = tracking.userId,
                     title = getString(Res.string.notifications_like_title),
-                    body = getString(Res.string.notifications_like_body, like.username),
+                    body = getString(Res.string.notifications_like_body, like.name),
                 )
             }
         }
@@ -153,7 +153,7 @@ class FeedViewModel(
             notificationService.sendPushNotification(
                 userId = _uiState.value.selectedTracking?.userId ?: return@launch,
                 title = getString(Res.string.notifications_comment_title),
-                body = getString(Res.string.notifications_comment_body, newComment.username),
+                body = getString(Res.string.notifications_comment_body, newComment.name),
             )
         }
     }
