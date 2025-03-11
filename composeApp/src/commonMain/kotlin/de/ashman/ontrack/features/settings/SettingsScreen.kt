@@ -68,17 +68,14 @@ fun SettingsScreen(
     val localFocusManager = LocalFocusManager.current
 
     LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.let {
-            localFocusManager.clearFocus()
-            snackbarHostState.showSnackbar(it)
-            sharedUiManager.clearSnackbarMessage()
+        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+            snackbarHostState.showSnackbar(message)
         }
     }
 
     DisposableEffect(Unit) {
         onDispose {
             viewModel.clearUnsavedChanges()
-            sharedUiManager.resetUiState()
         }
     }
 

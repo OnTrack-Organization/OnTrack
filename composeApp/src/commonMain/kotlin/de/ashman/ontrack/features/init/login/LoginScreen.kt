@@ -59,9 +59,8 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            sharedUiManager.clearSnackbarMessage()
+        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+            snackbarHostState.showSnackbar(message)
         }
     }
 

@@ -26,19 +26,22 @@ class SharedUiManager() {
     fun hideSheetAndShowSnackbar(message: String) {
         _uiState.update {
             it.copy(
-                snackbarMessage = message,
+                snackbarMessage = SnackbarEvent(message),
                 currentSheet = null,
                 showSheet = false,
             )
         }
     }
 
-    fun clearSnackbarMessage() {
-        _uiState.update { it.copy(snackbarMessage = null) }
+    suspend fun showSnackbar(message: StringResource) {
+        _uiState.update {
+            it.copy(snackbarMessage = SnackbarEvent(getString(message)))
+        }
     }
 
-    suspend fun showSnackbar(message: StringResource) {
-        _uiState.update { it.copy(snackbarMessage = getString(message)) }
+
+    fun clearSnackbarMessage() {
+        _uiState.update { it.copy(snackbarMessage = null) }
     }
 
     fun resetUiState() {
@@ -49,7 +52,7 @@ class SharedUiManager() {
 data class SharedUiState(
     val currentSheet: CurrentSheet? = null,
     val showSheet: Boolean = false,
-    val snackbarMessage: String? = null,
+    val snackbarMessage: SnackbarEvent<String>? = null,
 )
 
 // TODO add back handling
@@ -64,4 +67,20 @@ enum class CurrentSheet {
     COMMENTS,
     LIKES,
     FRIENDS,
+}
+
+class SnackbarEvent<out T>(private val content: T) {
+
+    private var hasBeenHandled = false
+
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+
+    fun peekContent(): T = content
 }
