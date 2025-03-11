@@ -73,6 +73,7 @@ import ontrack.composeapp.generated.resources.settings_username_empty
 import ontrack.composeapp.generated.resources.settings_username_taken
 import ontrack.composeapp.generated.resources.settings_username_too_long
 import ontrack.composeapp.generated.resources.settings_username_too_short
+import ontrack.composeapp.generated.resources.settings_username_whitespace
 import ontrack.composeapp.generated.resources.show_status_catalog_label
 import ontrack.composeapp.generated.resources.show_status_catalog_sublabel
 import ontrack.composeapp.generated.resources.show_status_consumed_label
@@ -113,6 +114,7 @@ fun Modifier.contentSizeAnimation(): Modifier =
 fun UsernameError.getLabel(): StringResource {
     return when (this) {
         UsernameError.EMPTY -> Res.string.settings_username_empty
+        UsernameError.WHITESPACE -> Res.string.settings_username_whitespace
         UsernameError.TAKEN -> Res.string.settings_username_taken
         UsernameError.TOO_LONG -> Res.string.settings_username_too_long
         UsernameError.TOO_SHORT -> Res.string.settings_username_too_short

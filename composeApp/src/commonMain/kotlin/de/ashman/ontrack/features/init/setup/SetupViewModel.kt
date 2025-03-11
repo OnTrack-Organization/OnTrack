@@ -3,9 +3,9 @@ package de.ashman.ontrack.features.init.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.settings.UsernameError
+import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,6 +44,11 @@ class SetupViewModel(
 
         if (newUsername.isBlank()) {
             _uiState.update { it.copy(usernameError = UsernameError.EMPTY) }
+            return false
+        }
+
+        if (newUsername.contains(" ")) {
+            _uiState.update { it.copy(usernameError = UsernameError.WHITESPACE) }
             return false
         }
 

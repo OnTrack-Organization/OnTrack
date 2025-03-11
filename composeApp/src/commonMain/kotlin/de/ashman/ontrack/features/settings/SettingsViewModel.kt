@@ -73,6 +73,11 @@ class SettingsViewModel(
                 return@launch
             }
 
+            if (newUsername.contains(" ")) {
+                _uiState.update { it.copy(usernameError = UsernameError.WHITESPACE) }
+                return@launch
+            }
+
             if (newUsername.length < 5) {
                 _uiState.update { it.copy(usernameError = UsernameError.TOO_SHORT) }
                 return@launch
@@ -149,6 +154,7 @@ data class SettingsUiState(
 
 enum class UsernameError {
     EMPTY,
+    WHITESPACE,
     TAKEN,
     TOO_LONG,
     TOO_SHORT,

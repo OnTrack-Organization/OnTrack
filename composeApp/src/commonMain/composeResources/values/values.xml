@@ -20,7 +20,7 @@
     <!-- INTRO -->
     <string name="intro_title">Introduction</string>
 
-    <string name="intro_first_page_title">Search all media types</string>
+    <string name="intro_first_page_title">Search all media</string>
     <string name="intro_first_page_description">Movies, shows, books, videogames, boardgames and albums. All in one central place.</string>
 
     <string name="intro_second_page_title">Track what you consume</string>
@@ -29,7 +29,7 @@
     <string name="intro_third_page_title">Your own media shelf</string>
     <string name="intro_third_page_description">Like to be organized? Want to display your likings? Do it with your own shelf.</string>
 
-    <string name="intro_fourth_page_title">Share &amp; recommend</string>
+    <string name="intro_fourth_page_title">Share &amp; Recommend</string>
     <string name="intro_fourth_page_description">Keep it social. Share your trackings in a feed and recommend media to your friends.</string>
 
     <!-- SETUP -->
@@ -38,21 +38,6 @@
 
     <!-- FEED -->
     <string name="feed_empty">Add some friends or track some media to share it in your feed!</string>
-
-    <string name="feed_friends">Friends</string>
-    <string name="feed_received_requests">Received Friend Requests</string>
-    <string name="feed_sent_requests">Sent Friend Requests</string>
-    <string name="feed_potential_friends">Potential Friends</string>
-    <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
-    <string name="feed_no_potential_friends">No potential friends found, sad</string>
-    <string name="feed_request_sent">Friend request sent</string>
-    <string name="feed_request_accepted">Friend request accepted</string>
-    <string name="feed_request_declined">Friend request declined</string>
-    <string name="feed_request_cancelled">Friend request cancelled</string>
-    <string name="feed_friend_removed">Friend removed</string>
-
-    <string name="feed_remove_friend_confirm_title">Remove friend?</string>
-    <string name="feed_remove_friend_confirm_text">Are you sure you want to remove this friend?</string>
 
     <string name="feed_comments">Comments</string>
     <string name="feed_comments_placeholder">Write a comment…</string>
@@ -72,95 +57,25 @@
         <item quantity="other">%1$s Comments</item>
     </plurals>
 
+    <!-- FRIENDS -->
+    <string name="feed_friends">Friends</string>
+    <string name="feed_received_requests">Received Friend Requests</string>
+    <string name="feed_sent_requests">Sent Friend Requests</string>
+    <string name="feed_potential_friends">Potential Friends</string>
+    <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
+    <string name="feed_no_potential_friends">No potential friends found, sad</string>
+    <string name="feed_request_sent">Friend request sent</string>
+    <string name="feed_request_accepted">Friend request accepted</string>
+    <string name="feed_request_declined">Friend request declined</string>
+    <string name="feed_request_cancelled">Friend request cancelled</string>
+    <string name="feed_friend_removed">Friend removed</string>
+
+    <string name="feed_remove_friend_confirm_title">Remove friend?</string>
+    <string name="feed_remove_friend_confirm_text">Are you sure you want to remove this friend?</string>
+
     <!-- SEARCH -->
     <string name="search_placeholder">Search for %1$s…</string>
     <string name="search_empty">No %1$s found</string>
-
-    <!-- MEDIA -->
-    <plurals name="movie">
-        <item quantity="one">Movie</item>
-        <item quantity="other">Movies</item>
-    </plurals>
-    <plurals name="show">
-        <item quantity="one">Show</item>
-        <item quantity="other">Shows</item>
-    </plurals>
-    <plurals name="book">
-        <item quantity="one">Book</item>
-        <item quantity="other">Books</item>
-    </plurals>
-    <plurals name="videogame">
-        <item quantity="one">Videogame</item>
-        <item quantity="other">Videogames</item>
-    </plurals>
-    <plurals name="boardgame">
-        <item quantity="one">Boardgame</item>
-        <item quantity="other">Boardgames</item>
-    </plurals>
-    <plurals name="album">
-        <item quantity="one">Album</item>
-        <item quantity="other">Albums</item>
-    </plurals>
-
-    <!-- MOVIE -->
-    <string name="movie_status_consuming_label">Watching</string>
-    <string name="movie_status_consuming_sublabel">Currently watching</string>
-    <string name="movie_status_consumed_label">Watched</string>
-    <string name="movie_status_consumed_sublabel">Finished watching</string>
-    <string name="movie_status_catalog_label">Catalog</string>
-    <string name="movie_status_catalog_sublabel">Plan to watch</string>
-    <string name="movie_status_dropped_label">Dropped</string>
-    <string name="movie_status_dropped_sublabel">Stopped watching</string>
-
-    <!-- SHOW -->
-    <string name="show_status_consumed_label">Binged</string>
-    <string name="show_status_consumed_sublabel">Finished binging</string>
-    <string name="show_status_catalog_label">Catalog</string>
-    <string name="show_status_catalog_sublabel">Plan to binge</string>
-    <string name="show_status_consuming_label">Binging</string>
-    <string name="show_status_consuming_sublabel">Currently binging</string>
-    <string name="show_status_dropped_label">Dropped</string>
-    <string name="show_status_dropped_sublabel">Stopped binging</string>
-
-    <!-- VIDEOGAME -->
-    <string name="videogame_status_consumed_label">Gamed</string>
-    <string name="videogame_status_consumed_sublabel">Finished gaming</string>
-    <string name="videogame_status_catalog_label">Catalog</string>
-    <string name="videogame_status_catalog_sublabel">Plan to game</string>
-    <string name="videogame_status_consuming_label">Gaming</string>
-    <string name="videogame_status_consuming_sublabel">Currently gaming</string>
-    <string name="videogame_status_dropped_label">Dropped</string>
-    <string name="videogame_status_dropped_sublabel">Stopped gaming</string>
-
-    <!-- BOARDGAME -->
-    <string name="boardgame_status_consumed_label">Played</string>
-    <string name="boardgame_status_consumed_sublabel">Finished playing</string>
-    <string name="boardgame_status_catalog_label">Catalog</string>
-    <string name="boardgame_status_catalog_sublabel">Plan to play</string>
-    <string name="boardgame_status_consuming_label">Playing</string>
-    <string name="boardgame_status_consuming_sublabel">Currently playing</string>
-    <string name="boardgame_status_dropped_label">Dropped</string>
-    <string name="boardgame_status_dropped_sublabel">Stopped playing</string>
-
-    <!-- BOOK -->
-    <string name="book_status_consumed_label">Read</string>
-    <string name="book_status_consumed_sublabel">Finished reading</string>
-    <string name="book_status_catalog_label">Catalog</string>
-    <string name="book_status_catalog_sublabel">Plan to read</string>
-    <string name="book_status_consuming_label">Reading</string>
-    <string name="book_status_consuming_sublabel">Currently reading</string>
-    <string name="book_status_dropped_label">Dropped</string>
-    <string name="book_status_dropped_sublabel">Stopped reading</string>
-
-    <!-- ALBUM -->
-    <string name="album_status_consumed_label">Listened</string>
-    <string name="album_status_consumed_sublabel">Finished listening</string>
-    <string name="album_status_catalog_label">Catalog</string>
-    <string name="album_status_catalog_sublabel">Plan to listen</string>
-    <string name="album_status_consuming_label">Listening</string>
-    <string name="album_status_consuming_sublabel">Currently listening</string>
-    <string name="album_status_dropped_label">Dropped</string>
-    <string name="album_status_dropped_sublabel">Stopped listening</string>
 
     <string name="no_title">No title</string>
     <string name="movie_network_error">This movie has been delayed… by bad internet.</string>
@@ -187,16 +102,32 @@
     <string name="review_title">Review</string>
     <string name="track_title">Track Status</string>
 
-    <string name="no_rating">No rating</string>
+    <string name="no_rating">No Rating</string>
     <string name="rating_one">Trash</string>
     <string name="rating_two">Alright</string>
-    <string name="rating_three">Good one</string>
-    <string name="rating_four">Very nice</string>
+    <string name="rating_three">Good One</string>
+    <string name="rating_four">Very Nice</string>
     <string name="rating_five">Masterpiece</string>
     <string name="rating_subtitle">%1$d/%2$d %3$s</string>
 
-    <string name="review_title_label">Write a review title...</string>
-    <string name="review_description_label">Write a review...</string>
+    <string name="review_title_label">Write a review title…</string>
+    <string name="review_description_label">Write a review…</string>
+
+    <!-- DETAIL FRIENDS ACTIVITY -->
+    <string name="detail_friends_activity_title">Friend's Activity</string>
+    <string name="recommendations_title">Recommendations</string>
+    <string name="trackings_title">Trackings</string>
+    <string name="recommendations_add_to_catalog_button">Add to Catalog</string>
+    <string name="detail_friends_activity_empty">No friend's activity yet</string>
+    <string name="detail_recommendation_added_to_catalog">Recommendation added to Catalog</string>
+    <string name="detail_recommendation_passed">Passed on recommendation</string>
+
+    <!-- DETAIL RECOMMEND -->
+    <string name="detail_recommend_title">Recommend</string>
+    <string name="detail_recommend_textfield_placeholder">Send a message…</string>
+    <string name="detail_recommend_previous">Recently Sent Recommendations</string>
+    <string name="detail_recommend_friends_empty">No friends to recommend to</string>
+    <string name="detail_recommendation_sent">Recommendation sent</string>
 
     <!-- DETAIL CONTENT -->
     <string name="ratings_overview">Ratings</string>
@@ -246,22 +177,6 @@
         <item quantity="other">%1$d Tracks</item>
     </plurals>
 
-    <!-- DETAIL FRIENDS ACTIVITY -->
-    <string name="detail_friends_activity_title">Friend's Activity</string>
-    <string name="recommendations_title">Recommendations</string>
-    <string name="trackings_title">Trackings</string>
-    <string name="recommendations_add_to_catalog_button">Add to Catalog</string>
-    <string name="detail_friends_activity_empty">No friend's activity yet</string>
-    <string name="detail_recommendation_added_to_catalog">Recommendation added to catalog</string>
-    <string name="detail_recommendation_passed">Passed on recommendation</string>
-
-    <!-- DETAIL RECOMMEND -->
-    <string name="detail_recommend_title">Recommend</string>
-    <string name="detail_recommend_textfield_placeholder">Send a message…</string>
-    <string name="detail_recommend_previous">Recently Sent Recommendations</string>
-    <string name="detail_recommend_friends_empty">No friends to recommend to</string>
-    <string name="detail_recommendation_sent">Recommendation sent</string>
-
     <!-- SHELF -->
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
     <string name="shelf_other_empty">This shelf is looking pretty empty, recommend them something!</string>
@@ -277,14 +192,101 @@
     <string name="settings_logout">Logout</string>
     <string name="settings_remove">Remove account</string>
 
+    <string name="settings_remove_confirm_title">Remove account?</string>
+    <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
+
     <string name="settings_username_taken">Username is already taken</string>
     <string name="settings_username_empty">Username cannot be empty</string>
+    <string name="settings_username_whitespace">Username cannot contain whitespaces</string>
     <string name="settings_username_too_long">Username should be less than 25 characters</string>
     <string name="settings_username_too_short">Username should be more than 5 characters</string>
     <string name="settings_account_data_saved">Account data saved</string>
 
-    <string name="settings_remove_confirm_title">Remove account?</string>
-    <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
+    <!-- MEDIA -->
+    <plurals name="movie">
+        <item quantity="one">Movie</item>
+        <item quantity="other">Movies</item>
+    </plurals>
+    <plurals name="show">
+        <item quantity="one">Show</item>
+        <item quantity="other">Shows</item>
+    </plurals>
+    <plurals name="book">
+        <item quantity="one">Book</item>
+        <item quantity="other">Books</item>
+    </plurals>
+    <plurals name="videogame">
+        <item quantity="one">Videogame</item>
+        <item quantity="other">Videogames</item>
+    </plurals>
+    <plurals name="boardgame">
+        <item quantity="one">Boardgame</item>
+        <item quantity="other">Boardgames</item>
+    </plurals>
+    <plurals name="album">
+        <item quantity="one">Album</item>
+        <item quantity="other">Albums</item>
+    </plurals>
+
+    <!-- MOVIE -->
+    <string name="movie_status_consuming_label">Watching</string>
+    <string name="movie_status_consuming_sublabel">Currently Watching</string>
+    <string name="movie_status_consumed_label">Watched</string>
+    <string name="movie_status_consumed_sublabel">Finished Watching</string>
+    <string name="movie_status_catalog_label">Catalog</string>
+    <string name="movie_status_catalog_sublabel">Plan To Watch</string>
+    <string name="movie_status_dropped_label">Dropped</string>
+    <string name="movie_status_dropped_sublabel">Stopped Watching</string>
+
+    <!-- SHOW -->
+    <string name="show_status_consumed_label">Binged</string>
+    <string name="show_status_consumed_sublabel">Finished Binging</string>
+    <string name="show_status_catalog_label">Catalog</string>
+    <string name="show_status_catalog_sublabel">Plan To Binge</string>
+    <string name="show_status_consuming_label">Binging</string>
+    <string name="show_status_consuming_sublabel">Currently Binging</string>
+    <string name="show_status_dropped_label">Dropped</string>
+    <string name="show_status_dropped_sublabel">Stopped Binging</string>
+
+    <!-- VIDEOGAME -->
+    <string name="videogame_status_consumed_label">Gamed</string>
+    <string name="videogame_status_consumed_sublabel">Finished Gaming</string>
+    <string name="videogame_status_catalog_label">Catalog</string>
+    <string name="videogame_status_catalog_sublabel">Plan To Game</string>
+    <string name="videogame_status_consuming_label">Gaming</string>
+    <string name="videogame_status_consuming_sublabel">Currently Gaming</string>
+    <string name="videogame_status_dropped_label">Dropped</string>
+    <string name="videogame_status_dropped_sublabel">Stopped Gaming</string>
+
+    <!-- BOARDGAME -->
+    <string name="boardgame_status_consumed_label">Played</string>
+    <string name="boardgame_status_consumed_sublabel">Finished Playing</string>
+    <string name="boardgame_status_catalog_label">Catalog</string>
+    <string name="boardgame_status_catalog_sublabel">Plan To Play</string>
+    <string name="boardgame_status_consuming_label">Playing</string>
+    <string name="boardgame_status_consuming_sublabel">Currently Playing</string>
+    <string name="boardgame_status_dropped_label">Dropped</string>
+    <string name="boardgame_status_dropped_sublabel">Stopped Playing</string>
+
+    <!-- BOOK -->
+    <string name="book_status_consumed_label">Read</string>
+    <string name="book_status_consumed_sublabel">Finished Reading</string>
+    <string name="book_status_catalog_label">Catalog</string>
+    <string name="book_status_catalog_sublabel">Plan To Read</string>
+    <string name="book_status_consuming_label">Reading</string>
+    <string name="book_status_consuming_sublabel">Currently Reading</string>
+    <string name="book_status_dropped_label">Dropped</string>
+    <string name="book_status_dropped_sublabel">Stopped Reading</string>
+
+    <!-- ALBUM -->
+    <string name="album_status_consumed_label">Listened</string>
+    <string name="album_status_consumed_sublabel">Finished Listening</string>
+    <string name="album_status_catalog_label">Catalog</string>
+    <string name="album_status_catalog_sublabel">Plan to Listen</string>
+    <string name="album_status_consuming_label">Listening</string>
+    <string name="album_status_consuming_sublabel">Currently Listening</string>
+    <string name="album_status_dropped_label">Dropped</string>
+    <string name="album_status_dropped_sublabel">Stopped Listening</string>
 
     <!-- NOTIFICATIONS -->
     <string name="notifications_new_recommendation_title">New Recommendation</string>
