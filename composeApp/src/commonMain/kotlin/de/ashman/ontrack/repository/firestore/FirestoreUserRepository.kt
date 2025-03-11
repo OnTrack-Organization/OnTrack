@@ -79,9 +79,15 @@ class FirestoreUserRepositoryImpl(
         val userId = auth.currentUser?.uid!!
 
         return try {
+            deleteSubcollectionDocuments("friends")
+            deleteSubcollectionDocuments("trackings")
+            deleteSubcollectionDocuments("recommendations")
+
             userCollection.document(userId).delete()
-            Logger.d("User deleted: $userId")
+
+            Logger.d("User and all subcollections deleted: $userId")
             true
+
         } catch (e: Exception) {
             Logger.e { "Error deleting user $userId: ${e.message}" }
             false
@@ -129,4 +135,25 @@ class FirestoreUserRepositoryImpl(
         auth.signOut()
         currentUserRepository.clearCurrentUser()
     }
+
+    private suspend fun deleteSubcollectionDocuments(subcollectionName: String) {
+        val userId = auth.currentUser?.uid!!
+        try {
+            val subcollectionRef = userCollection
+                .document(userId)
+                .collection(subcollectionName)
+
+            val documents = subcollectionRef.get().documents
+
+            for (doc in documents) {
+                doc.reference.delete()
+            }
+
+            Logger.d("Deleted subcollection $subcollectionName for user $userId")
+
+        } catch (e: Exception) {
+            Logger.e { "Error deleting subcollection $subcollectionName for user $userId: ${e.message}" }
+        }
+    }
+
 }
