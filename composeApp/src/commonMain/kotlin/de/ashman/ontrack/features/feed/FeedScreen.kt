@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,11 +23,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -61,13 +64,31 @@ fun FeedScreen(
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
 
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val listState = rememberLazyListState()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
-        feedViewModel.fetchTrackingFeed()
+        if (feedUiState.isFirstLaunch) {
+            feedViewModel.fetchInitialTrackingFeed()
+        }
     }
+
+    // Refresh when scrolling to bottom
+    LaunchedEffect(feedUiState.listState) {
+        snapshotFlow { feedUiState.listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                if (visibleItems.isNotEmpty() && visibleItems.last().index == feedUiState.feedTrackings.lastIndex) {
+                    feedViewModel.fetchNextPage()
+                }
+            }
+    }
+
+    // Scroll to top when refreshing
+   /* LaunchedEffect(feedUiState.feedTrackings) {
+        if (feedUiState.isRefreshing) {
+            feedUiState.listState.scrollToItem(0)
+        }
+    }*/
 
     LaunchedEffect(sharedUiState.snackbarMessage) {
         sharedUiState.snackbarMessage?.let {
@@ -75,16 +96,6 @@ fun FeedScreen(
             sharedUiManager.clearSnackbarMessage()
         }
     }
-
-    // TODO add again when using pagination and pull to refresh
-    /*LaunchedEffect(feedUiState.feedTrackings) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-            .collect { index ->
-                if (index != null && index >= feedUiState.feedTrackings.size - 1) {
-                    feedViewModel.fetchTrackingFeed()
-                }
-            }
-    }*/
 
     Scaffold(
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
@@ -103,72 +114,85 @@ fun FeedScreen(
             )
         },
     ) { contentPadding ->
-        /*PullToRefreshBox(
+        PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
-            isRefreshing = uiState.feedResultState == FeedResultState.Loading,
-            onRefresh = { viewModel.fetchTrackingFeed() },
-        ) {*/
-        if (feedUiState.feedTrackings.isEmpty()) {
-            EmptyFeed()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .padding(bottom = 80.dp),
-                contentPadding = PaddingValues(16.dp),
-                state = listState,
-            ) {
-                items(items = feedUiState.feedTrackings, key = { it.id }) {
-                    FeedCard(
-                        tracking = it,
-                        onLike = { feedViewModel.likeTracking(it) },
-                        onShowComments = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.COMMENTS) },
-                        onShowLikes = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.LIKES) },
-                        onClickCover = onClickCover,
-                        onClickUser = { onClickUser(it.userId) },
-                    )
+            isRefreshing = feedUiState.feedResultState == FeedResultState.Loading,
+            onRefresh = { feedViewModel.fetchInitialTrackingFeed() },
+        ) {
+            if (feedUiState.feedTrackings.isEmpty()) {
+                EmptyFeed()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(bottom = 80.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    state = feedUiState.listState,
+                ) {
+                    items(items = feedUiState.feedTrackings, key = { it.id }) {
+                        FeedCard(
+                            tracking = it,
+                            onLike = { feedViewModel.likeTracking(it) },
+                            onShowComments = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.COMMENTS) },
+                            onShowLikes = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.LIKES) },
+                            onClickCover = onClickCover,
+                            onClickUser = { onClickUser(it.userId) },
+                        )
 
-                    if (it != feedUiState.feedTrackings.last()) {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                        if (it != feedUiState.feedTrackings.last()) {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                        }
+                    }
+
+                    if (feedUiState.feedResultState == FeedResultState.LoadingMore) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
                     }
                 }
             }
-        }
 
-        if (sharedUiState.showSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { sharedUiManager.hideSheet() },
-                sheetState = bottomSheetState,
-                tonalElevation = 0.dp,
-            ) {
-                when (sharedUiState.currentSheet) {
-                    CurrentSheet.COMMENTS -> CommentsSheet(
-                        comments = feedUiState.selectedTracking?.comments ?: emptyList(),
-                        onAddComment = feedViewModel::addComment,
-                        onRemoveComment = feedViewModel::removeComment,
-                        onClickUser = { onClickUser(it) },
-                    )
-
-                    CurrentSheet.LIKES -> LikesSheet(
-                        likes = feedUiState.selectedTracking?.likes ?: emptyList(),
-                        onClickUser = { onClickUser(it) },
-                    )
-
-                    CurrentSheet.FRIENDS -> {
-                        FriendsSheet(
-                            uiState = friendsUiState,
-                            onRemoveFriend = friendsViewModel::removeFriend,
-                            onAcceptRequest = friendsViewModel::acceptRequest,
-                            onDeclineRequest = friendsViewModel::declineRequest,
-                            onCancelRequest = friendsViewModel::cancelRequest,
-                            onSendRequest = friendsViewModel::sendRequest,
+            if (sharedUiState.showSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { sharedUiManager.hideSheet() },
+                    sheetState = bottomSheetState,
+                    tonalElevation = 0.dp,
+                ) {
+                    when (sharedUiState.currentSheet) {
+                        CurrentSheet.COMMENTS -> CommentsSheet(
+                            comments = feedUiState.selectedTracking?.comments ?: emptyList(),
+                            onAddComment = feedViewModel::addComment,
+                            onRemoveComment = feedViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
-                            onQueryChanged = friendsViewModel::onQueryChanged,
-                            onSelectFriend = friendsViewModel::selectFriend,
                         )
-                    }
 
-                    else -> {}
+                        CurrentSheet.LIKES -> LikesSheet(
+                            likes = feedUiState.selectedTracking?.likes ?: emptyList(),
+                            onClickUser = { onClickUser(it) },
+                        )
+
+                        CurrentSheet.FRIENDS -> {
+                            FriendsSheet(
+                                uiState = friendsUiState,
+                                onRemoveFriend = friendsViewModel::removeFriend,
+                                onAcceptRequest = friendsViewModel::acceptRequest,
+                                onDeclineRequest = friendsViewModel::declineRequest,
+                                onCancelRequest = friendsViewModel::cancelRequest,
+                                onSendRequest = friendsViewModel::sendRequest,
+                                onClickUser = { onClickUser(it) },
+                                onQueryChanged = friendsViewModel::onQueryChanged,
+                                onSelectFriend = friendsViewModel::selectFriend,
+                            )
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }

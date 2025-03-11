@@ -93,7 +93,7 @@ val appModule = module {
     single<FirestoreUserRepository> { FirestoreUserRepositoryImpl(get(), get(), get()) }
     single<CurrentUserRepository> { CurrentUserRepositoryImpl() }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
-    single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
+    single<FeedRepository> { FeedRepositoryImpl(get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
@@ -103,7 +103,7 @@ val appModule = module {
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get()) }
-    viewModelDefinition { FeedViewModel(get(), get(), get(), get()) }
+    viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
