@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.mapNotNull
 
 interface FriendRepository {
     suspend fun searchForNewFriends(query: String, existingFriendsAndRequestIds: List<String>): List<Friend>
-    suspend fun getFriends(): Flow<List<Friend>>
-    suspend fun getReceivedRequests(): Flow<List<FriendRequest>>
-    suspend fun getSentRequests(): Flow<List<FriendRequest>>
+    suspend fun observeFriends(): Flow<List<Friend>>
+    suspend fun observeReceivedRequests(): Flow<List<FriendRequest>>
+    suspend fun observeSentRequests(): Flow<List<FriendRequest>>
 
     suspend fun removeFriend(friend: Friend)
 
@@ -66,21 +66,21 @@ class FriendRepositoryImpl(
         return results
     }
 
-    override suspend fun getFriends(): Flow<List<Friend>> {
+    override suspend fun observeFriends(): Flow<List<Friend>> {
         return userCollection.document(currentUserRepository.currentUserId)
             .collection("friends")
             .snapshots
             .mapNotNull { it.documents.map { it.data<FriendEntity>().toDomain() } }
     }
 
-    override suspend fun getReceivedRequests(): Flow<List<FriendRequest>> {
+    override suspend fun observeReceivedRequests(): Flow<List<FriendRequest>> {
         return userCollection.document(currentUserRepository.currentUserId)
             .collection("receivedRequests")
             .snapshots
             .mapNotNull { it.documents.map { it.data<FriendRequestEntity>().toDomain() } }
     }
 
-    override suspend fun getSentRequests(): Flow<List<FriendRequest>> {
+    override suspend fun observeSentRequests(): Flow<List<FriendRequest>> {
         return userCollection.document(currentUserRepository.currentUserId)
             .collection("sentRequests")
             .snapshots
@@ -103,6 +103,26 @@ class FriendRepositoryImpl(
         userCollection.document(friendRequest.userId)
             .collection("receivedRequests")
             .document(currentUserRepository.currentUserId).set(myRequest.toEntity())
+    }
+
+    override suspend fun declineRequest(friendRequest: FriendRequest) {
+        userCollection.document(currentUserRepository.currentUserId)
+            .collection("receivedRequests")
+            .document(friendRequest.userId).delete()
+
+        userCollection.document(friendRequest.userId)
+            .collection("sentRequests")
+            .document(currentUserRepository.currentUserId).delete()
+    }
+
+    override suspend fun cancelRequest(friendRequest: FriendRequest) {
+        userCollection.document(currentUserRepository.currentUserId)
+            .collection("sentRequests")
+            .document(friendRequest.userId).delete()
+
+        userCollection.document(friendRequest.userId)
+            .collection("receivedRequests")
+            .document(currentUserRepository.currentUserId).delete()
     }
 
     override suspend fun acceptRequest(friendRequest: FriendRequest) {
@@ -128,25 +148,5 @@ class FriendRepositoryImpl(
 
         userCollection.document(friendRequest.userId)
             .collection("friends").document(currentUserRepository.currentUserId).set(myself)
-    }
-
-    override suspend fun declineRequest(friendRequest: FriendRequest) {
-        userCollection.document(currentUserRepository.currentUserId)
-            .collection("receivedRequests")
-            .document(friendRequest.userId).delete()
-
-        userCollection.document(friendRequest.userId)
-            .collection("sentRequests")
-            .document(currentUserRepository.currentUserId).delete()
-    }
-
-    override suspend fun cancelRequest(friendRequest: FriendRequest) {
-        userCollection.document(currentUserRepository.currentUserId)
-            .collection("sentRequests")
-            .document(friendRequest.userId).delete()
-
-        userCollection.document(friendRequest.userId)
-            .collection("receivedRequests")
-            .document(currentUserRepository.currentUserId).delete()
     }
 }

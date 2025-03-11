@@ -52,9 +52,7 @@ fun SearchBar(
                 onQueryChange = { newQuery ->
                     onQueryChanged(newQuery)
                 },
-                onSearch = {
-                    closeKeyboard()
-                },
+                onSearch = { closeKeyboard() },
                 expanded = false,
                 onExpandedChange = { },
                 placeholder = { Text(stringResource(Res.string.search_placeholder, placeholder)) },

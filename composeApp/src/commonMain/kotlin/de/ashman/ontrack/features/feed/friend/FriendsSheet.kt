@@ -1,12 +1,12 @@
 package de.ashman.ontrack.features.feed.friend
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,11 +47,9 @@ fun FriendsSheet(
     var showFriendRemoveConfirmDialog by remember { mutableStateOf(false) }
 
     val localFocusManager = LocalFocusManager.current
-    val listState = rememberLazyListState()
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     localFocusManager.clearFocus()
@@ -67,61 +65,56 @@ fun FriendsSheet(
             closeKeyboard = { localFocusManager.clearFocus() },
         )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            state = listState,
-        ) {
-            item {
-                when (uiState.resultState) {
-                    FriendsResultState.Friends -> {
-                        FriendsAndRequests(
-                            receivedRequests = uiState.receivedRequests,
-                            sentRequests = uiState.sentRequests,
-                            friends = uiState.friends,
-                            onAcceptRequest = onAcceptRequest,
-                            onDenyRequest = onDeclineRequest,
-                            onCancelRequest = onCancelRequest,
-                            onRemoveFriend = {
-                                onSelectFriend(it)
-                                showFriendRemoveConfirmDialog = true
-                            },
-                            onClickUser = onClickUser,
-                        )
-                    }
+        AnimatedContent(uiState.resultState) { state ->
+            when (state) {
+                FriendsResultState.Friends -> {
+                    FriendsAndRequests(
+                        receivedRequests = uiState.receivedRequests,
+                        sentRequests = uiState.sentRequests,
+                        friends = uiState.friends,
+                        onAcceptRequest = onAcceptRequest,
+                        onDenyRequest = onDeclineRequest,
+                        onCancelRequest = onCancelRequest,
+                        onRemoveFriend = {
+                            onSelectFriend(it)
+                            showFriendRemoveConfirmDialog = true
+                        },
+                        onClickUser = onClickUser,
+                    )
+                }
 
-                    FriendsResultState.FriendsEmpty -> {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            text = stringResource(Res.string.feed_no_friends_and_potential),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                FriendsResultState.FriendsEmpty -> {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = stringResource(Res.string.feed_no_friends_and_potential),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
-                    FriendsResultState.Potential -> {
-                        PotentialFriends(
-                            potentialFriends = uiState.potentialFriends,
-                            sentRequests = uiState.sentRequests,
-                            onCancelRequest = onCancelRequest,
-                            onSendRequest = onSendRequest,
-                            onClickUser = onClickUser,
-                        )
-                    }
+                FriendsResultState.Potential -> {
+                    PotentialFriends(
+                        potentialFriends = uiState.potentialFriends,
+                        sentRequests = uiState.sentRequests,
+                        onCancelRequest = onCancelRequest,
+                        onSendRequest = onSendRequest,
+                        onClickUser = onClickUser,
+                    )
+                }
 
-                    FriendsResultState.PotentialEmpty -> {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            text = stringResource(Res.string.feed_no_potential_friends),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                FriendsResultState.PotentialEmpty -> {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = stringResource(Res.string.feed_no_potential_friends),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
@@ -146,26 +139,31 @@ fun PotentialFriends(
     onCancelRequest: (FriendRequest) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
-    Text(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        text = stringResource(Res.string.feed_potential_friends),
-        style = MaterialTheme.typography.titleMedium,
-    )
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = stringResource(Res.string.feed_potential_friends),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
 
-    potentialFriends.forEach { friend ->
-        val isRequestSent = sentRequests.any { it.userId == friend.id }
+        items(potentialFriends.size) { index ->
+            val friend = potentialFriends[index]
+            val isRequestSent = sentRequests.any { it.userId == friend.id }
 
-        PotentialFriendCard(
-            imageUrl = friend.imageUrl,
-            username = friend.username,
-            name = friend.name,
-            onClickUser = { onClickUser(friend.id) },
-            onSendRequest = {
-                onSendRequest(friend.toRequest())
-            },
-            onCancelRequest = { onCancelRequest(friend.toRequest()) },
-            isFriendRequestSent = isRequestSent,
-        )
+            PotentialFriendCard(
+                imageUrl = friend.imageUrl,
+                username = friend.username,
+                name = friend.name,
+                onClickUser = { onClickUser(friend.id) },
+                onSendRequest = { onSendRequest(friend.toRequest()) },
+                onCancelRequest = { onCancelRequest(friend.toRequest()) },
+                isFriendRequestSent = isRequestSent,
+            )
+        }
     }
 }
 
@@ -180,70 +178,86 @@ fun FriendsAndRequests(
     onRemoveFriend: (Friend) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
-    if (receivedRequests.isNotEmpty()) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_received_requests),
-            style = MaterialTheme.typography.titleMedium,
-        )
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (receivedRequests.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = stringResource(Res.string.feed_received_requests),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
 
-        receivedRequests.forEach {
-            ReceivedFriendRequestCard(
-                imageUrl = it.imageUrl,
-                username = it.name,
-                name = it.name,
-                onClickUser = { onClickUser(it.userId) },
-                onAcceptRequest = { onAcceptRequest(it) },
-                onDenyRequest = { onDenyRequest(it) },
-            )
+            items(receivedRequests.size) { index ->
+                val request = receivedRequests[index]
+                ReceivedFriendRequestCard(
+                    imageUrl = request.imageUrl,
+                    username = request.username,
+                    name = request.name,
+                    onClickUser = { onClickUser(request.userId) },
+                    onAcceptRequest = { onAcceptRequest(request) },
+                    onDenyRequest = { onDenyRequest(request) },
+                )
+            }
         }
-    }
 
-    if (friends.isNotEmpty()) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_friends),
-            style = MaterialTheme.typography.titleMedium,
-        )
+        if (friends.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = stringResource(Res.string.feed_friends),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
 
-        friends.forEach {
-            CurrentFriendCard(
-                imageUrl = it.imageUrl,
-                username = it.username,
-                name = it.name,
-                onClickUser = { onClickUser(it.id) },
-                onRemoveFriend = { onRemoveFriend(it) },
-            )
+            items(friends.size) { index ->
+                val friend = friends[index]
+                CurrentFriendCard(
+                    imageUrl = friend.imageUrl,
+                    username = friend.username,
+                    name = friend.name,
+                    onClickUser = { onClickUser(friend.id) },
+                    onRemoveFriend = { onRemoveFriend(friend) },
+                )
+            }
         }
-    }
 
-    if (sentRequests.isNotEmpty()) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_sent_requests),
-            style = MaterialTheme.typography.titleMedium,
-        )
+        if (sentRequests.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = stringResource(Res.string.feed_sent_requests),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
 
-        sentRequests.forEach {
-            SentFriendRequestCard(
-                imageUrl = it.imageUrl,
-                username = it.username,
-                name = it.name,
-                onClickUser = { onClickUser(it.userId) },
-                onCancelRequest = { onCancelRequest(it) },
-            )
+            items(sentRequests.size) { index ->
+                val request = sentRequests[index]
+                SentFriendRequestCard(
+                    imageUrl = request.imageUrl,
+                    username = request.username,
+                    name = request.name,
+                    onClickUser = { onClickUser(request.userId) },
+                    onCancelRequest = { onCancelRequest(request) },
+                )
+            }
         }
-    }
 
-    if (friends.isEmpty() && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = stringResource(Res.string.feed_no_friends_and_potential),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        if (friends.isEmpty() && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    text = stringResource(Res.string.feed_no_friends_and_potential),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
+

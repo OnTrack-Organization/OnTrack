@@ -95,9 +95,9 @@ class FriendsViewModel(
     }
 
     private fun observeFriendsAndRequests() = viewModelScope.launch {
-        launch { friendRepository.getFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } } }
-        launch { friendRepository.getReceivedRequests().collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests) } } }
-        launch { friendRepository.getSentRequests().collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests) } } }
+        launch { friendRepository.observeFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } } }
+        launch { friendRepository.observeReceivedRequests().collect { receivedRequests -> _uiState.update { it.copy(receivedRequests = receivedRequests) } } }
+        launch { friendRepository.observeSentRequests().collect { sentRequests -> _uiState.update { it.copy(sentRequests = sentRequests) } } }
     }.invokeOnCompletion {
         updateFriendsResultState()
     }

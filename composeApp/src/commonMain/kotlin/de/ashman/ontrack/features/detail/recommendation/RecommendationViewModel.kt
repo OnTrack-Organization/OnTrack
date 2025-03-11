@@ -44,7 +44,7 @@ class RecommendationViewModel(
     }
 
     fun fetchFriends() = viewModelScope.launch {
-        friendRepository.getFriends()
+        friendRepository.observeFriends()
             .collect { friends ->
                 _uiState.update { it.copy(friends = friends) }
             }
