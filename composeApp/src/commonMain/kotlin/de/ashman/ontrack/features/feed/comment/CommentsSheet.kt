@@ -227,7 +227,7 @@ fun CommentCard(
                             onShowRemoveCommentConfirmDialog()
                         }
                     },
-                ) else Modifier
+                ) else modifier
             ),
     ) {
         Column(
