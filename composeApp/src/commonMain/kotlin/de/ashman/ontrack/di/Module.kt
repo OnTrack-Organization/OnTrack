@@ -103,7 +103,7 @@ val appModule = module {
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get()) }
-    viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }

@@ -84,11 +84,11 @@ fun FeedScreen(
     }
 
     // Scroll to top when refreshing
-   /* LaunchedEffect(feedUiState.feedTrackings) {
-        if (feedUiState.isRefreshing) {
-            feedUiState.listState.scrollToItem(0)
-        }
-    }*/
+    /* LaunchedEffect(feedUiState.feedTrackings) {
+         if (feedUiState.isRefreshing) {
+             feedUiState.listState.scrollToItem(0)
+         }
+     }*/
 
     LaunchedEffect(sharedUiState.snackbarMessage) {
         sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
@@ -131,8 +131,20 @@ fun FeedScreen(
                         FeedCard(
                             tracking = it,
                             onLike = { feedViewModel.likeTracking(it) },
-                            onShowComments = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.COMMENTS) },
-                            onShowLikes = { feedViewModel.selectTrackingAndShowSheet(it.id, CurrentSheet.LIKES) },
+                            onShowComments = {
+                                feedViewModel.selectTrackingAndShowSheet(
+                                    userId = it.userId,
+                                    trackingId = it.id,
+                                    currentSheet = CurrentSheet.COMMENTS
+                                )
+                            },
+                            onShowLikes = {
+                                feedViewModel.selectTrackingAndShowSheet(
+                                    userId = it.userId,
+                                    trackingId = it.id,
+                                    currentSheet = CurrentSheet.LIKES
+                                )
+                            },
                             onClickCover = onClickCover,
                             onClickUser = { onClickUser(it.userId) },
                         )

@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.feed.like
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,11 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.features.common.PersonImage
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_likes
+import ontrack.composeapp.generated.resources.feed_no_likes
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -39,15 +42,34 @@ fun LikesSheet(
             style = MaterialTheme.typography.titleMedium,
         )
 
-        LazyColumn(
-            state = listState,
-        ) {
-            items(items = likes, key = { it.userId }) {
-                LikeCard(
-                    userImageUrl = it.userImageUrl,
-                    name = it.name,
-                    onClick = { onClickUser(it.userId) },
-                )
+        AnimatedContent(
+            targetState = likes.isNotEmpty(),
+            label = "Likes List Animation"
+        ) { hasLikes ->
+            LazyColumn(
+                state = listState,
+            ) {
+                if (!hasLikes) {
+                    item {
+                        Text(
+                            text = stringResource(Res.string.feed_no_likes),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    items(items = likes, key = { it.userId }) {
+                        LikeCard(
+                            userImageUrl = it.userImageUrl,
+                            name = it.name,
+                            onClick = { onClickUser(it.userId) },
+                        )
+                    }
+                }
             }
         }
     }

@@ -22,6 +22,8 @@ interface TrackingRepository {
     suspend fun saveTracking(tracking: Tracking)
     suspend fun removeTracking(trackingId: String, ratingId: String)
 
+    suspend fun fetchTrackingById(userId: String, trackingId: String): Tracking?
+
     fun observeTrackings(userId: String): Flow<List<Tracking>>
     fun observeTracking(trackingId: String): Flow<Tracking?>
 
@@ -67,6 +69,21 @@ class TrackingRepositoryImpl(
 
         // Remove rating as well
         removeRating(ratingId)
+    }
+
+    override suspend fun fetchTrackingById(userId: String, trackingId: String): Tracking? {
+        val trackingRef = trackingCollection(userId)
+            .document(trackingId)
+
+        val snapshot = trackingRef.get()
+
+        return if (!snapshot.exists) {
+            Logger.i("Tracking not found for userId: $userId and trackingId: $trackingId")
+            null
+        } else {
+            Logger.d("Tracking fetched for userId: $userId and trackingId: $trackingId")
+            snapshot.data<TrackingEntity>().toDomain()
+        }
     }
 
     override fun observeTracking(trackingId: String): Flow<Tracking?> {

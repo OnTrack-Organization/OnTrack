@@ -14,6 +14,7 @@ import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FeedRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
+import de.ashman.ontrack.repository.firestore.TrackingRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,6 +32,7 @@ import org.jetbrains.compose.resources.getString
 
 class FeedViewModel(
     private val feedRepository: FeedRepository,
+    private val trackingRepository: TrackingRepository,
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val currentUserRepository: CurrentUserRepository,
@@ -167,9 +169,26 @@ class FeedViewModel(
         _uiState.update { it.copy(feedTrackings = updatedTrackings) }
     }
 
-    fun selectTrackingAndShowSheet(trackingId: String, currentSheet: CurrentSheet) {
+    fun selectTrackingAndShowSheet(userId: String, trackingId: String, currentSheet: CurrentSheet) {
         _uiState.update { it.copy(selectedTrackingId = trackingId) }
-        sharedUiManager.showSheet(currentSheet)
+
+        viewModelScope.launch {
+            refreshTracking(userId = userId, trackingId = trackingId)
+            sharedUiManager.showSheet(currentSheet)
+        }
+    }
+
+    private fun refreshTracking(userId: String, trackingId: String) = viewModelScope.launch {
+        val refreshedTracking = trackingRepository.fetchTrackingById(userId = userId, trackingId = trackingId)
+        if (refreshedTracking != null) {
+            _uiState.update { state ->
+                state.copy(
+                    feedTrackings = state.feedTrackings.map {
+                        if (it.id == trackingId) refreshedTracking else it
+                    }
+                )
+            }
+        }
     }
 
     fun clearViewModel() {

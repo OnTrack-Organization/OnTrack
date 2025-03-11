@@ -61,6 +61,7 @@
     <string name="feed_remove_comment_confirm_text">Are you sure you want to remove this comment?</string>
 
     <string name="feed_likes">Likes</string>
+    <string name="feed_no_likes">No likes yet. Be the first to like!</string>
 
     <plurals name="feed_likes_count">
         <item quantity="one">%1$s Like</item>
