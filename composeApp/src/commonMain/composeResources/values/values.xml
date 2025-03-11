@@ -234,7 +234,7 @@
     <string name="movie_status_consumed_label">Watched</string>
     <string name="movie_status_consumed_sublabel">Finished Watching</string>
     <string name="movie_status_catalog_label">Catalog</string>
-    <string name="movie_status_catalog_sublabel">Plan To Watch</string>
+    <string name="movie_status_catalog_sublabel">Plan to Watch</string>
     <string name="movie_status_dropped_label">Dropped</string>
     <string name="movie_status_dropped_sublabel">Stopped Watching</string>
 
@@ -242,7 +242,7 @@
     <string name="show_status_consumed_label">Binged</string>
     <string name="show_status_consumed_sublabel">Finished Binging</string>
     <string name="show_status_catalog_label">Catalog</string>
-    <string name="show_status_catalog_sublabel">Plan To Binge</string>
+    <string name="show_status_catalog_sublabel">Plan to Binge</string>
     <string name="show_status_consuming_label">Binging</string>
     <string name="show_status_consuming_sublabel">Currently Binging</string>
     <string name="show_status_dropped_label">Dropped</string>
@@ -252,7 +252,7 @@
     <string name="videogame_status_consumed_label">Gamed</string>
     <string name="videogame_status_consumed_sublabel">Finished Gaming</string>
     <string name="videogame_status_catalog_label">Catalog</string>
-    <string name="videogame_status_catalog_sublabel">Plan To Game</string>
+    <string name="videogame_status_catalog_sublabel">Plan to Game</string>
     <string name="videogame_status_consuming_label">Gaming</string>
     <string name="videogame_status_consuming_sublabel">Currently Gaming</string>
     <string name="videogame_status_dropped_label">Dropped</string>
@@ -262,7 +262,7 @@
     <string name="boardgame_status_consumed_label">Played</string>
     <string name="boardgame_status_consumed_sublabel">Finished Playing</string>
     <string name="boardgame_status_catalog_label">Catalog</string>
-    <string name="boardgame_status_catalog_sublabel">Plan To Play</string>
+    <string name="boardgame_status_catalog_sublabel">Plan to Play</string>
     <string name="boardgame_status_consuming_label">Playing</string>
     <string name="boardgame_status_consuming_sublabel">Currently Playing</string>
     <string name="boardgame_status_dropped_label">Dropped</string>
@@ -272,7 +272,7 @@
     <string name="book_status_consumed_label">Read</string>
     <string name="book_status_consumed_sublabel">Finished Reading</string>
     <string name="book_status_catalog_label">Catalog</string>
-    <string name="book_status_catalog_sublabel">Plan To Read</string>
+    <string name="book_status_catalog_sublabel">Plan to Read</string>
     <string name="book_status_consuming_label">Reading</string>
     <string name="book_status_consuming_sublabel">Currently Reading</string>
     <string name="book_status_dropped_label">Dropped</string>
