@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.detail.tracking
+package de.ashman.ontrack.features.detail.review
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable

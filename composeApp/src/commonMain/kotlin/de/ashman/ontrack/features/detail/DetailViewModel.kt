@@ -23,6 +23,7 @@ import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.util.getSingularTitle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -129,10 +130,6 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        trackingRepository.saveTracking(tracking)
-
-        _uiState.update { it.copy(selectedTracking = tracking) }
-
         sharedUiManager.hideSheetAndShowSnackbar(
             getString(
                 resource = Res.string.tracking_saved,
@@ -140,15 +137,17 @@ class DetailViewModel(
                 getString(tracking.status?.getLabel(tracking.mediaType)!!)
             )
         )
+
+        delay(500L)
+
+        _uiState.update { it.copy(selectedTracking = tracking) }
+
+        trackingRepository.saveTracking(tracking)
     }
 
     fun removeTracking(trackingId: String) = viewModelScope.launch {
         val media = _uiState.value.selectedMedia ?: return@launch
         val tracking = _uiState.value.selectedTracking ?: return@launch
-
-        trackingRepository.removeTracking(trackingId = trackingId, ratingId = "${media.mediaType}_${media.id}")
-
-        _uiState.update { it.copy(selectedTracking = null) }
 
         sharedUiManager.hideSheetAndShowSnackbar(
             getString(
@@ -157,6 +156,10 @@ class DetailViewModel(
                 getString(tracking.status?.getLabel(tracking.mediaType)!!)
             )
         )
+
+        _uiState.update { it.copy(selectedTracking = null) }
+
+        trackingRepository.removeTracking(trackingId = trackingId, ratingId = "${media.mediaType}_${media.id}")
     }
 
     fun addRecommendationToCatalog() = viewModelScope.launch {
