@@ -178,9 +178,7 @@ fun FriendsAndRequests(
     onRemoveFriend: (Friend) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    LazyColumn {
         if (receivedRequests.isNotEmpty()) {
             item {
                 Text(

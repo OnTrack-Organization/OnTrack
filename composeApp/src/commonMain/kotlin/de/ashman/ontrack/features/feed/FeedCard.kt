@@ -73,7 +73,9 @@ fun FeedCard(
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ){
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(32.dp),
