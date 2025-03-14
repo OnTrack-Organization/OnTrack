@@ -1,4 +1,3 @@
-
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -15,6 +14,66 @@ plugins {
     alias(libs.plugins.crashlytics)
     id("kotlin-parcelize")
     id("kotlin-kapt")
+}
+
+version = "2.0.0"
+
+android {
+    namespace = "de.ashman.ontrack"
+    compileSdk = 35
+
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+
+    defaultConfig {
+        applicationId = "de.ashman.ontrack"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 10
+        versionName = version.toString()
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                file("proguard-rules.pro")
+            )
+
+            signingConfig = signingConfigs.getByName("debug")
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    dependencies {
+        debugImplementation(compose.uiTooling)
+    }
 }
 
 kotlin {
@@ -118,98 +177,41 @@ kotlin {
     }
 }
 
-android {
-    namespace = "de.ashman.ontrack"
-    compileSdk = 35
-
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
-    defaultConfig {
-        applicationId = "de.ashman.ontrack"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 7
-        versionName = "1.6"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = false
-            isShrinkResources = false
-        }
-        getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                file("proguard-rules.pro")
-            )
-
-            signingConfig = signingConfigs.getByName("debug")
-
-            ndk {
-                debugSymbolLevel = "FULL"
-            }
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    buildFeatures {
-        compose = true
-    }
-    dependencies {
-        debugImplementation(compose.uiTooling)
-    }
-}
-
 buildkonfig {
     packageName = "de.ashman.ontrack"
 
     defaultConfigs {
         buildConfigField(
+            type = STRING,
+            name = "APP_VERSION",
+            value = version.toString()
+        )
+
+        buildConfigField(
             STRING,
             "GOOGLE_AUTH_CLIENT_ID",
             gradleLocalProperties(rootDir, providers).getProperty("google_auth_client_id").orEmpty()
         )
-    }
-    defaultConfigs {
         buildConfigField(
             STRING,
             "TMDB_API_KEY",
             gradleLocalProperties(rootDir, providers).getProperty("tmdb_api_key").orEmpty()
         )
-    }
-    defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_ID",
             gradleLocalProperties(rootDir, providers).getProperty("twitch_client_id").orEmpty()
         )
-    }
-    defaultConfigs {
         buildConfigField(
             STRING,
             "TWITCH_CLIENT_SECRET",
             gradleLocalProperties(rootDir, providers).getProperty("twitch_client_secret").orEmpty()
         )
-    }
-    defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_ID",
             gradleLocalProperties(rootDir, providers).getProperty("spotify_client_id").orEmpty()
         )
-    }
-    defaultConfigs {
         buildConfigField(
             STRING,
             "SPOTIFY_CLIENT_SECRET",

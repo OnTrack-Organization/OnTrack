@@ -19,6 +19,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.features.common.ImagePicker
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
@@ -41,6 +43,7 @@ import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.app_version
 import ontrack.composeapp.generated.resources.remove_button
 import ontrack.composeapp.generated.resources.save_button
 import ontrack.composeapp.generated.resources.settings_email_hint
@@ -161,6 +164,7 @@ fun SettingsScreen(
                         )
                     }
                     ApiContributions()
+                    AppVersion()
                 }
             }
         }
@@ -189,4 +193,9 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+@Composable
+fun AppVersion() {
+    Text(stringResource(Res.string.app_version, BuildKonfig.APP_VERSION))
 }
