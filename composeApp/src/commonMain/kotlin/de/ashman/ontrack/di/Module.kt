@@ -25,6 +25,7 @@ import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
+import de.ashman.ontrack.features.settings.UsernameValidationUseCase
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.notification.NotificationService
@@ -52,6 +53,7 @@ import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
@@ -100,6 +102,10 @@ val appModule = module {
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
 
     single { SharedUiManager() }
+
+    // USE CASES
+    singleOf(::UsernameValidationUseCase)
+
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get()) }
@@ -110,8 +116,8 @@ val appModule = module {
     viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfViewModel(get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
-    viewModelDefinition { SettingsViewModel(get(), get(), get(), get()) }
-    viewModelDefinition { SetupViewModel(get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { SetupViewModel(get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

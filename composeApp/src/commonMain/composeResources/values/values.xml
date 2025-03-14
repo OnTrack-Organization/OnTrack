@@ -201,6 +201,8 @@
     <string name="settings_username_whitespace">Username cannot contain whitespaces</string>
     <string name="settings_username_too_long">Username should be less than 25 characters</string>
     <string name="settings_username_too_short">Username should be more than 5 characters</string>
+    <string name="settings_username_invalid_characters">Username has invalid characters</string>
+    <string name="settings_username_uppercase">Username cannot contain uppercase letters</string>
     <string name="settings_account_data_saved">Account data saved</string>
 
     <!-- MEDIA -->

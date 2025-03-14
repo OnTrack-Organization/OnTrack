@@ -70,9 +70,11 @@ import ontrack.composeapp.generated.resources.rating_subtitle
 import ontrack.composeapp.generated.resources.rating_three
 import ontrack.composeapp.generated.resources.rating_two
 import ontrack.composeapp.generated.resources.settings_username_empty
+import ontrack.composeapp.generated.resources.settings_username_invalid_characters
 import ontrack.composeapp.generated.resources.settings_username_taken
 import ontrack.composeapp.generated.resources.settings_username_too_long
 import ontrack.composeapp.generated.resources.settings_username_too_short
+import ontrack.composeapp.generated.resources.settings_username_uppercase
 import ontrack.composeapp.generated.resources.settings_username_whitespace
 import ontrack.composeapp.generated.resources.show_status_catalog_label
 import ontrack.composeapp.generated.resources.show_status_catalog_sublabel
@@ -118,6 +120,8 @@ fun UsernameError.getLabel(): StringResource {
         UsernameError.TAKEN -> Res.string.settings_username_taken
         UsernameError.TOO_LONG -> Res.string.settings_username_too_long
         UsernameError.TOO_SHORT -> Res.string.settings_username_too_short
+        UsernameError.INVALID_CHARACTERS -> Res.string.settings_username_invalid_characters
+        UsernameError.NO_UPPERCASE -> Res.string.settings_username_uppercase
     }
 }
 

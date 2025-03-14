@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.settings.UsernameError
+import de.ashman.ontrack.features.settings.UsernameValidationResult
+import de.ashman.ontrack.features.settings.UsernameValidationUseCase
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 class SetupViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
+    private val usernameValidation: UsernameValidationUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SetupUiState())
     val uiState: StateFlow<SetupUiState> = _uiState
@@ -42,28 +45,10 @@ class SetupViewModel(
         val newName = _uiState.value.name
         val newImage = _uiState.value.imageUrl
 
-        if (newUsername.isBlank()) {
-            _uiState.update { it.copy(usernameError = UsernameError.EMPTY) }
-            return false
-        }
+        val result = usernameValidation.validate(newUsername)
 
-        if (newUsername.contains(" ")) {
-            _uiState.update { it.copy(usernameError = UsernameError.WHITESPACE) }
-            return false
-        }
-
-        if (newUsername.length < 5) {
-            _uiState.update { it.copy(usernameError = UsernameError.TOO_SHORT) }
-            return false
-        }
-
-        if (newUsername.length > 25) {
-            _uiState.update { it.copy(usernameError = UsernameError.TOO_LONG) }
-            return false
-        }
-
-        if (firestoreUserRepository.isUsernameTaken(newUsername)) {
-            _uiState.update { it.copy(usernameError = UsernameError.TAKEN) }
+        if (result is UsernameValidationResult.Invalid) {
+            _uiState.update { it.copy(usernameError = result.error) }
             return false
         }
 

@@ -24,6 +24,7 @@ class SettingsViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
     private val sharedUiManager: SharedUiManager,
+    private val usernameValidation: UsernameValidationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -66,32 +67,11 @@ class SettingsViewModel(
         val newUsername = _uiState.value.username
         val newName = _uiState.value.name
 
-        // Validate username only if it has changed
-        if (currentUser.username != newUsername) {
-            if (newUsername.isBlank()) {
-                _uiState.update { it.copy(usernameError = UsernameError.EMPTY) }
-                return@launch
-            }
+        val result = usernameValidation.validate(newUsername, currentUser.username)
 
-            if (newUsername.contains(" ")) {
-                _uiState.update { it.copy(usernameError = UsernameError.WHITESPACE) }
-                return@launch
-            }
-
-            if (newUsername.length < 5) {
-                _uiState.update { it.copy(usernameError = UsernameError.TOO_SHORT) }
-                return@launch
-            }
-
-            if (newUsername.length > 25) {
-                _uiState.update { it.copy(usernameError = UsernameError.TOO_LONG) }
-                return@launch
-            }
-
-            if (firestoreUserRepository.isUsernameTaken(newUsername)) {
-                _uiState.update { it.copy(usernameError = UsernameError.TAKEN) }
-                return@launch
-            }
+        if (result is UsernameValidationResult.Invalid) {
+            _uiState.update { it.copy(usernameError = result.error) }
+            return@launch
         }
 
         firestoreUserRepository.updateUser(
@@ -151,11 +131,3 @@ data class SettingsUiState(
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
 )
-
-enum class UsernameError {
-    EMPTY,
-    WHITESPACE,
-    TAKEN,
-    TOO_LONG,
-    TOO_SHORT,
-}
