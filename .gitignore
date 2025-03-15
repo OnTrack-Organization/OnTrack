@@ -13,6 +13,7 @@ local.properties
 captures
 .externalNativeBuild
 .cxx
+.editorconfig
 
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
