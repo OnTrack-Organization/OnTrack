@@ -102,6 +102,8 @@ class SettingsViewModel(
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
+
         val currentUser = _uiState.value.user ?: return@launch
         bytes ?: return@launch
 
@@ -111,7 +113,7 @@ class SettingsViewModel(
             currentUser.copy(imageUrl = imageUrl)
         )
 
-        _uiState.update { it.copy(imageUrl = imageUrl) }
+        _uiState.update { it.copy(imageUrl = imageUrl, imageUploadState = ImageUploadState.Success) }
     }
 
     fun clearUnsavedChanges() {
@@ -130,4 +132,11 @@ data class SettingsUiState(
     val email: String = "",
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
+    val imageUploadState: ImageUploadState = ImageUploadState.Idle,
 )
+
+enum class ImageUploadState {
+    Idle,
+    Uploading,
+    Success
+}

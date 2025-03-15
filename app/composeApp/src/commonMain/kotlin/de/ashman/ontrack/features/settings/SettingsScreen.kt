@@ -111,6 +111,7 @@ fun SettingsScreen(
                 ) {
                     ImagePicker(
                         imageUrl = uiState.imageUrl,
+                        imageUploadState = uiState.imageUploadState,
                         onImagePicked = viewModel::onImagePicked,
                     )
 

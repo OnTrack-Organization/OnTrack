@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.settings.ImageUploadState
 import de.ashman.ontrack.features.settings.UsernameError
 import de.ashman.ontrack.features.settings.UsernameValidationResult
 import de.ashman.ontrack.features.settings.UsernameValidationUseCase
@@ -68,10 +69,12 @@ class SetupViewModel(
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
         bytes ?: return@launch
 
         val imageUrl = storageRepository.uploadUserImage(bytes)
-        _uiState.update { it.copy(imageUrl = imageUrl) }
+
+        _uiState.update { it.copy(imageUrl = imageUrl, imageUploadState = ImageUploadState.Success) }
     }
 
     fun onNameChange(name: String) {
@@ -97,4 +100,5 @@ data class SetupUiState(
     val username: String = "",
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
+    val imageUploadState: ImageUploadState = ImageUploadState.Idle,
 )

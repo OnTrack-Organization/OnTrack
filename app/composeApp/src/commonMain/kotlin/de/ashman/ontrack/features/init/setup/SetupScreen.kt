@@ -31,6 +31,7 @@ import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.getLabel
+import de.ashman.ontrack.features.settings.ImageUploadState
 import kotlinx.coroutines.launch
 import ontrack.app.composeapp.generated.resources.Res
 import ontrack.app.composeapp.generated.resources.settings_name_hint
@@ -95,6 +96,7 @@ fun SetupScreen(
 
                 ImagePicker(
                     imageUrl = uiState.imageUrl,
+                    imageUploadState = uiState.imageUploadState,
                     onImagePicked = viewModel::onImagePicked,
                 )
 
@@ -112,6 +114,11 @@ fun SetupScreen(
                     onValueChange = viewModel::onUsernameChange,
                 )
 
+                val startButtonEnabled = uiState.name.isNotBlank() &&
+                        uiState.username.isNotBlank() &&
+                        uiState.usernameError == null &&
+                        uiState.imageUploadState != ImageUploadState.Uploading
+
                 OnTrackButton(
                     text = Res.string.start_button,
                     icon = Icons.Default.Celebration,
@@ -124,7 +131,7 @@ fun SetupScreen(
                             }
                         }
                     },
-                    enabled = uiState.name.isNotBlank() && uiState.username.isNotBlank() && uiState.usernameError == null,
+                    enabled = startButtonEnabled,
                 )
             }
         }

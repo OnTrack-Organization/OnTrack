@@ -47,6 +47,7 @@ import de.ashman.ontrack.domain.media.Franchise
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.Season
 import de.ashman.ontrack.features.detail.components.MediaTitle
+import de.ashman.ontrack.features.settings.ImageUploadState
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
@@ -126,7 +127,7 @@ fun MediaPoster(
                             }
                         }
 
-                        else -> { }
+                        else -> {}
                     }
                 }
             }
@@ -250,8 +251,9 @@ fun MediaPosterRow(
 fun PersonImage(
     userImageUrl: String?,
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
+    isUploading: Boolean = false,
     size: Dp = 48.dp,
+    modifier: Modifier = Modifier,
 ) {
     val painter = rememberAsyncImagePainter(userImageUrl)
     val interactionSource = remember { MutableInteractionSource() }
@@ -273,17 +275,22 @@ fun PersonImage(
     ) {
         val state = painter.state.collectAsState().value
 
-        when (state) {
-            is AsyncImagePainter.State.Empty -> Unit
-            is AsyncImagePainter.State.Loading -> {
+        when {
+            isUploading -> {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .padding(iconPadding)
                         .fillMaxSize()
                 )
             }
 
-            is AsyncImagePainter.State.Success -> {
+            state is AsyncImagePainter.State.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+
+            state is AsyncImagePainter.State.Success -> {
                 Image(
                     painter = painter,
                     contentScale = ContentScale.Crop,
@@ -292,7 +299,7 @@ fun PersonImage(
                 )
             }
 
-            is AsyncImagePainter.State.Error -> {
+            state is AsyncImagePainter.State.Error || state is AsyncImagePainter.State.Empty -> {
                 Icon(
                     modifier = Modifier
                         .padding(iconPadding)
@@ -308,6 +315,7 @@ fun PersonImage(
 @Composable
 fun ImagePicker(
     imageUrl: String?,
+    imageUploadState: ImageUploadState,
     onImagePicked: (ByteArray?) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -328,6 +336,7 @@ fun ImagePicker(
         PersonImage(
             modifier = Modifier.size(100.dp).align(Alignment.Center),
             userImageUrl = imageUrl,
+            isUploading = imageUploadState == ImageUploadState.Uploading,
             onClick = { launcher.launch() },
         )
 
