@@ -1,4 +1,5 @@
 rootProject.name = "OnTrack"
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -28,4 +29,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
+include(":app:composeApp")
