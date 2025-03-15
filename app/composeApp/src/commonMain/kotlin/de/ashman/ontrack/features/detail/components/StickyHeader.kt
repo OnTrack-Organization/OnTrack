@@ -39,6 +39,7 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackIconButton
@@ -65,6 +66,7 @@ fun StickyHeader(
     onClickRecommend: () -> Unit,
 ) {
     var mainInfoItems by remember { mutableStateOf(emptyList<String>()) }
+    var showImageDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(media) {
         mainInfoItems = emptyList()
@@ -87,6 +89,7 @@ fun StickyHeader(
         MediaPoster(
             modifier = imageModifier.height(size),
             coverUrl = mediaCoverUrl,
+            onClick = { showImageDialog = true },
         )
 
         Column {
@@ -117,6 +120,14 @@ fun StickyHeader(
                 onClick = onClickRecommend
             )
         }
+    }
+
+    if (showImageDialog) {
+        LargerImageDialog(
+            showDialog = showImageDialog,
+            imageUrl = mediaCoverUrl,
+            onDismiss = { showImageDialog = false },
+        )
     }
 }
 

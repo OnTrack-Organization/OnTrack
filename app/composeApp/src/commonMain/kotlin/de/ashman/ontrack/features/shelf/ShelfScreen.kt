@@ -29,6 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
@@ -63,6 +67,7 @@ fun ShelfScreen(
     emptyText: StringResource = Res.string.shelf_own_empty,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showImageDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
         viewModel.observeUser(userId)
@@ -93,6 +98,7 @@ fun ShelfScreen(
                         name = user.name,
                         username = user.username,
                         imageUrl = user.imageUrl,
+                        showLargeImage = { showImageDialog = true },
                     )
                     HorizontalDivider(modifier = Modifier.padding(16.dp))
                 }
@@ -130,6 +136,12 @@ fun ShelfScreen(
                 }
             }
         }
+
+        LargerImageDialog(
+            showDialog = showImageDialog,
+            imageUrl = uiState.user?.imageUrl,
+            onDismiss = { showImageDialog = false },
+        )
     }
 }
 
@@ -138,6 +150,7 @@ fun UserHeader(
     name: String,
     username: String,
     imageUrl: String?,
+    showLargeImage: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -146,7 +159,8 @@ fun UserHeader(
     ) {
         PersonImage(
             userImageUrl = imageUrl,
-            size = 56.dp
+            size = 56.dp,
+            onClick = showLargeImage,
         )
 
         Column {

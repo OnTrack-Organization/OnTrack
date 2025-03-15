@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.valentinilk.shimmer.shimmer
@@ -352,6 +355,35 @@ fun ImagePicker(
                 modifier = Modifier
                     .padding(8.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun LargerImageDialog(
+    showDialog: Boolean,
+    imageUrl: String?,
+    onDismiss: () -> Unit,
+) {
+    val painter = rememberAsyncImagePainter(imageUrl)
+
+    if (imageUrl.isNullOrEmpty()) return
+
+    if (showDialog) {
+        Dialog(onDismissRequest = onDismiss) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Image(
+                    painter = painter,
+                    contentDescription = "Account Image",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

@@ -102,10 +102,12 @@ class SettingsViewModel(
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
-        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
-
         val currentUser = _uiState.value.user ?: return@launch
-        bytes ?: return@launch
+
+        // If no image was picked, do nothing
+        if (bytes == null) return@launch
+
+        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
 
         val imageUrl = storageRepository.uploadUserImage(bytes)
 
