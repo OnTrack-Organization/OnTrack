@@ -19,6 +19,7 @@ class CurrentUserRepositoryImpl : CurrentUserRepository {
     private val _currentUser = MutableStateFlow<User?>(null)
     override val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
+    // TODO this is problematic
     override val currentUserId: String
         get() = _currentUser.value?.id!!
 

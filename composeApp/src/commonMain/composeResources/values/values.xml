@@ -121,7 +121,6 @@
     <string name="recommendations_add_to_catalog_button">Add to Catalog</string>
     <string name="detail_friends_activity_empty">No friend's activity yet</string>
     <string name="detail_recommendation_added_to_catalog">Recommendation added to Catalog</string>
-    <string name="detail_recommendation_passed">Passed on recommendation</string>
 
     <!-- DETAIL RECOMMEND -->
     <string name="detail_recommend_title">Recommend</string>

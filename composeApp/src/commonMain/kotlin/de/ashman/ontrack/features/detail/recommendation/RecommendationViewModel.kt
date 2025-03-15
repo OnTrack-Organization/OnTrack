@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_recommendation_passed
 import ontrack.composeapp.generated.resources.detail_recommendation_sent
 import ontrack.composeapp.generated.resources.notifications_new_recommendation_body
 import ontrack.composeapp.generated.resources.notifications_new_recommendation_title
@@ -80,12 +79,6 @@ class RecommendationViewModel(
             mediaId = media.id,
             imageUrl = media.coverUrl,
         )
-    }
-
-    fun passRecommendation(mediaId: String) = viewModelScope.launch {
-        recommendationRepository.passRecommendation(mediaId)
-
-        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_passed))
     }
 
     fun selectFriend(friendId: String, mediaId: String) {

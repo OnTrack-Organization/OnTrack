@@ -242,7 +242,6 @@ fun DetailScreen(
                             hasTracking = tracking.status != null,
                             onUserClick = onClickUser,
                             onAddToCatalogClick = detailViewModel::addRecommendationToCatalog,
-                            onPassClick = { recommendationViewModel.passRecommendation(mediaNavItems.id) },
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendSheet(

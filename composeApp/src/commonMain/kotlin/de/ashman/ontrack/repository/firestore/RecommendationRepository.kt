@@ -17,7 +17,6 @@ interface RecommendationRepository {
     suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation>
 
     suspend fun catalogRecommendation(mediaId: String)
-    suspend fun passRecommendation(mediaId: String)
 }
 
 class RecommendationRepositoryImpl(
@@ -66,16 +65,6 @@ class RecommendationRepositoryImpl(
 
         snapshot.documents.forEach { document ->
             document.reference.update("status" to RecommendationStatus.CATALOG)
-        }
-    }
-
-    override suspend fun passRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(currentUserRepository.currentUserId)
-            .where { "mediaId" equalTo mediaId }
-            .get()
-
-        snapshot.documents.forEach { document ->
-            document.reference.update("status" to RecommendationStatus.PASS)
         }
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.outlined.DoNotDisturb
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
@@ -25,7 +24,6 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
-import de.ashman.ontrack.features.common.OnTrackOutlinedIconButton
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.UserCardHeader
 import de.ashman.ontrack.features.common.formatDateTime
@@ -46,7 +44,6 @@ fun FriendsActivitySheet(
     hasTracking: Boolean,
     onUserClick: (String) -> Unit,
     onAddToCatalogClick: () -> Unit,
-    onPassClick: () -> Unit,
 ) {
     val buttonsVisible = recommendations.isNotEmpty()
 
@@ -128,13 +125,6 @@ fun FriendsActivitySheet(
                     icon = Icons.Default.Bookmark,
                     enabled = !hasTracking,
                     onClick = onAddToCatalogClick,
-                )
-
-                OnTrackOutlinedIconButton(
-                    icon = Icons.Outlined.DoNotDisturb,
-                    color = TrackStatus.CATALOG.getColor(),
-                    enabled = !hasTracking,
-                    onClick = onPassClick,
                 )
             }
         }
