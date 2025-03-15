@@ -126,7 +126,7 @@ fun CommentsSheet(
                                 showCommentRemoveConfirmDialog = true
                             },
                             onReply = {
-                                val newText = "@${it.name} "
+                                val newText = "@${it.username} "
                                 commentText = TextFieldValue(
                                     text = newText,
                                     selection = TextRange(newText.length)
