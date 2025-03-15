@@ -217,6 +217,7 @@ fun NavGraphBuilder.mainGraph(
                 navController.navigate(Route.Detail(mediaNav))
             },
             onClickUser = { userId ->
+                sharedUiManager.hideSheet()
                 navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
         )
