@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -77,7 +76,7 @@ fun OnTrackButton(
     val animatedContentColor by animateColorAsState(targetValue = contentColorFor(color))
 
     Button(
-        modifier = modifier.fillMaxWidth().height(48.dp),
+        modifier = modifier.height(48.dp),
         onClick = onClick,
         enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(
@@ -113,7 +112,7 @@ fun OnTrackOutlinedButton(
     val animatedContentColor by animateColorAsState(targetValue = color)
 
     OutlinedButton(
-        modifier = modifier.fillMaxWidth().height(48.dp),
+        modifier = modifier.height(48.dp),
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
         enabled = enabled,

@@ -113,10 +113,12 @@ fun StartScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     OnTrackButton(
+                        modifier = Modifier.fillMaxWidth(),
                         text = Res.string.intro_button,
                         onClick = onGoToIntro,
                     )
                     OnTrackOutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
                         text = Res.string.login_button,
                         onClick = onGoToLogin,
                     )

@@ -138,6 +138,7 @@ fun SettingsScreen(
                         enabled = false,
                     )
                     OnTrackButton(
+                        modifier = Modifier.fillMaxWidth(),
                         text = Res.string.save_button,
                         icon = Icons.Default.Save,
                         onClick = viewModel::onUpdateUser,

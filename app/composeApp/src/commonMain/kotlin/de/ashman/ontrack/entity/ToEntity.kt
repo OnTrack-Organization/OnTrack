@@ -84,12 +84,4 @@ fun FriendRequest.toEntity() =
         username = username,
         name = name,
         imageUrl = imageUrl,
-        status = status,
     )
-
-fun FriendRequest.toFriendEntity() = FriendEntity(
-    id = userId,
-    username = username,
-    name = name,
-    imageUrl = imageUrl,
-)

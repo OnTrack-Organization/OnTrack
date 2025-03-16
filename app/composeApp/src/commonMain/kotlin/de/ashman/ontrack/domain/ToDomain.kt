@@ -98,7 +98,6 @@ fun FriendRequestEntity.toDomain() =
         username = username,
         name = name,
         imageUrl = imageUrl,
-        status = status,
     )
 
 fun Friend.toRequest() = FriendRequest(

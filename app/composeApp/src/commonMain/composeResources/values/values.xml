@@ -181,6 +181,12 @@
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
     <string name="shelf_other_empty">This shelf is looking pretty empty, recommend them something!</string>
 
+    <string name="send_request_button">Add</string>
+    <string name="cancel_request_button">Cancel</string>
+    <string name="accept_request_button">Accept</string>
+    <string name="decline_request_button">Decline</string>
+    <string name="remove_friend_button">Remove</string>
+
     <!-- SHELF LIST -->
     <string name="shelf_list_all">All</string>
 

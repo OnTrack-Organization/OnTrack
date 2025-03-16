@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.SharedUiManager
-import de.ashman.ontrack.notification.NotificationService
+import de.ashman.ontrack.features.usecase.AcceptRequestUseCase
+import de.ashman.ontrack.features.usecase.CancelRequestUseCase
+import de.ashman.ontrack.features.usecase.DeclineRequestUseCase
+import de.ashman.ontrack.features.usecase.RemoveFriendUseCase
+import de.ashman.ontrack.features.usecase.SendRequestUseCase
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import kotlinx.coroutines.FlowPreview
@@ -23,23 +26,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_friend_removed
-import ontrack.app.composeapp.generated.resources.feed_request_accepted
-import ontrack.app.composeapp.generated.resources.feed_request_cancelled
-import ontrack.app.composeapp.generated.resources.feed_request_declined
-import ontrack.app.composeapp.generated.resources.feed_request_sent
-import ontrack.app.composeapp.generated.resources.notifications_new_request_body
-import ontrack.app.composeapp.generated.resources.notifications_new_request_title
-import ontrack.app.composeapp.generated.resources.notifications_request_accepted_body
-import ontrack.app.composeapp.generated.resources.notifications_request_accepted_title
-import org.jetbrains.compose.resources.getString
 
 class FriendsViewModel(
     private val friendRepository: FriendRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val sharedUiManager: SharedUiManager,
-    private val notificationService: NotificationService,
+    private val sendFriendRequest: SendRequestUseCase,
+    private val cancelFriendRequest: CancelRequestUseCase,
+    private val acceptFriendRequest: AcceptRequestUseCase,
+    private val declineFriendRequest: DeclineRequestUseCase,
+    private val removeFriend: RemoveFriendUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FriendsUiState())
@@ -128,63 +123,34 @@ class FriendsViewModel(
         }
     }
 
-    fun removeFriend() {
-        viewModelScope.launch {
-            _uiState.value.selectedFriend?.let { friendRepository.removeFriend(it) }
-            sharedUiManager.showSnackbar(Res.string.feed_friend_removed)
-
+    fun removeFriend() = viewModelScope.launch {
+        _uiState.value.selectedFriend?.let {
+            removeFriend(it)
             clearSearchCache()
         }
     }
 
-    fun sendRequest(otherRequest: FriendRequest) = viewModelScope.launch {
+    fun sendRequest(friendRequest: FriendRequest) = viewModelScope.launch {
         _uiState.value.user?.let { user ->
-            val myRequest = FriendRequest(
-                userId = user.id,
-                username = user.username,
-                name = user.name,
-                imageUrl = user.imageUrl,
-            )
-
-            friendRepository.sendRequest(otherRequest, myRequest)
-            sharedUiManager.showSnackbar(Res.string.feed_request_sent)
-
-            notificationService.sendPushNotification(
-                userId = otherRequest.userId,
-                title = getString(Res.string.notifications_new_request_title),
-                body = getString(Res.string.notifications_new_request_body, user.name),
-            )
-
+            sendFriendRequest(friendRequest)
             clearSearchCache()
         }
     }
 
     fun acceptRequest(friendRequest: FriendRequest) = viewModelScope.launch {
         _uiState.value.user?.let { user ->
-            friendRepository.acceptRequest(friendRequest)
-            sharedUiManager.showSnackbar(Res.string.feed_request_accepted)
-
-            notificationService.sendPushNotification(
-                userId = friendRequest.userId,
-                title = getString(Res.string.notifications_request_accepted_title),
-                body = getString(Res.string.notifications_request_accepted_body, user.name),
-            )
-
+            acceptFriendRequest(friendRequest)
             clearSearchCache()
         }
     }
 
     fun declineRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        friendRepository.declineRequest(friendRequest)
-        sharedUiManager.showSnackbar(Res.string.feed_request_declined)
-
+        declineFriendRequest(friendRequest)
         clearSearchCache()
     }
 
     fun cancelRequest(friendRequest: FriendRequest) = viewModelScope.launch {
-        friendRepository.cancelRequest(friendRequest)
-        sharedUiManager.showSnackbar(Res.string.feed_request_cancelled)
-
+        cancelFriendRequest(friendRequest)
         clearSearchCache()
     }
 
@@ -205,6 +171,10 @@ class FriendsViewModel(
                 }
             )
         }
+    }
+
+    fun isRequestSent(friendId: String): Boolean {
+        return _uiState.value.sentRequests.any { it.userId == friendId }
     }
 
     private fun clearSearchCache() {

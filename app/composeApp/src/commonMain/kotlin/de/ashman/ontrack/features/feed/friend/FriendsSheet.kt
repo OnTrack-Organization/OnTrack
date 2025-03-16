@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun FriendsSheet(
     uiState: FriendsUiState,
+    isRequestSent: (String) -> Boolean,
     onRemoveFriend: () -> Unit,
     onSelectFriend: (Friend) -> Unit,
     onAcceptRequest: (FriendRequest) -> Unit,
@@ -98,7 +99,7 @@ fun FriendsSheet(
                 FriendsResultState.Potential -> {
                     PotentialFriends(
                         potentialFriends = uiState.potentialFriends,
-                        sentRequests = uiState.sentRequests,
+                        isRequestSent = isRequestSent,
                         onCancelRequest = onCancelRequest,
                         onSendRequest = onSendRequest,
                         onClickUser = onClickUser,
@@ -134,7 +135,7 @@ fun FriendsSheet(
 @Composable
 fun PotentialFriends(
     potentialFriends: List<Friend>,
-    sentRequests: List<FriendRequest>,
+    isRequestSent: (String) -> Boolean,
     onSendRequest: (FriendRequest) -> Unit,
     onCancelRequest: (FriendRequest) -> Unit,
     onClickUser: (String) -> Unit,
@@ -152,7 +153,6 @@ fun PotentialFriends(
 
         items(potentialFriends.size) { index ->
             val friend = potentialFriends[index]
-            val isRequestSent = sentRequests.any { it.userId == friend.id }
 
             PotentialFriendCard(
                 imageUrl = friend.imageUrl,
@@ -161,7 +161,7 @@ fun PotentialFriends(
                 onClickUser = { onClickUser(friend.id) },
                 onSendRequest = { onSendRequest(friend.toRequest()) },
                 onCancelRequest = { onCancelRequest(friend.toRequest()) },
-                isFriendRequestSent = isRequestSent,
+                isRequestSent = isRequestSent(friend.id),
             )
         }
     }

@@ -112,6 +112,7 @@ fun GoogleAppleLogin(
             }
         ) {
             OnTrackButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = Res.string.google_login_button,
                 icon = vectorResource(Res.drawable.google),
                 onClick = { onClick() }
@@ -141,6 +142,7 @@ fun GoogleAppleLogin(
             }
         ) {
             OnTrackButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = Res.string.apple_login_button,
                 icon = vectorResource(Res.drawable.apple),
                 onClick = { onClick() }

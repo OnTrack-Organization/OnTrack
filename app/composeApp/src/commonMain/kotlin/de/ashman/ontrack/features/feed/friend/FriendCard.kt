@@ -71,7 +71,7 @@ fun PotentialFriendCard(
     imageUrl: String,
     username: String,
     name: String,
-    isFriendRequestSent: Boolean,
+    isRequestSent: Boolean,
     onClickUser: () -> Unit,
     onSendRequest: () -> Unit,
     onCancelRequest: () -> Unit,
@@ -82,10 +82,10 @@ fun PotentialFriendCard(
         name = name,
         onClickUser = onClickUser,
     ) {
-        IconButton(onClick = if (isFriendRequestSent) onCancelRequest else onSendRequest) {
+        IconButton(onClick = if (isRequestSent) onCancelRequest else onSendRequest) {
             Icon(
-                imageVector = if (isFriendRequestSent) Icons.Rounded.Close else Icons.Rounded.GroupAdd,
-                contentDescription = if (isFriendRequestSent) "Cancel Friend Request" else "Send Friend Request"
+                imageVector = if (isRequestSent) Icons.Rounded.Close else Icons.Rounded.GroupAdd,
+                contentDescription = if (isRequestSent) "Cancel Friend Request" else "Send Friend Request"
             )
         }
     }

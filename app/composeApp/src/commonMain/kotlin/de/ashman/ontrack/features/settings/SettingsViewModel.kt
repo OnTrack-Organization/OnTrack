@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.usecase.UsernameError
+import de.ashman.ontrack.features.usecase.UsernameValidationResult
+import de.ashman.ontrack.features.usecase.UsernameValidationUseCase
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository

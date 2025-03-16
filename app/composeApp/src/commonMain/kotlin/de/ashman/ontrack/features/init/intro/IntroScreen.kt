@@ -142,6 +142,7 @@ fun IntroContent(
 
         AnimatedVisibility(visible = showLogin) {
             OnTrackButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = Res.string.login_button,
                 onClick = onGoToLogin,
             )

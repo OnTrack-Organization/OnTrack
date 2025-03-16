@@ -24,6 +24,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,13 +40,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.FriendRequest
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -59,19 +66,29 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ShelfScreen(
     viewModel: ShelfViewModel,
+    sharedUiManager: SharedUiManager,
     userId: String,
-    onClickMore: (MediaType) -> Unit,
-    onClickItem: (MediaNavigationItems) -> Unit,
-    onBack: (() -> Unit)? = null,
-    onSettings: (() -> Unit)? = null,
     emptyText: StringResource = Res.string.shelf_own_empty,
+    onClickMoreMedia: (MediaType) -> Unit,
+    onClickItem: (MediaNavigationItems) -> Unit,
+    onSettings: (() -> Unit)? = null,
+    onBack: (() -> Unit)? = null,
 ) {
+    val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsState()
+
     var showImageDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(userId) {
         viewModel.observeUser(userId)
         viewModel.observeUserTrackings(userId)
+    }
+
+    LaunchedEffect(sharedUiState.snackbarMessage) {
+        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+            snackbarHostState.showSnackbar(message)
+        }
     }
 
     Scaffold(
@@ -85,7 +102,8 @@ fun ShelfScreen(
                     onClickAction = { onSettings?.invoke() },
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -93,14 +111,37 @@ fun ShelfScreen(
                 .padding(contentPadding)
         ) {
             uiState.user?.let { user ->
-                Column {
-                    UserHeader(
-                        name = user.name,
-                        username = user.username,
-                        imageUrl = user.imageUrl,
-                        showLargeImage = { showImageDialog = true },
-                    )
-                    HorizontalDivider(modifier = Modifier.padding(16.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        UserHeader(
+                            modifier = Modifier.weight(1f),
+                            name = user.name,
+                            username = user.username,
+                            imageUrl = user.imageUrl,
+                            showLargeImage = { showImageDialog = true },
+                        )
+
+                        if (viewModel.isOtherUser()) {
+                            FriendRequestButton(
+                                friendRequestStatus = uiState.friendRequestStatus,
+                                onSendRequest = viewModel::sendRequest,
+                                onCancelRequest = viewModel::cancelRequest,
+                                onRemoveFriend = viewModel::removeFriend,
+                                onAcceptRequest = viewModel::acceptRequest,
+                                onDeclineRequest = viewModel::declineRequest,
+                            )
+                        }
+                    }
+
+                    HorizontalDivider()
                 }
             }
 
@@ -127,7 +168,7 @@ fun ShelfScreen(
                                 ShelfItem(
                                     mediaType = mediaType,
                                     items = filteredTrackings,
-                                    onClickMore = { onClickMore(mediaType) },
+                                    onClickMore = { onClickMoreMedia(mediaType) },
                                     onClickItem = onClickItem,
                                 )
                             }
@@ -147,13 +188,14 @@ fun ShelfScreen(
 
 @Composable
 fun UserHeader(
+    modifier: Modifier = Modifier,
     name: String,
     username: String,
     imageUrl: String?,
     showLargeImage: () -> Unit = {},
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -163,7 +205,9 @@ fun UserHeader(
             onClick = showLargeImage,
         )
 
-        Column {
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+        ) {
             Text(
                 text = name,
                 style = MaterialTheme.typography.titleLarge,
@@ -323,3 +367,17 @@ fun EmptyShelf(
         )
     }
 }
+
+fun User.toFriendRequest() = FriendRequest(
+    userId = id,
+    username = username,
+    name = name,
+    imageUrl = imageUrl,
+)
+
+fun User.toFriend() = Friend(
+    id = id,
+    username = username,
+    imageUrl = imageUrl,
+    name = name,
+)

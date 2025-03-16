@@ -191,6 +191,7 @@ fun FeedScreen(
                         CurrentSheet.FRIENDS -> {
                             FriendsSheet(
                                 uiState = friendsUiState,
+                                isRequestSent = friendsViewModel::isRequestSent,
                                 onRemoveFriend = friendsViewModel::removeFriend,
                                 onAcceptRequest = friendsViewModel::acceptRequest,
                                 onDeclineRequest = friendsViewModel::declineRequest,

@@ -25,9 +25,14 @@ import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
-import de.ashman.ontrack.features.settings.UsernameValidationUseCase
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import de.ashman.ontrack.features.usecase.AcceptRequestUseCase
+import de.ashman.ontrack.features.usecase.CancelRequestUseCase
+import de.ashman.ontrack.features.usecase.DeclineRequestUseCase
+import de.ashman.ontrack.features.usecase.RemoveFriendUseCase
+import de.ashman.ontrack.features.usecase.SendRequestUseCase
+import de.ashman.ontrack.features.usecase.UsernameValidationUseCase
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.CurrentUserRepository
@@ -105,16 +110,21 @@ val appModule = module {
 
     // USE CASES
     singleOf(::UsernameValidationUseCase)
+    singleOf(::SendRequestUseCase)
+    singleOf(::CancelRequestUseCase)
+    singleOf(::AcceptRequestUseCase)
+    singleOf(::DeclineRequestUseCase)
+    singleOf(::RemoveFriendUseCase)
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get()) }
     viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { FriendsViewModel(get(), get(), get(), get()) }
+    viewModelDefinition { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
-    viewModelDefinition { ShelfViewModel(get(), get()) }
+    viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get()) }

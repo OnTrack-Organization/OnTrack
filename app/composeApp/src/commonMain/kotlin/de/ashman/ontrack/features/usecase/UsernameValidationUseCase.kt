@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.settings
+package de.ashman.ontrack.features.usecase
 
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 

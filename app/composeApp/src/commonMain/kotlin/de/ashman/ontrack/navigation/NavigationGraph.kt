@@ -234,8 +234,9 @@ fun NavGraphBuilder.mainGraph(
     composable<Route.Shelf> {
         ShelfScreen(
             viewModel = shelfViewModel,
+            sharedUiManager = sharedUiManager,
             userId = firestoreUserRepository.currentUserId,
-            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(firestoreUserRepository.currentUserId, mediaType)) },
+            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(firestoreUserRepository.currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onSettings = { navController.navigate(Route.Settings) },
         )
@@ -303,6 +304,7 @@ fun NavGraphBuilder.mediaGraph(
 
         OtherUserShelf(
             viewModel = shelfViewModel,
+            sharedUiManager = sharedUiManager,
             userId = otherShelf.userId,
             onClickMore = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
             onClickItem = { mediaNavItem -> navController.navigate(Route.Detail(mediaNavItem)) },

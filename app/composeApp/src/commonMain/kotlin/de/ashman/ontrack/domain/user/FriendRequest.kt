@@ -8,5 +8,4 @@ data class FriendRequest(
     val username: String,
     val name: String,
     val imageUrl: String,
-    val status: FriendRequestStatus = FriendRequestStatus.PENDING,
 )

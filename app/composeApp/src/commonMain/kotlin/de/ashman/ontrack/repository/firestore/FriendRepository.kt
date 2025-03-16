@@ -4,8 +4,8 @@ import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
+import de.ashman.ontrack.domain.user.FriendRequestStatus
 import de.ashman.ontrack.entity.toEntity
-import de.ashman.ontrack.entity.toFriendEntity
 import de.ashman.ontrack.entity.user.FriendEntity
 import de.ashman.ontrack.entity.user.FriendRequestEntity
 import de.ashman.ontrack.entity.user.UserEntity
@@ -22,10 +22,12 @@ interface FriendRepository {
 
     suspend fun removeFriend(friend: Friend)
 
-    suspend fun sendRequest(otherRequest: FriendRequest, myRequest: FriendRequest)
+    suspend fun sendRequest(friendRequest: FriendRequest)
     suspend fun acceptRequest(friendRequest: FriendRequest)
     suspend fun declineRequest(friendRequest: FriendRequest)
     suspend fun cancelRequest(friendRequest: FriendRequest)
+
+    suspend fun getFriendStatus(friendId: String): FriendRequestStatus
 }
 
 class FriendRepositoryImpl(
@@ -95,14 +97,15 @@ class FriendRepositoryImpl(
             .collection("friends").document(currentUserRepository.currentUserId).delete()
     }
 
-    override suspend fun sendRequest(friendRequest: FriendRequest, myRequest: FriendRequest) {
+    override suspend fun sendRequest(friendRequest: FriendRequest) {
         userCollection.document(currentUserRepository.currentUserId)
             .collection("sentRequests")
             .document(friendRequest.userId).set(friendRequest.toEntity())
 
+        val myself = currentUserToFriendRequestEntity()
         userCollection.document(friendRequest.userId)
             .collection("receivedRequests")
-            .document(currentUserRepository.currentUserId).set(myRequest.toEntity())
+            .document(currentUserRepository.currentUserId).set(myself)
     }
 
     override suspend fun declineRequest(friendRequest: FriendRequest) {
@@ -125,7 +128,47 @@ class FriendRepositoryImpl(
             .document(currentUserRepository.currentUserId).delete()
     }
 
+    // TODO this is ugly af rn
+    override suspend fun getFriendStatus(friendId: String): FriendRequestStatus {
+        val currentUserId = currentUserRepository.currentUserId
+
+        // 1. Check if already friends
+        val friendDoc = userCollection.document(currentUserId)
+            .collection("friends")
+            .document(friendId)
+            .get()
+
+        if (friendDoc.exists) {
+            return FriendRequestStatus.ACCEPTED
+        }
+
+        // 2. Check if you have sent them a request (waiting for them to accept)
+        val sentRequestDoc = userCollection.document(currentUserId)
+            .collection("sentRequests")
+            .document(friendId)
+            .get()
+
+        if (sentRequestDoc.exists) {
+            return FriendRequestStatus.PENDING
+        }
+
+        // 3. Check if you have received a request from them (waiting for you to accept)
+        val receivedRequestDoc = userCollection.document(currentUserId)
+            .collection("receivedRequests")
+            .document(friendId)
+            .get()
+
+        if (receivedRequestDoc.exists) {
+            return FriendRequestStatus.RECEIVED
+        }
+
+        // 4. No relationship found
+        return FriendRequestStatus.NONE
+    }
+
+
     override suspend fun acceptRequest(friendRequest: FriendRequest) {
+        // remove from sentRequests and receivedRequests
         userCollection.document(currentUserRepository.currentUserId)
             .collection("receivedRequests")
             .document(friendRequest.userId).delete()
@@ -134,19 +177,41 @@ class FriendRepositoryImpl(
             .collection("sentRequests")
             .document(currentUserRepository.currentUserId).delete()
 
+        // add friend to my friends
         val friendRequestEntity = friendRequest.toFriendEntity()
         userCollection.document(currentUserRepository.currentUserId)
             .collection("friends").document(friendRequestEntity.id).set(friendRequestEntity)
 
+        // add myself to friend's friends
+        val myself = currentUserToFriendEntity()
+        userCollection.document(friendRequest.userId)
+            .collection("friends").document(myself.id).set(myself)
+    }
+
+    private fun currentUserToFriendEntity(): FriendEntity {
         val currentUser = currentUserRepository.getCurrentUser()
-        val myself = FriendEntity(
+        return FriendEntity(
             id = currentUser.id,
             username = currentUser.username,
             name = currentUser.name,
             imageUrl = currentUser.imageUrl,
         )
-
-        userCollection.document(friendRequest.userId)
-            .collection("friends").document(currentUserRepository.currentUserId).set(myself)
     }
+
+    private fun currentUserToFriendRequestEntity(): FriendRequestEntity {
+        val currentUser = currentUserRepository.getCurrentUser()
+        return FriendRequestEntity(
+            userId = currentUser.id,
+            username = currentUser.username,
+            name = currentUser.name,
+            imageUrl = currentUser.imageUrl,
+        )
+    }
+
+    private fun FriendRequest.toFriendEntity() = FriendEntity(
+        id = userId,
+        username = username,
+        name = name,
+        imageUrl = imageUrl,
+    )
 }
