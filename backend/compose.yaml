@@ -1,0 +1,28 @@
+services:
+  db:
+    image: 'postgres:17'
+    environment:
+      - 'POSTGRES_DB=ontrack'
+      - 'POSTGRES_USER=default'
+      - 'POSTGRES_PASSWORD=demo'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: gradle:8.13-jdk21-alpine
+    working_dir: /app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+      # 5005 is used for debug listener
+      - "5005:5005"
+    command: gradle bootRun --no-daemon
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
