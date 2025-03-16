@@ -36,8 +36,4 @@ fun LinkDto.toBoardgameDomain(): Boardgame =
         boardgameType = type.orEmpty(),
         id = id.orEmpty(),
         title = value.orEmpty(),
-        coverUrl = "",
-        description = "",
-        apiRating = null,
-        apiRatingCount = null,
     )

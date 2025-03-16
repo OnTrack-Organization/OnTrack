@@ -107,7 +107,9 @@ class SearchViewModel(
             onSuccess = { searchResults ->
                 _uiState.update {
                     it.copy(
-                        searchResults = searchResults.distinctBy { media -> media.id }
+                        searchResults = searchResults
+                            .distinctBy { media -> media.id }
+                            .sortedByDescending { it.apiRatingCount }
                             .ifEmpty { it.cachedTrending.filter { media -> media.mediaType == mediaType } }, // Restore trending if empty
                         errorMessage = null,
                         resultStates = it.resultStates + (mediaType to if (searchResults.isEmpty()) SearchResultState.Empty else SearchResultState.Success)

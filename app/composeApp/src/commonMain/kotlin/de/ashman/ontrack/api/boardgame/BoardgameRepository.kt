@@ -82,6 +82,7 @@ class BoardgameRepository(
     private suspend fun fetchBoardgamesByIds(bgIds: List<String>): List<Boardgame> {
         val response: String = httpClient.get("thing") {
             parameter("id", bgIds.take(DEFAULT_FETCH_LIMIT).joinToString(","))
+            parameter("stats", 1)
         }.body()
 
         return convertXmlToResponse(response).boardgames.map { it.toDomain() }

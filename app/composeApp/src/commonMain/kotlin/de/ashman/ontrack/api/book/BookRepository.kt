@@ -37,6 +37,7 @@ class BookRepository(
     override suspend fun fetchByQuery(query: String): Result<List<Book>> = safeApiCall {
         httpClient.get("search.json") {
             parameter("title", query)
+            parameter("sort", "rating")
             parameter("limit", DEFAULT_FETCH_LIMIT)
         }.body<BookSearchResponse>().books.map { it.toDomain() }
     }

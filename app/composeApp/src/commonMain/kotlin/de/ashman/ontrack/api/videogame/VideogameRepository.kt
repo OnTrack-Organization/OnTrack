@@ -65,7 +65,7 @@ class VideogameRepository(
             url("games")
             setBody(
                 """
-                    fields cover.url, name;
+                    fields cover.url, name, total_rating_count;
                     search "$query";
                     limit $DEFAULT_FETCH_LIMIT;
                 """
