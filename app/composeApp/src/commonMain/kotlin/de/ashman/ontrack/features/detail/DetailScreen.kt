@@ -282,8 +282,8 @@ fun DetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            /*item {
-                selectedTracking?.let {
+            /*selectedTracking?.let {
+                item {
                     Column(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),

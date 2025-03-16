@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -101,40 +102,49 @@ fun FriendActivityIcon(
     onUserClick: (String) -> Unit,
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier,
         ) {
             PersonImage(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.align(Alignment.TopCenter),
                 userImageUrl = imageUrl,
                 onClick = { onUserClick(userId) }
             )
-            status?.let {
-                Surface(
-                    modifier = Modifier.size(24.dp).align(Alignment.BottomEnd),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                ) {
-                    Icon(
-                        imageVector = it.getIcon(true),
-                        contentDescription = "Trackstatus Icon",
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
-                }
-            }
 
             if (isRecommended) {
                 Surface(
-                    modifier = Modifier.size(24.dp).align(Alignment.BottomStart),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomStart)
+                        .offset(x = (-8).dp, y = (8).dp),
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.primary,
                 ) {
                     Icon(
                         imageVector = Icons.Default.VolunteerActivism,
                         contentDescription = "Recommended Icon",
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                }
+            }
+
+            status?.let {
+                Surface(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(x = (8).dp, y = (8).dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        imageVector = it.getIcon(true),
+                        contentDescription = "Trackstatus Icon",
                         modifier = Modifier
                             .padding(4.dp)
                     )
