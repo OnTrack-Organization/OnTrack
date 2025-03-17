@@ -104,7 +104,7 @@ kotlin {
             isStatic = true
             freeCompilerArgs += "-Xbinary=bundleId=de.ashman.ontrack.ComposeApp"
 
-            export("io.github.mirzemehdi:kmpnotifier:1.4.0")
+            export(libs.kmpnotifier)
         }
     }
 

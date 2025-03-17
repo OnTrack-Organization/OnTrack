@@ -1,7 +1,9 @@
 package de.ashman.ontrack
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
@@ -12,7 +14,10 @@ import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
+import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.navigation.NavigationGraph
+import de.ashman.ontrack.navigation.Route
 import de.ashman.ontrack.notification.notificationInit
 import de.ashman.ontrack.theme.OnTrackTheme
 
@@ -22,15 +27,11 @@ fun App() {
     OnTrackTheme {
         val navController = rememberNavController()
         GoogleAuthProvider.create(GoogleAuthCredentials(BuildKonfig.GOOGLE_AUTH_CLIENT_ID))
-
-        notificationInit()
-        startNotificationManager()
-
-        setSingletonImageLoaderFactory { context ->
-            getAsyncImageLoader(context)
-        }
+        setSingletonImageLoaderFactory { context -> getAsyncImageLoader(context) }
 
         NavigationGraph(navController)
+
+        startNotificationManager(navController)
     }
 }
 
@@ -38,49 +39,43 @@ fun getAsyncImageLoader(context: PlatformContext) =
     ImageLoader
         .Builder(context)
         .memoryCachePolicy(CachePolicy.ENABLED)
-        /* .memoryCache {
-             MemoryCache
-                 .Builder()
-                 .maxSizePercent(context, 0.3)
-                 .strongReferencesEnabled(true)
-                 .build()
-         }
-         .diskCachePolicy(CachePolicy.ENABLED)
-         .diskCache {
-             DiskCache.Builder()
-                 .maxSizePercent(0.02)
-                 .directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "image_cache")
-                 .build()
-         }*/
         .logger(DebugLogger())
         .build()
 
-private fun startNotificationManager() {
-    NotifierManager.addListener(object : NotifierManager.Listener {
-        override fun onPushNotification(title: String?, body: String?) {
-            super.onPushNotification(title, body)
-            println("Push Notification notification type message is received: Title: $title and Body: $body")
-        }
+private fun startNotificationManager(
+    navController: NavController
+) {
+    val TAG = "NotificationManager"
+    notificationInit()
 
-        override fun onPayloadData(data: PayloadData) {
-            super.onPayloadData(data)
-            println("Push Notification payloadData: $data")
+    NotifierManager.addListener(object : NotifierManager.Listener {
+        override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
+            Logger.d(
+                "Push Notification is received: " +
+                        "Title: $title and " +
+                        "Body: $body and " +
+                        "Notification payloadData: $data"
+            )
         }
 
         override fun onNotificationClicked(data: PayloadData) {
             super.onNotificationClicked(data)
-            println("Notification clicked, Notification payloadData: $data")
+            Logger.d("Notification clicked, Notification payloadData: $data", tag = TAG)
 
-            // TODO maybe later
-            /*val mediaNav = MediaNavigationItems(
+            val mediaNav = MediaNavigationItems(
                 id = data["mediaId"].toString(),
                 title = "",
                 coverUrl = "",
                 mediaType = MediaType.MOVIE,
             )
 
-            navController.navigate(Route.Detail(mediaNav))*/
+            try {
+                val route = Route.Detail(mediaNav)
+                Logger.d("Route: $route", tag = TAG)
+                navController.navigate(route)
+            } catch (e: Exception) {
+                Logger.e("Failed to navigate: ${e.message}", tag = TAG)
+            }
         }
-    }
-    )
+    })
 }

@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
@@ -224,6 +225,8 @@ fun NavGraphBuilder.mainGraph(
     }
 
     composable<Route.Search> {
+        Logger.d("Navigating to Search: $it")
+
         SearchScreen(
             userId = Firebase.auth.currentUser?.uid.orEmpty(),
             viewModel = searchViewModel,
@@ -255,9 +258,14 @@ fun NavGraphBuilder.mediaGraph(
     composable<Route.Detail>(
         typeMap = mapOf(
             typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
+        ),
+        // TODO make this work
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "ontrack://detail/{mediaNavItems}" }
         )
     ) { backStackEntry ->
         val detail: Route.Detail = backStackEntry.toRoute()
+        Logger.d { "NAVIGATING TO DETAIL: $backStackEntry" }
 
         DetailScreen(
             mediaNavItems = detail.mediaNavItems,

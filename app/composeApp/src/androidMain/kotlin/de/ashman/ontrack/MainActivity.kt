@@ -10,7 +10,7 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.permission.permissionUtil
 import de.ashman.ontrack.di.initKoin
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.stopKoin
+import org.koin.core.context.GlobalContext
 
 class MainActivity : ComponentActivity() {
     val permissionUtil by permissionUtil()
@@ -18,16 +18,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (GlobalContext.getOrNull() == null) {
+            initKoin {
+                androidContext(applicationContext)
+            }
+        }
+
         permissionUtil.askNotificationPermission()
         NotifierManager.onCreateOrOnNewIntent(intent)
 
-        initKoin {
-            androidContext(applicationContext)
-        }
-
-        enableEdgeToEdge()
-
         setContent {
+            enableEdgeToEdge()
             App()
         }
     }
@@ -39,6 +40,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopKoin()
+        //stopKoin()
     }
 }
