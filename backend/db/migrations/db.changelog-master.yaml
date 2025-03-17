@@ -1,1 +1,34 @@
 databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: RiceIsNice
+      changes:
+        - createTable:
+            tableName: user__user
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: fcm_token
+                  type: varchar(255)
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: username
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: image_url
+                  type: varchar(255)
+              - column:
+                  name: updated_at
+                  type: datetime
+      rollback:
+        - dropTable:
+            tableName: user__user
