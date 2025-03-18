@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -188,11 +189,12 @@ fun DetailScreen(
                     )
                 }
 
-                // TODO add bottom sheet ui wrapper that holds the title and handles spacing
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(horizontal = if (sharedUiState.currentSheet == CurrentSheet.RECOMMEND) 0.dp else 16.dp)
+                        .padding(bottom = 16.dp)
+                        .imePadding()
                         .pointerInput(Unit) {
                             detectTapGestures(onTap = {
                                 localFocusManager.clearFocus()

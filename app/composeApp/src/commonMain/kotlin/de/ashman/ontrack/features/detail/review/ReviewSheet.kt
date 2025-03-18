@@ -71,6 +71,7 @@ fun ReviewSheet(
     )
 
     OnTrackButton(
+        modifier = Modifier.fillMaxWidth(),
         text = Res.string.save_button,
         icon = Icons.Default.Save,
         onClick = onSave,

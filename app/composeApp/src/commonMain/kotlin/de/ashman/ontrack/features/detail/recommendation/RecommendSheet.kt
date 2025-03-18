@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -59,8 +60,11 @@ fun RecommendSheet(
 
     var message by remember { mutableStateOf("") }
 
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(Res.string.detail_recommend_title),
             style = MaterialTheme.typography.titleMedium,
         )
@@ -79,7 +83,7 @@ fun RecommendSheet(
         }
 
         LazyRow(
-            modifier = Modifier.padding(bottom = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(selectableFriends) { friend ->
                 FriendRecommendSelectorIcon(
@@ -102,7 +106,8 @@ fun RecommendSheet(
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f, false)
-                .heightIn(max = 200.dp),
+                .heightIn(max = 200.dp)
+                .padding(horizontal = 16.dp),
             visible = previousSentRecommendations.isNotEmpty() && isAnyUserSelected,
         ) {
             Column(
@@ -131,7 +136,9 @@ fun RecommendSheet(
         }
 
         Row(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
