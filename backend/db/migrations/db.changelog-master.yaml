@@ -4,7 +4,7 @@ databaseChangeLog:
       author: RiceIsNice
       changes:
         - createTable:
-            tableName: user__user
+            tableName: users
             columns:
               - column:
                   name: id
@@ -31,4 +31,4 @@ databaseChangeLog:
                   type: datetime
       rollback:
         - dropTable:
-            tableName: user__user
+            tableName: users

@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "user__user")
+@Table(name = "users")
 data class User(
     @Column(name = "fcm_token")
     val fcmToken: String,
