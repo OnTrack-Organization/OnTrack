@@ -1,4 +1,4 @@
-# On Track Backend
+# OnTrack Backend
 ## Requirements
 - Local installation of Docker/Docker-compose
 
@@ -6,7 +6,7 @@
 Run `docker compose up -d` to start the backend services.
 The project is configured to automatically restart when changes are detected after building
 in order to apply the new code changes as soon as possible.
-When working in Intellij/Android Studio enable the following options:
+When working in Intellij enable the following options:
 - `Settings` > `Advanced Settings` > Enable `Allow auto-make to start even if application is currently running`
 - `Settings` > `Build, Execution, Deployment` > `Compiler` > Enable `Build project automatically`
 

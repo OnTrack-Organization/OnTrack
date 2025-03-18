@@ -1,1 +1,1 @@
-rootProject.name = "ontrack"
+rootProject.name = "onTrack"
