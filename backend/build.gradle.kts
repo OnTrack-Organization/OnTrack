@@ -1,11 +1,11 @@
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.4.3"
-    id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "1.9.25"
+    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.kotlinSpring)
+    alias(libs.plugins.springBoot)
+    alias(libs.plugins.springDependencyManagement)
+    alias(libs.plugins.kotlinJpa)
 }
 
 group = "de.ashman"
@@ -22,16 +22,16 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.springframework.security:spring-security-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(libs.springBootStarterDataJpa)
+    implementation(libs.springBootStarterSecurity)
+    implementation(libs.springBootStarterWeb)
+    implementation(libs.kotlinReflect)
+    developmentOnly(libs.springBootDevtools)
+    runtimeOnly(libs.postgresql)
+    testImplementation(libs.springBootStarterTest)
+    testImplementation(libs.kotlinTestJunit5)
+    testImplementation(libs.springSecurityTest)
+    testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
 kotlin {
