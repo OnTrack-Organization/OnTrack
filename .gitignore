@@ -24,3 +24,5 @@ captures
 
 /composeApp/google-services.json
 /build/
+/app/.kotlin/
+/app/build
