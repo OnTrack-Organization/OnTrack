@@ -52,6 +52,7 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -332,6 +333,7 @@ fun ShelfItem(
                     MediaPoster(
                         modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                         coverUrl = item.mediaCoverUrl,
+                        trackStatusIcon = item.status?.getIcon(true),
                         onClick = { onClickItem(MediaNavigationItems(item.mediaId, item.mediaTitle, item.mediaCoverUrl, item.mediaType)) },
                     )
                 }
