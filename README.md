@@ -3,7 +3,7 @@
 **OnTrack** is a **multiplatform mobile app** for **Android** and **iOS**, designed to be your **central hub** for tracking and sharing all kinds of media. Whether you're into **movies**, **shows**, **books**, **video games**, **board games**, or **albums**, OnTrack helps you organize, track, and share your experiences with close friends.
 
 <p align="center">
-  <img src="assets/ontrack-app-icon.png" alt="OnTrack App Icon" width="150"/>
+  <img src="app/docs/app_icon.png" alt="OnTrack App Icon" width="150"/>
 </p>
 
 ---
@@ -34,9 +34,13 @@ OnTrack runs on both **Android** and **iOS**, offering a seamless experience on 
 ## 📱 Screenshots
 
 <p align="center">
-  <img src="app/docs/screenshots/search.png" alt="OnTrack Search Screen" width="200"/>
-  <img src="app/docs/screenshots/share.png" alt="OnTrack Share Screen" width="200"/>
-  <img src="app/docs/screenshots/shelf.png" alt="OnTrack Shelf Screen" width="200"/>
+  <img src="app/docs/screenshots/android_search_dark.png" alt="OnTrack Search Screen" width="200"/>
+  <img src="app/docs/screenshots/android_share_dark.png" alt="OnTrack Share Screen" width="200"/>
+  <img src="app/docs/screenshots/android_shelf_dark.png" alt="OnTrack Shelf Screen" width="200"/>
+  <img src="app/docs/screenshots/android_shelf_list_dark.png" alt="OnTrack Shelf Screen" width="200"/>
+  <img src="app/docs/screenshots/android_detail_dark.png" alt="OnTrack Shelf Screen" width="200"/>
+  <img src="app/docs/screenshots/android_recommend_dark.png" alt="OnTrack Shelf Screen" width="200"/>
+  <img src="app/docs/screenshots/android_track_dark.png" alt="OnTrack Shelf Screen" width="200"/>
 </p>
 
 ---
