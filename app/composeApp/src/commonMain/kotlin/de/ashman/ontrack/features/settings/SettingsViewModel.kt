@@ -17,9 +17,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.logout_offline_error
-import ontrack.app.composeapp.generated.resources.settings_account_data_saved
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.logout_offline_error
+import ontrack.composeapp.generated.resources.settings_account_data_saved
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(

@@ -36,9 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.intro_title
-import ontrack.app.composeapp.generated.resources.login_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.intro_title
+import ontrack.composeapp.generated.resources.login_button
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 

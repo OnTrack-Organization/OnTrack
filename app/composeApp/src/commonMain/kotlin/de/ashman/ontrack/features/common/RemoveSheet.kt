@@ -10,9 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.cancel_button
-import ontrack.app.composeapp.generated.resources.remove_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.cancel_button
+import ontrack.composeapp.generated.resources.remove_button
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

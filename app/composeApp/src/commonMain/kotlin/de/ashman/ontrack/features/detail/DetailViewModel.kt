@@ -32,10 +32,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock.System
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_recommendation_added_to_catalog
-import ontrack.app.composeapp.generated.resources.tracking_removed
-import ontrack.app.composeapp.generated.resources.tracking_saved
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommendation_added_to_catalog
+import ontrack.composeapp.generated.resources.tracking_removed
+import ontrack.composeapp.generated.resources.tracking_saved
 import org.jetbrains.compose.resources.getString
 import kotlin.time.measureTime
 

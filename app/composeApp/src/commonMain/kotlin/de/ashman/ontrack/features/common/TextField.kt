@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.search_placeholder
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_placeholder
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

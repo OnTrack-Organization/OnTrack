@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.login_offline_error
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.login_offline_error
 
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,

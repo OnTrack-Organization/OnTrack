@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.search_empty
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_empty
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource

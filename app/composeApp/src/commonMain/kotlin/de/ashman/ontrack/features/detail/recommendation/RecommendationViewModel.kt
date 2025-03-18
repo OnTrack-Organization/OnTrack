@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_recommendation_sent
-import ontrack.app.composeapp.generated.resources.notifications_new_recommendation_body
-import ontrack.app.composeapp.generated.resources.notifications_new_recommendation_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommendation_sent
+import ontrack.composeapp.generated.resources.notifications_new_recommendation_body
+import ontrack.composeapp.generated.resources.notifications_new_recommendation_title
 import org.jetbrains.compose.resources.getString
 
 class RecommendationViewModel(

@@ -55,9 +55,9 @@ import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.shelf_nav_title
-import ontrack.app.composeapp.generated.resources.shelf_own_empty
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_nav_title
+import ontrack.composeapp.generated.resources.shelf_own_empty
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource

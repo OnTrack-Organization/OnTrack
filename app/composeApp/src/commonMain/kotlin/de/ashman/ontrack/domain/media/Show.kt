@@ -3,9 +3,9 @@ package de.ashman.ontrack.domain.media
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_episodes
-import ontrack.app.composeapp.generated.resources.detail_seasons
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_episodes
+import ontrack.composeapp.generated.resources.detail_seasons
 import org.jetbrains.compose.resources.getPluralString
 
 @Serializable

@@ -42,17 +42,17 @@ import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.app_version
-import ontrack.app.composeapp.generated.resources.remove_button
-import ontrack.app.composeapp.generated.resources.save_button
-import ontrack.app.composeapp.generated.resources.settings_email_hint
-import ontrack.app.composeapp.generated.resources.settings_logout
-import ontrack.app.composeapp.generated.resources.settings_name_hint
-import ontrack.app.composeapp.generated.resources.settings_remove_confirm_text
-import ontrack.app.composeapp.generated.resources.settings_remove_confirm_title
-import ontrack.app.composeapp.generated.resources.settings_title
-import ontrack.app.composeapp.generated.resources.settings_username_hint
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.app_version
+import ontrack.composeapp.generated.resources.remove_button
+import ontrack.composeapp.generated.resources.save_button
+import ontrack.composeapp.generated.resources.settings_email_hint
+import ontrack.composeapp.generated.resources.settings_logout
+import ontrack.composeapp.generated.resources.settings_name_hint
+import ontrack.composeapp.generated.resources.settings_remove_confirm_text
+import ontrack.composeapp.generated.resources.settings_remove_confirm_title
+import ontrack.composeapp.generated.resources.settings_title
+import ontrack.composeapp.generated.resources.settings_username_hint
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

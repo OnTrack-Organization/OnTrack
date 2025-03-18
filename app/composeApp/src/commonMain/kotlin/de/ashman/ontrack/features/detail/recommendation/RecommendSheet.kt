@@ -39,11 +39,11 @@ import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_recommend_friends_empty
-import ontrack.app.composeapp.generated.resources.detail_recommend_previous
-import ontrack.app.composeapp.generated.resources.detail_recommend_textfield_placeholder
-import ontrack.app.composeapp.generated.resources.detail_recommend_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_recommend_friends_empty
+import ontrack.composeapp.generated.resources.detail_recommend_previous
+import ontrack.composeapp.generated.resources.detail_recommend_textfield_placeholder
+import ontrack.composeapp.generated.resources.detail_recommend_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

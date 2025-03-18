@@ -47,9 +47,9 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.no_title
-import ontrack.app.composeapp.generated.resources.track_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.no_title
+import ontrack.composeapp.generated.resources.track_button
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

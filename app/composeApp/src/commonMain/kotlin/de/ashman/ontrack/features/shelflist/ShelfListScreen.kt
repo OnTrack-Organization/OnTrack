@@ -43,10 +43,10 @@ import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.shelf_list_all
-import ontrack.app.composeapp.generated.resources.shelves_filled
-import ontrack.app.composeapp.generated.resources.shelves_outlined
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_list_all
+import ontrack.composeapp.generated.resources.shelves_filled
+import ontrack.composeapp.generated.resources.shelves_outlined
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource

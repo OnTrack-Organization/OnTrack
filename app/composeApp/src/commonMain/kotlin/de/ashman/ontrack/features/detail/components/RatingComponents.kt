@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.ApiType
 import de.ashman.ontrack.api.utils.roundDecimals
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.ratings_overview
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.ratings_overview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

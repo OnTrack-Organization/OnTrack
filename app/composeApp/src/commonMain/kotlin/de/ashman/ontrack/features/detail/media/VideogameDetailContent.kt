@@ -7,12 +7,12 @@ import de.ashman.ontrack.features.detail.components.MediaChips
 import de.ashman.ontrack.features.detail.components.MediaDescription
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_description
-import ontrack.app.composeapp.generated.resources.detail_franchise
-import ontrack.app.composeapp.generated.resources.detail_genres
-import ontrack.app.composeapp.generated.resources.detail_platforms
-import ontrack.app.composeapp.generated.resources.detail_similar
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_description
+import ontrack.composeapp.generated.resources.detail_franchise
+import ontrack.composeapp.generated.resources.detail_genres
+import ontrack.composeapp.generated.resources.detail_platforms
+import ontrack.composeapp.generated.resources.detail_similar
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 

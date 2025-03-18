@@ -7,12 +7,12 @@ import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_nav_title
-import ontrack.app.composeapp.generated.resources.search_nav_title
-import ontrack.app.composeapp.generated.resources.shelf_nav_title
-import ontrack.app.composeapp.generated.resources.shelves_filled
-import ontrack.app.composeapp.generated.resources.shelves_outlined
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_nav_title
+import ontrack.composeapp.generated.resources.search_nav_title
+import ontrack.composeapp.generated.resources.shelf_nav_title
+import ontrack.composeapp.generated.resources.shelves_filled
+import ontrack.composeapp.generated.resources.shelves_outlined
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.vectorResource
 

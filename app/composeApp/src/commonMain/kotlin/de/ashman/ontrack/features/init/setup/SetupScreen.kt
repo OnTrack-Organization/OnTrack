@@ -33,12 +33,12 @@ import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.settings.ImageUploadState
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.settings_name_hint
-import ontrack.app.composeapp.generated.resources.settings_username_hint
-import ontrack.app.composeapp.generated.resources.setup_title
-import ontrack.app.composeapp.generated.resources.setup_username
-import ontrack.app.composeapp.generated.resources.start_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.settings_name_hint
+import ontrack.composeapp.generated.resources.settings_username_hint
+import ontrack.composeapp.generated.resources.setup_title
+import ontrack.composeapp.generated.resources.setup_username
+import ontrack.composeapp.generated.resources.start_button
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

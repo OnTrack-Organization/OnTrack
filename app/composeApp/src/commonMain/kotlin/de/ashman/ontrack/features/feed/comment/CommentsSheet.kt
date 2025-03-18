@@ -49,10 +49,10 @@ import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_comments
-import ontrack.app.composeapp.generated.resources.feed_comments_placeholder
-import ontrack.app.composeapp.generated.resources.feed_no_comments
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_comments
+import ontrack.composeapp.generated.resources.feed_comments_placeholder
+import ontrack.composeapp.generated.resources.feed_no_comments
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

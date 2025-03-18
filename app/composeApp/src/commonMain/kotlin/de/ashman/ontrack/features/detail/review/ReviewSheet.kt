@@ -28,11 +28,11 @@ import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getRatingLabel
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.review_description_label
-import ontrack.app.composeapp.generated.resources.review_title
-import ontrack.app.composeapp.generated.resources.review_title_label
-import ontrack.app.composeapp.generated.resources.save_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.review_description_label
+import ontrack.composeapp.generated.resources.review_title
+import ontrack.composeapp.generated.resources.review_title_label
+import ontrack.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

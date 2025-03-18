@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.features.common.PersonImage
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_likes
-import ontrack.app.composeapp.generated.resources.feed_no_likes
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_likes
+import ontrack.composeapp.generated.resources.feed_no_likes
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

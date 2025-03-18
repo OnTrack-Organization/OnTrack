@@ -68,9 +68,9 @@ import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import kotlinx.datetime.Clock.System
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_remove_confirm_text
-import ontrack.app.composeapp.generated.resources.detail_remove_confirm_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_remove_confirm_text
+import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 import org.jetbrains.compose.resources.pluralStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

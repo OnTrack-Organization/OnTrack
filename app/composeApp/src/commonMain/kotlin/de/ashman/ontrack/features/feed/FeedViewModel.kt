@@ -23,11 +23,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.notifications_comment_body
-import ontrack.app.composeapp.generated.resources.notifications_comment_title
-import ontrack.app.composeapp.generated.resources.notifications_like_body
-import ontrack.app.composeapp.generated.resources.notifications_like_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.notifications_comment_body
+import ontrack.composeapp.generated.resources.notifications_comment_title
+import ontrack.composeapp.generated.resources.notifications_like_body
+import ontrack.composeapp.generated.resources.notifications_like_title
 import org.jetbrains.compose.resources.getString
 
 class FeedViewModel(

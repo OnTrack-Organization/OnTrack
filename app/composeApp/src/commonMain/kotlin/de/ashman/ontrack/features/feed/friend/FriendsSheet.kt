@@ -23,13 +23,13 @@ import de.ashman.ontrack.domain.toRequest
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.SearchBar
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_friends
-import ontrack.app.composeapp.generated.resources.feed_no_friends_and_potential
-import ontrack.app.composeapp.generated.resources.feed_no_potential_friends
-import ontrack.app.composeapp.generated.resources.feed_potential_friends
-import ontrack.app.composeapp.generated.resources.feed_received_requests
-import ontrack.app.composeapp.generated.resources.feed_sent_requests
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_friends
+import ontrack.composeapp.generated.resources.feed_no_friends_and_potential
+import ontrack.composeapp.generated.resources.feed_no_potential_friends
+import ontrack.composeapp.generated.resources.feed_potential_friends
+import ontrack.composeapp.generated.resources.feed_received_requests
+import ontrack.composeapp.generated.resources.feed_sent_requests
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

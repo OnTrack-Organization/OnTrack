@@ -1,13 +1,13 @@
 package de.ashman.ontrack.api
 
 import de.ashman.ontrack.domain.media.MediaType
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.app_icon
-import ontrack.app.composeapp.generated.resources.bgg
-import ontrack.app.composeapp.generated.resources.igdb
-import ontrack.app.composeapp.generated.resources.openlib
-import ontrack.app.composeapp.generated.resources.spotify
-import ontrack.app.composeapp.generated.resources.tmdb
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.app_icon
+import ontrack.composeapp.generated.resources.bgg
+import ontrack.composeapp.generated.resources.igdb
+import ontrack.composeapp.generated.resources.openlib
+import ontrack.composeapp.generated.resources.spotify
+import ontrack.composeapp.generated.resources.tmdb
 import org.jetbrains.compose.resources.DrawableResource
 
 enum class ApiType(

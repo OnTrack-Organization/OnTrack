@@ -34,13 +34,13 @@ import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.SharedUiManager
 import kotlinx.coroutines.launch
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.apple
-import ontrack.app.composeapp.generated.resources.apple_login_button
-import ontrack.app.composeapp.generated.resources.google
-import ontrack.app.composeapp.generated.resources.google_login_button
-import ontrack.app.composeapp.generated.resources.login_title
-import ontrack.app.composeapp.generated.resources.or_divider
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.apple
+import ontrack.composeapp.generated.resources.apple_login_button
+import ontrack.composeapp.generated.resources.google
+import ontrack.composeapp.generated.resources.google_login_button
+import ontrack.composeapp.generated.resources.login_title
+import ontrack.composeapp.generated.resources.or_divider
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 

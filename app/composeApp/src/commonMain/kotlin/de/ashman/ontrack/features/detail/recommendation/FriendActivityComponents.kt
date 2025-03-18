@@ -33,8 +33,8 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.getIcon
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_friends_activity_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_friends_activity_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

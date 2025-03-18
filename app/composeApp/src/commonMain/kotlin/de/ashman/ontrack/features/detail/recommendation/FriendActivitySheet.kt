@@ -28,12 +28,12 @@ import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.UserCardHeader
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_friends_activity_empty
-import ontrack.app.composeapp.generated.resources.detail_friends_activity_title
-import ontrack.app.composeapp.generated.resources.recommendations_add_to_catalog_button
-import ontrack.app.composeapp.generated.resources.recommendations_title
-import ontrack.app.composeapp.generated.resources.trackings_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_friends_activity_empty
+import ontrack.composeapp.generated.resources.detail_friends_activity_title
+import ontrack.composeapp.generated.resources.recommendations_add_to_catalog_button
+import ontrack.composeapp.generated.resources.recommendations_title
+import ontrack.composeapp.generated.resources.trackings_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

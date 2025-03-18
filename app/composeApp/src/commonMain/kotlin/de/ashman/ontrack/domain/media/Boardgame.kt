@@ -3,10 +3,10 @@ package de.ashman.ontrack.domain.media
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import kotlinx.serialization.Serializable
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_player_count_range
-import ontrack.app.composeapp.generated.resources.detail_playing_time
-import ontrack.app.composeapp.generated.resources.detail_single_player_count
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_player_count_range
+import ontrack.composeapp.generated.resources.detail_playing_time
+import ontrack.composeapp.generated.resources.detail_single_player_count
 import org.jetbrains.compose.resources.getPluralString
 import org.jetbrains.compose.resources.getString
 

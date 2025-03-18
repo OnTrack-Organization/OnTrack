@@ -43,10 +43,10 @@ import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.common.getSublabel
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.review_button
-import ontrack.app.composeapp.generated.resources.save_button
-import ontrack.app.composeapp.generated.resources.track_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.review_button
+import ontrack.composeapp.generated.resources.save_button
+import ontrack.composeapp.generated.resources.track_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

@@ -40,8 +40,8 @@ import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.fakeItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.search_nav_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_nav_title
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 

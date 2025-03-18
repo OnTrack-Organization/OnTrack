@@ -8,11 +8,11 @@ import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaChips
 import de.ashman.ontrack.features.detail.components.MediaDescription
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_author
-import ontrack.app.composeapp.generated.resources.detail_author_books
-import ontrack.app.composeapp.generated.resources.detail_description
-import ontrack.app.composeapp.generated.resources.detail_genres
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_author
+import ontrack.composeapp.generated.resources.detail_author_books
+import ontrack.composeapp.generated.resources.detail_description
+import ontrack.composeapp.generated.resources.detail_genres
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BookDetailContent(

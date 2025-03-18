@@ -6,10 +6,10 @@ import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_description
-import ontrack.app.composeapp.generated.resources.detail_designer
-import ontrack.app.composeapp.generated.resources.detail_franchise
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_description
+import ontrack.composeapp.generated.resources.detail_designer
+import ontrack.composeapp.generated.resources.detail_franchise
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BoardgameDetailContent(

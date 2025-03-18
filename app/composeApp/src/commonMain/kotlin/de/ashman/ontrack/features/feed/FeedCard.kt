@@ -50,9 +50,9 @@ import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_comments_count
-import ontrack.app.composeapp.generated.resources.feed_likes_count
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_comments_count
+import ontrack.composeapp.generated.resources.feed_likes_count
 import org.jetbrains.compose.resources.pluralStringResource
 
 @Composable

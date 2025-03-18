@@ -45,9 +45,9 @@ import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.feed.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_empty
-import ontrack.app.composeapp.generated.resources.feed_nav_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_empty
+import ontrack.composeapp.generated.resources.feed_nav_title
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

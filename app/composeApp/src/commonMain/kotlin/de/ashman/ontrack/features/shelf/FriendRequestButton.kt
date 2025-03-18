@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.user.FriendRequestStatus
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.accept_request_button
-import ontrack.app.composeapp.generated.resources.cancel_request_button
-import ontrack.app.composeapp.generated.resources.decline_request_button
-import ontrack.app.composeapp.generated.resources.remove_friend_button
-import ontrack.app.composeapp.generated.resources.send_request_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.accept_request_button
+import ontrack.composeapp.generated.resources.cancel_request_button
+import ontrack.composeapp.generated.resources.decline_request_button
+import ontrack.composeapp.generated.resources.remove_friend_button
+import ontrack.composeapp.generated.resources.send_request_button
 import org.jetbrains.compose.resources.StringResource
 
 data class FriendRequestButtonUiState(

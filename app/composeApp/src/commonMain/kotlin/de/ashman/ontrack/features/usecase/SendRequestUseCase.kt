@@ -5,10 +5,10 @@ import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.feed_request_sent
-import ontrack.app.composeapp.generated.resources.notifications_new_request_body
-import ontrack.app.composeapp.generated.resources.notifications_new_request_title
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.feed_request_sent
+import ontrack.composeapp.generated.resources.notifications_new_request_body
+import ontrack.composeapp.generated.resources.notifications_new_request_title
 import org.jetbrains.compose.resources.getString
 
 class SendRequestUseCase(

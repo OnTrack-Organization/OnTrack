@@ -38,8 +38,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.contentSizeAnimation
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.remove_tracking_button
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.remove_tracking_button
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

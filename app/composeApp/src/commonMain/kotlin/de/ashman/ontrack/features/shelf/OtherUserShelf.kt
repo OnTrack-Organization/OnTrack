@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.shelf_other_empty
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.shelf_other_empty
 
 @Composable
 fun OtherUserShelf(

@@ -6,11 +6,11 @@ import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import ontrack.app.composeapp.generated.resources.Res
-import ontrack.app.composeapp.generated.resources.detail_artist
-import ontrack.app.composeapp.generated.resources.detail_artist_albums
-import ontrack.app.composeapp.generated.resources.detail_artist_popularity
-import ontrack.app.composeapp.generated.resources.detail_tracks
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_artist
+import ontrack.composeapp.generated.resources.detail_artist_albums
+import ontrack.composeapp.generated.resources.detail_artist_popularity
+import ontrack.composeapp.generated.resources.detail_tracks
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
