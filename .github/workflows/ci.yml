@@ -1,6 +1,6 @@
-#name: OnTrack CI
-#run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-#on: [ push ]
+name: OnTrack CI
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
 #jobs:
 #  build-push-docker-image:
 #    runs-on: ubuntu-latest
