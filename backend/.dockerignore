@@ -1,0 +1,17 @@
+# Ignore Gradle build and cache directories
+/build
+/.gradle
+
+# Ignore IDE configuration files
+.idea
+.vscode
+*.iml
+
+# Ignore OS-specific files (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# Ignore logs and temporary files
+*.log
+*.bak
+*.tmp

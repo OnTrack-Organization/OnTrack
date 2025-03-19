@@ -25,6 +25,10 @@ services:
     restart: always
     depends_on:
       - db
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ontrack'
+      - 'SPRING_DATASOURCE_USERNAME=default'
+      - 'SPRING_DATASOURCE_PASSWORD=demo'
     ports:
       - "8080:8080"
       # 5005 is used for debug listener
