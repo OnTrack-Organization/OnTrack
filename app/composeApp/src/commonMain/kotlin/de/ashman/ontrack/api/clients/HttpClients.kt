@@ -3,6 +3,8 @@ package de.ashman.ontrack.api.clients
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.di.BGG_PATH
 import de.ashman.ontrack.di.BGG_URL
+import de.ashman.ontrack.di.GEEKDO_PATH
+import de.ashman.ontrack.di.GEEKDO_URL
 import de.ashman.ontrack.di.IGDB_PATH
 import de.ashman.ontrack.di.IGDB_URL
 import de.ashman.ontrack.di.OPEN_LIB_URL
@@ -64,6 +66,18 @@ fun createBGGClient(): HttpClient = HttpClient {
             protocol = URLProtocol.HTTPS
             host = BGG_URL
             path(BGG_PATH)
+        }
+    }
+}
+
+fun createGeekDoClient(): HttpClient = HttpClient {
+    setupContentNegotiation()
+
+    defaultRequest {
+        url {
+            protocol = URLProtocol.HTTPS
+            host = GEEKDO_URL
+            path(GEEKDO_PATH)
         }
     }
 }

@@ -134,6 +134,8 @@
 
     <string name="detail_description">Description</string>
 
+    <string name="detail_images">Images</string>
+
     <plurals name="detail_seasons">
         <item quantity="one">%1$d Season</item>
         <item quantity="other">%1$d Seasons</item>

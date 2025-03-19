@@ -47,6 +47,7 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.ErrorContent
+import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.RemoveSheet
@@ -93,6 +94,9 @@ fun DetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
+
+    var showImageDialog by remember { mutableStateOf(false) }
+    var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(mediaNavItems.id) {
         detailViewModel.fetchDetails(mediaNavItems)
@@ -141,6 +145,10 @@ fun DetailScreen(
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = { sharedUiManager.showSheet(CurrentSheet.TRACK) },
                 onClickRecommend = { sharedUiManager.showSheet(CurrentSheet.RECOMMEND) },
+                onClickImage = { imageUrl ->
+                    selectedImageUrl = imageUrl
+                    showImageDialog = true
+                }
             )
 
             when (detailUiState.resultState) {
@@ -159,9 +167,21 @@ fun DetailScreen(
                         onClickItem = onClickItem,
                         onUserClick = onClickUser,
                         onShowFriendActivity = { sharedUiManager.showSheet(CurrentSheet.FRIEND_ACTIVITY) },
+                        onClickImage = { imageUrl ->
+                            selectedImageUrl = imageUrl
+                            showImageDialog = true
+                        }
                     )
                 }
             }
+        }
+
+        if (showImageDialog) {
+            LargerImageDialog(
+                showDialog = showImageDialog,
+                imageUrl = selectedImageUrl,
+                onDismiss = { showImageDialog = false },
+            )
         }
 
         if (sharedUiState.showSheet) {
@@ -276,6 +296,7 @@ fun DetailContent(
     onClickItem: (MediaNavigationItems) -> Unit,
     onUserClick: (String) -> Unit,
     onShowFriendActivity: () -> Unit,
+    onClickImage: (String) -> Unit,
 ) {
     media?.let {
         LazyColumn(
@@ -335,7 +356,7 @@ fun DetailContent(
                 MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
                 MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
                 MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
-                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem, onClickImage = onClickImage)
                 MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
             }
         }

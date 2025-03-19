@@ -28,6 +28,7 @@ data class Boardgame(
     val weightCount: Int? = null,
     val franchise: List<Boardgame>? = null,
     val designer: BoardgameDesigner? = null,
+    val images: List<BoardgameImage>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()
@@ -58,4 +59,11 @@ data class BoardgameDesigner(
     val name: String,
     val imageUrl: String? = null,
     val bio: String? = null,
+) : CommonParcelable
+
+@CommonParcelize
+@Serializable
+data class BoardgameImage(
+    val id: String,
+    val imageUrl: String,
 ) : CommonParcelable

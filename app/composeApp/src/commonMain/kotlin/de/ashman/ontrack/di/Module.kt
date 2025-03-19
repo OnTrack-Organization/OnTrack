@@ -6,6 +6,7 @@ import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.clients.createBGGClient
+import de.ashman.ontrack.api.clients.createGeekDoClient
 import de.ashman.ontrack.api.clients.createIGDBClient
 import de.ashman.ontrack.api.clients.createOpenLibraryClient
 import de.ashman.ontrack.api.clients.createSpotifyClient
@@ -68,6 +69,7 @@ val appModule = module {
     single(named(TMDB_CLIENT_NAME)) { createTMDBClient() }
     single(named(OPEN_LIB_CLIENT_NAME)) { createOpenLibraryClient() }
     single(named(BGG_CLIENT_NAME)) { createBGGClient() }
+    single(named(GEEKDO_CLIENT_NAME)) { createGeekDoClient() }
     single(named(IGDB_CLIENT_NAME)) { createIGDBClient() }
     single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
@@ -77,7 +79,7 @@ val appModule = module {
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
     single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
     single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
-    single { BoardgameRepository(get(named(BGG_CLIENT_NAME))) }
+    single { BoardgameRepository(get(named(BGG_CLIENT_NAME)), get(named(GEEKDO_CLIENT_NAME))) }
     single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 

@@ -64,9 +64,9 @@ fun StickyHeader(
     scrollBehavior: TopAppBarScrollBehavior,
     onClickAddTracking: () -> Unit,
     onClickRecommend: () -> Unit,
+    onClickImage: (String) -> Unit = {},
 ) {
     var mainInfoItems by remember { mutableStateOf(emptyList<String>()) }
-    var showImageDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(media) {
         mainInfoItems = emptyList()
@@ -89,7 +89,7 @@ fun StickyHeader(
         MediaPoster(
             modifier = imageModifier.height(size),
             coverUrl = mediaCoverUrl,
-            onClick = { showImageDialog = true },
+            onClick = { onClickImage(mediaCoverUrl.orEmpty()) },
         )
 
         Column {
@@ -120,14 +120,6 @@ fun StickyHeader(
                 onClick = onClickRecommend
             )
         }
-    }
-
-    if (showImageDialog) {
-        LargerImageDialog(
-            showDialog = showImageDialog,
-            imageUrl = mediaCoverUrl,
-            onDismiss = { showImageDialog = false },
-        )
     }
 }
 
