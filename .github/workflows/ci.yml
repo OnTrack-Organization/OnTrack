@@ -1,6 +1,8 @@
-name: OnTrack Backend Pipeline
+name: OnTrack Deployment Workflow
 on:
-  pull_request:
+  push:
+    branches:
+      - 'develop'
     paths:
       - 'backend/**'
   workflow_dispatch:
