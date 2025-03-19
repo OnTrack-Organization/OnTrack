@@ -30,7 +30,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build backend/Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest backend
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest backend
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest
 #
 #  migrate-db:
