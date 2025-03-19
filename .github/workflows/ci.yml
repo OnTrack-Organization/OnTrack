@@ -1,6 +1,6 @@
 name: OnTrack Backend Pipeline
 on:
-  pull_requests:
+  pull_request:
     paths:
       - 'backend/**'
   workflow_dispatch:
