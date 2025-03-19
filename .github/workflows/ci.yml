@@ -1,18 +1,61 @@
-name: OnTrack CI
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
-jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+#name: OnTrack CI
+#run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+#on: [ push ]
+#jobs:
+#  build-push-docker-image:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+#
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ vars.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Build and push Docker image
+#        run: |
+#          docker build -t quanvuanh/on-track:latest .
+#          docker push quanvuanh/on-track:latest
+#
+#  migrate-db:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Run DB migrations (add new schema elements)
+#        env:
+#          DB_URL: ${{ secrets.DB_URL }}
+#          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+#          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#        run: |
+#          liquibase --url=${DB_URL} --username=${DB_USERNAME} --password=${DB_PASSWORD} update
+#
+#  deploy-to-render:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Trigger Render Deployment
+#        env:
+#          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+#        run: |
+#          curl -X POST \
+#          -H "Authorization: Bearer ${RENDER_API_KEY}" \
+#          -d '{"branch": "main"}' \
+#          https://api.render.com/v1/services/<YOUR_RENDER_SERVICE_ID>/deployments
+#
+#  run-db-migrations:
+#    runs-on: ubuntu-latest
+#    needs: deploy-to-render  # Ensure migrations only happen after the app is deployed
+#    steps:
+#      - name: Run DB migrations
+#        env:
+#          DB_URL: ${{ secrets.DB_URL }}
+#          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+#          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#        run: |
+#          liquibase --url=${DB_URL} --username=${DB_USERNAME} --password=${DB_PASSWORD} update
