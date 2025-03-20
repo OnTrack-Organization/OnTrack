@@ -21,6 +21,8 @@ fun ShowDto.toDomain(): Show =
         seasons = seasons?.map { it.toDomain() },
         apiRating = voteAverage,
         apiRatingCount = voteCount,
+        similarShows = similar?.shows?.map { it.toDomain() }?.takeIf { it.isNotEmpty() },
+        images = images?.backdrops?.take(10)?.map { it.filePath.getTMDBCoverUrl() },
     )
 
 fun SeasonDto.toDomain(): Season =

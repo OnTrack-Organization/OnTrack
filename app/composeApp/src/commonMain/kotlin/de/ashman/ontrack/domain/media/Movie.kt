@@ -23,6 +23,7 @@ data class Movie(
     val runtime: Int? = null,
     val similarMovies: List<Movie>? = null,
     val director: Director? = null,
+    val images: List<String>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

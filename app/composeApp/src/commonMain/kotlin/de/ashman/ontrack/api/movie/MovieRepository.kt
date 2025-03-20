@@ -34,15 +34,13 @@ class MovieRepository(
 
     override suspend fun fetchDetails(mediaId: String): Result<Movie> = safeApiCall {
         val response: MovieDto = httpClient.get("movie/$mediaId") {
-            parameter("append_to_response", "credits,similar")
+            parameter("append_to_response", "credits,similar,images")
         }.body()
 
         val director = getDirector(response.credits?.crew)
         val collection = fetchMovieCollection(response.belongsToCollection?.id)
-        val similarMovies = response.similar?.movies?.map { it.toDomain() }?.takeIf { it.isNotEmpty() }
 
         response.toDomain().copy(
-            similarMovies = similarMovies,
             director = director,
             collection = collection
         )

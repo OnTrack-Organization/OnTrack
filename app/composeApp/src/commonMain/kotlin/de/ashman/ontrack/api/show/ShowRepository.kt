@@ -33,14 +33,12 @@ class ShowRepository(
 
     override suspend fun fetchDetails(mediaId: String): Result<Show> = safeApiCall {
         val response: ShowDto = httpClient.get("tv/$mediaId") {
-            parameter("append_to_response", "credits,similar")
+            parameter("append_to_response", "credits,similar,images")
         }.body()
 
         val director = getDirector(response.credits?.crew)
-        val similarShows = response.similar?.shows?.map { it.toDomain() }
 
         response.toDomain().copy(
-            similarShows = similarShows,
             director = director
         )
     }

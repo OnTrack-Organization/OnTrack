@@ -56,6 +56,9 @@ import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_images
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MediaPoster(
@@ -391,7 +394,6 @@ fun LargerImageDialog(
 
 @Composable
 fun MediaImageRow(
-    title: String,
     images: List<String>,
     onClickImage: (String) -> Unit,
 ) {
@@ -400,7 +402,7 @@ fun MediaImageRow(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = title,
+            text = stringResource(Res.string.detail_images),
             style = MaterialTheme.typography.titleMedium,
         )
 

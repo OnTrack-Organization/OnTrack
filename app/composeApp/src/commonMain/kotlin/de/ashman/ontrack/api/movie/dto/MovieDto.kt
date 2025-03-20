@@ -25,6 +25,7 @@ data class MovieDto(
 
     val credits: CreditsDto? = null,
     val similar: MovieResponseDto? = null,
+    val images: ImageWrapper? = null,
 )
 
 @Serializable
@@ -39,4 +40,21 @@ data class CollectionDto(
     val name: String?,
     val posterPath: String?,
     val backdropPath: String?
+)
+
+@Serializable
+data class ImageWrapper(
+    val backdrops: List<TMDBImageDto>,
+    val logos: List<TMDBImageDto>,
+    val posters: List<TMDBImageDto>,
+)
+
+@Serializable
+data class TMDBImageDto(
+    val filePath: String,
+    val width: Int,
+    val height: Int,
+    val aspectRatio: Double,
+    val voteAverage: Double,
+    val voteCount: Int
 )

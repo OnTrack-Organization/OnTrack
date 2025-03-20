@@ -12,7 +12,6 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_franchise
 import ontrack.composeapp.generated.resources.detail_genres
-import ontrack.composeapp.generated.resources.detail_images
 import ontrack.composeapp.generated.resources.detail_platforms
 import ontrack.composeapp.generated.resources.detail_similar
 import org.jetbrains.compose.resources.pluralStringResource
@@ -70,7 +69,6 @@ fun LazyListScope.VideogameDetailContent(
     videogame.screenshots?.let {
         item {
             MediaImageRow(
-                title = stringResource(Res.string.detail_images),
                 images = it,
                 onClickImage = onClickImage,
             )

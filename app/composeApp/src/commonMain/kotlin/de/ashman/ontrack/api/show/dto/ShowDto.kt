@@ -1,6 +1,7 @@
 package de.ashman.ontrack.api.show.dto
 
 import de.ashman.ontrack.api.movie.dto.CreditsDto
+import de.ashman.ontrack.api.movie.dto.ImageWrapper
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -28,6 +29,7 @@ data class ShowDto(
 
     val credits: CreditsDto? = null,
     val similar: ShowResponseDto? = null,
+    val images: ImageWrapper? = null,
 )
 
 @Serializable

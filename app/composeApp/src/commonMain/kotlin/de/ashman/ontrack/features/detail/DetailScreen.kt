@@ -352,8 +352,8 @@ fun DetailContent(
             }
 
             when (media.mediaType) {
-                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
-                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem, onClickImage = onClickImage)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem, onClickImage = onClickImage)
                 MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
                 MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem, onClickImage = onClickImage)
                 MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem, onClickImage = onClickImage)

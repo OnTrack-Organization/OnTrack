@@ -22,6 +22,8 @@ fun MovieDto.toDomain(): Movie =
         runtime = runtime?.takeIf { it > 0 },
         apiRating = voteAverage,
         apiRatingCount = voteCount,
+        similarMovies = similar?.movies?.map { it.toDomain() }?.takeIf { it.isNotEmpty() },
+        images = images?.backdrops?.take(10)?.map { it.filePath.getTMDBCoverUrl() },
     )
 
 fun PersonDetailsDto.toDomain(): Director =

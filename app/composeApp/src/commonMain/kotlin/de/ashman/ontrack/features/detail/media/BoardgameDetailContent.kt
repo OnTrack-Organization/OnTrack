@@ -1,23 +1,6 @@
 package de.ashman.ontrack.features.detail.media
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.features.common.MediaImageRow
 import de.ashman.ontrack.features.common.MediaPosterRow
@@ -28,7 +11,6 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_designer
 import ontrack.composeapp.generated.resources.detail_franchise
-import ontrack.composeapp.generated.resources.detail_images
 import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BoardgameDetailContent(
@@ -68,7 +50,6 @@ fun LazyListScope.BoardgameDetailContent(
     boardgame.images?.let {
         item {
             MediaImageRow(
-                title = stringResource(Res.string.detail_images),
                 images = it,
                 onClickImage = onClickImage,
             )
