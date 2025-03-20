@@ -26,6 +26,7 @@ fun VideogameDto.toDomain(): Videogame =
         apiRating = totalRating,
         apiRatingCount = totalRatingCount,
         similarGames = similarGames?.map { it.toDomain() },
+        screenshots = screenshots?.take(10)?.map { it.url.getIGDBCoverUrl() },
     )
 
 fun FranchiseDto.toDomain(): Franchise =

@@ -19,7 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import de.ashman.ontrack.domain.media.Boardgame
-import de.ashman.ontrack.domain.media.BoardgameImage
+import de.ashman.ontrack.features.common.MediaImageRow
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription
@@ -69,49 +69,9 @@ fun LazyListScope.BoardgameDetailContent(
         item {
             MediaImageRow(
                 title = stringResource(Res.string.detail_images),
-                items = it,
+                images = it,
                 onClickImage = onClickImage,
             )
-        }
-    }
-}
-
-@Composable
-fun MediaImageRow(
-    title: String,
-    items: List<BoardgameImage>,
-    onClickImage: (String) -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        ) {
-            items(items) { item ->
-                val painter = rememberAsyncImagePainter(item.imageUrl)
-
-                Surface(
-                    modifier = Modifier
-                        .size(124.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    onClick = { onClickImage(item.imageUrl) },
-                ) {
-                    Image(
-                        painter = painter,
-                        contentDescription = "Account Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
         }
     }
 }

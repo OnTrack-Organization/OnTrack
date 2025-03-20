@@ -7,7 +7,6 @@ import de.ashman.ontrack.api.utils.decodeHtmlManually
 import de.ashman.ontrack.api.utils.nonZeroToInt
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.domain.media.BoardgameDesigner
-import de.ashman.ontrack.domain.media.BoardgameImage
 
 fun BoardgameDto.toDomain(): Boardgame =
     Boardgame(
@@ -39,8 +38,3 @@ fun LinkDto.toBoardgameDomain(): Boardgame =
         id = id.orEmpty(),
         title = value.orEmpty(),
     )
-
-fun BoardgameImageDto.toDomain() = BoardgameImage(
-    id = imageid,
-    imageUrl = imageUrlLarge,
-)

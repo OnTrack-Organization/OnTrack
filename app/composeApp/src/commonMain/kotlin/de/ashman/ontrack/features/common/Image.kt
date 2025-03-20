@@ -387,3 +387,44 @@ fun LargerImageDialog(
         }
     }
 }
+
+
+@Composable
+fun MediaImageRow(
+    title: String,
+    images: List<String>,
+    onClickImage: (String) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+        ) {
+            items(images) { imageUrl ->
+                val painter = rememberAsyncImagePainter(imageUrl)
+
+                Surface(
+                    modifier = Modifier
+                        .size(124.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    onClick = { onClickImage(imageUrl) },
+                ) {
+                    Image(
+                        painter = painter,
+                        contentDescription = "Account Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+    }
+}

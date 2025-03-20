@@ -19,6 +19,7 @@ data class Videogame(
     val involvedCompanies: List<String>? = null,
     val platforms: List<Platform>? = null,
     val similarGames: List<Videogame>? = null,
+    val screenshots: List<String>? = null,
 ) : Media() {
     override suspend fun getMainInfoItems(): List<String> {
         val infoItems = mutableListOf<String>()

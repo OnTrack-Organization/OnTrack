@@ -1,5 +1,6 @@
 package de.ashman.ontrack.api.videogame
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.utils.safeApiCall
@@ -78,13 +79,16 @@ class VideogameRepository(
             url("games")
             setBody(
                 """
-                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary;
+                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary, screenshots.url;
                     where id = ${mediaId};
                 """
             )
         }).body()
 
+        Logger.d { "VIDEOGAME RESPONSE $response" }
+
         val videogame = response.first()
+        Logger.d { "VIDEOGAME $videogame" }
         val franchises = fetchFranchises(videogame.franchises)
 
         videogame.toDomain().copy(franchises = franchises)

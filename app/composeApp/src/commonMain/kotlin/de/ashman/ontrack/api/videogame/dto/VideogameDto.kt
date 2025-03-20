@@ -1,5 +1,6 @@
 package de.ashman.ontrack.api.videogame.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,7 @@ data class VideogameDto(
     val involvedCompanies: List<InvolvedCompanyDto>? = null,
     val platforms: List<PlatformDto>? = null,
     val similarGames: List<VideogameDto>? = null,
+    val screenshots: List<ScreenshotDto>? = null,
 )
 
 @Serializable
@@ -69,4 +71,11 @@ data class PopularityDto(
     val gameId: Int,
     val value: Float,
     val popularityType: Int,
+)
+
+@Serializable
+data class ScreenshotDto(
+    @SerialName("image_id")
+    val imageId: String? = null,
+    val url: String,
 )

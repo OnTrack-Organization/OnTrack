@@ -355,7 +355,7 @@ fun DetailContent(
                 MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem)
                 MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem)
                 MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
-                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem, onClickImage = onClickImage)
                 MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem, onClickImage = onClickImage)
                 MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
             }

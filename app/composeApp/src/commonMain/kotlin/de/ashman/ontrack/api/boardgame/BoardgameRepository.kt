@@ -11,7 +11,6 @@ import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.domain.media.BoardgameDesigner
-import de.ashman.ontrack.domain.media.BoardgameImage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -108,10 +107,10 @@ class BoardgameRepository(
         )
     }
 
-    private suspend fun fetchImages(bgId: String): List<BoardgameImage> =
+    private suspend fun fetchImages(bgId: String): List<String> =
         geekDoClient.get("images") {
             parameter("objectid", bgId)
             parameter("objecttype", "thing")
-        }.body<BoardgameImagesDto>().images.take(10).map { it.toDomain() }
+        }.body<BoardgameImagesDto>().images.take(10).map { it.imageUrlLarge }
 
 }
