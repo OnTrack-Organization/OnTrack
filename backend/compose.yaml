@@ -30,9 +30,34 @@ services:
       - 'SPRING_DATASOURCE_USERNAME=default'
       - 'SPRING_DATASOURCE_PASSWORD=demo'
     ports:
-      - "8080:8080"
       # 5005 is used for debug listener
       - "5005:5005"
     command: gradle bootRun --no-daemon
     volumes:
       - .:/app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.rule=Host(`api.ontrack.local.riceisnice.dev`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+
+  proxy:
+    image: traefik:latest
+    command:
+      - "--log=true"
+      - "--log.level=info"
+      - "--accesslog=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      # Watch dynamic config and apply changes
+      - "--providers.file.watch=true"
+      - "--providers.file.directory=/conf"
+    volumes:
+      # mount docker socket to container as readonly
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # mount volume with cert
+      - "./dev/docker/proxy/conf:/conf"
+    ports:
+      - "8000:443"

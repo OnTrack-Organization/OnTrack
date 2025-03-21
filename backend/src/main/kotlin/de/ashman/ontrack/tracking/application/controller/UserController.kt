@@ -27,4 +27,10 @@ class UserController(
     fun getUsers(): List<User> {
         return this.repository.findAll()
     }
+
+    @GetMapping("/test")
+    fun test(): String
+    {
+        return "Hi you finally reached me"
+    }
 }

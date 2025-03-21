@@ -38,3 +38,6 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### SSL Certs
+dev/docker/proxy/conf/*.pem
