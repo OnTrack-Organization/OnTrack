@@ -1,5 +1,11 @@
 package de.ashman.ontrack.di
 
+// BACKEND
+const val BACKEND_CLIENT_NAME = "BackendClient"
+const val BACKEND_PORT = 8080
+const val BACKEND_URL = "localhost"
+const val EMULATOR_URL = "10.0.2.2"
+
 // DEFAULT FETCH LIMIT
 const val DEFAULT_FETCH_LIMIT = 20
 const val SMALL_FETCH_LIMIT = 10
