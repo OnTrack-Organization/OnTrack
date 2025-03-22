@@ -1,6 +1,7 @@
 package de.ashman.ontrack.api.utils
 
 import co.touchlab.kermit.Logger
+import de.ashman.ontrack.api.book.cleanupDescription
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number

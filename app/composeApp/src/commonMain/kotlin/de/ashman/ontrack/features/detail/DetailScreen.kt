@@ -32,7 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.api.getRatingType
+import de.ashman.ontrack.api.getApiType
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Album
 import de.ashman.ontrack.domain.media.Boardgame
@@ -124,7 +124,10 @@ fun DetailScreen(
                 onClickNavigation = onBack,
                 dropdownMenu = {
                     DetailDropDown(
-                        isTrackingAvailable = detailUiState.selectedTracking != null,
+                        isRemoveEnabled = detailUiState.selectedTracking != null,
+                        mediaApiUrl = detailUiState.selectedMedia?.detailUrl,
+                        apiTitle = mediaNavItems.mediaType.getApiType().title,
+                        apiIcon = mediaNavItems.mediaType.getApiType().icon,
                         onClickRemove = { sharedUiManager.showSheet(CurrentSheet.REMOVE) }
                     )
                 },
@@ -343,7 +346,7 @@ fun DetailContent(
 
             item {
                 RatingCardRow(
-                    apiType = media.mediaType.getRatingType(),
+                    apiType = media.mediaType.getApiType(),
                     rating = media.apiRating,
                     ratingCount = media.apiRatingCount,
                     appRating = ratingStats.averageRating,

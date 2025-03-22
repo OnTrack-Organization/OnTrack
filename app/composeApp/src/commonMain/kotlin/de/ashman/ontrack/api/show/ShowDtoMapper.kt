@@ -1,9 +1,10 @@
 package de.ashman.ontrack.api.show
 
+import de.ashman.ontrack.api.movie.getShowDetailUrl
+import de.ashman.ontrack.api.movie.getTMDBCoverUrl
+import de.ashman.ontrack.api.movie.getYear
 import de.ashman.ontrack.api.show.dto.SeasonDto
 import de.ashman.ontrack.api.show.dto.ShowDto
-import de.ashman.ontrack.api.utils.getTMDBCoverUrl
-import de.ashman.ontrack.api.utils.getYear
 import de.ashman.ontrack.domain.media.Season
 import de.ashman.ontrack.domain.media.Show
 
@@ -12,6 +13,7 @@ fun ShowDto.toDomain(): Show =
         id = id.toString(),
         title = name,
         coverUrl = posterPath.getTMDBCoverUrl(),
+        detailUrl = getShowDetailUrl(id),
         releaseYear = firstAirDate?.getYear(),
         description = overview?.takeIf { it.isNotEmpty() },
         genres = genres?.takeIf { it.isNotEmpty() }?.map { it.name },

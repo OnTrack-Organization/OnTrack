@@ -99,6 +99,8 @@
     <string name="tracking_saved">%1$s added to %2$s</string>
     <string name="tracking_removed">%1$s removed from %2$s</string>
 
+    <string name="detail_view_on_api">View on %1$s</string>
+
     <!-- DETAIL REVIEW -->
     <string name="review_title">Review</string>
     <string name="track_title">Track Status</string>
@@ -213,6 +215,12 @@
     <string name="settings_account_data_saved">Account data saved</string>
 
     <!-- MEDIA -->
+    <string name="api_tmdb">TMDB</string>
+    <string name="api_openlib">OpenLibrary</string>
+    <string name="api_igdb">IGDB</string>
+    <string name="api_bgg">BGG</string>
+    <string name="api_spotify">Spotify</string>
+
     <plurals name="movie">
         <item quantity="one">Movie</item>
         <item quantity="other">Movies</item>

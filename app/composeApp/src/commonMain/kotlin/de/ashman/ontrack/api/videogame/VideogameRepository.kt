@@ -79,7 +79,7 @@ class VideogameRepository(
             url("games")
             setBody(
                 """
-                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary, screenshots.url;
+                    fields cover.url, first_release_date, franchises, genres.name, involved_companies.company.name, name, platforms.abbreviation, platforms.name, platforms.platform_logo.url, similar_games.cover.url, similar_games.name, total_rating, total_rating_count, summary, screenshots.url, url;
                     where id = ${mediaId};
                 """
             )

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.utils
+package de.ashman.ontrack.api.boardgame
 
 import de.ashman.ontrack.api.boardgame.dto.BoardgameResponseDto
 import nl.adaptivity.xmlutil.serialization.XML
@@ -33,3 +33,5 @@ fun String.decodeHtmlManually(): String {
 }
 
 fun String.nonZeroToInt(): Int? = this.takeIf { it != "0" }?.toInt()
+
+fun getBoardgameDetailUrl(id: String) = "https://boardgamegeek.com/boardgame/$id"

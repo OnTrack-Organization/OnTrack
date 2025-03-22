@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.utils
+package de.ashman.ontrack.api.album
 
 import de.ashman.ontrack.api.album.dto.TrackDto
 

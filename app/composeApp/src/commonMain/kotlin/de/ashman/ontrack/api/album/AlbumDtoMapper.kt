@@ -4,8 +4,7 @@ import de.ashman.ontrack.api.album.dto.AlbumDto
 import de.ashman.ontrack.api.album.dto.AlbumResponseDto
 import de.ashman.ontrack.api.album.dto.ArtistDto
 import de.ashman.ontrack.api.album.dto.TrackDto
-import de.ashman.ontrack.api.utils.getYear
-import de.ashman.ontrack.api.utils.toNumberedTracks
+import de.ashman.ontrack.api.movie.getYear
 import de.ashman.ontrack.domain.media.Album
 import de.ashman.ontrack.domain.media.AlbumTrack
 import de.ashman.ontrack.domain.media.Artist
@@ -15,6 +14,7 @@ fun AlbumDto.toDomain(): Album =
         id = id,
         title = name,
         coverUrl = images.first().url,
+        detailUrl = externalUrls.spotify,
         releaseYear = releaseDate.getYear(),
         description = tracks?.items?.toNumberedTracks(),
         mainArtist = artists.first().toDomain(),

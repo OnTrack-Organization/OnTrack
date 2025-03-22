@@ -10,8 +10,6 @@ import de.ashman.ontrack.api.book.dto.BookSearchResponse
 import de.ashman.ontrack.api.book.dto.BookTrendingResponse
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
 import de.ashman.ontrack.api.book.dto.RatingSummary
-import de.ashman.ontrack.api.utils.extractPageCount
-import de.ashman.ontrack.api.utils.extractPublishYear
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.di.SMALL_FETCH_LIMIT

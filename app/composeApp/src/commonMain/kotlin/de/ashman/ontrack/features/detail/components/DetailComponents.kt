@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.detail.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -33,14 +35,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.contentSizeAnimation
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.detail_view_on_api
 import ontrack.composeapp.generated.resources.remove_tracking_button
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -218,9 +225,13 @@ fun CreatorCard(
 
 @Composable
 fun DetailDropDown(
-    isTrackingAvailable: Boolean,
+    isRemoveEnabled: Boolean,
+    mediaApiUrl: String?,
+    apiTitle: StringResource,
+    apiIcon: DrawableResource,
     onClickRemove: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -234,10 +245,32 @@ fun DetailDropDown(
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.remove_tracking_button)) },
                 leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
-                enabled = isTrackingAvailable,
+                enabled = isRemoveEnabled,
                 onClick = {
                     expanded = false
                     onClickRemove()
+                },
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        stringResource(Res.string.detail_view_on_api, stringResource(apiTitle))
+                    )
+                },
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(apiIcon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(MaterialTheme.shapes.small),
+                    )
+                },
+                onClick = {
+                    expanded = false
+                    mediaApiUrl?.let {
+                        uriHandler.openUri(it)
+                    }
                 },
             )
         }

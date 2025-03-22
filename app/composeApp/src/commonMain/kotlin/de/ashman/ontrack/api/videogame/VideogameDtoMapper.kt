@@ -1,6 +1,5 @@
 package de.ashman.ontrack.api.videogame
 
-import de.ashman.ontrack.api.utils.getIGDBCoverUrl
 import de.ashman.ontrack.api.videogame.dto.FranchiseDto
 import de.ashman.ontrack.api.videogame.dto.PlatformDto
 import de.ashman.ontrack.api.videogame.dto.VideogameDto
@@ -16,6 +15,7 @@ fun VideogameDto.toDomain(): Videogame =
         id = id.toString(),
         title = name,
         coverUrl = cover?.url.getIGDBCoverUrl(),
+        detailUrl = url.orEmpty(),
         releaseYear = firstReleaseDate?.let {
             Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.UTC).date.year.toString()
         },

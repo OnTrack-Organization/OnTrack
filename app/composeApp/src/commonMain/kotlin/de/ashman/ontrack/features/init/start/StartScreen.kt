@@ -223,8 +223,6 @@ fun ApiContributions() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ApiType.entries.forEachIndexed { index, item ->
-                if (item == ApiType.OnTrack) return@forEachIndexed
-
                 Image(
                     painter = painterResource(item.icon),
                     contentDescription = null,
@@ -232,7 +230,7 @@ fun ApiContributions() {
                         .size(32.dp)
                         .clip(MaterialTheme.shapes.small)
                         .clickable {
-                            item.uri?.let {
+                            item.websiteUrl?.let {
                                 uriHandler.openUri(it)
                             }
                         },

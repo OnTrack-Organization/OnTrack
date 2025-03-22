@@ -3,12 +3,7 @@ package de.ashman.ontrack.api.book
 import de.ashman.ontrack.api.book.dto.AuthorDto
 import de.ashman.ontrack.api.book.dto.BookDto
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
-import de.ashman.ontrack.api.utils.cleanupAuthorKey
-import de.ashman.ontrack.api.utils.cleanupBookKey
-import de.ashman.ontrack.api.utils.cleanupDescription
-import de.ashman.ontrack.api.utils.filterGenres
 import de.ashman.ontrack.api.utils.formatDates
-import de.ashman.ontrack.api.utils.getOpenLibraryCoverUrl
 import de.ashman.ontrack.domain.media.Author
 import de.ashman.ontrack.domain.media.Book
 
@@ -17,6 +12,7 @@ fun BookDto.toDomain(): Book =
         id = key.cleanupBookKey(),
         title = title,
         coverUrl = coverI.getOpenLibraryCoverUrl(),
+        detailUrl = getBookDetailUrl(key.cleanupBookKey()),
         releaseYear = firstPublishYear.toString(),
         numberOfPages = numberOfPagesMedian,
         publisher = publisher,
@@ -33,6 +29,7 @@ fun BookWorksResponse.toDomain(): Book =
         coverUrl = covers?.firstOrNull()?.getOpenLibraryCoverUrl(),
         author = authors?.first()?.author?.toDomain(),
         description = description?.cleanupDescription(),
+        detailUrl = getBookDetailUrl(key.cleanupBookKey()),
     )
 
 fun AuthorDto.toDomain(): Author =

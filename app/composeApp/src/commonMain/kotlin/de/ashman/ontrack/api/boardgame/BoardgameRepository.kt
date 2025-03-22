@@ -5,8 +5,6 @@ import com.fleeksoft.ksoup.network.parseGetRequest
 import com.fleeksoft.ksoup.nodes.Document
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.boardgame.dto.BoardgameImagesDto
-import de.ashman.ontrack.api.utils.convertXmlToResponse
-import de.ashman.ontrack.api.utils.decodeHtmlManually
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.di.DEFAULT_FETCH_LIMIT
 import de.ashman.ontrack.domain.media.Boardgame

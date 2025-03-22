@@ -15,4 +15,4 @@ fun Modifier.debugBorder(
     return this.border(width, color)
 }
 
-fun fakeItems(): List<Media> = List(20) { Movie(id = "fake_$it", title = "") }
+fun fakeItems(): List<Media> = List(20) { Movie(id = "fake_$it", title = "", detailUrl = "") }

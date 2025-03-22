@@ -1,18 +1,16 @@
 package de.ashman.ontrack.api.boardgame
 
 import de.ashman.ontrack.api.boardgame.dto.BoardgameDto
-import de.ashman.ontrack.api.boardgame.dto.BoardgameImageDto
 import de.ashman.ontrack.api.boardgame.dto.LinkDto
-import de.ashman.ontrack.api.utils.decodeHtmlManually
-import de.ashman.ontrack.api.utils.nonZeroToInt
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.domain.media.BoardgameDesigner
 
 fun BoardgameDto.toDomain(): Boardgame =
     Boardgame(
-        id = id.orEmpty(),
+        id = id,
         title = names?.first()?.value.orEmpty(),
         coverUrl = image.orEmpty(),
+        detailUrl = getBoardgameDetailUrl(id),
         releaseYear = yearpublished?.value,
         description = description?.decodeHtmlManually(),
         designer = links?.find { it.type == "boardgamedesigner" }?.toBoardgameDesignerDomain(),
@@ -37,4 +35,5 @@ fun LinkDto.toBoardgameDomain(): Boardgame =
         boardgameType = type.orEmpty(),
         id = id.orEmpty(),
         title = value.orEmpty(),
+        detailUrl = "",
     )

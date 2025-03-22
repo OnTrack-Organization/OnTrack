@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class VideogameDto(
     val id: Int? = null,
     val cover: CoverDto? = null,
+    val url: String? = null,
     val name: String,
     val summary: String? = null,
     val firstReleaseDate: Long? = null,

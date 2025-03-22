@@ -4,8 +4,6 @@ import de.ashman.ontrack.api.movie.dto.CollectionResponseDto
 import de.ashman.ontrack.api.movie.dto.MovieDto
 import de.ashman.ontrack.api.movie.dto.PersonDetailsDto
 import de.ashman.ontrack.api.utils.formatDates
-import de.ashman.ontrack.api.utils.getTMDBCoverUrl
-import de.ashman.ontrack.api.utils.getYear
 import de.ashman.ontrack.domain.media.Director
 import de.ashman.ontrack.domain.media.Movie
 import de.ashman.ontrack.domain.media.MovieCollection
@@ -15,6 +13,7 @@ fun MovieDto.toDomain(): Movie =
         id = id.toString(),
         title = title,
         coverUrl = posterPath.getTMDBCoverUrl(),
+        detailUrl = getMovieDetailUrl(id),
         releaseYear = releaseDate?.getYear(),
         description = overview?.takeIf { it.isNotEmpty() },
         genres = genres?.takeIf { it.isNotEmpty() }?.map { it.name },

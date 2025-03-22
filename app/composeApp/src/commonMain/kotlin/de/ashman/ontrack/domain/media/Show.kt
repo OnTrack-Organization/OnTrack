@@ -14,6 +14,7 @@ data class Show(
     override val mediaType: MediaType = MediaType.SHOW,
     override val title: String,
     override val coverUrl: String? = null,
+    override val detailUrl: String,
     override val releaseYear: String? = null,
     override val description: String? = null,
     override val apiRating: Double? = null,

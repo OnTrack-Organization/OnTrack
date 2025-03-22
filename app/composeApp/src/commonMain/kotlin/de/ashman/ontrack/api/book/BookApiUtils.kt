@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.utils
+package de.ashman.ontrack.api.book
 
 import de.ashman.ontrack.api.book.dto.BookEditionsEntry
 
@@ -50,3 +50,5 @@ fun String.extractYear(): String? {
 
 fun List<BookEditionsEntry>.extractPageCount(): Int? = this.firstNotNullOfOrNull { it.numberOfPages }
 fun List<BookEditionsEntry>.extractPublishYear(): String? = this.firstNotNullOfOrNull { it.publishDate?.extractYear() }
+
+fun getBookDetailUrl(id: String) = "https://openlibrary.org/works/$id"

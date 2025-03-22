@@ -11,6 +11,7 @@ sealed class Media() : CommonParcelable {
     abstract val mediaType: MediaType
     abstract val title: String
     abstract val coverUrl: String?
+    abstract val detailUrl: String
     abstract val releaseYear: String?
     abstract val description: String?
     abstract val apiRating: Double?

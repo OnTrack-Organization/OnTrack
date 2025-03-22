@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.api.ApiType
+import de.ashman.ontrack.api.OnTrackApiType
 import de.ashman.ontrack.api.utils.roundDecimals
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.ratings_overview
@@ -46,10 +47,10 @@ fun RatingCardRow(
         ) {
             RatingCard(
                 modifier = Modifier.weight(1f),
-                icon = ApiType.OnTrack.icon,
+                icon = OnTrackApiType.OnTrack.icon,
                 rating = appRating?.roundDecimals(1),
                 ratingCount = appRatingCount,
-                maxRating = ApiType.OnTrack.maxRating,
+                maxRating = OnTrackApiType.OnTrack.maxRating,
             )
 
             RatingCard(
