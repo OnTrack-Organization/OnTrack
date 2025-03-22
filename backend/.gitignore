@@ -38,3 +38,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### SSL Certs
+.env
+/letsencrypt/
