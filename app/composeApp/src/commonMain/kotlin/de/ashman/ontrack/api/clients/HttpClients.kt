@@ -1,8 +1,10 @@
 package de.ashman.ontrack.api.clients
 
 import de.ashman.ontrack.BuildKonfig
+import de.ashman.ontrack.di.BACKEND_PORT
 import de.ashman.ontrack.di.BGG_PATH
 import de.ashman.ontrack.di.BGG_URL
+import de.ashman.ontrack.di.EMULATOR_URL
 import de.ashman.ontrack.di.GEEKDO_PATH
 import de.ashman.ontrack.di.GEEKDO_URL
 import de.ashman.ontrack.di.IGDB_PATH
@@ -24,6 +26,19 @@ import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.path
+
+fun createBackendClient(): HttpClient = HttpClient {
+    setupBackendContentNegotiation()
+
+    defaultRequest {
+        url {
+            // TODO only http works rn
+            protocol = URLProtocol.HTTP
+            host = EMULATOR_URL
+            port = BACKEND_PORT
+        }
+    }
+}
 
 fun createTMDBClient(): HttpClient = HttpClient {
     setupContentNegotiation()
