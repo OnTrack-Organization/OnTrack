@@ -40,4 +40,4 @@ out/
 .kotlin
 
 ### SSL Certs
-dev/docker/proxy/conf/*.pem
+*.pem

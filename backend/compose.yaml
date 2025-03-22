@@ -45,7 +45,7 @@ services:
     image: traefik:latest
     command:
       - "--log=true"
-      - "--log.level=info"
+      - "--log.level=debug"
       - "--accesslog=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -53,11 +53,11 @@ services:
       - "--entrypoints.websecure.http.tls=true"
       # Watch dynamic config and apply changes
       - "--providers.file.watch=true"
-      - "--providers.file.directory=/conf"
+      - "--providers.file.directory=/certs"
     volumes:
       # mount docker socket to container as readonly
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # mount volume with cert
-      - "./dev/docker/proxy/conf:/conf"
+      - "./dev/docker/proxy/certs:/certs"
     ports:
       - "8000:443"
