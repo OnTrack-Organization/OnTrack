@@ -40,4 +40,5 @@ out/
 .kotlin
 
 ### SSL Certs
-*.pem
+./letsencrypt
+.env

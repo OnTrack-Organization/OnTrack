@@ -39,6 +39,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.rule=Host(`api.ontrack.local.riceisnice.dev`)"
+      - "traefik.http.routers.backend.tls.certresolver=cloudflare"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
   proxy:
@@ -54,10 +55,20 @@ services:
       # Watch dynamic config and apply changes
       - "--providers.file.watch=true"
       - "--providers.file.directory=/certs"
+      # Certificate resolver
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+      # use Google 8.8.8.8 and Cloudflare 1.1.1.1 to resolve DNS instead of internal Docker
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
+      - "--certificatesresolvers.cloudflare.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_DNS_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     volumes:
       # mount docker socket to container as readonly
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # mount volume with cert
-      - "./dev/docker/proxy/certs:/certs"
+      - "./letsencrypt:/letsencrypt"
     ports:
       - "8000:443"

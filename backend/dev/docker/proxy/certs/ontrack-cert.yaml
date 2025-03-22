@@ -1,5 +1,0 @@
-tls:
-  certificates:
-    # this is a dummy cert
-    - certFile: "/certs/dev-cert.pem"
-      keyFile: "/certs/dev-key.pem"
