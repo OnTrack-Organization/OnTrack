@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -28,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +42,11 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.contentSizeAnimation
+import de.ashman.ontrack.features.common.getColor
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_view_on_api
 import ontrack.composeapp.generated.resources.remove_tracking_button
@@ -273,6 +278,62 @@ fun DetailDropDown(
                     }
                 },
             )
+        }
+    }
+}
+
+@Composable
+fun OwnTrackingCard(
+    trackStatus: TrackStatus,
+    rating: Double?,
+    reviewTitle: String?,
+    reviewDescription: String?,
+    onClickTimeline: () -> Unit,
+    onClickCard: () -> Unit,
+) {
+    rating?.let {
+        OutlinedCard(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            onClick = onClickCard,
+        ) {
+            Column(
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 4.dp, bottom = if (reviewDescription != null || reviewTitle != null) 16.dp else 0.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    MiniStarRatingBar(
+                        modifier = Modifier.weight(1f),
+                        rating = rating,
+                        starColor = contentColorFor(trackStatus.getColor()),
+                    )
+
+                    IconButton(onClickTimeline) {
+                        Icon(
+                            imageVector = Icons.Default.Timeline,
+                            contentDescription = null,
+                        )
+                    }
+                }
+
+                Column {
+                    reviewTitle?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+
+                    reviewDescription?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
+                }
+            }
         }
     }
 }

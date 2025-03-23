@@ -43,8 +43,11 @@ fun Tracking.toEntity() = TrackingEntity(
     timestamp = timestamp,
 )
 
-fun TrackingEntity.toEntryEntity() = EntryEntity(
-    status = status,
+fun Tracking.toEntryEntity() = EntryEntity(
+    rating = rating,
+    reviewTitle = reviewTitle,
+    reviewDescription = reviewDescription,
+    status = status!!,
     timestamp = timestamp,
 )
 
@@ -60,6 +63,9 @@ fun Comment.toEntity() = CommentEntity(
 
 fun Entry.toEntity() = EntryEntity(
     status = status,
+    rating = rating,
+    reviewTitle = reviewTitle,
+    reviewDescription = reviewDescription,
     timestamp = timestamp,
 )
 

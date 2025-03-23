@@ -90,8 +90,6 @@
     <string name="track_button">Track</string>
     <string name="review_button">Review</string>
 
-    <string name="detail_current_tracking">Tracking</string>
-
     <string name="remove_tracking_button">Remove Tracking</string>
     <string name="detail_remove_confirm_title">Remove tracking?</string>
     <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>
@@ -115,6 +113,8 @@
 
     <string name="review_title_label">Write a review title…</string>
     <string name="review_description_label">Write a review…</string>
+
+    <string name="detail_timeline_title">Tracking Timeline</string>
 
     <!-- DETAIL FRIENDS ACTIVITY -->
     <string name="detail_friends_activity_title">Friend's Activity</string>

@@ -74,6 +74,9 @@ fun CommentEntity.toDomain() = Comment(
 
 fun EntryEntity.toDomain() = Entry(
     status = status,
+    rating = rating,
+    reviewTitle = reviewTitle,
+    reviewDescription = reviewDescription,
     timestamp = timestamp,
 )
 

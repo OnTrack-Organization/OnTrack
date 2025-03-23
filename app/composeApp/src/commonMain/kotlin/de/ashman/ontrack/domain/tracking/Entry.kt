@@ -8,5 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Entry(
     val status: TrackStatus,
+    val rating: Double? = null,
+    val reviewTitle: String? = null,
+    val reviewDescription: String? = null,
     val timestamp: Long,
 ) : CommonParcelable

@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.tracking.isEquivalent
 import de.ashman.ontrack.entity.globalrating.RatingEntity
 import de.ashman.ontrack.entity.globalrating.RatingStatsEntity
 import de.ashman.ontrack.entity.toEntity
@@ -47,9 +48,13 @@ class TrackingRepositoryImpl(
         val snapshot = trackingRef.get()
 
         val existingTracking = snapshot.takeIf { it.exists }?.data<TrackingEntity>()
-        val updatedHistory = existingTracking?.takeIf { it.status != tracking.status }
-            ?.let { it.history + it.toEntryEntity() }
-            ?: emptyList()
+
+        if (existingTracking != null && tracking.isEquivalent(existingTracking.toDomain())) {
+            return
+        }
+
+        val previousHistory = existingTracking?.history.orEmpty()
+        val updatedHistory = previousHistory + tracking.toEntryEntity()
 
         trackingRef.set(
             tracking.toEntity().copy(history = updatedHistory),

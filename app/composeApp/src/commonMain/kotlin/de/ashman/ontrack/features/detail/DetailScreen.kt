@@ -53,6 +53,7 @@ import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.detail.components.DetailDropDown
+import de.ashman.ontrack.features.detail.components.OwnTrackingCard
 import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.StickyHeader
 import de.ashman.ontrack.features.detail.media.AlbumDetailContent
@@ -66,6 +67,7 @@ import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.detail.review.ReviewSheet
+import de.ashman.ontrack.features.detail.review.TimelineSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -167,13 +169,15 @@ fun DetailScreen(
                         friendTrackings = detailUiState.friendTrackings,
                         receivedRecommendations = recommendationUiState.receivedRecommendations,
                         columnListState = listState,
-                        onClickItem = onClickItem,
-                        onUserClick = onClickUser,
-                        onShowFriendActivity = { sharedUiManager.showSheet(CurrentSheet.FRIEND_ACTIVITY) },
+                        onClickMedia = onClickItem,
+                        onClickUser = onClickUser,
+                        onClickMoreFriendsActivity = { sharedUiManager.showSheet(CurrentSheet.FRIEND_ACTIVITY) },
                         onClickImage = { imageUrl ->
                             selectedImageUrl = imageUrl
                             showImageDialog = true
-                        }
+                        },
+                        onClickReview = { sharedUiManager.showSheet(CurrentSheet.REVIEW) },
+                        onClickTimeline = { sharedUiManager.showSheet(CurrentSheet.TIMELINE) },
                     )
                 }
             }
@@ -248,8 +252,12 @@ fun DetailScreen(
                             reviewDescription = tracking.reviewDescription,
                             rating = tracking.rating,
                             trackStatus = tracking.status,
-                            onReviewTitleChange = { tracking = tracking.copy(reviewTitle = it) },
-                            onReviewDescriptionChange = { tracking = tracking.copy(reviewDescription = it) },
+                            onReviewTitleChange = { title ->
+                                tracking = tracking.copy(reviewTitle = title.takeIf { it.isNotBlank() })
+                            },
+                            onReviewDescriptionChange = { description ->
+                                tracking = tracking.copy(reviewDescription = description.takeIf { it.isNotBlank() })
+                            },
                             onRatingChange = { tracking = tracking.copy(rating = it) },
                             onSave = { detailViewModel.saveTracking(tracking) },
                         )
@@ -279,6 +287,11 @@ fun DetailScreen(
                             onClickUser = onClickUser,
                         )
 
+                        CurrentSheet.TIMELINE -> TimelineSheet(
+                            mediaType = mediaNavItems.mediaType,
+                            entries = tracking.history,
+                        )
+
                         else -> {}
                     }
                 }
@@ -296,10 +309,12 @@ fun DetailContent(
     friendTrackings: List<Tracking>,
     receivedRecommendations: List<Recommendation>,
     columnListState: LazyListState,
-    onClickItem: (MediaNavigationItems) -> Unit,
-    onUserClick: (String) -> Unit,
-    onShowFriendActivity: () -> Unit,
+    onClickMedia: (MediaNavigationItems) -> Unit,
+    onClickUser: (String) -> Unit,
+    onClickMoreFriendsActivity: () -> Unit,
     onClickImage: (String) -> Unit,
+    onClickReview: () -> Unit,
+    onClickTimeline: () -> Unit,
 ) {
     media?.let {
         LazyColumn(
@@ -308,38 +323,28 @@ fun DetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            /*selectedTracking?.let {
-                item {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.detail_current_tracking),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        TrackingCard(
-                            userImageUrl = it.userImageUrl,
-                            username = it.username,
-                            timestamp = it.timestamp.formatDateTime(),
-                            mediaType = it.mediaType,
-                            trackStatus = it.status!!,
-                            rating = it.rating,
-                            reviewTitle = it.reviewTitle,
-                            reviewDescription = it.reviewDescription,
-                            onUserClick = { onUserClick(it.userId) },
+            selectedTracking?.let { tracking ->
+                tracking.rating?.let {
+                    item {
+                        OwnTrackingCard(
+                            trackStatus = tracking.status!!,
+                            rating = tracking.rating,
+                            reviewTitle = tracking.reviewTitle,
+                            reviewDescription = tracking.reviewDescription,
+                            onClickTimeline = onClickTimeline,
+                            onClickCard = onClickReview
                         )
                     }
                 }
-            }*/
+            }
 
             if (friendTrackings.isNotEmpty() || receivedRecommendations.isNotEmpty()) {
                 item {
                     FriendActivityRow(
                         friendTrackings = friendTrackings,
                         friendRecommendations = receivedRecommendations,
-                        onUserClick = onUserClick,
-                        onMoreClick = onShowFriendActivity
+                        onUserClick = onClickUser,
+                        onMoreClick = onClickMoreFriendsActivity
                     )
                 }
             }
@@ -355,12 +360,12 @@ fun DetailContent(
             }
 
             when (media.mediaType) {
-                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickItem, onClickImage = onClickImage)
-                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickItem, onClickImage = onClickImage)
-                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickItem)
-                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickItem, onClickImage = onClickImage)
-                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickItem, onClickImage = onClickImage)
-                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickItem)
+                MediaType.MOVIE -> MovieDetailContent(movie = media as Movie, onClickItem = onClickMedia, onClickImage = onClickImage)
+                MediaType.SHOW -> ShowDetailContent(show = media as Show, onClickItem = onClickMedia, onClickImage = onClickImage)
+                MediaType.BOOK -> BookDetailContent(book = media as Book, onClickItem = onClickMedia)
+                MediaType.VIDEOGAME -> VideogameDetailContent(videogame = media as Videogame, onClickItem = onClickMedia, onClickImage = onClickImage)
+                MediaType.BOARDGAME -> BoardgameDetailContent(boardgame = media as Boardgame, onClickItem = onClickMedia, onClickImage = onClickImage)
+                MediaType.ALBUM -> AlbumDetailContent(album = media as Album, onClickItem = onClickMedia)
             }
         }
     }

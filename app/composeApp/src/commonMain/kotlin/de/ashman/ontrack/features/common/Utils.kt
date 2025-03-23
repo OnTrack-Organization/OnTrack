@@ -266,3 +266,13 @@ fun Long.formatDateTime(): String {
 
     return "$date, $time"
 }
+
+fun Long.formatDayMonth(): String {
+    val instant = Instant.fromEpochMilliseconds(this)
+    val dateTime = instant.toLocalDateTime(currentSystemDefault())
+
+    val day = dateTime.dayOfMonth.toString().padStart(2, '0')
+    val month = dateTime.monthNumber.toString().padStart(2, '0')
+
+    return "$day.$month"
+}

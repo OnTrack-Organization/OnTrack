@@ -6,5 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EntryEntity(
     val status: TrackStatus,
+    val rating: Double? = null,
+    val reviewTitle: String? = null,
+    val reviewDescription: String? = null,
     val timestamp: Long,
 )

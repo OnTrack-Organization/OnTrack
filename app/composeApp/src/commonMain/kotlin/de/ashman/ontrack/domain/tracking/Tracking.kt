@@ -51,3 +51,10 @@ data class Tracking(
 }
 
 const val MAX_RATING = 5
+
+fun Tracking.isEquivalent(other: Tracking): Boolean {
+    return this.status == other.status &&
+            this.rating == other.rating &&
+            this.reviewTitle == other.reviewTitle &&
+            this.reviewDescription == other.reviewDescription
+}

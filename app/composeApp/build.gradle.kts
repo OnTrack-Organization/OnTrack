@@ -16,7 +16,7 @@ plugins {
     id("kotlin-kapt")
 }
 
-version = "2.0.0"
+version = "2.0.1"
 
 android {
     namespace = "de.ashman.ontrack"
@@ -30,7 +30,7 @@ android {
         applicationId = "de.ashman.ontrack"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10
+        versionCode = 11
         versionName = version.toString()
     }
 
@@ -121,6 +121,9 @@ kotlin {
             implementation(libs.compose.navigation)
             implementation(libs.filekit)
             implementation(libs.compose.shimmer)
+            implementation(libs.jetlime.get().toString()) {
+                exclude(group = "org.jetbrains.dokka")
+            }
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
