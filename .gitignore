@@ -26,3 +26,6 @@ captures
 /build/
 /app/.kotlin/
 /app/build
+
+*.aab
+*.apk
