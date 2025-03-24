@@ -1,6 +1,5 @@
 package de.ashman.ontrack.api.videogame
 
-import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.MediaRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.utils.safeApiCall
@@ -62,6 +61,9 @@ class VideogameRepository(
     }
 
     override suspend fun fetchByQuery(query: String): Result<List<Videogame>> = safeApiCall {
+        // Exclude game types: 5 (Mod), 12 (Fork), 13 (Pack), 14 (Update)
+        val filteredOutGameTypes = listOf(5, 12, 13, 14).joinToString(",")
+
         httpClient.post(buildRequestWithToken {
             url("games")
             setBody(
@@ -69,6 +71,7 @@ class VideogameRepository(
                     fields cover.url, name, total_rating_count;
                     search "$query";
                     limit $DEFAULT_FETCH_LIMIT;
+                    where game_type != ($filteredOutGameTypes);
                 """
             )
         }).body<List<VideogameDto>>().map { it.toDomain() }
@@ -85,10 +88,7 @@ class VideogameRepository(
             )
         }).body()
 
-        Logger.d { "VIDEOGAME RESPONSE $response" }
-
         val videogame = response.first()
-        Logger.d { "VIDEOGAME $videogame" }
         val franchises = fetchFranchises(videogame.franchises)
 
         videogame.toDomain().copy(franchises = franchises)
