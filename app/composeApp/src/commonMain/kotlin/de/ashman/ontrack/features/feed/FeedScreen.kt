@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -58,6 +59,7 @@ fun FeedScreen(
     sharedUiManager: SharedUiManager,
     onClickCover: (MediaNavigationItems) -> Unit,
     onClickUser: (String) -> Unit,
+    onNavigateToNotifications: () -> Unit,
 ) {
     val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
     val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
@@ -107,8 +109,10 @@ fun FeedScreen(
         topBar = {
             OnTrackTopBar(
                 title = stringResource(Res.string.feed_nav_title),
-                actionIcon = Icons.Default.Group,
-                onClickAction = { sharedUiManager.showSheet(CurrentSheet.FRIENDS) },
+                navigationIcon = Icons.Default.Group,
+                actionIcon = Icons.Default.Notifications,
+                onClickNavigation = { sharedUiManager.showSheet(CurrentSheet.FRIENDS) },
+                onClickAction = onNavigateToNotifications,
                 scrollBehavior = appBarScrollBehavior,
             )
         },
@@ -215,23 +219,28 @@ fun FeedScreen(
 fun EmptyFeed(
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            modifier = Modifier.size(48.dp),
-            imageVector = BottomNavItem.FeedNav.filledIcon(),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.size(16.dp))
-        Text(
-            text = stringResource(Res.string.feed_empty),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = BottomNavItem.FeedNav.filledIcon(),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                Text(
+                    text = stringResource(Res.string.feed_empty),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
     }
 }

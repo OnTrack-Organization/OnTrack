@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.features.usecase.UsernameError
+import de.ashman.ontrack.usecase.UsernameError
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -98,6 +98,7 @@ import org.jetbrains.compose.resources.stringResource
 // Default Poster Size ist 2:3 Ratio
 val DEFAULT_POSTER_HEIGHT = 224.dp
 val SMALL_POSTER_HEIGHT = 112.dp
+val MINI_POSTER_HEIGHT = 80.dp
 
 @Composable
 fun keyboardAsState(): State<Boolean> {

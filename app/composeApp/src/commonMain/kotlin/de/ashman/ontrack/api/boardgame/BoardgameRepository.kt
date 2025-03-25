@@ -82,7 +82,7 @@ class BoardgameRepository(
             query?.let { parameter("query", it) }
         }.body()
 
-        return convertXmlToResponse(response).boardgames.mapNotNull { it.id }
+        return convertXmlToResponse(response).boardgames.map { it.id }
     }
 
     private suspend fun fetchBoardgamesByIds(bgIds: List<String>): List<Boardgame> {

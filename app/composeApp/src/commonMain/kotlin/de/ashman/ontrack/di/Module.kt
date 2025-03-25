@@ -24,16 +24,11 @@ import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
+import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
-import de.ashman.ontrack.features.usecase.AcceptRequestUseCase
-import de.ashman.ontrack.features.usecase.CancelRequestUseCase
-import de.ashman.ontrack.features.usecase.DeclineRequestUseCase
-import de.ashman.ontrack.features.usecase.RemoveFriendUseCase
-import de.ashman.ontrack.features.usecase.SendRequestUseCase
-import de.ashman.ontrack.features.usecase.UsernameValidationUseCase
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.CurrentUserRepository
@@ -52,6 +47,12 @@ import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
+import de.ashman.ontrack.usecase.AcceptRequestUseCase
+import de.ashman.ontrack.usecase.CancelRequestUseCase
+import de.ashman.ontrack.usecase.DeclineRequestUseCase
+import de.ashman.ontrack.usecase.RemoveFriendUseCase
+import de.ashman.ontrack.usecase.SendRequestUseCase
+import de.ashman.ontrack.usecase.UsernameValidationUseCase
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
@@ -130,6 +131,7 @@ val appModule = module {
     viewModelDefinition { ShelfListViewModel(get()) }
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get()) }
+    viewModelDefinition { NotificationsViewModel() }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

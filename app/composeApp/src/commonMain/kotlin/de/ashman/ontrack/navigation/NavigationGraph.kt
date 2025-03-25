@@ -27,6 +27,8 @@ import de.ashman.ontrack.features.init.setup.SetupScreen
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
+import de.ashman.ontrack.features.notifications.NotificationsScreen
+import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsScreen
@@ -60,6 +62,7 @@ fun NavigationGraph(
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
+    notificationsViewModel: NotificationsViewModel = koinInject(),
     sharedUiManager: SharedUiManager = koinInject(),
     firestoreUserRepository: FirestoreUserRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
@@ -105,6 +108,18 @@ fun NavigationGraph(
                 firestoreUserRepository = firestoreUserRepository,
                 navController = navController
             )
+
+            composable<Route.Notifications> {
+                NotificationsScreen(
+                    viewModel = notificationsViewModel,
+                    onBack = { navController.popBackStack() },
+                    onNotificationClick = { /*TODO*/ },
+                    onUserClick = { userId ->
+                        navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                    },
+                    onMediaClick = { navController.navigate(Route.Detail(it)) }
+                )
+            }
 
             composable<Route.Settings> {
                 SettingsScreen(
@@ -221,6 +236,7 @@ fun NavGraphBuilder.mainGraph(
                 sharedUiManager.hideSheet()
                 navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
             },
+            onNavigateToNotifications = { navController.navigate(Route.Notifications) },
         )
     }
 

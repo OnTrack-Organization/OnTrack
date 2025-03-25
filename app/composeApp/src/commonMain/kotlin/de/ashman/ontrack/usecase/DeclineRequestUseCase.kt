@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.usecase
+package de.ashman.ontrack.usecase
 
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.SharedUiManager

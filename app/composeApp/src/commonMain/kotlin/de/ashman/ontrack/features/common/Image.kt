@@ -83,7 +83,6 @@ fun MediaPoster(
             modifier = modifier
                 .aspectRatio(2f / 3f),
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
             enabled = (onClick != null && !isLoadingShimmer),
             onClick = { onClick?.invoke() },
         ) {

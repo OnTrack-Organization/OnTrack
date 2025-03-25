@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.settings.ImageUploadState
-import de.ashman.ontrack.features.usecase.UsernameError
-import de.ashman.ontrack.features.usecase.UsernameValidationResult
-import de.ashman.ontrack.features.usecase.UsernameValidationUseCase
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository
+import de.ashman.ontrack.usecase.UsernameError
+import de.ashman.ontrack.usecase.UsernameValidationResult
+import de.ashman.ontrack.usecase.UsernameValidationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
