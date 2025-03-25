@@ -29,6 +29,7 @@ services:
       - 'SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ontrack'
       - 'SPRING_DATASOURCE_USERNAME=default'
       - 'SPRING_DATASOURCE_PASSWORD=demo'
+      - 'GOOGLE_APPLICATION_CREDENTIALS=firebaseServiceAccount.json'
     ports:
       # 5005 is used for debug listener
       - "5005:5005"
@@ -38,7 +39,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.rule=Host(`api.ontrack.local.riceisnice.dev`)"
+      - "traefik.http.routers.backend.rule=Host(`api.ontrack.local.riceisnice.dev`) || Host(`emulator.api.ontrack.local.riceisnice.dev`)"
       - "traefik.http.routers.backend.tls.certresolver=cloudflare"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
@@ -52,9 +53,6 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.http.tls=true"
-      # Watch dynamic config and apply changes
-      - "--providers.file.watch=true"
-      - "--providers.file.directory=/certs"
       # Certificate resolver
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"

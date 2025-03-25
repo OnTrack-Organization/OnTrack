@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.springBootStarterSecurity)
     implementation(libs.springBootStarterWeb)
     implementation(libs.kotlinReflect)
+    implementation(libs.firebase.admin)
     developmentOnly(libs.springBootDevtools)
     runtimeOnly(libs.postgresql)
     testImplementation(libs.springBootStarterTest)
