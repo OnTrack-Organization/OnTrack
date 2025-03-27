@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
+import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.network.UserService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,8 @@ import ontrack.composeapp.generated.resources.login_offline_error
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val sharedUiManager: SharedUiManager
+    private val sharedUiManager: SharedUiManager,
+    private val userService: UserService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -54,6 +57,10 @@ class LoginViewModel(
                 sharedUiManager.showSnackbar(Res.string.login_offline_error)
             }
         )
+    }
+
+    suspend fun authOnBackend(idToken: String) = safeApiCall {
+        userService.signIn(idToken)
     }
 
     fun clearViewModel() {

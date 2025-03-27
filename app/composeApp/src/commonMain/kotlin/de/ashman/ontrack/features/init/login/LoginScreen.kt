@@ -90,6 +90,11 @@ fun LoginScreen(
                             onSuccess = { user -> onNavigateAfterLogin(userExist, user) }
                         )
                     }
+                },
+                authOnBackend = { idToken ->
+                    coroutineScope.launch {
+                        viewModel.authOnBackend(idToken)
+                    }
                 }
             )
         }
@@ -99,7 +104,10 @@ fun LoginScreen(
 @Composable
 fun GoogleAppleLogin(
     onClickContinue: (Result<User?>) -> Unit,
+    authOnBackend: (idToken: String) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -107,6 +115,15 @@ fun GoogleAppleLogin(
         GoogleButtonUiContainerFirebase(
             linkAccount = false,
             onResult = { result ->
+                coroutineScope.launch {
+                    result.onSuccess {
+                        val idToken = it?.getIdToken(false)
+                        if (idToken != null) {
+                            authOnBackend(idToken)
+                        }
+                    }
+                }
+
                 val userResult = result.mapCatching { it?.toDomain() }
                 onClickContinue(userResult)
             }
