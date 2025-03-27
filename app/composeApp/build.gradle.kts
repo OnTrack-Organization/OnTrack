@@ -124,6 +124,7 @@ kotlin {
             implementation(libs.jetlime.get().toString()) {
                 exclude(group = "org.jetbrains.dokka")
             }
+            implementation(libs.zoomable)
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network)

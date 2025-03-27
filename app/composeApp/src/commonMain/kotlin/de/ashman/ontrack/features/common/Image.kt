@@ -1,9 +1,11 @@
 package de.ashman.ontrack.features.common
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,10 +13,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,24 +26,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.valentinilk.shimmer.shimmer
@@ -56,9 +64,13 @@ import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import kotlinx.coroutines.launch
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_images
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 @Composable
 fun MediaPoster(
@@ -273,7 +285,7 @@ fun PersonImage(
                 enabled = onClick != null,
                 onClick = { onClick?.invoke() },
                 interactionSource = interactionSource,
-                indication = null, // or ripple if you want
+                indication = null,
             ),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -361,35 +373,63 @@ fun ImagePicker(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LargerImageDialog(
     showDialog: Boolean,
     imageUrl: String?,
     onDismiss: () -> Unit,
 ) {
-    val painter = rememberAsyncImagePainter(imageUrl)
-
     if (imageUrl.isNullOrEmpty()) return
 
     if (showDialog) {
-        Dialog(onDismissRequest = onDismiss) {
-            Surface(
+        BasicAlertDialog(
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+            onDismissRequest = onDismiss
+        ) {
+            val swipeOffset = remember { mutableStateOf(0f) }
+            val animatedOffset by animateFloatAsState(
+                targetValue = swipeOffset.value,
+                label = "Swipe Animation"
+            )
+
+            val dismissThreshold = 400f
+
+            val zoomState = rememberZoomState()
+
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                shape = MaterialTheme.shapes.medium,
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.medium)
+                    .zoomable(zoomState)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onDragEnd = {
+                                if (abs(swipeOffset.value) > dismissThreshold) {
+                                    onDismiss()
+                                } else {
+                                    swipeOffset.value = 0f
+                                }
+                            }
+                        ) { _, dragAmount ->
+                            if (zoomState.scale == 1f) {
+                                swipeOffset.value += dragAmount
+                            }
+                        }
+                    }
             ) {
                 Image(
-                    painter = painter,
+                    painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = "Account Image",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(0, animatedOffset.roundToInt()) }
                 )
             }
         }
     }
 }
-
 
 @Composable
 fun MediaImageRow(
