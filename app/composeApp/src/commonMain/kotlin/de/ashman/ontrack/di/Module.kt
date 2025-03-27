@@ -5,6 +5,7 @@ import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
+import de.ashman.ontrack.api.clients.createBackendClient
 import de.ashman.ontrack.api.clients.createBGGClient
 import de.ashman.ontrack.api.clients.createGeekDoClient
 import de.ashman.ontrack.api.clients.createIGDBClient
@@ -29,6 +30,8 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
+import de.ashman.ontrack.network.UserService
+import de.ashman.ontrack.network.UserServiceImpl
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.CurrentUserRepository
@@ -75,6 +78,7 @@ val appModule = module {
     single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
+    single(named(BACKEND_CLIENT_NAME)) { createBackendClient() }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
@@ -83,6 +87,9 @@ val appModule = module {
     single { BoardgameRepository(get(named(BGG_CLIENT_NAME)), get(named(GEEKDO_CLIENT_NAME))) }
     single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
+
+    // BACKEND
+    single<UserService> { UserServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
