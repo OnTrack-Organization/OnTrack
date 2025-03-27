@@ -120,6 +120,7 @@ fun OnTrackTextField(
     placeholder: String,
     value: String?,
     onValueChange: (String) -> Unit,
+    singleLine: Boolean = false,
 ) {
     TextField(
         modifier = modifier.fillMaxWidth(),
@@ -127,6 +128,7 @@ fun OnTrackTextField(
         onValueChange = onValueChange,
         placeholder = { Text(placeholder) },
         shape = MaterialTheme.shapes.medium,
+        singleLine = singleLine,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,

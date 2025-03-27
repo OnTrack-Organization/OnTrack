@@ -61,6 +61,7 @@ fun ReviewSheet(
         placeholder = stringResource(Res.string.review_title_label),
         value = reviewTitle,
         onValueChange = onReviewTitleChange,
+        singleLine = true,
     )
 
     OnTrackTextField(
