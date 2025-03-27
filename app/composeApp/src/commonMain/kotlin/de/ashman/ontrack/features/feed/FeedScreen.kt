@@ -111,8 +111,12 @@ fun FeedScreen(
                 title = stringResource(Res.string.feed_nav_title),
                 navigationIcon = Icons.Default.Group,
                 actionIcon = Icons.Default.Notifications,
+                showActionBadge = feedUiState.hasNewNotifications,
                 onClickNavigation = { sharedUiManager.showSheet(CurrentSheet.FRIENDS) },
-                onClickAction = onNavigateToNotifications,
+                onClickAction = {
+                    feedViewModel.updateHasNewNotifications(false)
+                    onNavigateToNotifications()
+                },
                 scrollBehavior = appBarScrollBehavior,
             )
         },

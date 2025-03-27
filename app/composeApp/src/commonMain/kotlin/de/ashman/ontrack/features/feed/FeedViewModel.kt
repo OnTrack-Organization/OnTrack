@@ -191,6 +191,10 @@ class FeedViewModel(
         }
     }
 
+    fun updateHasNewNotifications(hasNewNotifications: Boolean) {
+        _uiState.update { it.copy(hasNewNotifications = hasNewNotifications) }
+    }
+
     fun clearViewModel() {
         _uiState.update {
             it.copy(
@@ -211,6 +215,7 @@ data class FeedUiState(
     val canLoadMore: Boolean = false,
     val isFirstLaunch: Boolean = true,
     val listState: LazyListState = LazyListState(0, 0),
+    val hasNewNotifications: Boolean = false,
 ) {
     val selectedTracking: Tracking?
         get() = feedTrackings.find { it.id == selectedTrackingId }

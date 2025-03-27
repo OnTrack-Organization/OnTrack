@@ -2,6 +2,8 @@ package de.ashman.ontrack.features.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +26,8 @@ fun OnTrackTopBar(
     actionIcon: ImageVector? = null,
     dropdownMenu: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    showActionBadge: Boolean = false,
+    showNavigationBadge: Boolean = false,
     onClickAction: () -> Unit = {},
     onClickNavigation: () -> Unit = {},
 ) {
@@ -50,20 +54,28 @@ fun OnTrackTopBar(
         navigationIcon = {
             navigationIcon?.let {
                 IconButton(onClickNavigation) {
-                    Icon(
-                        imageVector = navigationIcon,
-                        contentDescription = null,
-                    )
+                    BadgedBox(
+                        badge = { if (showNavigationBadge) Badge() }
+                    ) {
+                        Icon(
+                            imageVector = navigationIcon,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         },
         actions = {
             actionIcon?.let {
                 IconButton(onClickAction) {
-                    Icon(
-                        imageVector = actionIcon,
-                        contentDescription = null,
-                    )
+                    BadgedBox(
+                        badge = { if (showActionBadge) Badge() }
+                    ) {
+                        Icon(
+                            imageVector = actionIcon,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
             dropdownMenu()
