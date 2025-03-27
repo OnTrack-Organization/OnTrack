@@ -1,29 +1,45 @@
 package de.ashman.ontrack.config
 
 import de.ashman.ontrack.security.service.FirebaseAuthFilter
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.security.web.access.intercept.AuthorizationFilter
 
 @Configuration
-// @EnableWebSecurity(debug = true) // enable for debug
+@EnableWebSecurity
 class SecurityConfig(
     private val firebaseAuthFilter: FirebaseAuthFilter
 ) {
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.csrf { csrf -> csrf.disable() }
-            .formLogin { it.disable() }
-            .httpBasic { it.disable() }
+        http
+            .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/auth").permitAll() // Allow unauthenticated access to /auth
-                    .anyRequest().authenticated() // Require authentication for other requests
+                    .requestMatchers("/auth")
+                    .permitAll()
+                    .anyRequest().authenticated()
             }
-            .addFilterBefore(firebaseAuthFilter, BasicAuthenticationFilter::class.java) // Add the filter for other routes
+            .addFilterBefore(firebaseAuthFilter, AuthorizationFilter::class.java)
 
         return http.build()
+    }
+
+    /**
+     * Disables [FirebaseAuthFilter] in embedded container as per
+     * [spring security doc](https://docs.spring.io/spring-security/reference/servlet/architecture.html#_declaring_your_filter_as_a_bean).
+     * to avoid duplicate execution
+     */
+    @Bean
+    fun firebaseAuthFilterRegistration(filter: FirebaseAuthFilter): FilterRegistrationBean<FirebaseAuthFilter> {
+        val registration: FilterRegistrationBean<FirebaseAuthFilter> = FilterRegistrationBean<FirebaseAuthFilter>(filter)
+        registration.isEnabled = false
+
+        return registration
     }
 }

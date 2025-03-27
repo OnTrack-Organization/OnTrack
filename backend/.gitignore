@@ -43,5 +43,4 @@ out/
 .env
 /letsencrypt/
 
-### Firebase credentials
 firebaseServiceAccount.json
