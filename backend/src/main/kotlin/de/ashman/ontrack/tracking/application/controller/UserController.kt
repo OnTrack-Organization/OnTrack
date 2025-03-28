@@ -44,4 +44,10 @@ class UserController(
     {
        return "You are authenticated as ${token.name}"
     }
+
+    @GetMapping("/test2")
+    fun test2(): String
+    {
+        return "You are not authenticated"
+    }
 }
