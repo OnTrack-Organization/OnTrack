@@ -15,12 +15,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.login_backend_error
 import ontrack.composeapp.generated.resources.login_offline_error
 
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
     private val commonUiManager: CommonUiManager
+    private val userService: UserService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -32,23 +34,34 @@ class LoginViewModel(
 
     fun signIn(
         loginResult: Result<User?>,
-        onSuccess: (User?) -> Unit
+        onSuccessNavigate: (User?) -> Unit
     ) = viewModelScope.launch {
         loginResult.fold(
             onSuccess = { user ->
-                onSuccess(user)
+                userService.signIn().fold(
+                    onSuccess = {
+                        // Set fcm token on login
+                        NotifierManager.getPushNotifier().getToken()?.let { fcmToken ->
+                            firestoreUserRepository.updateFcmToken(fcmToken)
+                        }
 
-                val fcmToken = NotifierManager.getPushNotifier().getToken()
-                fcmToken?.let {
-                    firestoreUserRepository.updateFcmToken(fcmToken)
-                }
+                        // Set current user if user does not exist
+                        if (!firestoreUserRepository.doesUserExist(user?.id!!)) {
+                            currentUserRepository.setCurrentUser(user)
+                        }
 
-                if (!firestoreUserRepository.doesUserExist(user?.id!!)) {
-                    currentUserRepository.setCurrentUser(user)
-                }
+                        onSuccessNavigate(user)
+
+                        Logger.i("Backend sign in successful: ${user.id}")
+                    },
+                    onFailure = { error ->
+                        Logger.e("Backend sign in failed: ${error.message}")
+                        commonUiManager.showSnackbar(Res.string.login_backend_error)
+                    }
+                )
             },
             onFailure = { error ->
-                Logger.e("Login failed: ${error.message}")
+                Logger.e("Google/Apple Login failed: ${error.message}")
 
                 if (error.message == "Idtoken is null") return@launch
                 commonUiManager.showSnackbar(Res.string.login_offline_error)

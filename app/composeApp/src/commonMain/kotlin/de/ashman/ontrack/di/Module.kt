@@ -79,7 +79,7 @@ val appModule = module {
     single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
-    single(named(BACKEND_CLIENT_NAME)) { createBackendClient() }
+    single(named(BACKEND_CLIENT_NAME)) { createBackendClient(get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
