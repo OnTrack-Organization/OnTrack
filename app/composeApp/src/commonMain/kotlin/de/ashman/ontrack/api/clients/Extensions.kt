@@ -8,6 +8,18 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 
 @OptIn(ExperimentalSerializationApi::class)
+fun HttpClientConfig<*>.setupBackendContentNegotiation() {
+    install(ContentNegotiation) {
+        json(
+            Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
 fun HttpClientConfig<*>.setupContentNegotiation() {
     install(ContentNegotiation) {
         json(

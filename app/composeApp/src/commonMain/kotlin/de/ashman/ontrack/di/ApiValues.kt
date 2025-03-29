@@ -40,3 +40,9 @@ const val SPOTIFY_PATH = "v1/"
 const val SPOTIFY_TOKEN_CLIENT_NAME = "SpotifyTokenClient"
 const val SPOTIFY_TOKEN_URL = "accounts.spotify.com"
 const val SPOTIFY_TOKEN_PATH = "api/token"
+
+// BACKEND
+const val BACKEND_CLIENT_NAME = "BackendClient"
+const val BACKEND_PORT = 8000
+const val BACKEND_HOST = "emulator.api.ontrack.local.riceisnice.dev" // this subdomain maps to 10.0.2.2
+

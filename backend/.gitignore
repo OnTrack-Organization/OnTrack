@@ -42,3 +42,5 @@ out/
 ### SSL Certs
 .env
 /letsencrypt/
+
+firebaseServiceAccount.json

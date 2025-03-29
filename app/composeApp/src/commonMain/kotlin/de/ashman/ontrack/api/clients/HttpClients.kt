@@ -1,6 +1,8 @@
 package de.ashman.ontrack.api.clients
 
 import de.ashman.ontrack.BuildKonfig
+import de.ashman.ontrack.di.BACKEND_HOST
+import de.ashman.ontrack.di.BACKEND_PORT
 import de.ashman.ontrack.di.BGG_PATH
 import de.ashman.ontrack.di.BGG_URL
 import de.ashman.ontrack.di.GEEKDO_PATH
@@ -131,6 +133,18 @@ fun createTwitchTokenClient(): HttpClient = HttpClient {
             protocol = URLProtocol.HTTPS
             host = TWITCH_TOKEN_URL
             path(TWITCH_TOKEN_PATH)
+        }
+    }
+}
+
+fun createBackendClient(): HttpClient = HttpClient {
+    setupBackendContentNegotiation()
+
+    defaultRequest {
+        url {
+            protocol = URLProtocol.HTTPS
+            host = BACKEND_HOST
+            port = BACKEND_PORT
         }
     }
 }

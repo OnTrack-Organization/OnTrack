@@ -2,6 +2,7 @@
 kotlin = "1.9.25"
 springBoot = "3.4.3"
 springDependencyManagement = "1.1.7"
+firebaseAdmin = "9.4.3"
 
 [libraries]
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
@@ -14,6 +15,7 @@ springBootStarterTest = { group = "org.springframework.boot", name = "spring-boo
 kotlinTestJunit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 springSecurityTest = { group = "org.springframework.security", name = "spring-security-test" }
 junitPlatformLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+firebase-admin = { group = "com.google.firebase", name = "firebase-admin", version.ref = "firebaseAdmin" }
 
 [plugins]
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

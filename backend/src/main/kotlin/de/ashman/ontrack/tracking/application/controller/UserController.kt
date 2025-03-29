@@ -1,36 +1,53 @@
 package de.ashman.ontrack.tracking.application.controller
 
+import com.google.firebase.auth.FirebaseToken
+import de.ashman.ontrack.security.service.FirebaseAuthService
 import de.ashman.ontrack.tracking.domain.User
 import de.ashman.ontrack.tracking.infrastructure.UserRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class UserController(
-    private val repository: UserRepository
+    private val userRepository: UserRepository,
+    private val firebaseAuthService: FirebaseAuthService
 ) {
-    @PostMapping("/user")
-    fun create() {
-        val user = User(
-            "some Token",
-            "John",
-            "John Doe1234",
-            "somedumm@example.com",
-            ""
-        )
+    @PostMapping("/auth")
+    fun auth(@RequestHeader("Authorization") authHeader: String): ResponseEntity<Unit> {
+        val idToken = authHeader.removePrefix("Bearer ")
 
-        this.repository.saveAndFlush(user)
-    }
+        val token = firebaseAuthService.verifyIdToken(idToken)
+        val userExists = userRepository.existsUserByEmail(token.email)
+        if (!userExists) {
+            val user = User(
+                "some Token",
+                token.name,
+                token.name,
+                token.email,
+                ""
+            )
+            userRepository.saveAndFlush(user)
 
-    @GetMapping("/users")
-    fun getUsers(): List<User> {
-        return this.repository.findAll()
+            return ResponseEntity.status(HttpStatus.CREATED).build()
+        }
+
+        return ResponseEntity.ok().build()
     }
 
     @GetMapping("/test")
-    fun test(): String
+    fun test(@AuthenticationPrincipal token: FirebaseToken ): String
     {
-        return "Hi you finally reached me"
+       return "You are authenticated as ${token.name}"
+    }
+
+    @GetMapping("/test2")
+    fun test2(): String
+    {
+        return "You are not authenticated"
     }
 }
