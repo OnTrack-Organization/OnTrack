@@ -5,8 +5,8 @@ import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
-import de.ashman.ontrack.api.clients.createBackendClient
 import de.ashman.ontrack.api.clients.createBGGClient
+import de.ashman.ontrack.api.clients.createBackendClient
 import de.ashman.ontrack.api.clients.createGeekDoClient
 import de.ashman.ontrack.api.clients.createIGDBClient
 import de.ashman.ontrack.api.clients.createOpenLibraryClient
@@ -78,7 +78,7 @@ val appModule = module {
     single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
-    single(named(BACKEND_CLIENT_NAME)) { createBackendClient() }
+    single(named(BACKEND_CLIENT_NAME)) { createBackendClient(get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
@@ -128,7 +128,7 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get(), get(), get()) }
+    viewModelDefinition { LoginViewModel(get(), get(), get(), get()) }
     viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }

@@ -18,36 +18,47 @@ class UserController(
     private val firebaseAuthService: FirebaseAuthService
 ) {
     @PostMapping("/auth")
-    fun auth(@RequestHeader("Authorization") authHeader: String): ResponseEntity<Unit> {
-        val idToken = authHeader.removePrefix("Bearer ")
-
-        val token = firebaseAuthService.verifyIdToken(idToken)
-        val userExists = userRepository.existsUserByEmail(token.email)
-        if (!userExists) {
-            val user = User(
-                "some Token",
-                token.name,
-                token.name,
-                token.email,
-                ""
-            )
-            userRepository.saveAndFlush(user)
-
-            return ResponseEntity.status(HttpStatus.CREATED).build()
+    fun auth(
+        @RequestHeader("Authorization", required = false) authHeader: String?
+    ): ResponseEntity<Unit> {
+        if (authHeader.isNullOrBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
 
-        return ResponseEntity.ok().build()
+        println("Received Authorization header: $authHeader")
+
+        val idToken = authHeader.removePrefix("Bearer ")
+
+        val token: FirebaseToken = try {
+            firebaseAuthService.verifyIdToken(idToken)
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        return if (userRepository.existsUserByEmail(token.email)) {
+            ResponseEntity.ok().build()
+        } else {
+            val user = User(
+                name = token.name,
+                // TODO username kommt von woanders
+                username = token.name,
+                email = token.email,
+                imageUrl = token.picture,
+                // TODO fcm token auch
+                fcmToken = "",
+            )
+            userRepository.saveAndFlush(user)
+            ResponseEntity.status(HttpStatus.CREATED).build()
+        }
     }
 
     @GetMapping("/test")
-    fun test(@AuthenticationPrincipal token: FirebaseToken ): String
-    {
-       return "You are authenticated as ${token.name}"
+    fun test(@AuthenticationPrincipal token: FirebaseToken): String {
+        return "You are authenticated as ${token.name}"
     }
 
     @GetMapping("/test2")
-    fun test2(): String
-    {
+    fun test2(): String {
         return "You are not authenticated"
     }
 }
