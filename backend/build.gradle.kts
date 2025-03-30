@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterSecurity)
     implementation(libs.springBootStarterWeb)
+    implementation(libs.springBootStarterValidation)
     implementation(libs.kotlinReflect)
     implementation(libs.firebase.admin)
     developmentOnly(libs.springBootDevtools)

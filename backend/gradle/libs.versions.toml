@@ -8,6 +8,7 @@ firebaseAdmin = "9.4.3"
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBootStarterSecurity = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+springBootStarterValidation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
 kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 postgresql = { group = "org.postgresql", name = "postgresql" }

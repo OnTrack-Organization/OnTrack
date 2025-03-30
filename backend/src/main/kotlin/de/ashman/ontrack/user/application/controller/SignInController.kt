@@ -1,0 +1,58 @@
+package de.ashman.ontrack.user.application.controller
+
+import com.google.firebase.auth.FirebaseToken
+import de.ashman.ontrack.user.domain.User
+import de.ashman.ontrack.user.infrastructure.UserRepository
+import jakarta.transaction.Transactional
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+class SignInController(private val userRepository: UserRepository) {
+    /**
+     * Signs in a User. If the user doesn't exist, they are created.
+     * In any case the Firebase's FCM Token is updated.
+     */
+    @PostMapping("/sign-in")
+    @Transactional
+    fun signIn(
+        @AuthenticationPrincipal token: FirebaseToken,
+        @RequestBody signInDto: SignInDto
+    ): ResponseEntity<UserDto> {
+        var user = userRepository.findOneByEmail(token.email)
+        if (user === null) {
+            user = User(
+                token.uid,
+                token.name,
+                token.email,
+                token.picture
+            )
+            user.updateFcmToken(signInDto.fcmToken)
+            userRepository.save(user)
+
+            return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(user.toDto())
+        }
+
+        user.updateFcmToken(signInDto.fcmToken)
+
+        return ResponseEntity.ok(user.toDto())
+    }
+
+    /**
+     * Logs out the user and clears Firebase's FCM token
+     */
+    @PostMapping("/sign-out")
+    @Transactional
+    fun signOut(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<Unit> {
+        val user = userRepository.getReferenceById(token.uid)
+        user.clearFcmToken()
+
+        return ResponseEntity.ok().build()
+    }
+}

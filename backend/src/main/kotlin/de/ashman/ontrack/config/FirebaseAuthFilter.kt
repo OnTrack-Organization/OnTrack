@@ -1,5 +1,6 @@
-package de.ashman.ontrack.security.service
+package de.ashman.ontrack.config
 
+import de.ashman.ontrack.security.service.FirebaseAuthService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

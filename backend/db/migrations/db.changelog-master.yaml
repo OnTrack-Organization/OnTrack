@@ -32,3 +32,28 @@ databaseChangeLog:
       rollback:
         - dropTable:
             tableName: users
+  - changeSet:
+      id: 2
+      author: RiceIsNice
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: username
+            constraintName: unique_username
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: unique_user_email
+        - addNotNullConstraint:
+            tableName: users
+            columnName: email
+        - addNotNullConstraint:
+            tableName: users
+            columnName: name
+        - addNotNullConstraint:
+            tableName: users
+            columnName: updated_at
+        - modifyDataType:
+            tableName: users
+            columnName: id
+            newDataType: varchar(36)
