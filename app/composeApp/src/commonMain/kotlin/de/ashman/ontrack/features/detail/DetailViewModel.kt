@@ -15,7 +15,7 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.repository.CurrentUserRepository
@@ -50,7 +50,7 @@ class DetailViewModel(
     private val recommendationRepository: RecommendationRepository,
     private val selectedMediaRepository: SelectedMediaRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val sharedUiManager: SharedUiManager,
+    private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -130,7 +130,7 @@ class DetailViewModel(
     }
 
     fun saveTracking(tracking: Tracking) = viewModelScope.launch {
-        sharedUiManager.hideSheetAndShowSnackbar(
+        commonUiManager.hideSheetAndShowSnackbar(
             getString(
                 resource = Res.string.tracking_saved,
                 tracking.mediaType.getSingularTitle(),
@@ -149,7 +149,7 @@ class DetailViewModel(
         val media = _uiState.value.selectedMedia ?: return@launch
         val tracking = _uiState.value.selectedTracking ?: return@launch
 
-        sharedUiManager.hideSheetAndShowSnackbar(
+        commonUiManager.hideSheetAndShowSnackbar(
             getString(
                 resource = Res.string.tracking_removed,
                 tracking.mediaType.getSingularTitle(),
@@ -181,7 +181,7 @@ class DetailViewModel(
             saveTracking(catalogTracking)
         }
 
-        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
+        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))
     }
 
     fun clearViewModel() {

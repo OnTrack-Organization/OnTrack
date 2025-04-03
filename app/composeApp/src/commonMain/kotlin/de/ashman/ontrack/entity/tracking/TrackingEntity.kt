@@ -2,8 +2,8 @@ package de.ashman.ontrack.entity.tracking
 
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.entity.feed.CommentEntity
-import de.ashman.ontrack.entity.feed.LikeEntity
+import de.ashman.ontrack.entity.share.CommentEntity
+import de.ashman.ontrack.entity.share.LikeEntity
 import kotlinx.datetime.Clock.System
 import kotlinx.serialization.Serializable
 

@@ -51,8 +51,8 @@ fun NotificationsScreen(
     viewModel: NotificationsViewModel,
     onBack: () -> Unit,
     onNotificationClick: (String) -> Unit,
-    onUserClick: (String) -> Unit,
-    onMediaClick: (MediaNavigationItems) -> Unit,
+    onClickUser: (String) -> Unit,
+    onClickMedia: (MediaNavigationItems) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -81,9 +81,9 @@ fun NotificationsScreen(
                     NotificationCard(
                         notification = it,
                         onNotificationClick = onNotificationClick,
-                        onUserClick = onUserClick,
+                        onUserClick = onClickUser,
                         onMediaClick = {
-                            onMediaClick(
+                            onClickMedia(
                                 MediaNavigationItems(
                                     id = it.mediaId,
                                     title = it.mediaTitle,

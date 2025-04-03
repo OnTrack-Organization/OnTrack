@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 
-class SharedUiManager() {
+class CommonUiManager() {
 
-    private val _uiState = MutableStateFlow(SharedUiState())
-    val uiState: StateFlow<SharedUiState> = _uiState
+    private val _uiState = MutableStateFlow(CommonUiState())
+    val uiState: StateFlow<CommonUiState> = _uiState
 
     fun showSheet(sheet: CurrentSheet) {
         _uiState.update { it.copy(showSheet = true, currentSheet = sheet) }
@@ -45,11 +45,11 @@ class SharedUiManager() {
     }
 
     fun resetUiState() {
-        _uiState.update { SharedUiState() }
+        _uiState.update { CommonUiState() }
     }
 }
 
-data class SharedUiState(
+data class CommonUiState(
     val currentSheet: CurrentSheet? = null,
     val showSheet: Boolean = false,
     val snackbarMessage: SnackbarEvent<String>? = null,

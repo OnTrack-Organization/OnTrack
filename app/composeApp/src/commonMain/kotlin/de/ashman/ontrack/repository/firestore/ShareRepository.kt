@@ -1,7 +1,7 @@
 package de.ashman.ontrack.repository.firestore
 
-import de.ashman.ontrack.domain.feed.Comment
-import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.share.Comment
+import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.entity.toEntity
@@ -10,22 +10,22 @@ import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 
-interface FeedRepository {
-    suspend fun fetchTrackingFeedPage(friendIds: List<String>, pageSize: Int = 10, lastTimestamp: Long? = null): List<Tracking>
+interface ShareRepository {
+    suspend fun fetchPage(friendIds: List<String>, pageSize: Int = 10, lastTimestamp: Long? = null): List<Tracking>
     suspend fun likeTracking(friendId: String, trackingId: String, like: Like)
     suspend fun unlikeTracking(friendId: String, trackingId: String, like: Like)
     suspend fun addComment(friendId: String, trackingId: String, comment: Comment)
     suspend fun removeComment(friendId: String, trackingId: String, comment: Comment)
 }
 
-class FeedRepositoryImpl(
+class ShareRepositoryImpl(
     private val firestore: FirebaseFirestore,
-) : FeedRepository {
+) : ShareRepository {
 
     private val userCollection = firestore.collection("users")
     private fun userTrackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 
-    override suspend fun fetchTrackingFeedPage(
+    override suspend fun fetchPage(
         friendIds: List<String>,
         pageSize: Int,
         lastTimestamp: Long?

@@ -8,8 +8,8 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_nav_title
 import ontrack.composeapp.generated.resources.search_nav_title
+import ontrack.composeapp.generated.resources.share_nav_title
 import ontrack.composeapp.generated.resources.shelf_nav_title
 import ontrack.composeapp.generated.resources.shelves_filled
 import ontrack.composeapp.generated.resources.shelves_outlined
@@ -22,9 +22,9 @@ sealed class BottomNavItem(
     val icon: @Composable () -> ImageVector,
     val filledIcon: @Composable () -> ImageVector,
 ) {
-    data object FeedNav : BottomNavItem(
-        title = Res.string.feed_nav_title,
-        route = Route.Feed,
+    data object ShareNav : BottomNavItem(
+        title = Res.string.share_nav_title,
+        route = Route.Share,
         icon = { Icons.Outlined.Public },
         filledIcon = { Icons.Filled.Public }
     )
@@ -44,6 +44,6 @@ sealed class BottomNavItem(
     )
 
     companion object {
-        val items: Set<BottomNavItem> = setOf(FeedNav, SearchNav, ShelfNav)
+        val items: Set<BottomNavItem> = setOf(ShareNav, SearchNav, ShelfNav)
     }
 }

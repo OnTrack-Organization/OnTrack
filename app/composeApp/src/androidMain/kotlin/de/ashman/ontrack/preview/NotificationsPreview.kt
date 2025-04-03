@@ -116,8 +116,8 @@ fun NotificationsScreenPreview() {
             viewModel = NotificationsViewModel(),
             onBack = {},
             onNotificationClick = {},
-            onUserClick = {},
-            onMediaClick = {},
+            onClickUser = {},
+            onClickMedia = {},
         )
     }
 }

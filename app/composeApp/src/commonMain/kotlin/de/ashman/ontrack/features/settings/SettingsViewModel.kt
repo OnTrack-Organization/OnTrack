@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.storage.StorageRepository
@@ -26,7 +26,7 @@ class SettingsViewModel(
     private val currentUserRepository: CurrentUserRepository,
     private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
-    private val sharedUiManager: SharedUiManager,
+    private val commonUiManager: CommonUiManager,
     private val usernameValidation: UsernameValidationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -84,7 +84,7 @@ class SettingsViewModel(
             )
         )
 
-        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
+        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
     }
 
     fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
@@ -94,12 +94,12 @@ class SettingsViewModel(
         } catch (e: Exception) {
             Logger.e("Error signing out: ${e.message}")
 
-            sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.logout_offline_error))
+            commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.logout_offline_error))
         }
     }
 
     fun removeUser() = viewModelScope.launch {
-        sharedUiManager.hideSheet()
+        commonUiManager.hideSheet()
         firestoreUserRepository.removeUser()
         firestoreUserRepository.signOut()
     }

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.entity.feed
+package de.ashman.ontrack.entity.share
 
 import kotlinx.serialization.Serializable
 

@@ -1,8 +1,7 @@
-package de.ashman.ontrack.features.feed
+package de.ashman.ontrack.features.share
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,32 +36,33 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.OnTrackTopBar
-import de.ashman.ontrack.features.common.SharedUiManager
-import de.ashman.ontrack.features.feed.comment.CommentsSheet
-import de.ashman.ontrack.features.feed.friend.FriendsSheet
-import de.ashman.ontrack.features.feed.friend.FriendsViewModel
-import de.ashman.ontrack.features.feed.like.LikesSheet
+import de.ashman.ontrack.features.share.comment.CommentsSheet
+import de.ashman.ontrack.features.share.friend.FriendsSheet
+import de.ashman.ontrack.features.share.friend.FriendsViewModel
+import de.ashman.ontrack.features.share.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_empty
-import ontrack.composeapp.generated.resources.feed_nav_title
+import ontrack.composeapp.generated.resources.share_empty
+import ontrack.composeapp.generated.resources.share_nav_title
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(
-    feedViewModel: FeedViewModel,
+fun ShareScreen(
+    shareViewModel: ShareViewModel,
     friendsViewModel: FriendsViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
+    onClickShareCard: (String) -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
     onClickUser: (String) -> Unit,
-    onNavigateToNotifications: () -> Unit,
+    onClickNotifications: () -> Unit,
 ) {
-    val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
-    val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
+    val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
+    val shareUiState by shareViewModel.uiState.collectAsStateWithLifecycle()
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
 
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -70,17 +70,17 @@ fun FeedScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
-        if (feedUiState.isFirstLaunch) {
-            feedViewModel.fetchInitialTrackingFeed()
+        if (shareUiState.isFirstLaunch) {
+            shareViewModel.fetchInitial()
         }
     }
 
     // Refresh when scrolling to bottom
-    LaunchedEffect(feedUiState.listState) {
-        snapshotFlow { feedUiState.listState.layoutInfo.visibleItemsInfo }
+    LaunchedEffect(shareUiState.listState) {
+        snapshotFlow { shareUiState.listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
-                if (visibleItems.isNotEmpty() && visibleItems.last().index == feedUiState.feedTrackings.lastIndex) {
-                    feedViewModel.fetchNextPage()
+                if (visibleItems.isNotEmpty() && visibleItems.last().index == shareUiState.trackings.lastIndex) {
+                    shareViewModel.fetchNextPage()
                 }
             }
     }
@@ -92,8 +92,8 @@ fun FeedScreen(
          }
      }*/
 
-    LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)
         }
     }
@@ -108,14 +108,14 @@ fun FeedScreen(
         },
         topBar = {
             OnTrackTopBar(
-                title = stringResource(Res.string.feed_nav_title),
+                title = stringResource(Res.string.share_nav_title),
                 navigationIcon = Icons.Default.Group,
                 actionIcon = Icons.Default.Notifications,
-                showActionBadge = feedUiState.hasNewNotifications,
-                onClickNavigation = { sharedUiManager.showSheet(CurrentSheet.FRIENDS) },
+                showActionBadge = shareUiState.hasNewNotifications,
+                onClickNavigation = { commonUiManager.showSheet(CurrentSheet.FRIENDS) },
                 onClickAction = {
-                    feedViewModel.updateHasNewNotifications(false)
-                    onNavigateToNotifications()
+                    shareViewModel.updateHasNewNotifications(false)
+                    onClickNotifications()
                 },
                 scrollBehavior = appBarScrollBehavior,
             )
@@ -123,46 +123,47 @@ fun FeedScreen(
     ) { contentPadding ->
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
-            isRefreshing = feedUiState.feedResultState == FeedResultState.Loading,
-            onRefresh = { feedViewModel.fetchInitialTrackingFeed() },
+            isRefreshing = shareUiState.shareResultState == ShareResultState.Loading,
+            onRefresh = { shareViewModel.fetchInitial() },
         ) {
-            if (feedUiState.feedTrackings.isEmpty()) {
+            if (shareUiState.trackings.isEmpty()) {
                 EmptyFeed()
             } else {
                 LazyColumn(
                     modifier = Modifier
                         .padding(bottom = 80.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    state = feedUiState.listState,
+                    //contentPadding = PaddingValues(16.dp),
+                    state = shareUiState.listState,
                 ) {
-                    items(items = feedUiState.feedTrackings, key = { it.id }) {
-                        FeedCard(
+                    items(items = shareUiState.trackings, key = { it.id }) {
+                        ShareCard(
                             tracking = it,
-                            onLike = { feedViewModel.likeTracking(it) },
+                            onLike = { shareViewModel.likeTracking(it) },
                             onShowComments = {
-                                feedViewModel.selectTrackingAndShowSheet(
+                                shareViewModel.selectTrackingAndShowSheet(
                                     userId = it.userId,
                                     trackingId = it.id,
                                     currentSheet = CurrentSheet.COMMENTS
                                 )
                             },
                             onShowLikes = {
-                                feedViewModel.selectTrackingAndShowSheet(
+                                shareViewModel.selectTrackingAndShowSheet(
                                     userId = it.userId,
                                     trackingId = it.id,
                                     currentSheet = CurrentSheet.LIKES
                                 )
                             },
+                            onClickCard = { onClickShareCard(it.id) },
                             onClickCover = onClickCover,
                             onClickUser = { onClickUser(it.userId) },
                         )
 
-                        if (it != feedUiState.feedTrackings.last()) {
+                        if (it != shareUiState.trackings.last()) {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                         }
                     }
 
-                    if (feedUiState.feedResultState == FeedResultState.LoadingMore) {
+                    if (shareUiState.shareResultState == ShareResultState.LoadingMore) {
                         item {
                             Column(
                                 modifier = Modifier
@@ -177,22 +178,22 @@ fun FeedScreen(
                 }
             }
 
-            if (sharedUiState.showSheet) {
+            if (commonUiState.showSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { sharedUiManager.hideSheet() },
+                    onDismissRequest = { commonUiManager.hideSheet() },
                     sheetState = bottomSheetState,
                     tonalElevation = 0.dp,
                 ) {
-                    when (sharedUiState.currentSheet) {
+                    when (commonUiState.currentSheet) {
                         CurrentSheet.COMMENTS -> CommentsSheet(
-                            comments = feedUiState.selectedTracking?.comments ?: emptyList(),
-                            onAddComment = feedViewModel::addComment,
-                            onRemoveComment = feedViewModel::removeComment,
+                            comments = shareUiState.selectedTracking?.comments ?: emptyList(),
+                            onAddComment = shareViewModel::addComment,
+                            onRemoveComment = shareViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
                         )
 
                         CurrentSheet.LIKES -> LikesSheet(
-                            likes = feedUiState.selectedTracking?.likes ?: emptyList(),
+                            likes = shareUiState.selectedTracking?.likes ?: emptyList(),
                             onClickUser = { onClickUser(it) },
                         )
 
@@ -233,13 +234,13 @@ fun EmptyFeed(
             ) {
                 Icon(
                     modifier = Modifier.size(48.dp),
-                    imageVector = BottomNavItem.FeedNav.filledIcon(),
+                    imageVector = BottomNavItem.ShareNav.filledIcon(),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(
-                    text = stringResource(Res.string.feed_empty),
+                    text = stringResource(Res.string.share_empty),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

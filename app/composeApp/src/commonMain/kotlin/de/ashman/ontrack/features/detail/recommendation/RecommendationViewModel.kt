@@ -6,7 +6,7 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
@@ -27,7 +27,7 @@ class RecommendationViewModel(
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val currentUserRepository: CurrentUserRepository,
-    private val sharedUiManager: SharedUiManager,
+    private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecommendationUiState())
@@ -70,7 +70,7 @@ class RecommendationViewModel(
         previousRecommendationsCache[friendId] = updatedRecs
         _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
 
-        sharedUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_sent))
+        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_sent))
 
         notificationService.sendPushNotification(
             userId = friendId,

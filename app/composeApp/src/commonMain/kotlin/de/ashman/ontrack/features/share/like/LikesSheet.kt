@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.feed.like
+package de.ashman.ontrack.features.share.like
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.feed.Like
+import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.features.common.PersonImage
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_likes
-import ontrack.composeapp.generated.resources.feed_no_likes
+import ontrack.composeapp.generated.resources.share_likes
+import ontrack.composeapp.generated.resources.share_likes_empty
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -38,7 +38,7 @@ fun LikesSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_likes),
+            text = stringResource(Res.string.share_likes, likes.size, likes.size),
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -52,7 +52,7 @@ fun LikesSheet(
                 if (!hasLikes) {
                     item {
                         Text(
-                            text = stringResource(Res.string.feed_no_likes),
+                            text = stringResource(Res.string.share_likes_empty),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),

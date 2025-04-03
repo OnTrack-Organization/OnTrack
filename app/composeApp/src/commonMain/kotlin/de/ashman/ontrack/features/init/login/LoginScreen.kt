@@ -30,9 +30,9 @@ import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
-import de.ashman.ontrack.features.common.SharedUiManager
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.apple
@@ -49,17 +49,17 @@ import org.jetbrains.compose.resources.vectorResource
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     onNavigateAfterLogin: (Boolean, User?) -> Unit,
     onBack: () -> Unit,
 ) {
-    val sharedUiState by sharedUiManager.uiState.collectAsState()
+    val commonUiState by commonUiManager.uiState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)
         }
     }

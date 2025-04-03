@@ -3,6 +3,7 @@ package de.ashman.ontrack.navigation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,13 +14,10 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.feed.FeedScreen
-import de.ashman.ontrack.features.feed.FeedViewModel
-import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
 import de.ashman.ontrack.features.init.login.LoginViewModel
@@ -33,6 +31,11 @@ import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsScreen
 import de.ashman.ontrack.features.settings.SettingsViewModel
+import de.ashman.ontrack.features.share.ShareScreen
+import de.ashman.ontrack.features.share.ShareViewModel
+import de.ashman.ontrack.features.share.friend.FriendsViewModel
+import de.ashman.ontrack.features.share_detail.ShareDetailScreen
+import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.features.shelf.OtherUserShelf
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
@@ -53,7 +56,8 @@ fun NavigationGraph(
     navController: NavHostController,
     startViewModel: StartViewModel = koinInject(),
     loginViewModel: LoginViewModel = koinInject(),
-    feedViewModel: FeedViewModel = koinInject(),
+    shareViewModel: ShareViewModel = koinInject(),
+    shareDetailViewModel: ShareDetailViewModel = koinInject(),
     friendsViewModel: FriendsViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
@@ -63,7 +67,7 @@ fun NavigationGraph(
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
     notificationsViewModel: NotificationsViewModel = koinInject(),
-    sharedUiManager: SharedUiManager = koinInject(),
+    commonUiManager: CommonUiManager = koinInject(),
     firestoreUserRepository: FirestoreUserRepository = koinInject(),
     analytics: FirebaseAnalytics = koinInject(),
 ) {
@@ -87,16 +91,16 @@ fun NavigationGraph(
                 loginViewModel = loginViewModel,
                 navController = navController,
                 setupViewModel = setupViewModel,
-                sharedUiManager = sharedUiManager,
+                commonUiManager = commonUiManager,
                 analytics = analytics,
             )
             mainGraph(
                 navController = navController,
-                feedViewModel = feedViewModel,
+                shareViewModel = shareViewModel,
                 friendsViewModel = friendsViewModel,
                 searchViewModel = searchViewModel,
                 shelfViewModel = shelfViewModel,
-                sharedUiManager = sharedUiManager,
+                commonUiManager = commonUiManager,
                 firestoreUserRepository = firestoreUserRepository,
             )
             mediaGraph(
@@ -104,31 +108,41 @@ fun NavigationGraph(
                 recommendationViewModel = recommendationViewModel,
                 shelfListViewModel = shelfListViewModel,
                 shelfViewModel = shelfViewModel,
-                sharedUiManager = sharedUiManager,
+                commonUiManager = commonUiManager,
                 firestoreUserRepository = firestoreUserRepository,
                 navController = navController
             )
+
+            composable<Route.ShareDetail> { backStackEntry ->
+                val shareDetail: Route.ShareDetail = backStackEntry.toRoute()
+
+                ShareDetailScreen(
+                    viewModel = shareDetailViewModel,
+                    trackingId = shareDetail.trackingId,
+                    onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+                    onClickMedia = { navController.navigate(Route.Detail(it)) },
+                    onBack = { navController.popBackStack() },
+                )
+            }
 
             composable<Route.Notifications> {
                 NotificationsScreen(
                     viewModel = notificationsViewModel,
                     onBack = { navController.popBackStack() },
-                    onNotificationClick = { /*TODO*/ },
-                    onUserClick = { userId ->
-                        navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
-                    },
-                    onMediaClick = { navController.navigate(Route.Detail(it)) }
+                    onNotificationClick = { navController.navigate(Route.ShareDetail(it)) },
+                    onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+                    onClickMedia = { navController.navigate(Route.Detail(it)) }
                 )
             }
 
             composable<Route.Settings> {
                 SettingsScreen(
                     viewModel = settingsViewModel,
-                    sharedUiManager = sharedUiManager,
+                    commonUiManager = commonUiManager,
                     onBack = { navController.popBackStack() },
                     clearAndNavigateOnLogout = {
                         friendsViewModel.clearViewModel()
-                        feedViewModel.clearViewModel()
+                        shareViewModel.clearViewModel()
                         detailViewModel.clearViewModel()
                         shelfListViewModel.clearViewModel()
                         shelfViewModel.clearViewModel()
@@ -137,7 +151,7 @@ fun NavigationGraph(
                         loginViewModel.clearViewModel()
 
                         navController.navigate(Route.Start) {
-                            popUpTo(Route.Feed) { inclusive = true } // Clear backstack
+                            popUpTo(Route.Share) { inclusive = true } // Clear backstack
                         }
                     }
                 )
@@ -162,7 +176,7 @@ fun NavGraphBuilder.initGraph(
     startViewModel: StartViewModel,
     loginViewModel: LoginViewModel,
     setupViewModel: SetupViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     navController: NavHostController,
     analytics: FirebaseAnalytics,
 ) {
@@ -184,7 +198,7 @@ fun NavGraphBuilder.initGraph(
     composable<Route.Login> {
         LoginScreen(
             viewModel = loginViewModel,
-            sharedUiManager = sharedUiManager,
+            commonUiManager = commonUiManager,
             onNavigateAfterLogin = { userExists, user ->
                 analytics.logEvent(analytics.Event.LOGIN)
 
@@ -217,26 +231,25 @@ fun NavGraphBuilder.initGraph(
 
 fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
-    feedViewModel: FeedViewModel,
+    shareViewModel: ShareViewModel,
     friendsViewModel: FriendsViewModel,
     searchViewModel: SearchViewModel,
     shelfViewModel: ShelfViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     firestoreUserRepository: FirestoreUserRepository,
 ) {
-    composable<Route.Feed> {
-        FeedScreen(
-            feedViewModel = feedViewModel,
+    composable<Route.Share> {
+        ShareScreen(
+            shareViewModel = shareViewModel,
             friendsViewModel = friendsViewModel,
-            sharedUiManager = sharedUiManager,
-            onClickCover = { mediaNav ->
-                navController.navigate(Route.Detail(mediaNav))
-            },
+            commonUiManager = commonUiManager,
+            onClickShareCard = { navController.navigate(Route.ShareDetail(it)) },
+            onClickCover = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onClickUser = { userId ->
-                sharedUiManager.hideSheet()
-                navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
+                commonUiManager.hideSheet()
+                navController.navigateToShelf(userId, firestoreUserRepository)
             },
-            onNavigateToNotifications = { navController.navigate(Route.Notifications) },
+            onClickNotifications = { navController.navigate(Route.Notifications) },
         )
     }
 
@@ -253,7 +266,7 @@ fun NavGraphBuilder.mainGraph(
     composable<Route.Shelf> {
         ShelfScreen(
             viewModel = shelfViewModel,
-            sharedUiManager = sharedUiManager,
+            commonUiManager = commonUiManager,
             userId = firestoreUserRepository.currentUserId,
             onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(firestoreUserRepository.currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
@@ -267,7 +280,7 @@ fun NavGraphBuilder.mediaGraph(
     recommendationViewModel: RecommendationViewModel,
     shelfListViewModel: ShelfListViewModel,
     shelfViewModel: ShelfViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     firestoreUserRepository: FirestoreUserRepository,
     navController: NavHostController,
 ) {
@@ -287,7 +300,7 @@ fun NavGraphBuilder.mediaGraph(
             mediaNavItems = detail.mediaNavItems,
             detailViewModel = detailViewModel,
             recommendationViewModel = recommendationViewModel,
-            sharedUiManager = sharedUiManager,
+            commonUiManager = commonUiManager,
             onClickItem = { mediaNavItems ->
                 // Remove all the Detail Navigations from graph before navigating
                 navController.navigate(Route.Detail(mediaNavItems)) {
@@ -296,12 +309,8 @@ fun NavGraphBuilder.mediaGraph(
                     }
                 }
             },
-            onClickUser = { userId ->
-                navController.navigate(if (userId == firestoreUserRepository.currentUserId) Route.Shelf else Route.OtherShelf(userId))
-            },
-            onBack = {
-                navController.popBackStack()
-            },
+            onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+            onBack = { navController.popBackStack() },
         )
     }
 
@@ -317,9 +326,7 @@ fun NavGraphBuilder.mediaGraph(
             userId = shelfList.userId,
             mediaType = shelfList.mediaType,
             onClickItem = { mediaNavItems -> navController.navigate(Route.Detail(mediaNavItems)) },
-            onBack = {
-                navController.popBackStack()
-            },
+            onBack = { navController.popBackStack() },
         )
     }
 
@@ -328,11 +335,20 @@ fun NavGraphBuilder.mediaGraph(
 
         OtherUserShelf(
             viewModel = shelfViewModel,
-            sharedUiManager = sharedUiManager,
+            commonUiManager = commonUiManager,
             userId = otherShelf.userId,
             onClickMore = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
             onClickItem = { mediaNavItem -> navController.navigate(Route.Detail(mediaNavItem)) },
             onBack = { navController.popBackStack() },
         )
     }
+}
+
+fun NavController.navigateToShelf(userId: String, firestoreUserRepository: FirestoreUserRepository) {
+    val route = if (userId == firestoreUserRepository.currentUserId) {
+        Route.Shelf
+    } else {
+        Route.OtherShelf(userId)
+    }
+    navigate(route)
 }

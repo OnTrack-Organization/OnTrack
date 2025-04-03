@@ -23,7 +23,7 @@ sealed class Route {
 
     // BOTTOM NAVIGATION
     @Serializable
-    data object Feed : Route()
+    data object Share : Route()
 
     @Serializable
     data object Search : Route()
@@ -53,4 +53,9 @@ sealed class Route {
 
     @Serializable
     data object Notifications : Route()
+
+    @Serializable
+    data class ShareDetail(
+        val trackingId: String,
+    ) : Route()
 }

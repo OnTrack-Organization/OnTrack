@@ -1,11 +1,10 @@
-package de.ashman.ontrack.features.feed
+package de.ashman.ontrack.features.share
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Favorite
@@ -26,10 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,38 +35,42 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
-import de.ashman.ontrack.features.common.UserCardHeader
-import de.ashman.ontrack.features.common.contentSizeAnimation
-import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.common.getLabel
+import de.ashman.ontrack.features.notifications.formatTimeAgoString
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_comments_count
-import ontrack.composeapp.generated.resources.feed_likes_count
+import ontrack.composeapp.generated.resources.share_comments_count
+import ontrack.composeapp.generated.resources.share_likes_count
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun FeedCard(
+fun ShareCard(
     tracking: Tracking,
     onLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
     onClickCover: (MediaNavigationItems) -> Unit,
     onClickUser: () -> Unit,
+    onClickCard: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.contentSizeAnimation(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
+        onClick = onClickCard,
     ) {
         Column(
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -80,16 +80,16 @@ fun FeedCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
-                    UserCardHeader(
+                    ShareCardHeader(
                         userImageUrl = tracking.userImageUrl,
                         username = tracking.username,
-                        timestamp = tracking.timestamp.formatDateTime(),
+                        timestamp = tracking.timestamp,
                         mediaType = tracking.mediaType,
                         trackStatus = tracking.status!!,
-                        onUserClick = onClickUser,
+                        onClickUser = onClickUser,
                     )
 
-                    FeedCardMediaTitle(
+                    ShareCardMediaTitle(
                         mediaType = tracking.mediaType,
                         mediaTitle = tracking.mediaTitle,
                     )
@@ -111,14 +111,14 @@ fun FeedCard(
                 )
             }
 
-            FeedCardReview(
+            ShareCardReview(
                 reviewTitle = tracking.reviewTitle,
                 reviewDescription = tracking.reviewDescription,
                 reviewRating = tracking.rating,
                 starColor = contentColorFor(tracking.status.getColor()),
             )
 
-            FeedCardFooter(
+            ShareCardFooter(
                 isLiked = tracking.isLikedByCurrentUser,
                 likeCount = tracking.likeCount,
                 likeImages = tracking.likeImages,
@@ -132,12 +132,57 @@ fun FeedCard(
 }
 
 @Composable
-fun FeedCardMediaTitle(
+fun ShareCardHeader(
+    userImageUrl: String?,
+    username: String,
+    timestamp: Long,
+    mediaType: MediaType,
+    trackStatus: TrackStatus,
+    onClickUser: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        PersonImage(
+            userImageUrl = userImageUrl,
+            onClick = onClickUser
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = username,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Icon(
+                    imageVector = trackStatus.getIcon(true), trackStatus.name,
+                    tint = contentColorFor(trackStatus.getColor()),
+                    modifier = Modifier.size(16.dp),
+                )
+                Text(
+                    text = "${stringResource(trackStatus.getLabel(mediaType))} - ${timestamp.formatTimeAgoString()}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ShareCardMediaTitle(
     mediaType: MediaType,
     mediaTitle: String,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Icon(
@@ -146,7 +191,7 @@ fun FeedCardMediaTitle(
         )
         Text(
             text = mediaTitle,
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 lineBreak = LineBreak.Simple,
             ),
             fontWeight = FontWeight.Bold,
@@ -158,14 +203,12 @@ fun FeedCardMediaTitle(
 }
 
 @Composable
-fun FeedCardReview(
+fun ShareCardReview(
     reviewTitle: String?,
     reviewDescription: String?,
     reviewRating: Double?,
     starColor: Color,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     reviewRating?.let {
         MiniStarRatingBar(
             rating = reviewRating,
@@ -175,20 +218,14 @@ fun FeedCardReview(
 
     if (!reviewDescription.isNullOrBlank() || !reviewTitle.isNullOrBlank()) {
         Column(
-            modifier = Modifier
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = { expanded = !expanded }
-                ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (!reviewTitle.isNullOrBlank()) {
                 Text(
                     text = reviewTitle,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    maxLines = if (expanded) Int.MAX_VALUE else 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -197,7 +234,7 @@ fun FeedCardReview(
                 Text(
                     text = reviewDescription,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = if (expanded) Int.MAX_VALUE else 2,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -206,7 +243,7 @@ fun FeedCardReview(
 }
 
 @Composable
-fun FeedCardFooter(
+fun ShareCardFooter(
     isLiked: Boolean,
     likeCount: Int,
     commentCount: Int,
@@ -261,8 +298,8 @@ fun FeedCardFooter(
 
                     if (likeCount > 0) {
                         Text(
-                            text = pluralStringResource(Res.plurals.feed_likes_count, likeCount, likeCount),
-                            style = MaterialTheme.typography.bodySmall,
+                            text = pluralStringResource(Res.plurals.share_likes_count, likeCount, likeCount),
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -278,8 +315,8 @@ fun FeedCardFooter(
         ) {
             if (commentCount > 0) {
                 Text(
-                    text = pluralStringResource(Res.plurals.feed_comments_count, commentCount, commentCount),
-                    style = MaterialTheme.typography.bodySmall,
+                    text = pluralStringResource(Res.plurals.share_comments_count, commentCount, commentCount),
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

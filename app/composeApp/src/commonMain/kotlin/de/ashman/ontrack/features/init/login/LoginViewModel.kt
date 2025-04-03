@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ import ontrack.composeapp.generated.resources.login_offline_error
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val sharedUiManager: SharedUiManager
+    private val commonUiManager: CommonUiManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -51,7 +51,7 @@ class LoginViewModel(
                 Logger.e("Login failed: ${error.message}")
 
                 if (error.message == "Idtoken is null") return@launch
-                sharedUiManager.showSnackbar(Res.string.login_offline_error)
+                commonUiManager.showSnackbar(Res.string.login_offline_error)
             }
         )
     }

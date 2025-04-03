@@ -3,7 +3,7 @@
     <string name="app_version">Version %1$s</string>
     <string name="app_subtitle">Shelf &amp; Share Media</string>
 
-    <string name="feed_nav_title">Share</string>
+    <string name="share_nav_title">Share</string>
     <string name="search_nav_title">Search</string>
     <string name="shelf_nav_title">Shelf</string>
 
@@ -37,26 +37,30 @@
     <string name="setup_title">Setup</string>
     <string name="setup_username">Enter some personal info to get started!</string>
 
-    <!-- FEED -->
-    <string name="feed_empty">Add some friends or track some media to share it in your feed!</string>
+    <!-- SHARE -->
+    <string name="share_empty">Add some friends or track some media to share it in your feed!</string>
 
-    <string name="feed_comments">Comments</string>
-    <string name="feed_comments_placeholder">Write a comment…</string>
-    <string name="feed_no_comments">No comments yet. Be the first to comment!</string>
-    <string name="feed_remove_comment_confirm_title">Remove comment?</string>
-    <string name="feed_remove_comment_confirm_text">Are you sure you want to remove this comment?</string>
+    <string name="share_comments_placeholder">Write a comment…</string>
+    <string name="share_remove_comment_confirm_title">Remove comment?</string>
+    <string name="share_remove_comment_confirm_text">Are you sure you want to remove this comment?</string>
 
-    <string name="feed_likes">Likes</string>
-    <string name="feed_no_likes">No likes yet. Be the first to like!</string>
-
-    <plurals name="feed_likes_count">
+    <plurals name="share_likes_count">
         <item quantity="one">%1$s Like</item>
         <item quantity="other">%1$s Likes</item>
     </plurals>
-    <plurals name="feed_comments_count">
+    <plurals name="share_comments_count">
         <item quantity="one">%1$s Comment</item>
         <item quantity="other">%1$s Comments</item>
     </plurals>
+
+    <!-- SHARE DETAIL -->
+    <string name="share_detail_title">Tracking</string>
+
+    <string name="share_likes">Likes (%1$d)</string>
+    <string name="share_comments">Comments (%1$d)</string>
+
+    <string name="share_comments_empty">No comments yet</string>
+    <string name="share_likes_empty">No likes yet</string>
 
     <!-- FRIENDS -->
     <string name="feed_friends">Friends</string>

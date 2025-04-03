@@ -1,8 +1,8 @@
 package de.ashman.ontrack.domain.tracking
 
-import de.ashman.ontrack.domain.feed.Comment
-import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.share.Comment
+import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
 import dev.gitlive.firebase.Firebase

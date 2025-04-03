@@ -46,12 +46,12 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationItems
@@ -67,7 +67,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ShelfScreen(
     viewModel: ShelfViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     userId: String,
     emptyText: StringResource = Res.string.shelf_own_empty,
     onClickMoreMedia: (MediaType) -> Unit,
@@ -75,7 +75,7 @@ fun ShelfScreen(
     onSettings: (() -> Unit)? = null,
     onBack: (() -> Unit)? = null,
 ) {
-    val sharedUiState by sharedUiManager.uiState.collectAsStateWithLifecycle()
+    val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsState()
 
     var showImageDialog by remember { mutableStateOf(false) }
@@ -86,8 +86,8 @@ fun ShelfScreen(
         viewModel.observeUserTrackings(userId)
     }
 
-    LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)
         }
     }

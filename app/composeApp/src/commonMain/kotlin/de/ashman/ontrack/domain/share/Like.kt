@@ -1,4 +1,4 @@
-package de.ashman.ontrack.domain.feed
+package de.ashman.ontrack.domain.share
 
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize

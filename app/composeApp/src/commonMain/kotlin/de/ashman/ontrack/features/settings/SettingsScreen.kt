@@ -33,13 +33,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.BuildKonfig
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.ImagePicker
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
 import de.ashman.ontrack.features.common.RemoveSheet
-import de.ashman.ontrack.features.common.SharedUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
@@ -59,19 +59,19 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    sharedUiManager: SharedUiManager,
+    commonUiManager: CommonUiManager,
     onBack: () -> Unit,
     clearAndNavigateOnLogout: () -> Unit,
 ) {
-    val sharedUiState by sharedUiManager.uiState.collectAsState()
+    val commonUiState by commonUiManager.uiState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState()
     val snackbarHostState = remember { SnackbarHostState() }
     val localFocusManager = LocalFocusManager.current
 
-    LaunchedEffect(sharedUiState.snackbarMessage) {
-        sharedUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)
         }
     }
@@ -162,7 +162,7 @@ fun SettingsScreen(
                             modifier = Modifier.weight(1f),
                             text = Res.string.remove_button,
                             icon = Icons.Default.Delete,
-                            onClick = { sharedUiManager.showSheet() },
+                            onClick = { commonUiManager.showSheet() },
                         )
                     }
                     ApiContributions()
@@ -171,9 +171,9 @@ fun SettingsScreen(
             }
         }
 
-        if (sharedUiState.showSheet) {
+        if (commonUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { sharedUiManager.hideSheet() },
+                onDismissRequest = { commonUiManager.hideSheet() },
                 sheetState = sheetState,
             ) {
                 Column(
@@ -189,7 +189,7 @@ fun SettingsScreen(
                             viewModel.removeUser()
                             clearAndNavigateOnLogout()
                         },
-                        onCancel = { sharedUiManager.hideSheet() },
+                        onCancel = { commonUiManager.hideSheet() },
                     )
                 }
             }

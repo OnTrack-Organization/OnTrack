@@ -5,8 +5,8 @@ import de.ashman.ontrack.api.album.AlbumRepository
 import de.ashman.ontrack.api.auth.AccessTokenManager
 import de.ashman.ontrack.api.boardgame.BoardgameRepository
 import de.ashman.ontrack.api.book.BookRepository
-import de.ashman.ontrack.api.clients.createBackendClient
 import de.ashman.ontrack.api.clients.createBGGClient
+import de.ashman.ontrack.api.clients.createBackendClient
 import de.ashman.ontrack.api.clients.createGeekDoClient
 import de.ashman.ontrack.api.clients.createIGDBClient
 import de.ashman.ontrack.api.clients.createOpenLibraryClient
@@ -17,17 +17,18 @@ import de.ashman.ontrack.api.clients.createTwitchTokenClient
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.features.common.SharedUiManager
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.feed.FeedViewModel
-import de.ashman.ontrack.features.feed.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
+import de.ashman.ontrack.features.share.ShareViewModel
+import de.ashman.ontrack.features.share.friend.FriendsViewModel
+import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.network.UserService
@@ -38,14 +39,14 @@ import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.CurrentUserRepositoryImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FeedRepository
-import de.ashman.ontrack.repository.firestore.FeedRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
+import de.ashman.ontrack.repository.firestore.ShareRepository
+import de.ashman.ontrack.repository.firestore.ShareRepositoryImpl
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
@@ -110,13 +111,13 @@ val appModule = module {
     single<FirestoreUserRepository> { FirestoreUserRepositoryImpl(get(), get(), get()) }
     single<CurrentUserRepository> { CurrentUserRepositoryImpl() }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
-    single<FeedRepository> { FeedRepositoryImpl(get()) }
+    single<ShareRepository> { ShareRepositoryImpl(get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
 
-    single { SharedUiManager() }
+    single { CommonUiManager() }
 
     // USE CASES
     singleOf(::UsernameValidationUseCase)
@@ -129,16 +130,21 @@ val appModule = module {
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get()) }
-    viewModelDefinition { FeedViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { SetupViewModel(get(), get(), get()) }
+
+    viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { ShareDetailViewModel() }
     viewModelDefinition { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { NotificationsViewModel() }
+
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
+
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
+
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
-    viewModelDefinition { SetupViewModel(get(), get(), get()) }
-    viewModelDefinition { NotificationsViewModel() }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

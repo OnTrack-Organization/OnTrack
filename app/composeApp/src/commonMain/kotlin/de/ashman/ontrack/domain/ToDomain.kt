@@ -1,16 +1,16 @@
 package de.ashman.ontrack.domain
 
-import de.ashman.ontrack.domain.feed.Comment
-import de.ashman.ontrack.domain.feed.Like
 import de.ashman.ontrack.domain.globalrating.RatingStats
+import de.ashman.ontrack.domain.share.Comment
+import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Entry
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.entity.feed.CommentEntity
-import de.ashman.ontrack.entity.feed.LikeEntity
 import de.ashman.ontrack.entity.globalrating.RatingStatsEntity
+import de.ashman.ontrack.entity.share.CommentEntity
+import de.ashman.ontrack.entity.share.LikeEntity
 import de.ashman.ontrack.entity.tracking.EntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
 import de.ashman.ontrack.entity.user.FriendEntity

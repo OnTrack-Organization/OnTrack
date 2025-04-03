@@ -25,9 +25,9 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.UserCardHeader
 import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.share.ShareCardHeader
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_friends_activity_empty
 import ontrack.composeapp.generated.resources.detail_friends_activity_title
@@ -100,10 +100,10 @@ fun FriendsActivitySheet(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(friendTrackings) {
-                    TrackingCard(
+                    SimpleFriendTrackingCard(
                         userImageUrl = it.userImageUrl,
                         username = it.username,
-                        timestamp = it.timestamp.formatDateTime(),
+                        timestamp = it.timestamp,
                         mediaType = it.mediaType,
                         trackStatus = it.status!!,
                         rating = it.rating,
@@ -178,10 +178,10 @@ fun RecommendationCard(
 }
 
 @Composable
-fun TrackingCard(
+fun SimpleFriendTrackingCard(
     userImageUrl: String?,
     username: String,
-    timestamp: String,
+    timestamp: Long,
     mediaType: MediaType,
     trackStatus: TrackStatus,
     rating: Double?,
@@ -192,13 +192,13 @@ fun TrackingCard(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        UserCardHeader(
+        ShareCardHeader(
             userImageUrl = userImageUrl,
             username = username,
             timestamp = timestamp,
             mediaType = mediaType,
             trackStatus = trackStatus,
-            onUserClick = onUserClick,
+            onClickUser = onUserClick,
         )
 
         Column(modifier = Modifier.padding(start = 56.dp)) {

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.feed.friend
+package de.ashman.ontrack.features.share.friend
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.gestures.detectTapGestures

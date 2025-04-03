@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.feed.comment
+package de.ashman.ontrack.features.share.comment
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.feed.Comment
+import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.OnTrackCommentTextField
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.PersonImage
@@ -50,11 +50,12 @@ import de.ashman.ontrack.features.common.formatDateTime
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.feed_comments
-import ontrack.composeapp.generated.resources.feed_comments_placeholder
-import ontrack.composeapp.generated.resources.feed_no_comments
+import ontrack.composeapp.generated.resources.share_comments
+import ontrack.composeapp.generated.resources.share_comments_empty
+import ontrack.composeapp.generated.resources.share_comments_placeholder
 import org.jetbrains.compose.resources.stringResource
 
+// TODO maybe remove this sheet altogether
 @Composable
 fun CommentsSheet(
     comments: List<Comment>,
@@ -86,7 +87,7 @@ fun CommentsSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.feed_comments),
+            text = stringResource(Res.string.share_comments, comments.size, comments.size),
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -104,7 +105,7 @@ fun CommentsSheet(
                 if (!hasComments) {
                     item {
                         Text(
-                            text = stringResource(Res.string.feed_no_comments),
+                            text = stringResource(Res.string.share_comments_empty),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
@@ -117,7 +118,6 @@ fun CommentsSheet(
                     items(items = comments, key = { it.id }) {
                         CommentCard(
                             modifier = Modifier.animateItem(),
-                            userId = it.userId,
                             userImageUrl = it.userImageUrl,
                             name = it.name,
                             timestamp = it.timestamp.formatDateTime(),
@@ -133,8 +133,8 @@ fun CommentsSheet(
                                 )
                                 focusRequester.requestFocus()
                             },
-                            onUserClick = { onClickUser(it.userId) },
-                            isScrolling = listState.isScrollInProgress,
+                            onClickUser = { onClickUser(it.userId) },
+                            isOwnComment = it.userId == Firebase.auth.currentUser?.uid,
                         )
 
                         if (showCommentRemoveConfirmDialog) {
@@ -160,7 +160,7 @@ fun CommentsSheet(
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f),
-                placeholder = stringResource(Res.string.feed_comments_placeholder),
+                placeholder = stringResource(Res.string.share_comments_placeholder),
                 value = commentText,
                 onValueChange = { commentText = it },
             )
@@ -183,18 +183,15 @@ fun CommentsSheet(
 @Composable
 fun CommentCard(
     modifier: Modifier = Modifier,
-    userId: String,
     userImageUrl: String,
     name: String,
     timestamp: String,
     comment: String,
     onShowRemoveCommentConfirmDialog: () -> Unit,
     onReply: () -> Unit,
-    onUserClick: () -> Unit,
-    isScrolling: Boolean,
+    onClickUser: () -> Unit,
+    isOwnComment: Boolean = false,
 ) {
-    val isOwnComment = userId == Firebase.auth.currentUser?.uid
-
     val annotatedString = buildAnnotatedString {
         append(comment)
         val regex = "@\\S+".toRegex()
@@ -220,18 +217,13 @@ fun CommentCard(
         modifier = modifier
             .fillMaxWidth()
             .then(
-                if (!isScrolling) Modifier.combinedClickable(
+                modifier.combinedClickable(
                     onClick = {},
-                    onLongClick = {
-                        if (isOwnComment) {
-                            onShowRemoveCommentConfirmDialog()
-                        }
-                    },
-                ) else modifier
-            ),
+                    onLongClick = { if (isOwnComment) onShowRemoveCommentConfirmDialog() },
+                ),
+            )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
@@ -240,7 +232,7 @@ fun CommentCard(
             ) {
                 PersonImage(
                     userImageUrl = userImageUrl,
-                    onClick = onUserClick
+                    onClick = onClickUser
                 )
 
                 Column(
