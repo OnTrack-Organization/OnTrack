@@ -16,8 +16,8 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import de.ashman.ontrack.navigation.NavigationGraph
 import de.ashman.ontrack.navigation.Route
+import de.ashman.ontrack.navigation.graph.NavigationGraph
 import de.ashman.ontrack.notification.notificationInit
 import de.ashman.ontrack.theme.OnTrackTheme
 
