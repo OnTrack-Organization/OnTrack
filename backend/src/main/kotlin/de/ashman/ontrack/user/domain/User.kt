@@ -23,6 +23,10 @@ final class User(
     var name: String = name
         private set
 
+    @Column(name = "username", unique = true, nullable = true)
+    var username: String? = null
+        private set
+
     @Column(name = "email", unique = true)
     var email: String = email
         private set
@@ -33,10 +37,6 @@ final class User(
 
     @Column(name = "updated_at")
     private var updatedAt: LocalDateTime = LocalDateTime.now()
-
-    @Column(name = "username", unique = true, nullable = true)
-    var username: String? = null
-        private set
 
     @Column(name = "fcm_token")
     var fcmToken: String? = null
