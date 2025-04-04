@@ -27,7 +27,7 @@ class AccountController(
     @Transactional
     fun changeAccountSetting(
         @AuthenticationPrincipal token: FirebaseToken,
-        @RequestBody @Valid accountSetting: AccountSettingDto
+        @RequestBody @Valid accountSetting: AccountSettingsDto
     ): ResponseEntity<String> {
         val user = userRepository.getReferenceById(token.uid)
         user.updateName(accountSetting.name)
