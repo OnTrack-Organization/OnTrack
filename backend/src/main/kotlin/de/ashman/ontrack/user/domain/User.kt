@@ -51,12 +51,8 @@ final class User(
         fcmToken = null
     }
 
-    fun updateName(name: String) {
+    fun updateAccountSettings(name: String, username: String) {
         this.name = name
-        updateLastModified()
-    }
-
-    fun updateUsername(username: String) {
         this.username = username
         updateLastModified()
     }

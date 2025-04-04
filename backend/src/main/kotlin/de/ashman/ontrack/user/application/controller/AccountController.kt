@@ -27,17 +27,16 @@ class AccountController(
     @Transactional
     fun changeAccountSetting(
         @AuthenticationPrincipal token: FirebaseToken,
-        @RequestBody @Valid accountSetting: AccountSettingsDto
+        @RequestBody @Valid accountSettings: AccountSettingsDto
     ): ResponseEntity<String> {
         val user = userRepository.getReferenceById(token.uid)
-        user.updateName(accountSetting.name)
 
-        val usernameExists = userRepository.existsUserByUsername(accountSetting.username)
+        val usernameExists = userRepository.existsUserByUsername(accountSettings.username)
         if (usernameExists) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is taken")
         }
 
-        user.updateUsername(accountSetting.username)
+        user.updateAccountSettings(accountSettings.name, accountSettings.username)
 
         return ResponseEntity.ok().build()
     }
