@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.UserService
 import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ import ontrack.composeapp.generated.resources.login_offline_error
 class LoginViewModel(
     private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val commonUiManager: CommonUiManager
+    private val commonUiManager: CommonUiManager,
     private val userService: UserService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())

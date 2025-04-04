@@ -129,7 +129,7 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get(), get(), get()) }
+    viewModelDefinition { LoginViewModel(get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get()) }
 
     viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }

@@ -1,6 +1,5 @@
 package de.ashman.ontrack.api.clients
 
-import co.touchlab.kermit.Logger
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.di.BACKEND_HOST
 import de.ashman.ontrack.di.BACKEND_PORT
@@ -157,8 +156,6 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
         bearer {
             loadTokens {
                 val token = auth.currentUser?.getIdToken(true) ?: return@loadTokens null
-
-                Logger.d("Made request with firebase auth bearer token: $token")
                 BearerTokens(accessToken = token, refreshToken = null)
             }
         }

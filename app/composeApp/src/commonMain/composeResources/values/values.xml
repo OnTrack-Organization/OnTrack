@@ -371,7 +371,7 @@
     <string name="unknown_error">An unknown error occurred, sorry!</string>
     <string name="login_offline_error">Couldn't log in, are you offline?</string>
     <string name="logout_offline_error">Couldn't log out, are you offline?</string>
-    <string name="login_backend_error">Failed to log in, probably Quan's fault</string>
+    <string name="login_backend_error">Failed to log in :(</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
