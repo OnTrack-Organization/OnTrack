@@ -79,7 +79,7 @@ val appModule = module {
     single(named(SPOTIFY_CLIENT_NAME)) { createSpotifyClient() }
     single(named(SPOTIFY_TOKEN_CLIENT_NAME)) { createSpotifyTokenClient() }
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
-    single(named(BACKEND_CLIENT_NAME)) { createBackendClient() }
+    single(named(BACKEND_CLIENT_NAME)) { createBackendClient(get()) }
 
     // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
@@ -129,7 +129,7 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get(), get(), get()) }
+    viewModelDefinition { LoginViewModel(get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get()) }
 
     viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }

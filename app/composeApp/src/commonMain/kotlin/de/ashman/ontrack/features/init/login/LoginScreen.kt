@@ -87,7 +87,7 @@ fun LoginScreen(
 
                         viewModel.signIn(
                             loginResult = result,
-                            onSuccess = { user -> onNavigateAfterLogin(userExist, user) }
+                            onSuccessNavigate = { user -> onNavigateAfterLogin(userExist, user) }
                         )
                     }
                 }

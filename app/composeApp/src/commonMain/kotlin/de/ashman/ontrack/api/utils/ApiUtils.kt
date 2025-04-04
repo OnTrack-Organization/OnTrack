@@ -2,6 +2,9 @@ package de.ashman.ontrack.api.utils
 
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.book.cleanupDescription
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
@@ -12,12 +15,30 @@ import kotlin.math.roundToInt
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     return try {
         val result = apiCall()
-        //Logger.d { "API call successful: $result" }
+        Logger.d { "API call successful: $result" }
         Result.success(result)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
         Logger.e(e) { "API call failed: $e" }
+        Result.failure(e)
+    }
+}
+
+suspend inline fun <reified T> safeBackendApiCall(call: suspend () -> HttpResponse): Result<T> {
+    return try {
+        val response = call()
+
+        if (response.status == HttpStatusCode.Unauthorized) {
+            return Result.failure(Exception("Unauthorized"))
+        }
+
+        if (response.status.value in 200..299) {
+            Result.success(response.body())
+        } else {
+            Result.failure(Exception("HTTP Error: ${response.status.value}"))
+        }
+    } catch (e: Exception) {
         Result.failure(e)
     }
 }
