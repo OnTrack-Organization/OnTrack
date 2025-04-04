@@ -33,7 +33,8 @@ class SecurityConfig(
      */
     @Bean
     fun firebaseAuthFilterRegistration(filter: FirebaseAuthFilter): FilterRegistrationBean<FirebaseAuthFilter> {
-        val registration: FilterRegistrationBean<FirebaseAuthFilter> = FilterRegistrationBean<FirebaseAuthFilter>(filter)
+        val registration: FilterRegistrationBean<FirebaseAuthFilter> =
+            FilterRegistrationBean<FirebaseAuthFilter>(filter)
         registration.isEnabled = false
 
         return registration

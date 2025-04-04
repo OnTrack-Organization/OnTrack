@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class OnTrackApplication
 
 fun main(args: Array<String>) {
-	runApplication<OnTrackApplication>(*args)
+    runApplication<OnTrackApplication>(*args)
 }
