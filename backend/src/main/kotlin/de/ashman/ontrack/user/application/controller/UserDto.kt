@@ -15,7 +15,7 @@ data class UserDto(
 fun User.toDto(): UserDto {
     return UserDto(
         id,
-        username ?: "",
+        username.orEmpty(),
         name,
         email,
         profilePictureUrl
