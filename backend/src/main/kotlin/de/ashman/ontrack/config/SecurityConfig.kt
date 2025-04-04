@@ -1,6 +1,5 @@
 package de.ashman.ontrack.config
 
-import de.ashman.ontrack.security.service.FirebaseAuthFilter
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,10 +19,7 @@ class SecurityConfig(
         http
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/auth", "/test2")
-                    .permitAll()
-                    .anyRequest().authenticated()
+                auth.anyRequest().authenticated()
             }
             .addFilterBefore(firebaseAuthFilter, AuthorizationFilter::class.java)
 
@@ -37,7 +33,8 @@ class SecurityConfig(
      */
     @Bean
     fun firebaseAuthFilterRegistration(filter: FirebaseAuthFilter): FilterRegistrationBean<FirebaseAuthFilter> {
-        val registration: FilterRegistrationBean<FirebaseAuthFilter> = FilterRegistrationBean<FirebaseAuthFilter>(filter)
+        val registration: FilterRegistrationBean<FirebaseAuthFilter> =
+            FilterRegistrationBean<FirebaseAuthFilter>(filter)
         registration.isEnabled = false
 
         return registration
