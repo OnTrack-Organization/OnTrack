@@ -57,3 +57,11 @@ databaseChangeLog:
             tableName: users
             columnName: id
             newDataType: varchar(36)
+  - changeSet:
+      id: 3
+      author: RiceIsNice
+      changes:
+        - renameColumn:
+            tableName: users
+            oldColumnName: image_url
+            newColumnName: profile_picture_url

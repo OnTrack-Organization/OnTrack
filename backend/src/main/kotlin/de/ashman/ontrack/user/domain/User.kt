@@ -27,7 +27,7 @@ final class User(
     var email: String = email
         private set
 
-    @Column(name = "image_url")
+    @Column(name = "profile_picture_url")
     var profilePictureUrl: String = profilePictureUrl
         private set
 
