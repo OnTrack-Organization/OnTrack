@@ -24,24 +24,24 @@ class SignInController(private val userRepository: UserRepository) {
         @RequestBody signInDto: SignInDto
     ): ResponseEntity<UserDto> {
         var user = userRepository.findOneByEmail(token.email)
-        if (user === null) {
-            user = User(
-                token.uid,
-                token.name,
-                token.email,
-                token.picture
-            )
+        if (user !== null) {
             user.updateFcmToken(signInDto.fcmToken)
-            userRepository.save(user)
 
-            return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(user.toDto())
+            return ResponseEntity.ok(user.toDto())
         }
 
+        user = User(
+            token.uid,
+            token.name,
+            token.email,
+            token.picture
+        )
         user.updateFcmToken(signInDto.fcmToken)
+        userRepository.save(user)
 
-        return ResponseEntity.ok(user.toDto())
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(user.toDto())
     }
 
     /**
