@@ -23,9 +23,6 @@ class AccountController(
         return ResponseEntity.ok(user.toDto())
     }
 
-    /**
-     * Update account setting (name, username etc.)
-     */
     @PostMapping("/account")
     @Transactional
     fun changeAccountSetting(
@@ -45,9 +42,6 @@ class AccountController(
         return ResponseEntity.ok().build()
     }
 
-    /**
-     * Changes profile picture
-     */
     @PostMapping("/account/profile-picture")
     @Transactional
     fun changeProfilePicture(

@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SignInController(private val userRepository: UserRepository) {
-    /**
-     * Signs in a User. If the user doesn't exist, they are created.
-     * In any case the Firebase's FCM Token is updated.
-     */
     @PostMapping("/sign-in")
     @Transactional
     fun signIn(
@@ -44,9 +40,6 @@ class SignInController(private val userRepository: UserRepository) {
             .body(user.toDto())
     }
 
-    /**
-     * Logs out the user and clears Firebase's FCM token
-     */
     @PostMapping("/sign-out")
     @Transactional
     fun signOut(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<Unit> {
