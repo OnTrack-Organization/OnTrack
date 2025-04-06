@@ -4,7 +4,7 @@ import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
 import com.eygraber.uri.UriCodec
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import kotlinx.serialization.json.Json
 
 object CustomNavType {
@@ -48,22 +48,22 @@ object CustomNavType {
         }
     }
 
-    val UserType = object : NavType<User?>(
+    val NewUserType = object : NavType<NewUser>(
         isNullableAllowed = true
     ) {
-        override fun get(bundle: Bundle, key: String): User? {
+        override fun get(bundle: Bundle, key: String): NewUser? {
             return Json.decodeFromString(bundle.getString(key) ?: return null)
         }
 
-        override fun parseValue(value: String): User? {
+        override fun parseValue(value: String): NewUser {
             return Json.decodeFromString(UriCodec.decode(value))
         }
 
-        override fun put(bundle: Bundle, key: String, value: User?) {
+        override fun put(bundle: Bundle, key: String, value: NewUser) {
             bundle.putString(key, Json.encodeToString(value))
         }
 
-        override fun serializeAsValue(value: User?): String {
+        override fun serializeAsValue(value: NewUser): String {
             return UriCodec.encode(Json.encodeToString(value))
         }
     }

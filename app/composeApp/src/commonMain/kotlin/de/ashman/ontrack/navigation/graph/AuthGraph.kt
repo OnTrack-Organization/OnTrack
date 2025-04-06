@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.login.LoginScreen
@@ -43,8 +43,13 @@ fun NavGraphBuilder.authGraph(
         LoginScreen(
             viewModel = loginViewModel,
             commonUiManager = commonUiManager,
-            onNavigateAfterLogin = { userExists, user ->
-                navController.navigate(if (userExists) Route.Search else Route.Setup(user)) {
+            onNavigateToSearch = {
+                navController.navigate(Route.Search) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            },
+            onNavigateToSetup = { newUser ->
+                navController.navigate(Route.Setup(newUser)) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
             },
@@ -54,15 +59,16 @@ fun NavGraphBuilder.authGraph(
 
     composable<Route.Setup>(
         typeMap = mapOf(
-            typeOf<User?>() to CustomNavType.UserType,
+            typeOf<NewUser>() to CustomNavType.NewUserType,
         )
     ) { backStackEntry ->
         val setup: Route.Setup = backStackEntry.toRoute()
 
         SetupScreen(
             viewModel = setupViewModel,
+            commonUiManager = commonUiManager,
             user = setup.user,
-            onGoToApp = {
+            navigateToSearch = {
                 navController.navigate(Route.Search) {
                     popUpTo<Route.Setup> { inclusive = true }
                 }

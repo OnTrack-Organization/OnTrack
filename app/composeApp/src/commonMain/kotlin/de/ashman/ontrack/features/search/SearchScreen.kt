@@ -49,16 +49,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    userId: String,
     viewModel: SearchViewModel,
     onClickItem: (MediaNavigationItems) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(key1 = userId) {
-        viewModel.getUserAfterLogin(userId)
-    }
 
     Scaffold(
         modifier = Modifier.pointerInput(Unit) {

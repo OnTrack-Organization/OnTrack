@@ -2,12 +2,14 @@ package de.ashman.ontrack.navigation.graph
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
@@ -49,8 +51,11 @@ fun NavigationGraph(
     notificationsViewModel: NotificationsViewModel = koinInject(),
     commonUiManager: CommonUiManager = koinInject(),
     firestoreUserRepository: FirestoreUserRepository = koinInject(),
+    userDataStore: UserDataStore = koinInject(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val currentUser = userDataStore.currentUser.collectAsState(initial = null).value
+    val startDestination = if (currentUser != null) Route.Search else Route.Start
 
     MainScaffold(
         navController = navController,
@@ -63,7 +68,7 @@ fun NavigationGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (firestoreUserRepository.currentUserId.isNotBlank()) Route.Search else Route.Start,
+            startDestination = startDestination,
         ) {
             authGraph(
                 navController = navController,

@@ -25,7 +25,12 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     }
 }
 
-suspend inline fun <reified T> safeBackendApiCall(call: suspend () -> HttpResponse): Result<T> {
+data class ApiResponse<T>(
+    val data: T,
+    val status: HttpStatusCode
+)
+
+suspend inline fun <reified T> safeBackendApiCall(call: suspend () -> HttpResponse): Result<ApiResponse<T>> {
     return try {
         val response = call()
 
@@ -33,11 +38,12 @@ suspend inline fun <reified T> safeBackendApiCall(call: suspend () -> HttpRespon
             return Result.failure(Exception("Unauthorized"))
         }
 
-        if (response.status.value in 200..299) {
-            Result.success(response.body())
-        } else {
-            Result.failure(Exception("HTTP Error: ${response.status.value}"))
-        }
+        Result.success(
+            ApiResponse(
+                data = response.body(),
+                status = response.status
+            )
+        )
     } catch (e: Exception) {
         Result.failure(e)
     }

@@ -13,7 +13,6 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.repository.CurrentUserRepository
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -38,7 +37,6 @@ class SearchViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
-    private val firestoreUserRepository: FirestoreUserRepository,
     private val currentUserRepository: CurrentUserRepository,
 ) : ViewModel() {
 
@@ -57,15 +55,6 @@ class SearchViewModel(
 
     init {
         fetchAllTrending()
-    }
-
-    fun getUserAfterLogin(userId: String) = viewModelScope.launch {
-        firestoreUserRepository.getUser(userId).collect { user ->
-            if (user != null) {
-                currentUserRepository.setCurrentUser(user)
-                observeUserTrackings()
-            }
-        }
     }
 
     private fun observeUserTrackings() {

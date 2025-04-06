@@ -151,6 +151,9 @@ kotlin {
             implementation(libs.bundles.firebase)
 
             api(libs.kmpnotifier)
+
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
         }
 
         androidMain.dependencies {

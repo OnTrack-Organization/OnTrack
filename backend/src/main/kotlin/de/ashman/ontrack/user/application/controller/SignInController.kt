@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SignInController(private val userRepository: UserRepository) {
+class SignInController(
+    private val userRepository: UserRepository,
+) {
+
     @PostMapping("/sign-in")
     @Transactional
     fun signIn(
@@ -20,18 +23,19 @@ class SignInController(private val userRepository: UserRepository) {
         @RequestBody signInDto: SignInDto
     ): ResponseEntity<UserDto> {
         var user = userRepository.findOneByEmail(token.email)
-        if (user !== null) {
-            user.updateFcmToken(signInDto.fcmToken)
 
+        if (user != null && !user.username.isNullOrBlank()) {
+            user.updateFcmToken(signInDto.fcmToken)
             return ResponseEntity.ok(user.toDto())
         }
 
         user = User(
-            token.uid,
-            token.name,
-            token.email,
-            token.picture
+            id = token.uid,
+            name = token.name,
+            email = token.email,
+            profilePictureUrl = token.picture
         )
+
         user.updateFcmToken(signInDto.fcmToken)
         userRepository.save(user)
 

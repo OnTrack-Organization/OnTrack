@@ -72,7 +72,7 @@ fun NavGraphBuilder.shelfGraph(
             viewModel = settingsViewModel,
             commonUiManager = commonUiManager,
             onBack = { navController.popBackStack() },
-            clearAndNavigateOnLogout = {
+            clearAndNavigateToStart = {
                 clearViewModels()
 
                 navController.navigate(Route.Start) {
