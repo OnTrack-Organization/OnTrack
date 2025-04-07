@@ -14,7 +14,6 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.navigation.CustomNavType
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.navigation.Route
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.searchGraph(
@@ -23,7 +22,6 @@ fun NavGraphBuilder.searchGraph(
     detailViewModel: DetailViewModel,
     recommendationViewModel: RecommendationViewModel,
     commonUiManager: CommonUiManager,
-    firestoreUserRepository: FirestoreUserRepository,
 ) {
     composable<Route.Search> {
         SearchScreen(
@@ -56,7 +54,7 @@ fun NavGraphBuilder.searchGraph(
                     }
                 }
             },
-            onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+            onClickUser = { userId -> navController.navigateToShelf(userId) },
             onBack = { navController.popBackStack() },
         )
     }

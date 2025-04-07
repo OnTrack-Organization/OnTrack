@@ -9,16 +9,16 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems
-import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
@@ -49,8 +49,8 @@ class DetailViewModel(
     private val trackingRepository: TrackingRepository,
     private val recommendationRepository: RecommendationRepository,
     private val selectedMediaRepository: SelectedMediaRepository,
-    private val currentUserRepository: CurrentUserRepository,
     private val commonUiManager: CommonUiManager,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -69,14 +69,13 @@ class DetailViewModel(
         }
 
         viewModelScope.launch {
-            currentUserRepository.currentUser.collect { user ->
-                _uiState.update { it.copy(user = user) }
-            }
+            val currentUser = userDataStore.getCurrentUser()
+            _uiState.update { it.copy(user = currentUser) }
         }
     }
 
     fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingRepository.observeTrackings(currentUserRepository.currentUserId)
+        trackingRepository.observeTrackings(userDataStore.getCurrentUserId())
             .collect { trackings ->
                 val tracking = trackings.find { it.mediaId == mediaId }
                 _uiState.update { it.copy(selectedTracking = tracking) }
@@ -170,7 +169,7 @@ class DetailViewModel(
             val catalogTracking = Tracking(
                 userId = user.id,
                 username = user.name,
-                userImageUrl = user.imageUrl,
+                userImageUrl = user.profilePictureUrl,
                 mediaId = media.id,
                 mediaType = media.mediaType,
                 mediaTitle = media.title,
@@ -199,7 +198,7 @@ class DetailViewModel(
 }
 
 data class DetailUiState(
-    val user: User? = null,
+    val user: NewUser? = null,
     val selectedMedia: Media? = null,
     val selectedTracking: Tracking? = null,
     val ratingStats: RatingStats = RatingStats(),

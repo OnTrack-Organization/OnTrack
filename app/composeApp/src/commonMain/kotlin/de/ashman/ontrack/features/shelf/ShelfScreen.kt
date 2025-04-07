@@ -45,7 +45,7 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
@@ -82,8 +82,7 @@ fun ShelfScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(userId) {
-        viewModel.observeUser(userId)
-        viewModel.observeUserTrackings(userId)
+        viewModel.loadUser(userId)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -126,7 +125,7 @@ fun ShelfScreen(
                             modifier = Modifier.weight(1f),
                             name = user.name,
                             username = user.username,
-                            imageUrl = user.imageUrl,
+                            imageUrl = user.profilePictureUrl,
                             showLargeImage = { showImageDialog = true },
                         )
 
@@ -181,7 +180,7 @@ fun ShelfScreen(
 
         LargerImageDialog(
             showDialog = showImageDialog,
-            imageUrl = uiState.user?.imageUrl,
+            imageUrl = uiState.user?.profilePictureUrl,
             onDismiss = { showImageDialog = false },
         )
     }
@@ -370,16 +369,16 @@ fun EmptyShelf(
     }
 }
 
-fun User.toFriendRequest() = FriendRequest(
+fun NewUser.toFriendRequest() = FriendRequest(
     userId = id,
     username = username,
     name = name,
-    imageUrl = imageUrl,
+    imageUrl = profilePictureUrl,
 )
 
-fun User.toFriend() = Friend(
+fun NewUser.toFriend() = Friend(
     id = id,
     username = username,
-    imageUrl = imageUrl,
+    imageUrl = profilePictureUrl,
     name = name,
 )

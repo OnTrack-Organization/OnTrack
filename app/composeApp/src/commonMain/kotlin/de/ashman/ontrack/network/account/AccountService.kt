@@ -5,7 +5,7 @@ import de.ashman.ontrack.api.utils.safeBackendApiCall
 import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.network.account.dto.AccountSettingsDto
 import de.ashman.ontrack.network.signin.dto.UserDto
-import de.ashman.ontrack.network.signin.toDomain
+import de.ashman.ontrack.network.signin.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -20,7 +20,7 @@ interface AccountService {
     suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult>
     suspend fun updateProfilePicture(profilePictureUrl: String): Result<Unit>
 
-    // TODO remove user method
+    // TODO add remove user method
 }
 
 class AccountServiceImpl(

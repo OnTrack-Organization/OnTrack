@@ -1,8 +1,8 @@
 package de.ashman.ontrack.repository.firestore
 
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
-import de.ashman.ontrack.repository.CurrentUserRepository
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ interface RecommendationRepository {
     suspend fun sendRecommendation(friendId: String, recommendation: Recommendation)
     suspend fun removeRecommendation(friendId: String, recommendationId: String)
 
-    fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>>
+    suspend fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>>
 
     suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation>
 
@@ -21,7 +21,7 @@ interface RecommendationRepository {
 
 class RecommendationRepositoryImpl(
     private val firestore: FirebaseFirestore,
-    private val currentUserRepository: CurrentUserRepository,
+    private val userDataStore: UserDataStore,
 ) : RecommendationRepository {
 
     private fun recommendationsCollection(userId: String) = firestore.collection("users").document(userId).collection("recommendations")
@@ -38,8 +38,8 @@ class RecommendationRepositoryImpl(
             .delete()
     }
 
-    override fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>> {
-        return recommendationsCollection(currentUserRepository.currentUserId)
+    override suspend fun fetchRecommendations(mediaId: String): Flow<List<Recommendation>> {
+        return recommendationsCollection(userDataStore.getCurrentUserId())
             .where { "mediaId" equalTo mediaId }
             .snapshots.map { snapshot ->
                 snapshot.documents.map { it.data<Recommendation>() }
@@ -47,8 +47,10 @@ class RecommendationRepositoryImpl(
     }
 
     override suspend fun getPreviousSentRecommendations(friendId: String, mediaId: String): List<Recommendation> {
+        val currentUserId = userDataStore.getCurrentUserId()
+
         val snapshot = recommendationsCollection(friendId)
-            .where { "userId" equalTo currentUserRepository.currentUserId }
+            .where { "userId" equalTo currentUserId }
             .where { "mediaId" equalTo mediaId }
             .orderBy("timestamp", Direction.DESCENDING)
             .limit(5)
@@ -59,7 +61,7 @@ class RecommendationRepositoryImpl(
 
     // TODO maybe change...
     override suspend fun catalogRecommendation(mediaId: String) {
-        val snapshot = recommendationsCollection(currentUserRepository.currentUserId)
+        val snapshot = recommendationsCollection(userDataStore.getCurrentUserId())
             .where { "mediaId" equalTo mediaId }
             .get()
 

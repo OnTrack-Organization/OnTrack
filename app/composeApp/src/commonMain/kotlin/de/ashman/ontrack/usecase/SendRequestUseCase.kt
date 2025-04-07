@@ -1,9 +1,9 @@
 package de.ashman.ontrack.usecase
 
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.notification.NotificationService
-import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_request_sent
@@ -15,14 +15,14 @@ class SendRequestUseCase(
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val commonUiManager: CommonUiManager,
-    private val currentUserRepository: CurrentUserRepository,
+    private val userDataStore: UserDataStore,
 ) {
     suspend operator fun invoke(friendRequest: FriendRequest) {
         friendRepository.sendRequest(friendRequest)
 
         commonUiManager.showSnackbar(Res.string.feed_request_sent)
 
-        val currentUser = currentUserRepository.getCurrentUser()
+        val currentUser = userDataStore.getCurrentUser()
         notificationService.sendPushNotification(
             userId = friendRequest.userId,
             title = getString(Res.string.notifications_new_request_title),

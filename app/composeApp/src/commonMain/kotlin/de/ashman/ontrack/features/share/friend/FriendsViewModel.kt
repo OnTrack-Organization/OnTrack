@@ -2,10 +2,10 @@ package de.ashman.ontrack.features.share.friend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.usecase.AcceptRequestUseCase
 import de.ashman.ontrack.usecase.CancelRequestUseCase
@@ -29,12 +29,12 @@ import kotlinx.coroutines.launch
 
 class FriendsViewModel(
     private val friendRepository: FriendRepository,
-    private val currentUserRepository: CurrentUserRepository,
     private val sendFriendRequest: SendRequestUseCase,
     private val cancelFriendRequest: CancelRequestUseCase,
     private val acceptFriendRequest: AcceptRequestUseCase,
     private val declineFriendRequest: DeclineRequestUseCase,
     private val removeFriend: RemoveFriendUseCase,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FriendsUiState())
@@ -54,7 +54,7 @@ class FriendsViewModel(
 
     init {
         viewModelScope.launch {
-            currentUserRepository.currentUser.collect { user ->
+            userDataStore.currentUser.collect { user ->
                 _uiState.update { it.copy(user = user) }
             }
         }
@@ -189,7 +189,7 @@ class FriendsViewModel(
 
 
 data class FriendsUiState(
-    val user: User? = null,
+    val user: NewUser? = null,
     val query: String = "",
     val friends: List<Friend> = emptyList(),
     val receivedRequests: List<FriendRequest> = emptyList(),

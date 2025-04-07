@@ -1,7 +1,7 @@
 package de.ashman.ontrack.notification
 
 import co.touchlab.kermit.Logger
-import de.ashman.ontrack.repository.CurrentUserRepository
+import de.ashman.ontrack.datastore.UserDataStore
 import dev.gitlive.firebase.functions.FirebaseFunctions
 
 interface NotificationService {
@@ -16,11 +16,11 @@ interface NotificationService {
 
 class NotificationServiceImpl(
     private val functions: FirebaseFunctions,
-    private val currentUserRepository: CurrentUserRepository,
+    private val userDataStore: UserDataStore,
 ) : NotificationService {
     override suspend fun sendPushNotification(userId: String, title: String, body: String, mediaId: String?, imageUrl: String?) {
         // Only send notification to other users
-        if (currentUserRepository.currentUserId != userId) {
+        if (userDataStore.getCurrentUserId() != userId) {
             val data = hashMapOf(
                 "userId" to userId,
                 "title" to title,

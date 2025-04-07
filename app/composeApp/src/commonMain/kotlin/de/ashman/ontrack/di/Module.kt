@@ -42,12 +42,8 @@ import de.ashman.ontrack.network.signin.SignInService
 import de.ashman.ontrack.network.signin.SignInServiceImpl
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
-import de.ashman.ontrack.repository.CurrentUserRepository
-import de.ashman.ontrack.repository.CurrentUserRepositoryImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
@@ -118,8 +114,6 @@ val appModule = module {
     single { Firebase.firestore }
     single { Firebase.storage }
 
-    single<FirestoreUserRepository> { FirestoreUserRepositoryImpl(get(), get(), get()) }
-    single<CurrentUserRepository> { CurrentUserRepositoryImpl() }
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<ShareRepository> { ShareRepositoryImpl(get()) }
     single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }

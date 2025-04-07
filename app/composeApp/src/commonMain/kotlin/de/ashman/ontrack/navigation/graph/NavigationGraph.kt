@@ -3,12 +3,9 @@ package de.ashman.ontrack.navigation.graph
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import co.touchlab.kermit.Logger
-import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
@@ -26,10 +23,8 @@ import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.MainScaffold
 import de.ashman.ontrack.navigation.Route
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,10 +45,8 @@ fun NavigationGraph(
     setupViewModel: SetupViewModel = koinInject(),
     notificationsViewModel: NotificationsViewModel = koinInject(),
     commonUiManager: CommonUiManager = koinInject(),
-    firestoreUserRepository: FirestoreUserRepository = koinInject(),
     userDataStore: UserDataStore = koinInject(),
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val currentUser = userDataStore.currentUser.collectAsState(initial = null).value
     val startDestination = if (currentUser != null) Route.Search else Route.Start
 
@@ -78,62 +71,51 @@ fun NavigationGraph(
                 commonUiManager = commonUiManager,
             )
 
-            shareGraph(
-                navController = navController,
-                shareViewModel = shareViewModel,
-                friendsViewModel = friendsViewModel,
-                shareDetailViewModel = shareDetailViewModel,
-                notificationsViewModel = notificationsViewModel,
-                commonUiManager = commonUiManager,
-                firestoreUserRepository = firestoreUserRepository,
-            )
+            currentUser?.let {
+                shareGraph(
+                    navController = navController,
+                    shareViewModel = shareViewModel,
+                    friendsViewModel = friendsViewModel,
+                    shareDetailViewModel = shareDetailViewModel,
+                    notificationsViewModel = notificationsViewModel,
+                    commonUiManager = commonUiManager,
+                )
 
-            searchGraph(
-                navController = navController,
-                searchViewModel = searchViewModel,
-                detailViewModel = detailViewModel,
-                recommendationViewModel = recommendationViewModel,
-                commonUiManager = commonUiManager,
-                firestoreUserRepository = firestoreUserRepository,
-            )
+                searchGraph(
+                    navController = navController,
+                    searchViewModel = searchViewModel,
+                    detailViewModel = detailViewModel,
+                    recommendationViewModel = recommendationViewModel,
+                    commonUiManager = commonUiManager,
+                )
 
-            shelfGraph(
-                navController = navController,
-                shelfViewModel = shelfViewModel,
-                shelfListViewModel = shelfListViewModel,
-                settingsViewModel = settingsViewModel,
-                commonUiManager = commonUiManager,
-                firestoreUserRepository = firestoreUserRepository,
-                clearViewModels = {
-                    // TODO different way
-                    friendsViewModel.clearViewModel()
-                    shareViewModel.clearViewModel()
-                    detailViewModel.clearViewModel()
-                    shelfListViewModel.clearViewModel()
-                    shelfViewModel.clearViewModel()
-                    searchViewModel.clearViewModel()
-                    settingsViewModel.clearViewModel()
-                    loginViewModel.clearViewModel()
-                }
-            )
-        }
-    }
-
-    // Listener for token changes
-    NotifierManager.addListener(object : NotifierManager.Listener {
-        override fun onNewToken(token: String) {
-            Logger.i("Push Notification onNewToken: $token")
-            if (Firebase.auth.currentUser == null) return
-
-            coroutineScope.launch {
-                firestoreUserRepository.updateFcmToken(token)
+                shelfGraph(
+                    currentUserId = it.id,
+                    navController = navController,
+                    shelfViewModel = shelfViewModel,
+                    shelfListViewModel = shelfListViewModel,
+                    settingsViewModel = settingsViewModel,
+                    commonUiManager = commonUiManager,
+                    clearViewModels = {
+                        // TODO different way
+                        friendsViewModel.clearViewModel()
+                        shareViewModel.clearViewModel()
+                        detailViewModel.clearViewModel()
+                        shelfListViewModel.clearViewModel()
+                        shelfViewModel.clearViewModel()
+                        searchViewModel.clearViewModel()
+                        settingsViewModel.clearViewModel()
+                        loginViewModel.clearViewModel()
+                    }
+                )
             }
         }
-    })
+    }
 }
 
-fun NavController.navigateToShelf(userId: String, firestoreUserRepository: FirestoreUserRepository) {
-    val route = if (userId == firestoreUserRepository.currentUserId) {
+fun NavController.navigateToShelf(userId: String) {
+    // TODO change
+    val route = if (userId == Firebase.auth.currentUser?.uid) {
         Route.Shelf
     } else {
         Route.OtherShelf(userId)

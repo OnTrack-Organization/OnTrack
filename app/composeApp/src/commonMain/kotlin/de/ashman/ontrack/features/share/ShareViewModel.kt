@@ -3,15 +3,15 @@ package de.ashman.ontrack.features.share
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.notification.NotificationService
-import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.ShareRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
@@ -35,7 +35,7 @@ class ShareViewModel(
     private val trackingRepository: TrackingRepository,
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
-    private val currentUserRepository: CurrentUserRepository,
+    private val userDataStore: UserDataStore,
     private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
 
@@ -46,7 +46,7 @@ class ShareViewModel(
                 friendRepository.observeFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } }
             }
             viewModelScope.launch {
-                currentUserRepository.currentUser.collect { user -> _uiState.update { it.copy(user = user) } }
+                userDataStore.currentUser.collect { user -> _uiState.update { it.copy(user = user) } }
             }
         }
         .stateIn(
@@ -101,7 +101,7 @@ class ShareViewModel(
                 userId = user.id,
                 username = user.username,
                 name = user.name,
-                userImageUrl = user.imageUrl,
+                userImageUrl = user.profilePictureUrl,
             )
 
             val updatedTrackings = _uiState.value.trackings.map {
@@ -137,7 +137,7 @@ class ShareViewModel(
                 userId = user.id,
                 username = user.username,
                 name = user.name,
-                userImageUrl = user.imageUrl,
+                userImageUrl = user.profilePictureUrl,
             )
 
             val updatedTrackings = _uiState.value.trackings.map {
@@ -207,7 +207,7 @@ class ShareViewModel(
 }
 
 data class ShareUiState(
-    val user: User? = null,
+    val user: NewUser? = null,
     val friends: List<Friend> = emptyList(),
     val trackings: List<Tracking> = emptyList(),
     val selectedTrackingId: String? = null,

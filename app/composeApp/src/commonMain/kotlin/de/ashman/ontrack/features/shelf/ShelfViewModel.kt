@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendRequestStatus
-import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.usecase.AcceptRequestUseCase
@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShelfViewModel(
-    private val firestoreUserRepository: FirestoreUserRepository,
     private val trackingRepository: TrackingRepository,
     private val friendRepository: FriendRepository,
     private val sendFriendRequest: SendRequestUseCase,
@@ -37,6 +36,7 @@ class ShelfViewModel(
     private val acceptFriendRequest: AcceptRequestUseCase,
     private val declineFriendRequest: DeclineRequestUseCase,
     private val removeFriend: RemoveFriendUseCase,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
@@ -48,11 +48,16 @@ class ShelfViewModel(
 
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
-    fun observeUser(userId: String) {
-        viewModelScope.launch {
-            firestoreUserRepository.getUser(userId)
-                .collect { user -> _uiState.update { it.copy(user = user) } }
+    fun loadUser(userId: String) = viewModelScope.launch {
+        // TODO make a call to a backend method instead later
+        val user = userDataStore.getCurrentUser()
+        _uiState.update {
+            it.copy(
+                user = user,
+                isCurrentUser = user.id == Firebase.auth.currentUser?.uid
+            )
         }
+        observeUserTrackings(userId)
     }
 
     fun observeUserTrackings(userId: String) {
@@ -112,7 +117,8 @@ class ShelfViewModel(
 }
 
 data class ShelfUiState(
-    val user: User? = null,
+    val user: NewUser? = null,
+    val isCurrentUser: Boolean = false,
     val friendRequestStatus: FriendRequestStatus = FriendRequestStatus.NONE,
     val trackings: List<Tracking> = emptyList(),
 )

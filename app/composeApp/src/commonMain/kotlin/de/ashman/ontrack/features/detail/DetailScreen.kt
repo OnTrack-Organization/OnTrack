@@ -206,7 +206,7 @@ fun DetailScreen(
                         ) ?: Tracking(
                             userId = detailUiState.user?.id.orEmpty(),
                             username = detailUiState.user?.name.orEmpty(),
-                            userImageUrl = detailUiState.user?.imageUrl.orEmpty(),
+                            userImageUrl = detailUiState.user?.profilePictureUrl.orEmpty(),
                             mediaId = mediaNavItems.id,
                             mediaType = mediaNavItems.mediaType,
                             mediaTitle = mediaNavItems.title,

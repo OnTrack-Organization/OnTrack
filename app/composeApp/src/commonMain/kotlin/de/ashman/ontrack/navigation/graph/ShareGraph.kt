@@ -13,7 +13,6 @@ import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share_detail.ShareDetailScreen
 import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.navigation.Route
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 
 fun NavGraphBuilder.shareGraph(
     navController: NavController,
@@ -22,7 +21,6 @@ fun NavGraphBuilder.shareGraph(
     shareDetailViewModel: ShareDetailViewModel,
     notificationsViewModel: NotificationsViewModel,
     commonUiManager: CommonUiManager,
-    firestoreUserRepository: FirestoreUserRepository,
 ) {
     composable<Route.Share> {
         ShareScreen(
@@ -33,7 +31,7 @@ fun NavGraphBuilder.shareGraph(
             onClickCover = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onClickUser = { userId ->
                 commonUiManager.hideSheet()
-                navController.navigateToShelf(userId, firestoreUserRepository)
+                navController.navigateToShelf(userId)
             },
             onClickNotifications = { navController.navigate(Route.Notifications) },
         )
@@ -45,7 +43,7 @@ fun NavGraphBuilder.shareGraph(
         ShareDetailScreen(
             viewModel = shareDetailViewModel,
             trackingId = shareDetail.trackingId,
-            onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+            onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) },
             onBack = { navController.popBackStack() },
         )
@@ -56,7 +54,7 @@ fun NavGraphBuilder.shareGraph(
             viewModel = notificationsViewModel,
             onBack = { navController.popBackStack() },
             onNotificationClick = { navController.navigate(Route.ShareDetail(it)) },
-            onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+            onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) }
         )
     }
