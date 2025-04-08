@@ -46,8 +46,12 @@ class LoginViewModel(
                     onSuccess = { signInResult ->
                         when (signInResult) {
                             is SignInResult.ExistingUser -> {
-                                userDataStore.saveUser(signInResult.user)
-                                onNavigateToSearch()
+                                if (signInResult.user.username.isBlank()) {
+                                    onNavigateToSetup(signInResult.user)
+                                } else {
+                                    userDataStore.saveUser(signInResult.user)
+                                    onNavigateToSearch()
+                                }
                             }
 
                             is SignInResult.NewUserCreated -> onNavigateToSetup(signInResult.user)

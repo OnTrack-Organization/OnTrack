@@ -48,7 +48,7 @@ fun NavigationGraph(
     userDataStore: UserDataStore = koinInject(),
 ) {
     val currentUser = userDataStore.currentUser.collectAsState(initial = null).value
-    val startDestination = if (currentUser != null) Route.Search else Route.Start
+    val startDestination = if (currentUser != null && currentUser.username.isNotBlank()) Route.Search else Route.Start
 
     MainScaffold(
         navController = navController,
@@ -71,24 +71,24 @@ fun NavigationGraph(
                 commonUiManager = commonUiManager,
             )
 
+            shareGraph(
+                navController = navController,
+                shareViewModel = shareViewModel,
+                friendsViewModel = friendsViewModel,
+                shareDetailViewModel = shareDetailViewModel,
+                notificationsViewModel = notificationsViewModel,
+                commonUiManager = commonUiManager,
+            )
+
+            searchGraph(
+                navController = navController,
+                searchViewModel = searchViewModel,
+                detailViewModel = detailViewModel,
+                recommendationViewModel = recommendationViewModel,
+                commonUiManager = commonUiManager,
+            )
+
             currentUser?.let {
-                shareGraph(
-                    navController = navController,
-                    shareViewModel = shareViewModel,
-                    friendsViewModel = friendsViewModel,
-                    shareDetailViewModel = shareDetailViewModel,
-                    notificationsViewModel = notificationsViewModel,
-                    commonUiManager = commonUiManager,
-                )
-
-                searchGraph(
-                    navController = navController,
-                    searchViewModel = searchViewModel,
-                    detailViewModel = detailViewModel,
-                    recommendationViewModel = recommendationViewModel,
-                    commonUiManager = commonUiManager,
-                )
-
                 shelfGraph(
                     currentUserId = it.id,
                     navController = navController,

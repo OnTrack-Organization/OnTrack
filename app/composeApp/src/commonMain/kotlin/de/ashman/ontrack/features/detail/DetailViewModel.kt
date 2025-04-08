@@ -67,7 +67,9 @@ class DetailViewModel(
                 _uiState.update { it.copy(selectedMedia = media) }
             }
         }
+    }
 
+    fun initUser() {
         viewModelScope.launch {
             val currentUser = userDataStore.getCurrentUser()
             _uiState.update { it.copy(user = currentUser) }

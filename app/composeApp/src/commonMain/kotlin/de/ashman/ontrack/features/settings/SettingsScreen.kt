@@ -76,6 +76,12 @@ fun SettingsScreen(
         }
     }
 
+    LaunchedEffect(uiState.user) {
+        uiState.user?.let {
+            localFocusManager.clearFocus()
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.clearUnsavedChanges()
@@ -128,7 +134,7 @@ fun SettingsScreen(
                         value = uiState.username,
                         errorSupport = uiState.usernameError?.getLabel(),
                         onValueChange = viewModel::onUsernameChange,
-                        enabled = false,
+                        enabled = true,
                     )
                     OnTrackUsernameTextField(
                         placeholder = stringResource(Res.string.settings_email_hint),

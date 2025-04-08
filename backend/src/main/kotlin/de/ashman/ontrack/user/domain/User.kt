@@ -56,7 +56,7 @@ final class User(
         updateLastModified()
     }
 
-    fun updateProfilePicture(url: String) {
+    fun changeProfilePicture(url: String) {
         profilePictureUrl = url
         updateLastModified()
     }

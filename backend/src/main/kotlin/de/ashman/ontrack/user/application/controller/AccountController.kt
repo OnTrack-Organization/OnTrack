@@ -47,13 +47,13 @@ class AccountController(
 
     @PostMapping("/account/profile-picture")
     @Transactional
-    fun updateProfilePicture(
+    fun changeProfilePicture(
         @AuthenticationPrincipal token: FirebaseToken,
         @RequestBody profilePictureUrl: String,
     ): ResponseEntity<Unit> {
         val user = userRepository.getReferenceById(token.uid)
 
-        user.updateProfilePicture(profilePictureUrl)
+        user.changeProfilePicture(profilePictureUrl)
 
         return ResponseEntity.ok().build()
     }

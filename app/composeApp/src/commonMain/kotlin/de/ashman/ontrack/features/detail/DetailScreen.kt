@@ -101,6 +101,7 @@ fun DetailScreen(
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(mediaNavItems.id) {
+        detailViewModel.initUser()
         detailViewModel.fetchDetails(mediaNavItems)
         detailViewModel.observeTracking(mediaNavItems.id)
         detailViewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)

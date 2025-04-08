@@ -56,7 +56,9 @@ class SearchViewModel(
 
     init {
         fetchAllTrending()
+    }
 
+    fun initUser() {
         viewModelScope.launch {
             val userId = userDataStore.getCurrentUserId()
             // TODO get trackings later, store (in local room db for example) and access across the app from there

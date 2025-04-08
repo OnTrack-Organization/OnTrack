@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 class SignInController(
     private val userRepository: UserRepository,
 ) {
-
     @PostMapping("/sign-in")
     @Transactional
     fun signIn(
@@ -24,7 +23,7 @@ class SignInController(
     ): ResponseEntity<UserDto> {
         var user = userRepository.findOneByEmail(token.email)
 
-        if (user != null && !user.username.isNullOrBlank()) {
+        if (user != null) {
             user.updateFcmToken(signInDto.fcmToken)
             return ResponseEntity.ok(user.toDto())
         }
