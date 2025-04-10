@@ -9,7 +9,7 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_other_empty
 
 @Composable
-fun OtherUserShelf(
+fun OtherShelfScreen(
     viewModel: ShelfViewModel,
     commonUiManager: CommonUiManager,
     userId: String,

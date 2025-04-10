@@ -2,25 +2,28 @@ package de.ashman.ontrack.features.init.setup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.ImageUploadState
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.network.account.AccountResult
+import de.ashman.ontrack.network.account.AccountService
+import de.ashman.ontrack.network.account.UsernameError
 import de.ashman.ontrack.storage.StorageRepository
-import de.ashman.ontrack.usecase.UsernameError
-import de.ashman.ontrack.usecase.UsernameValidationResult
-import de.ashman.ontrack.usecase.UsernameValidationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.unknown_error
 
 class SetupViewModel(
-    private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
-    private val usernameValidation: UsernameValidationUseCase,
+    private val accountService: AccountService,
+    private val commonUiManager: CommonUiManager,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SetupUiState())
     val uiState: StateFlow<SetupUiState> = _uiState
@@ -30,51 +33,54 @@ class SetupViewModel(
             _uiState.value,
         )
 
-    fun setUserFromLogin(user: User?) {
+    fun preFillUserDataFromLogin(user: NewUser) {
         _uiState.update {
             it.copy(
                 user = user,
-                name = user?.name.orEmpty(),
-                username = user?.username.orEmpty(),
-                imageUrl = user?.imageUrl,
+                name = user.name,
+                username = user.username,
+                imageUrl = user.profilePictureUrl,
             )
         }
     }
 
-    suspend fun onCreateUser(): Boolean {
-        val newUsername = _uiState.value.username
+    fun onSave(navigateToSearch: () -> Unit) = viewModelScope.launch {
         val newName = _uiState.value.name
-        val newImage = _uiState.value.imageUrl
+        val newUsername = _uiState.value.username
 
-        val result = usernameValidation.validate(newUsername)
+        accountService.updateAccountSettings(username = newUsername, name = newName).fold(
+            onSuccess = { result ->
+                when (result) {
+                    is AccountResult.Success -> {
+                        _uiState.update { it.copy(user = it.user?.copy(name = newName, username = newUsername)) }
+                        userDataStore.saveUser(user = _uiState.value.user!!)
 
-        if (result is UsernameValidationResult.Invalid) {
-            _uiState.update { it.copy(usernameError = result.error) }
-            return false
-        }
+                        navigateToSearch()
+                    }
 
-        val fcmToken = NotifierManager.getPushNotifier().getToken()
-
-        val newUser = _uiState.value.user?.copy(
-            name = newName,
-            username = newUsername,
-            fcmToken = fcmToken.orEmpty(),
-            imageUrl = newImage.orEmpty(),
+                    is AccountResult.InvalidUsername -> {
+                        _uiState.update {
+                            it.copy(usernameError = result.error)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.unknown_error)
+            }
         )
-
-        return newUser?.let {
-            firestoreUserRepository.createUser(it)
-            true
-        } == true
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
         _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
+
         bytes ?: return@launch
 
-        val imageUrl = storageRepository.uploadUserImage(bytes)
+        val profilePictureUrl = storageRepository.uploadUserImage(bytes = bytes, fileName = _uiState.value.user!!.id)
 
-        _uiState.update { it.copy(imageUrl = imageUrl, imageUploadState = ImageUploadState.Success) }
+        accountService.updateProfilePicture(profilePictureUrl)
+
+        _uiState.update { it.copy(imageUrl = profilePictureUrl, imageUploadState = ImageUploadState.Success) }
     }
 
     fun onNameChange(name: String) {
@@ -85,17 +91,14 @@ class SetupViewModel(
         _uiState.update { it.copy(username = username, usernameError = null) }
     }
 
-    fun clearUnsavedChanges() {
-        _uiState.update { it.copy(name = it.user?.name.orEmpty(), username = it.user?.username.orEmpty()) }
-    }
-
     fun clearViewModel() {
         _uiState.value = SetupUiState()
     }
 }
 
 data class SetupUiState(
-    val user: User? = null,
+    // TODO maybe remove and do differently
+    val user: NewUser? = null,
     val name: String = "",
     val username: String = "",
     val imageUrl: String? = null,

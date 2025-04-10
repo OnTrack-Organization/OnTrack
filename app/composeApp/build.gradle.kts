@@ -136,9 +136,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.contentNegotiation)
-            implementation(libs.ktor.json)
+            implementation(libs.bundles.ktor)
 
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
@@ -153,6 +151,9 @@ kotlin {
             implementation(libs.bundles.firebase)
 
             api(libs.kmpnotifier)
+
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
         }
 
         androidMain.dependencies {

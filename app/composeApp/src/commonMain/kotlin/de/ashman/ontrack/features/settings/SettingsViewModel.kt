@@ -2,15 +2,14 @@ package de.ashman.ontrack.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
-import de.ashman.ontrack.repository.CurrentUserRepository
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
+import de.ashman.ontrack.network.account.AccountResult
+import de.ashman.ontrack.network.account.AccountService
+import de.ashman.ontrack.network.account.UsernameError
+import de.ashman.ontrack.network.signin.SignInService
 import de.ashman.ontrack.storage.StorageRepository
-import de.ashman.ontrack.usecase.UsernameError
-import de.ashman.ontrack.usecase.UsernameValidationResult
-import de.ashman.ontrack.usecase.UsernameValidationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,14 +19,15 @@ import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.logout_offline_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
+import ontrack.composeapp.generated.resources.unknown_error
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
-    private val currentUserRepository: CurrentUserRepository,
-    private val firestoreUserRepository: FirestoreUserRepository,
     private val storageRepository: StorageRepository,
     private val commonUiManager: CommonUiManager,
-    private val usernameValidation: UsernameValidationUseCase
+    private val signInService: SignInService,
+    private val accountService: AccountService,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -39,18 +39,75 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            currentUserRepository.currentUser.collect { user ->
+            userDataStore.currentUser.collect { user ->
+                user ?: return@collect
                 _uiState.update {
                     it.copy(
                         user = user,
-                        name = user?.name.orEmpty(),
-                        username = user?.username.orEmpty(),
-                        imageUrl = user?.imageUrl,
-                        email = user?.email.orEmpty()
+                        name = user.name,
+                        username = user.username,
+                        email = user.email,
+                        imageUrl = user.profilePictureUrl,
                     )
                 }
             }
         }
+    }
+
+    fun onSave() = viewModelScope.launch {
+        val newUsername = _uiState.value.username
+        val newName = _uiState.value.name
+
+        accountService.updateAccountSettings(username = newUsername, name = newName).fold(
+            onSuccess = { result ->
+                when (result) {
+                    is AccountResult.Success -> {
+                        _uiState.update { it.copy(user = it.user?.copy(name = newName, username = newUsername)) }
+                        userDataStore.saveUser(user = _uiState.value.user!!)
+
+                        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
+                    }
+
+                    is AccountResult.InvalidUsername -> {
+                        _uiState.update {
+                            it.copy(usernameError = result.error)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.unknown_error)
+            }
+        )
+    }
+
+    fun signOut(clearAndNavigateToStart: () -> Unit) = viewModelScope.launch {
+        signInService.signOut().fold(
+            onSuccess = {
+                userDataStore.clearUser()
+                clearAndNavigateToStart()
+            },
+            onFailure = {
+                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.logout_offline_error))
+            }
+        )
+    }
+
+    // TODO add later again
+    fun removeUser() = viewModelScope.launch {
+        commonUiManager.hideSheet()
+    }
+
+    fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
+
+        bytes ?: return@launch
+
+        val profilePictureUrl = storageRepository.uploadUserImage(bytes = bytes, fileName = _uiState.value.user!!.id)
+
+        accountService.updateProfilePicture(profilePictureUrl)
+
+        _uiState.update { it.copy(imageUrl = profilePictureUrl, imageUploadState = ImageUploadState.Success) }
     }
 
     fun onNameChange(name: String) {
@@ -59,66 +116,6 @@ class SettingsViewModel(
 
     fun onUsernameChange(username: String) {
         _uiState.update { it.copy(username = username, usernameError = null) }
-    }
-
-    fun onEmailChange(mail: String) {
-        _uiState.update { it.copy(email = mail) }
-    }
-
-    fun onUpdateUser() = viewModelScope.launch {
-        val currentUser = _uiState.value.user ?: return@launch
-        val newUsername = _uiState.value.username
-        val newName = _uiState.value.name
-
-        val result = usernameValidation.validate(newUsername, currentUser.username)
-
-        if (result is UsernameValidationResult.Invalid) {
-            _uiState.update { it.copy(usernameError = result.error) }
-            return@launch
-        }
-
-        firestoreUserRepository.updateUser(
-            currentUser.copy(
-                name = newName,
-                username = newUsername
-            )
-        )
-
-        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
-    }
-
-    fun signOut(onSuccess: () -> Unit) = viewModelScope.launch {
-        try {
-            firestoreUserRepository.signOut()
-            onSuccess()
-        } catch (e: Exception) {
-            Logger.e("Error signing out: ${e.message}")
-
-            commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.logout_offline_error))
-        }
-    }
-
-    fun removeUser() = viewModelScope.launch {
-        commonUiManager.hideSheet()
-        firestoreUserRepository.removeUser()
-        firestoreUserRepository.signOut()
-    }
-
-    fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
-        val currentUser = _uiState.value.user ?: return@launch
-
-        // If no image was picked, do nothing
-        if (bytes == null) return@launch
-
-        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
-
-        val imageUrl = storageRepository.uploadUserImage(bytes)
-
-        firestoreUserRepository.updateUser(
-            currentUser.copy(imageUrl = imageUrl)
-        )
-
-        _uiState.update { it.copy(imageUrl = imageUrl, imageUploadState = ImageUploadState.Success) }
     }
 
     fun clearUnsavedChanges() {
@@ -131,7 +128,7 @@ class SettingsViewModel(
 }
 
 data class SettingsUiState(
-    val user: User? = null,
+    val user: NewUser? = null,
     val name: String = "",
     val username: String = "",
     val email: String = "",

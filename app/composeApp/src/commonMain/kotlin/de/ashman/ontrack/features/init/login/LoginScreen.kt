@@ -21,19 +21,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
-import de.ashman.ontrack.domain.toDomain
-import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
-import kotlinx.coroutines.launch
+import dev.gitlive.firebase.auth.FirebaseUser
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.apple
 import ontrack.composeapp.generated.resources.apple_login_button
@@ -50,13 +48,13 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel,
     commonUiManager: CommonUiManager,
-    onNavigateAfterLogin: (Boolean, User?) -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToSetup: (NewUser) -> Unit,
     onBack: () -> Unit,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(commonUiState.snackbarMessage) {
         commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
@@ -79,17 +77,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround,
         ) {
-
             GoogleAppleLogin(
                 onClickContinue = { result ->
-                    coroutineScope.launch {
-                        val userExist = viewModel.doesUserExist(result.getOrNull()?.id)
-
-                        viewModel.signIn(
-                            loginResult = result,
-                            onSuccess = { user -> onNavigateAfterLogin(userExist, user) }
-                        )
-                    }
+                    viewModel.signIn(
+                        loginResult = result,
+                        onNavigateToSearch = onNavigateToSearch,
+                        onNavigateToSetup = onNavigateToSetup,
+                    )
                 }
             )
         }
@@ -98,7 +92,7 @@ fun LoginScreen(
 
 @Composable
 fun GoogleAppleLogin(
-    onClickContinue: (Result<User?>) -> Unit,
+    onClickContinue: (Result<FirebaseUser?>) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,8 +101,7 @@ fun GoogleAppleLogin(
         GoogleButtonUiContainerFirebase(
             linkAccount = false,
             onResult = { result ->
-                val userResult = result.mapCatching { it?.toDomain() }
-                onClickContinue(userResult)
+                onClickContinue(result)
             }
         ) {
             OnTrackButton(
@@ -137,8 +130,7 @@ fun GoogleAppleLogin(
         AppleButtonUiContainer(
             linkAccount = false,
             onResult = { result ->
-                val userResult = result.mapCatching { it?.toDomain() }
-                onClickContinue(userResult)
+                onClickContinue(result)
             }
         ) {
             OnTrackButton(

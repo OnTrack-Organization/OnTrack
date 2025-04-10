@@ -9,11 +9,10 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.repository.CurrentUserRepository
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -38,8 +38,7 @@ class SearchViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
-    private val firestoreUserRepository: FirestoreUserRepository,
-    private val currentUserRepository: CurrentUserRepository,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -59,21 +58,14 @@ class SearchViewModel(
         fetchAllTrending()
     }
 
-    fun getUserAfterLogin(userId: String) = viewModelScope.launch {
-        firestoreUserRepository.getUser(userId).collect { user ->
-            if (user != null) {
-                currentUserRepository.setCurrentUser(user)
-                observeUserTrackings()
-            }
-        }
-    }
-
-    private fun observeUserTrackings() {
-        trackingRepository.observeTrackings(currentUserRepository.currentUserId)
-            .onEach { trackings ->
+    fun initUser() {
+        viewModelScope.launch {
+            val userId = userDataStore.getCurrentUserId()
+            // TODO get trackings later, store (in local room db for example) and access across the app from there
+            trackingRepository.observeTrackings(userId).firstOrNull()?.let { trackings ->
                 _uiState.update { it.copy(trackings = trackings) }
             }
-            .launchIn(viewModelScope)
+        }
     }
 
     private fun fetchAllTrending() {

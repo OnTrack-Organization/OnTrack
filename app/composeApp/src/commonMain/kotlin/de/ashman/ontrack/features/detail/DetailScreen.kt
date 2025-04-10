@@ -101,6 +101,7 @@ fun DetailScreen(
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(mediaNavItems.id) {
+        detailViewModel.initUser()
         detailViewModel.fetchDetails(mediaNavItems)
         detailViewModel.observeTracking(mediaNavItems.id)
         detailViewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
@@ -206,7 +207,7 @@ fun DetailScreen(
                         ) ?: Tracking(
                             userId = detailUiState.user?.id.orEmpty(),
                             username = detailUiState.user?.name.orEmpty(),
-                            userImageUrl = detailUiState.user?.imageUrl.orEmpty(),
+                            userImageUrl = detailUiState.user?.profilePictureUrl.orEmpty(),
                             mediaId = mediaNavItems.id,
                             mediaType = mediaNavItems.mediaType,
                             mediaTitle = mediaNavItems.title,

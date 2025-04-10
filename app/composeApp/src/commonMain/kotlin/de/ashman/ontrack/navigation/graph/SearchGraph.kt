@@ -5,7 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import co.touchlab.kermit.Logger
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
@@ -15,9 +14,6 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.navigation.CustomNavType
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.navigation.Route
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.searchGraph(
@@ -26,13 +22,9 @@ fun NavGraphBuilder.searchGraph(
     detailViewModel: DetailViewModel,
     recommendationViewModel: RecommendationViewModel,
     commonUiManager: CommonUiManager,
-    firestoreUserRepository: FirestoreUserRepository,
 ) {
     composable<Route.Search> {
-        Logger.d("Navigating to Search: $it")
-
         SearchScreen(
-            userId = Firebase.auth.currentUser?.uid.orEmpty(),
             viewModel = searchViewModel,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) }
         )
@@ -48,7 +40,6 @@ fun NavGraphBuilder.searchGraph(
         )
     ) { backStackEntry ->
         val detail: Route.Detail = backStackEntry.toRoute()
-        Logger.d { "NAVIGATING TO DETAIL: $backStackEntry" }
 
         DetailScreen(
             mediaNavItems = detail.mediaNavItems,
@@ -63,7 +54,7 @@ fun NavGraphBuilder.searchGraph(
                     }
                 }
             },
-            onClickUser = { userId -> navController.navigateToShelf(userId, firestoreUserRepository) },
+            onClickUser = { userId -> navController.navigateToShelf(userId) },
             onBack = { navController.popBackStack() },
         )
     }

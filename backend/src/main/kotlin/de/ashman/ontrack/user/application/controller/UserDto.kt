@@ -12,13 +12,11 @@ data class UserDto(
     val profilePictureUrl: String
 )
 
-fun User.toDto(): UserDto {
-    return UserDto(
-        id,
-        username.orEmpty(),
-        name,
-        email,
-        profilePictureUrl
-    )
-}
+fun User.toDto() = UserDto(
+    id = id,
+    username = username.orEmpty(),
+    name = name,
+    email = email,
+    profilePictureUrl = profilePictureUrl
+)
 

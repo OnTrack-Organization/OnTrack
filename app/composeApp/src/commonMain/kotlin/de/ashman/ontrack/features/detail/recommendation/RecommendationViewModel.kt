@@ -2,13 +2,13 @@ package de.ashman.ontrack.features.detail.recommendation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.recommendation.RecommendationStatus
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.notification.NotificationService
-import de.ashman.ontrack.repository.CurrentUserRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +26,8 @@ class RecommendationViewModel(
     private val recommendationRepository: RecommendationRepository,
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
-    private val currentUserRepository: CurrentUserRepository,
     private val commonUiManager: CommonUiManager,
+    private val userDataStore: UserDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecommendationUiState())
@@ -50,11 +50,11 @@ class RecommendationViewModel(
     }
 
     fun sendRecommendation(friendId: String, message: String?, media: Media) = viewModelScope.launch {
-        val user = currentUserRepository.getCurrentUser()
+        val user = userDataStore.getCurrentUser()
 
         val recommendation = Recommendation(
             userId = user.id,
-            userImageUrl = user.imageUrl,
+            userImageUrl = user.profilePictureUrl,
             username = user.name,
             mediaId = media.id,
             mediaType = media.mediaType,

@@ -18,8 +18,12 @@ import de.ashman.ontrack.di.TMDB_PATH_URL
 import de.ashman.ontrack.di.TMDB_URL
 import de.ashman.ontrack.di.TWITCH_TOKEN_PATH
 import de.ashman.ontrack.di.TWITCH_TOKEN_URL
+import dev.gitlive.firebase.auth.FirebaseAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
@@ -137,7 +141,7 @@ fun createTwitchTokenClient(): HttpClient = HttpClient {
     }
 }
 
-fun createBackendClient(): HttpClient = HttpClient {
+fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
     setupBackendContentNegotiation()
 
     defaultRequest {
@@ -145,6 +149,15 @@ fun createBackendClient(): HttpClient = HttpClient {
             protocol = URLProtocol.HTTPS
             host = BACKEND_HOST
             port = BACKEND_PORT
+        }
+    }
+
+    install(Auth) {
+        bearer {
+            loadTokens {
+                val token = auth.currentUser?.getIdToken(true) ?: return@loadTokens null
+                BearerTokens(accessToken = token, refreshToken = null)
+            }
         }
     }
 }

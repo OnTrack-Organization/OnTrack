@@ -61,7 +61,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel,
     commonUiManager: CommonUiManager,
     onBack: () -> Unit,
-    clearAndNavigateOnLogout: () -> Unit,
+    clearAndNavigateToStart: () -> Unit,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -73,6 +73,12 @@ fun SettingsScreen(
     LaunchedEffect(commonUiState.snackbarMessage) {
         commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    LaunchedEffect(uiState.user) {
+        uiState.user?.let {
+            localFocusManager.clearFocus()
         }
     }
 
@@ -128,20 +134,20 @@ fun SettingsScreen(
                         value = uiState.username,
                         errorSupport = uiState.usernameError?.getLabel(),
                         onValueChange = viewModel::onUsernameChange,
-                        enabled = false,
+                        enabled = true,
                     )
                     OnTrackUsernameTextField(
                         placeholder = stringResource(Res.string.settings_email_hint),
                         support = Res.string.settings_email_hint,
                         value = uiState.email,
-                        onValueChange = viewModel::onEmailChange,
+                        onValueChange = {},
                         enabled = false,
                     )
                     OnTrackButton(
                         modifier = Modifier.fillMaxWidth(),
                         text = Res.string.save_button,
                         icon = Icons.Default.Save,
-                        onClick = viewModel::onUpdateUser,
+                        onClick = viewModel::onSave,
                         enabled = true
                     )
 
@@ -153,9 +159,7 @@ fun SettingsScreen(
                             text = Res.string.settings_logout,
                             icon = Icons.AutoMirrored.Default.Logout,
                             onClick = {
-                                viewModel.signOut(
-                                    onSuccess = clearAndNavigateOnLogout,
-                                )
+                                viewModel.signOut(clearAndNavigateToStart = clearAndNavigateToStart)
                             },
                         )
                         OnTrackOutlinedButton(
@@ -187,7 +191,7 @@ fun SettingsScreen(
                         text = Res.string.settings_remove_confirm_text,
                         onConfirm = {
                             viewModel.removeUser()
-                            clearAndNavigateOnLogout()
+                            clearAndNavigateToStart()
                         },
                         onCancel = { commonUiManager.hideSheet() },
                     )

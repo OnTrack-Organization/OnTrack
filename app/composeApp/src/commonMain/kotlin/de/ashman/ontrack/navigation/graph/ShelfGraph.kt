@@ -8,31 +8,30 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.SettingsScreen
 import de.ashman.ontrack.features.settings.SettingsViewModel
-import de.ashman.ontrack.features.shelf.OtherUserShelf
+import de.ashman.ontrack.features.shelf.OtherShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListScreen
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.CustomNavType
 import de.ashman.ontrack.navigation.Route
-import de.ashman.ontrack.repository.firestore.FirestoreUserRepository
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.shelfGraph(
+    currentUserId: String,
     navController: NavController,
     shelfViewModel: ShelfViewModel,
     shelfListViewModel: ShelfListViewModel,
     settingsViewModel: SettingsViewModel,
     commonUiManager: CommonUiManager,
-    firestoreUserRepository: FirestoreUserRepository,
     clearViewModels: () -> Unit,
 ) {
     composable<Route.Shelf> {
         ShelfScreen(
             viewModel = shelfViewModel,
             commonUiManager = commonUiManager,
-            userId = firestoreUserRepository.currentUserId,
-            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(firestoreUserRepository.currentUserId, mediaType)) },
+            userId = currentUserId,
+            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(currentUserId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onSettings = { navController.navigate(Route.Settings) },
         )
@@ -57,7 +56,7 @@ fun NavGraphBuilder.shelfGraph(
     composable<Route.OtherShelf> { backStackEntry ->
         val otherShelf: Route.OtherShelf = backStackEntry.toRoute()
 
-        OtherUserShelf(
+        OtherShelfScreen(
             viewModel = shelfViewModel,
             commonUiManager = commonUiManager,
             userId = otherShelf.userId,
@@ -72,7 +71,7 @@ fun NavGraphBuilder.shelfGraph(
             viewModel = settingsViewModel,
             commonUiManager = commonUiManager,
             onBack = { navController.popBackStack() },
-            clearAndNavigateOnLogout = {
+            clearAndNavigateToStart = {
                 clearViewModels()
 
                 navController.navigate(Route.Start) {

@@ -17,7 +17,7 @@ class AccountController(
     private val userRepository: UserRepository
 ) {
     @GetMapping("/account")
-    fun getAccountSettings(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<UserDto> {
+    fun getCurrentUser(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<UserDto> {
         val user = userRepository.getReferenceById(token.uid)
 
         return ResponseEntity.ok(user.toDto())
@@ -25,18 +25,22 @@ class AccountController(
 
     @PostMapping("/account")
     @Transactional
-    fun changeAccountSetting(
+    fun updateAccountSettings(
         @AuthenticationPrincipal token: FirebaseToken,
         @RequestBody @Valid accountSettings: AccountSettingsDto
     ): ResponseEntity<String> {
-        val user = userRepository.getReferenceById(token.uid)
-
-        val usernameExists = userRepository.existsUserByUsername(accountSettings.username)
-        if (usernameExists) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is taken")
+        val validationResult = validateUsername(accountSettings.username)
+        if (validationResult != null) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(validationResult)
         }
 
-        user.updateAccountSettings(accountSettings.name, accountSettings.username)
+        val user = userRepository.getReferenceById(token.uid)
+        user.updateAccountSettings(
+            name = accountSettings.name,
+            username = accountSettings.username
+        )
 
         return ResponseEntity.ok().build()
     }
@@ -45,11 +49,25 @@ class AccountController(
     @Transactional
     fun changeProfilePicture(
         @AuthenticationPrincipal token: FirebaseToken,
-        @RequestBody profilePictureDto: ProfilePictureDto
+        @RequestBody profilePictureUrl: String,
     ): ResponseEntity<Unit> {
         val user = userRepository.getReferenceById(token.uid)
-        user.changeProfilePictureUrl(profilePictureDto.pictureUrl)
+
+        user.changeProfilePicture(profilePictureUrl)
 
         return ResponseEntity.ok().build()
+    }
+
+    private fun validateUsername(username: String?): String? {
+        if (username.isNullOrBlank()) return "USERNAME_EMPTY"
+        if (username.contains(" ")) return "USERNAME_WHITESPACE"
+        if (username.length < 5) return "USERNAME_TOO_SHORT"
+        if (username.length > 25) return "USERNAME_TOO_LONG"
+        if (username.any { it.isUpperCase() }) return "USERNAME_NO_UPPERCASE"
+
+        val allowedPattern = "^[a-z0-9_.]*$".toRegex()
+        if (!allowedPattern.matches(username)) return "USERNAME_INVALID_CHARACTERS"
+
+        return null
     }
 }

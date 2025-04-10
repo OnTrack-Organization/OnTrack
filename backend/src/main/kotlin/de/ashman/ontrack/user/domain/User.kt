@@ -14,7 +14,6 @@ final class User(
     email: String,
     profilePictureUrl: String
 ) {
-
     @Id
     @Column(name = "id")
     val id: String = id
@@ -57,7 +56,7 @@ final class User(
         updateLastModified()
     }
 
-    fun changeProfilePictureUrl(url: String) {
+    fun changeProfilePicture(url: String) {
         profilePictureUrl = url
         updateLastModified()
     }
