@@ -19,7 +19,8 @@ class SecurityConfig(
         http
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { auth ->
-                auth.anyRequest().authenticated()
+                auth.requestMatchers("/error").permitAll()
+                    .anyRequest().authenticated()
             }
             .addFilterBefore(firebaseAuthFilter, AuthorizationFilter::class.java)
 
