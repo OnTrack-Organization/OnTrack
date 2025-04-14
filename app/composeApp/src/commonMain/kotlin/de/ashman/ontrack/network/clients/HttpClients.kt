@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.clients
+package de.ashman.ontrack.network.clients
 
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.di.BACKEND_HOST
@@ -156,6 +156,11 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
         bearer {
             loadTokens {
                 val token = auth.currentUser?.getIdToken(true) ?: return@loadTokens null
+                BearerTokens(accessToken = token, refreshToken = null)
+            }
+            // Backend needs to send 401 and WWW-Authenticate header to trigger refresh
+            refreshTokens {
+                val token = auth.currentUser?.getIdToken(true) ?: return@refreshTokens null
                 BearerTokens(accessToken = token, refreshToken = null)
             }
         }

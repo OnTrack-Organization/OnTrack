@@ -1,4 +1,4 @@
-package de.ashman.ontrack.api.clients
+package de.ashman.ontrack.network.clients
 
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
