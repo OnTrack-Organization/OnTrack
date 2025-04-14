@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.share_detail
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,15 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -38,6 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -48,7 +50,6 @@ import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackCommentTextField
-import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
@@ -79,6 +80,7 @@ fun ShareDetailScreen(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val localFocusManager = LocalFocusManager.current
 
     LaunchedEffect(trackingId) {
         viewModel.fetchTracking(trackingId)
@@ -99,7 +101,13 @@ fun ShareDetailScreen(
             ShareDetailContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(contentPadding),
+                    .padding(contentPadding)
+                    .imePadding()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            localFocusManager.clearFocus()
+                        })
+                    },
                 tracking = it,
                 onClickCover = onClickMedia,
                 onClickUser = onClickUser,
@@ -120,14 +128,12 @@ fun ShareDetailContent(
     onClickLike: () -> Unit,
     onPostComment: (String) -> Unit,
 ) {
-    Column(
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         LazyColumn(
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // MAIN CONTENT
             item {
                 ShareDetailMainContent(
                     tracking = tracking,
@@ -136,14 +142,10 @@ fun ShareDetailContent(
                 )
             }
 
-            item {
-                HorizontalDivider()
-            }
+            item { HorizontalDivider() }
 
-            // LIKE CONTENT
             item {
                 ShareDetailLikeContent(
-                    //isLiked = tracking.isLikedByCurrentUser,
                     isLiked = false,
                     likes = tracking.likes,
                     onClickUser = onClickUser,
@@ -153,7 +155,6 @@ fun ShareDetailContent(
 
             item { HorizontalDivider() }
 
-            // COMMENT CONTENT
             item {
                 ShareDetailCommentContent(
                     comments = tracking.comments,
@@ -162,7 +163,7 @@ fun ShareDetailContent(
             }
         }
 
-        CommentTextFieldRow(
+        CommentTextField(
             onPostComment = onPostComment,
         )
     }
@@ -242,11 +243,15 @@ fun ShareDetailLikeContent(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             if (likes.isEmpty()) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = stringResource(Res.string.share_likes_empty),
                     style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
                 )
             } else {
                 LazyRow(
@@ -308,6 +313,7 @@ fun ShareDetailCommentContent(
     onClickUser: (String) -> Unit,
 ) {
     Column(
+        modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -320,8 +326,10 @@ fun ShareDetailCommentContent(
 
         if (comments.isEmpty()) {
             Text(
+                modifier = Modifier,
                 text = stringResource(Res.string.share_comments_empty),
                 style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
             )
         } else {
             // TODO change to lazy column maybe
@@ -343,37 +351,26 @@ fun ShareDetailCommentContent(
 }
 
 @Composable
-fun CommentTextFieldRow(
+fun CommentTextField(
     onPostComment: (String) -> Unit,
 ) {
     // TODO move into vm
-    var commentText by remember { mutableStateOf(TextFieldValue("")) }
+    var commentText by remember { mutableStateOf(TextFieldValue("test")) }
     var replyingTo by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
 
-    Row(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        OnTrackCommentTextField(
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .weight(1f),
-            placeholder = stringResource(Res.string.share_comments_placeholder),
-            value = commentText,
-            onValueChange = { commentText = it },
-        )
-
-        OnTrackIconButton(
-            modifier = Modifier.size(56.dp),
-            icon = Icons.AutoMirrored.Default.Send,
-            enabled = commentText.text.isNotBlank(),
-            onClick = {
-                onPostComment(commentText.text)
-                replyingTo = null
-                commentText = TextFieldValue("")
-            },
-        )
-    }
+    OnTrackCommentTextField(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .focusRequester(focusRequester),
+        placeholder = stringResource(Res.string.share_comments_placeholder),
+        value = commentText,
+        onValueChange = { commentText = it },
+        isSendVisible = commentText.text.isNotBlank(),
+        onPostComment = {
+            onPostComment(commentText.text)
+            replyingTo = null
+            commentText = TextFieldValue("")
+        },
+    )
 }

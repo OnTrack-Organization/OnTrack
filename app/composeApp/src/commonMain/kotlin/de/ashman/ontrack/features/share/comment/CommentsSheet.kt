@@ -163,6 +163,7 @@ fun CommentsSheet(
                 placeholder = stringResource(Res.string.share_comments_placeholder),
                 value = commentText,
                 onValueChange = { commentText = it },
+                onPostComment = {},
             )
 
             OnTrackIconButton(

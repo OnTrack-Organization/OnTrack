@@ -17,3 +17,20 @@ fun ShareDetailContentPreview() {
         )
     }
 }
+
+@OnTrackPreview
+@Composable
+fun ShareDetailContentEmptyPreview() {
+    OnTrackTheme {
+        ShareDetailContent(
+            tracking = previewTracking.copy(
+                likes = emptyList(),
+                comments = emptyList(),
+            ),
+            onPostComment = {},
+            onClickLike = {},
+            onClickCover = {},
+            onClickUser = {},
+        )
+    }
+}

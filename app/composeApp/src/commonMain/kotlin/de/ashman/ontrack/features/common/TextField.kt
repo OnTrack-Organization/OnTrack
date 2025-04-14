@@ -1,12 +1,15 @@
 package de.ashman.ontrack.features.common
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -100,6 +103,8 @@ fun OnTrackCommentTextField(
     placeholder: String,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
+    isSendVisible: Boolean = true,
+    onPostComment: () -> Unit,
 ) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
@@ -107,6 +112,19 @@ fun OnTrackCommentTextField(
         onValueChange = onValueChange,
         placeholder = { Text(placeholder) },
         shape = MaterialTheme.shapes.medium,
+        trailingIcon = {
+            AnimatedVisibility(
+                modifier = Modifier.padding(end = 8.dp),
+                visible = isSendVisible,
+            ) {
+                OnTrackIconButton(
+                    modifier = Modifier.size(42.dp),
+                    icon = Icons.AutoMirrored.Default.Send,
+                    onClick = onPostComment,
+                )
+
+            }
+        },
     )
 }
 
