@@ -40,6 +40,7 @@ class AccountServiceImpl(
         when (apiResponse.status) {
             HttpStatusCode.OK -> AccountResult.Success
             HttpStatusCode.Conflict -> {
+                // TODO handle new error type here
                 val error = mapUsernameError(apiResponse.data)
                 AccountResult.InvalidUsername(error)
             }
