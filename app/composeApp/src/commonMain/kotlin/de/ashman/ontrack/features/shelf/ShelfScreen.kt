@@ -42,10 +42,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog

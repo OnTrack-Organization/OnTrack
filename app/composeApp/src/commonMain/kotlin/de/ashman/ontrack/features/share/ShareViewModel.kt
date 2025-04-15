@@ -4,11 +4,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.notification.NotificationService

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
-import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar

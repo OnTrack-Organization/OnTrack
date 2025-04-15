@@ -13,9 +13,9 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationItems

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.signin.SignInResult
 import de.ashman.ontrack.network.signin.SignInService

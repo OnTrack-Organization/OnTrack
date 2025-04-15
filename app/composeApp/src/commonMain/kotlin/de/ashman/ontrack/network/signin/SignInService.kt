@@ -1,7 +1,7 @@
 package de.ashman.ontrack.network.signin
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
-import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.network.signin.dto.SignInDto
 import de.ashman.ontrack.network.signin.dto.UserDto
 import de.ashman.ontrack.network.signin.dto.toDomain

@@ -4,7 +4,7 @@ import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
 import com.eygraber.uri.UriCodec
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import kotlinx.serialization.json.Json
 
 object CustomNavType {

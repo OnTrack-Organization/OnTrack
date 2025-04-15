@@ -3,9 +3,9 @@ package de.ashman.ontrack.features.share.friend
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.usecase.AcceptRequestUseCase
 import de.ashman.ontrack.usecase.CancelRequestUseCase

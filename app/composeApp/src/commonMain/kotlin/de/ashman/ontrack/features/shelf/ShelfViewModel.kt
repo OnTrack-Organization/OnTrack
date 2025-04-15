@@ -7,9 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendRequestStatus
-import de.ashman.ontrack.domain.user.NewUser
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.usecase.AcceptRequestUseCase

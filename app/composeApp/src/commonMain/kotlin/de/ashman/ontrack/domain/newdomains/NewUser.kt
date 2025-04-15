@@ -1,4 +1,4 @@
-package de.ashman.ontrack.domain.user
+package de.ashman.ontrack.domain.newdomains
 
 import kotlinx.serialization.Serializable
 

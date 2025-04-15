@@ -1,7 +1,7 @@
 package de.ashman.ontrack.navigation
 
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.user.NewUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import kotlinx.serialization.Serializable
 
 @Serializable
