@@ -7,8 +7,8 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
-import de.ashman.ontrack.network.signin.SignInResult
-import de.ashman.ontrack.network.signin.SignInService
+import de.ashman.ontrack.network.services.signin.SignInResult
+import de.ashman.ontrack.network.services.signin.SignInService
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -6,9 +6,9 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.ImageUploadState
-import de.ashman.ontrack.network.account.AccountResult
-import de.ashman.ontrack.network.account.AccountService
-import de.ashman.ontrack.network.account.UsernameError
+import de.ashman.ontrack.network.services.account.AccountResult
+import de.ashman.ontrack.network.services.account.AccountService
+import de.ashman.ontrack.network.services.account.UsernameError
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

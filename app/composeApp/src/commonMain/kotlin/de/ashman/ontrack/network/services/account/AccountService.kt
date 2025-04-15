@@ -1,11 +1,11 @@
-package de.ashman.ontrack.network.account
+package de.ashman.ontrack.network.services.account
 
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.api.utils.safeBackendApiCall
 import de.ashman.ontrack.domain.newdomains.NewUser
-import de.ashman.ontrack.network.account.dto.AccountSettingsDto
-import de.ashman.ontrack.network.signin.dto.UserDto
-import de.ashman.ontrack.network.signin.dto.toDomain
+import de.ashman.ontrack.network.services.account.dto.AccountSettingsDto
+import de.ashman.ontrack.network.services.signin.dto.UserDto
+import de.ashman.ontrack.network.services.signin.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

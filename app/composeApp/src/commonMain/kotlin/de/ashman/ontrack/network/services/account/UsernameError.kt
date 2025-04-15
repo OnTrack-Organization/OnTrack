@@ -1,4 +1,4 @@
-package de.ashman.ontrack.network.account
+package de.ashman.ontrack.network.services.account
 
 enum class UsernameError {
     TAKEN,

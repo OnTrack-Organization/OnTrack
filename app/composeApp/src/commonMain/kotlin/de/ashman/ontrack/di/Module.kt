@@ -27,8 +27,6 @@ import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
-import de.ashman.ontrack.network.account.AccountService
-import de.ashman.ontrack.network.account.AccountServiceImpl
 import de.ashman.ontrack.network.clients.createBGGClient
 import de.ashman.ontrack.network.clients.createBackendClient
 import de.ashman.ontrack.network.clients.createGeekDoClient
@@ -38,8 +36,10 @@ import de.ashman.ontrack.network.clients.createSpotifyClient
 import de.ashman.ontrack.network.clients.createSpotifyTokenClient
 import de.ashman.ontrack.network.clients.createTMDBClient
 import de.ashman.ontrack.network.clients.createTwitchTokenClient
-import de.ashman.ontrack.network.signin.SignInService
-import de.ashman.ontrack.network.signin.SignInServiceImpl
+import de.ashman.ontrack.network.services.account.AccountService
+import de.ashman.ontrack.network.services.account.AccountServiceImpl
+import de.ashman.ontrack.network.services.signin.SignInService
+import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository

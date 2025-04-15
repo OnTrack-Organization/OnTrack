@@ -1,10 +1,10 @@
-package de.ashman.ontrack.network.signin
+package de.ashman.ontrack.network.services.signin
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
 import de.ashman.ontrack.domain.newdomains.NewUser
-import de.ashman.ontrack.network.signin.dto.SignInDto
-import de.ashman.ontrack.network.signin.dto.UserDto
-import de.ashman.ontrack.network.signin.dto.toDomain
+import de.ashman.ontrack.network.services.signin.dto.SignInDto
+import de.ashman.ontrack.network.services.signin.dto.UserDto
+import de.ashman.ontrack.network.services.signin.dto.toDomain
 import dev.gitlive.firebase.auth.FirebaseAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
