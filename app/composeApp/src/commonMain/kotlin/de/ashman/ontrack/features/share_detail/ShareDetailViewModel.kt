@@ -37,7 +37,7 @@ class ShareDetailViewModel(
                 rating = 5.0,
                 reviewTitle = "Great movie",
                 reviewDescription = "This movie is great",
-                timestamp = System.now().epochSeconds,
+                timestamp = System.now().toEpochMilliseconds(),
                 likes = listOf(),
                 comments = listOf(),
             )

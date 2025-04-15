@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
-import de.ashman.ontrack.features.common.OnTrackCommentTextField
+import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
@@ -156,7 +156,7 @@ fun CommentsSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            OnTrackCommentTextField(
+            CommentTextField(
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f),

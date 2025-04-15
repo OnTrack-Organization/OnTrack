@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.MediaPoster
-import de.ashman.ontrack.features.common.OnTrackCommentTextField
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
@@ -157,6 +157,7 @@ fun ShareDetailContent(
 
             item {
                 ShareDetailCommentContent(
+                    modifier = Modifier.weight(1f),
                     comments = tracking.comments,
                     onClickUser = onClickUser,
                 )
@@ -247,6 +248,8 @@ fun ShareDetailLikeContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (likes.isEmpty()) {
+                Spacer(modifier = Modifier.width(48.dp))
+
                 Text(
                     modifier = Modifier.weight(1f),
                     text = stringResource(Res.string.share_likes_empty),
@@ -309,11 +312,12 @@ fun UserLikeComponent(
 
 @Composable
 fun ShareDetailCommentContent(
+    modifier: Modifier = Modifier,
     comments: List<Comment>,
     onClickUser: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier,
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -325,15 +329,22 @@ fun ShareDetailCommentContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         if (comments.isEmpty()) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(Res.string.share_comments_empty),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-            )
+            // TODO make this centered vertically
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(Res.string.share_comments_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                )
+            }
         } else {
-            // TODO change to lazy column maybe
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 comments.forEach {
                     CommentCard(
                         userImageUrl = it.userImageUrl,
@@ -359,7 +370,7 @@ fun CommentTextField(
     var replyingTo by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
 
-    OnTrackCommentTextField(
+    CommentTextField(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .focusRequester(focusRequester),

@@ -2,6 +2,8 @@ package de.ashman.ontrack.features.common
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,7 +100,7 @@ fun SearchBar(
 }
 
 @Composable
-fun OnTrackCommentTextField(
+fun CommentTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
     value: TextFieldValue,
@@ -112,10 +114,14 @@ fun OnTrackCommentTextField(
         onValueChange = onValueChange,
         placeholder = { Text(placeholder) },
         shape = MaterialTheme.shapes.medium,
+        maxLines = 4,
         trailingIcon = {
             AnimatedVisibility(
-                modifier = Modifier.padding(end = 8.dp),
+                modifier = Modifier
+                    .padding(end = 8.dp),
                 visible = isSendVisible,
+                enter = scaleIn(),
+                exit = scaleOut(),
             ) {
                 OnTrackIconButton(
                     modifier = Modifier.size(42.dp),

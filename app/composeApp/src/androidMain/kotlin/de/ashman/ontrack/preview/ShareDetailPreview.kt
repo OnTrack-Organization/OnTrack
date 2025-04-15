@@ -6,10 +6,41 @@ import de.ashman.ontrack.theme.OnTrackTheme
 
 @OnTrackPreview
 @Composable
-fun ShareDetailContentPreview() {
+fun ShareDetailContentSingleInteractionPreview() {
     OnTrackTheme {
         ShareDetailContent(
             tracking = previewTracking,
+            onPostComment = {},
+            onClickLike = {},
+            onClickCover = {},
+            onClickUser = {},
+        )
+    }
+}
+
+@OnTrackPreview
+@Composable
+fun ShareDetailContentMultipleInteractionsPreview() {
+    OnTrackTheme {
+        ShareDetailContent(
+            tracking = previewTracking.copy(
+                likes = listOf(
+                    previewLike,
+                    previewLike,
+                    previewLike,
+                    previewLike,
+                    previewLike,
+                    previewLike,
+                ),
+                comments = listOf(
+                    previewComment,
+                    previewComment,
+                    previewComment,
+                    previewComment,
+                    previewComment,
+                    previewComment,
+                ),
+            ),
             onPostComment = {},
             onClickLike = {},
             onClickCover = {},

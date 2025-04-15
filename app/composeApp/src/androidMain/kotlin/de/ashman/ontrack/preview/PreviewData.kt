@@ -34,24 +34,20 @@ val previewTimestampHourAgo = System.currentTimeMillis() - 60 * 60 * 1000
 val previewTimestampYesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
 val previewTimestampWeekAgo = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000
 
-val previewLikes = listOf(
-    Like(
-        userId = previewUser.id,
-        username = previewUser.username,
-        userImageUrl = previewUser.imageUrl,
-        name = previewUser.name
-    )
+val previewLike = Like(
+    userId = previewUser.id,
+    username = previewUser.username,
+    userImageUrl = previewUser.imageUrl,
+    name = previewUser.name
 )
 
-val previewComments = listOf(
-    Comment(
-        userId = previewUser.id,
-        userImageUrl = previewUser.imageUrl,
-        username = previewUser.username,
-        name = previewUser.name,
-        comment = "This is a comment",
-        timestamp = previewTimestampNow,
-    )
+val previewComment = Comment(
+    userId = previewUser.id,
+    userImageUrl = previewUser.imageUrl,
+    username = previewUser.username,
+    name = previewUser.name,
+    comment = "This is a comment",
+    timestamp = previewTimestampNow,
 )
 
 val previewTracking = Tracking(
@@ -67,7 +63,7 @@ val previewTracking = Tracking(
     reviewTitle = "Review title",
     reviewDescription = "A short review description",
     timestamp = previewTimestampWeekAgo,
-    likes = previewLikes,
-    comments = previewComments,
+    likes = listOf(previewLike),
+    comments = listOf(previewComment),
 )
 
