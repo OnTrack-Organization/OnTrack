@@ -42,8 +42,8 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.Movie
 import de.ashman.ontrack.domain.media.Show
 import de.ashman.ontrack.domain.media.Videogame
+import de.ashman.ontrack.domain.newdomains.NewTracking
 import de.ashman.ontrack.domain.recommendation.Recommendation
-import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
@@ -53,7 +53,6 @@ import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.RemoveSheet
 import de.ashman.ontrack.features.detail.components.DetailDropDown
-import de.ashman.ontrack.features.detail.components.OwnTrackingCard
 import de.ashman.ontrack.features.detail.components.RatingCardRow
 import de.ashman.ontrack.features.detail.components.StickyHeader
 import de.ashman.ontrack.features.detail.media.AlbumDetailContent
@@ -66,12 +65,9 @@ import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.detail.review.ReviewSheet
-import de.ashman.ontrack.features.detail.review.TimelineSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationItems
 import de.ashman.ontrack.util.getMediaTypeUi
-import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
 import ontrack.composeapp.generated.resources.detail_remove_confirm_title
@@ -97,13 +93,13 @@ fun DetailScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
 
+    val localFocusManager = LocalFocusManager.current
+
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(mediaNavItems.id) {
-        detailViewModel.initUser()
         detailViewModel.fetchDetails(mediaNavItems)
-        detailViewModel.observeTracking(mediaNavItems.id)
         detailViewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
         detailViewModel.observeFriendTrackings(mediaNavItems.id)
         recommendationViewModel.observeFriendRecommendations(mediaNavItems.id)
@@ -127,8 +123,8 @@ fun DetailScreen(
                 onClickNavigation = onBack,
                 dropdownMenu = {
                     DetailDropDown(
-                        isRemoveEnabled = detailUiState.selectedTracking != null,
-                        mediaApiUrl = detailUiState.selectedMedia?.detailUrl,
+                        isRemoveEnabled = detailUiState.currentTracking != null,
+                        mediaApiUrl = detailUiState.currentMedia?.detailUrl,
                         apiTitle = mediaNavItems.mediaType.getApiType().title,
                         apiIcon = mediaNavItems.mediaType.getApiType().icon,
                         onClickRemove = { commonUiManager.showSheet(CurrentSheet.REMOVE) }
@@ -143,11 +139,11 @@ fun DetailScreen(
         ) {
             StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
-                media = detailUiState.selectedMedia,
+                media = detailUiState.currentMedia,
                 mediaType = mediaNavItems.mediaType,
                 mediaTitle = mediaNavItems.title,
                 mediaCoverUrl = mediaNavItems.coverUrl,
-                status = detailUiState.selectedTracking?.status,
+                status = detailUiState.currentTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = { commonUiManager.showSheet(CurrentSheet.TRACK) },
                 onClickRecommend = { commonUiManager.showSheet(CurrentSheet.RECOMMEND) },
@@ -164,8 +160,8 @@ fun DetailScreen(
 
                 DetailResultState.Success -> {
                     DetailContent(
-                        media = detailUiState.selectedMedia,
-                        selectedTracking = detailUiState.selectedTracking,
+                        media = detailUiState.currentMedia,
+                        currentTracking = detailUiState.currentTracking,
                         ratingStats = detailUiState.ratingStats,
                         friendTrackings = detailUiState.friendTrackings,
                         receivedRecommendations = recommendationUiState.receivedRecommendations,
@@ -197,26 +193,6 @@ fun DetailScreen(
                 onDismissRequest = { commonUiManager.hideSheet() },
                 sheetState = sheetState,
             ) {
-                val localFocusManager = LocalFocusManager.current
-                // Copy previous tracking with new id and timestamp or create new tracking with filled media data
-                // TODO move out into vm
-                var tracking by remember {
-                    mutableStateOf(
-                        detailUiState.selectedTracking?.copy(
-                            timestamp = System.now().toEpochMilliseconds(),
-                        ) ?: Tracking(
-                            userId = detailUiState.user?.id.orEmpty(),
-                            username = detailUiState.user?.name.orEmpty(),
-                            userImageUrl = detailUiState.user?.profilePictureUrl.orEmpty(),
-                            mediaId = mediaNavItems.id,
-                            mediaType = mediaNavItems.mediaType,
-                            mediaTitle = mediaNavItems.title,
-                            mediaCoverUrl = mediaNavItems.coverUrl,
-                            timestamp = System.now().toEpochMilliseconds(),
-                        )
-                    )
-                }
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -233,22 +209,14 @@ fun DetailScreen(
                     when (commonUiState.currentSheet) {
                         CurrentSheet.TRACK -> TrackSheet(
                             mediaType = mediaNavItems.mediaType,
-                            selectedStatus = tracking.status,
-                            onSelectStatus = { tracking = tracking.copy(status = it) },
-                            onSave = {
-                                tracking = tracking.copy(
-                                    rating = if (tracking.status == TrackStatus.CATALOG) null else tracking.rating,
-                                    reviewTitle = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewTitle,
-                                    reviewDescription = if (tracking.status == TrackStatus.CATALOG) null else tracking.reviewDescription,
-                                    timestamp = System.now().toEpochMilliseconds()
-                                ).also {
-                                    detailViewModel.saveTracking(it)
-                                }
-                            },
+                            selectedStatus = detailUiState.currentStatus,
+                            onSelectStatus = detailViewModel::selectStatus,
+                            onSave = detailViewModel::saveTracking,
                             onToReview = { commonUiManager.showSheet(CurrentSheet.REVIEW) },
                         )
 
-                        CurrentSheet.REVIEW -> ReviewSheet(
+                        // TODO add in the next step when adding review back in again
+                        /*CurrentSheet.REVIEW -> ReviewSheet(
                             reviewTitle = tracking.reviewTitle,
                             reviewDescription = tracking.reviewDescription,
                             rating = tracking.rating,
@@ -260,20 +228,20 @@ fun DetailScreen(
                                 tracking = tracking.copy(reviewDescription = description.takeIf { it.isNotBlank() })
                             },
                             onRatingChange = { tracking = tracking.copy(rating = it) },
-                            onSave = { detailViewModel.saveTracking(tracking) },
-                        )
+                            onSave = { detailViewModel.createTracking(tracking) },
+                        )*/
 
                         CurrentSheet.REMOVE -> RemoveSheet(
                             title = Res.string.detail_remove_confirm_title,
                             text = Res.string.detail_remove_confirm_text,
-                            onConfirm = { detailViewModel.removeTracking(tracking.id) },
+                            onConfirm = detailViewModel::removeTracking,
                             onCancel = { commonUiManager.hideSheet() },
                         )
 
                         CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
                             recommendations = recommendationUiState.receivedRecommendations,
                             friendTrackings = detailUiState.friendTrackings,
-                            hasTracking = tracking.status != null,
+                            hasTracking = detailUiState.currentTracking != null,
                             onUserClick = onClickUser,
                             onAddToCatalogClick = detailViewModel::addRecommendationToCatalog,
                         )
@@ -282,16 +250,17 @@ fun DetailScreen(
                             selectableFriends = recommendationUiState.friends,
                             previousSentRecommendations = recommendationUiState.previousSentRecommendations,
                             onSendRecommendation = { friendId, message ->
-                                recommendationViewModel.sendRecommendation(friendId, message, detailUiState.selectedMedia!!)
+                                recommendationViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
                             },
                             selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
                             onClickUser = onClickUser,
                         )
 
-                        CurrentSheet.TIMELINE -> TimelineSheet(
+                        // TODO add in later again
+                        /*CurrentSheet.TIMELINE -> TimelineSheet(
                             mediaType = mediaNavItems.mediaType,
                             entries = tracking.history,
-                        )
+                        )*/
 
                         else -> {}
                     }
@@ -305,7 +274,7 @@ fun DetailScreen(
 @Composable
 fun DetailContent(
     media: Media?,
-    selectedTracking: Tracking?,
+    currentTracking: NewTracking?,
     ratingStats: RatingStats,
     friendTrackings: List<Tracking>,
     receivedRecommendations: List<Recommendation>,
@@ -324,7 +293,8 @@ fun DetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            selectedTracking?.let { tracking ->
+            // TODO add in back again later
+            /*currentTracking?.let { tracking ->
                 tracking.rating?.let {
                     item {
                         OwnTrackingCard(
@@ -337,7 +307,7 @@ fun DetailContent(
                         )
                     }
                 }
-            }
+            }*/
 
             if (friendTrackings.isNotEmpty() || receivedRecommendations.isNotEmpty()) {
                 item {

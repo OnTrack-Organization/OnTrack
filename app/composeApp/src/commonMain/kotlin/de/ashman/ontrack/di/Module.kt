@@ -40,6 +40,8 @@ import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.AccountServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
+import de.ashman.ontrack.network.services.tracking.TrackingService
+import de.ashman.ontrack.network.services.tracking.TrackingServiceImpl
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
@@ -94,6 +96,7 @@ val appModule = module {
     // BACKEND
     single<SignInService> { SignInServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
     single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }

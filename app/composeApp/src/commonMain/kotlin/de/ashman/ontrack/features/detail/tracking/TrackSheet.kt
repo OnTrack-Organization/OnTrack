@@ -131,7 +131,7 @@ fun TrackStatusButton(
             contentColor = if (isSelected) animatedContentColor else MaterialTheme.colorScheme.onSurface,
         ),
         shape = MaterialTheme.shapes.medium,
-        onClick = { onClick() },
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 16.dp),

@@ -150,6 +150,8 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
             host = BACKEND_HOST
             port = BACKEND_PORT
         }
+
+        contentType(ContentType.Application.Json)
     }
 
     install(Auth) {
