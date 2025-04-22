@@ -67,3 +67,6 @@
 -keep class androidx.compose.material.icons.** { *; }
 -keep class androidx.compose.material.icons.filled.** { *; }
 -keep class androidx.compose.material.icons.outlined.** { *; }
+
+# Handle room
+-keep class * extends androidx.room.RoomDatabase { <init>(); }

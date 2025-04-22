@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.buildKonfig)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
     id("kotlin-kapt")
 }
@@ -154,6 +156,9 @@ kotlin {
 
             implementation(libs.datastore)
             implementation(libs.datastore.preferences)
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
 
         androidMain.dependencies {
@@ -180,6 +185,17 @@ kotlin {
             )
         }
     }
+}
+
+dependencies {
+    add("kspAndroid", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 buildkonfig {
