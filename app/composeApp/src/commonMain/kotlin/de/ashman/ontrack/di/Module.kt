@@ -10,6 +10,8 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.database.TrackingDao
+import de.ashman.ontrack.database.TrackingDatabase
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.datastore.createDataStore
 import de.ashman.ontrack.datastore.dataStoreFileName
@@ -110,9 +112,12 @@ val appModule = module {
     single { Firebase.functions }
     single<NotificationService> { NotificationServiceImpl(get(), get()) }
 
-    // DATABASE
+    // DATASTORE
     single<DataStore<Preferences>> { createDataStore { dataStoreFileName } }
     single { UserDataStore(get()) }
+
+    // DATABASE
+    single<TrackingDao> { get<TrackingDatabase>().getTrackingDao() }
 
     single { Firebase.firestore }
     single { Firebase.storage }
@@ -158,6 +163,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
         appDeclaration()
         modules(
             appModule,
-            dataStoreModule,
+            platformModule,
         )
     }
