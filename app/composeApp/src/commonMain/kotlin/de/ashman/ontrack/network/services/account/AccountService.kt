@@ -11,9 +11,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 
 interface AccountService {
     suspend fun getCurrentUser(): Result<NewUser>
@@ -33,7 +31,6 @@ class AccountServiceImpl(
 
     override suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult> = safeBackendApiCall<String> {
         httpClient.post("/account") {
-            contentType(ContentType.Application.Json)
             setBody(AccountSettingsDto(username = username, name = name))
         }
     }.mapCatching { apiResponse ->
@@ -50,7 +47,6 @@ class AccountServiceImpl(
 
     override suspend fun updateProfilePicture(profilePictureUrl: String): Result<Unit> = safeBackendApiCall<Unit> {
         httpClient.post("/account/profile-picture") {
-            contentType(ContentType.Application.Json)
             setBody(profilePictureUrl)
         }
     }.mapCatching { apiResponse ->

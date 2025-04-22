@@ -9,9 +9,7 @@ import dev.gitlive.firebase.auth.FirebaseAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 
 interface SignInService {
     suspend fun signIn(fcmToken: String): Result<SignInResult>
@@ -25,7 +23,6 @@ class SignInServiceImpl(
 
     override suspend fun signIn(fcmToken: String): Result<SignInResult> = safeBackendApiCall<UserDto> {
         httpClient.post("/sign-in") {
-            contentType(ContentType.Application.Json)
             setBody(SignInDto(fcmToken = fcmToken))
         }
     }.mapCatching { apiResponse ->
