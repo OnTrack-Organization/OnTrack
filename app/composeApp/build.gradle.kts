@@ -169,6 +169,8 @@ kotlin {
             implementation(libs.ktor.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))
+
+            implementation(libs.androidx.sqlite.framework)
         }
 
         iosMain.dependencies {

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.init.login
+package de.ashman.ontrack.features.init.signin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

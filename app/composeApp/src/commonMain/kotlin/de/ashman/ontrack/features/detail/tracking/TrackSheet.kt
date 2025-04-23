@@ -54,6 +54,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TrackSheet(
     mediaType: MediaType,
     selectedStatus: TrackStatus?,
+    isSaving: Boolean,
     onSelectStatus: (TrackStatus) -> Unit,
     onSave: () -> Unit,
     onToReview: () -> Unit,
@@ -87,6 +88,7 @@ fun TrackSheet(
         OnTrackButton(
             modifier = Modifier.weight(1f).animateContentSize(),
             enabled = selectedStatus != null,
+            isLoading = isSaving,
             text = Res.string.save_button,
             icon = Icons.Default.Save,
             onClick = onSave,

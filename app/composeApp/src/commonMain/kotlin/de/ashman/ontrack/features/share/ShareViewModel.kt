@@ -12,9 +12,9 @@ import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.notification.NotificationService
+import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.ShareRepository
-import de.ashman.ontrack.repository.firestore.TrackingRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +32,7 @@ import org.jetbrains.compose.resources.getString
 
 class ShareViewModel(
     private val shareRepository: ShareRepository,
-    private val trackingRepository: TrackingRepository,
+    private val firebaseTrackingRepository: FirebaseTrackingRepository,
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val userDataStore: UserDataStore,
@@ -179,7 +179,7 @@ class ShareViewModel(
     }
 
     private fun refreshTracking(userId: String, trackingId: String) = viewModelScope.launch {
-        val refreshedTracking = trackingRepository.fetchTrackingById(userId = userId, trackingId = trackingId)
+        val refreshedTracking = firebaseTrackingRepository.fetchTrackingById(userId = userId, trackingId = trackingId)
         if (refreshedTracking != null) {
             _uiState.update { state ->
                 state.copy(

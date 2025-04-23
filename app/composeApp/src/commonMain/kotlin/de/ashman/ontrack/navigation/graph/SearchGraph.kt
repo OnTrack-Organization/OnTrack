@@ -12,7 +12,7 @@ import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.navigation.CustomNavType
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.navigation.Route
 import kotlin.reflect.typeOf
 
@@ -32,7 +32,7 @@ fun NavGraphBuilder.searchGraph(
 
     composable<Route.Detail>(
         typeMap = mapOf(
-            typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
+            typeOf<MediaNavigationParam>() to CustomNavType.MediaNavigationParamType,
         ),
         // TODO make this work
         deepLinks = listOf(
@@ -42,7 +42,7 @@ fun NavGraphBuilder.searchGraph(
         val detail: Route.Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            mediaNavItems = detail.mediaNavItems,
+            mediaNavParam = detail.mediaNavItems,
             detailViewModel = detailViewModel,
             recommendationViewModel = recommendationViewModel,
             commonUiManager = commonUiManager,

@@ -40,7 +40,7 @@ sealed class Route {
 
     @Serializable
     data class Detail(
-        val mediaNavItems: MediaNavigationItems,
+        val mediaNavItems: MediaNavigationParam,
     ) : Route()
 
     @Serializable

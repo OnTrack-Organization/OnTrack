@@ -8,22 +8,22 @@ import de.ashman.ontrack.domain.newdomains.NewUser
 import kotlinx.serialization.json.Json
 
 object CustomNavType {
-    val MediaNavigationItemsType = object : NavType<MediaNavigationItems>(
+    val MediaNavigationParamType = object : NavType<MediaNavigationParam>(
         isNullableAllowed = false
     ) {
-        override fun get(bundle: Bundle, key: String): MediaNavigationItems? {
+        override fun get(bundle: Bundle, key: String): MediaNavigationParam? {
             return Json.decodeFromString(bundle.getString(key) ?: return null)
         }
 
-        override fun parseValue(value: String): MediaNavigationItems {
+        override fun parseValue(value: String): MediaNavigationParam {
             return Json.decodeFromString(UriCodec.decode(value))
         }
 
-        override fun put(bundle: Bundle, key: String, value: MediaNavigationItems) {
+        override fun put(bundle: Bundle, key: String, value: MediaNavigationParam) {
             bundle.putString(key, Json.encodeToString(value))
         }
 
-        override fun serializeAsValue(value: MediaNavigationItems): String {
+        override fun serializeAsValue(value: MediaNavigationParam): String {
             return UriCodec.encode(Json.encodeToString(value))
         }
     }

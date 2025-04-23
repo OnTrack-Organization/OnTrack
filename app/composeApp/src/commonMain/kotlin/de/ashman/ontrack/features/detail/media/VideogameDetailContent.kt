@@ -6,7 +6,7 @@ import de.ashman.ontrack.features.common.MediaImageRow
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.MediaChips
 import de.ashman.ontrack.features.detail.components.MediaDescription
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
@@ -19,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.VideogameDetailContent(
     videogame: Videogame,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onClickImage: (String) -> Unit,
 ) {
     item {

@@ -9,11 +9,10 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.repository.firestore.TrackingRepository
+import de.ashman.ontrack.domain.newdomains.NewTracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -38,7 +36,6 @@ class SearchViewModel(
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
     private val trackingRepository: TrackingRepository,
-    private val userDataStore: UserDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -58,13 +55,9 @@ class SearchViewModel(
         fetchAllTrending()
     }
 
-    fun initUser() {
-        viewModelScope.launch {
-            val userId = userDataStore.getCurrentUserId()
-            // TODO get trackings later, store (in local room db for example) and access across the app from there
-            trackingRepository.observeTrackings(userId).firstOrNull()?.let { trackings ->
-                _uiState.update { it.copy(trackings = trackings) }
-            }
+    fun observeTrackings() = viewModelScope.launch {
+        trackingRepository.getTrackings().collect { trackings ->
+            _uiState.update { it.copy(trackings = trackings) }
         }
     }
 
@@ -168,8 +161,6 @@ class SearchViewModel(
         }
     }
 
-    fun clearViewModel() {}
-
     private fun MediaType.getRepository() = when (this) {
         MediaType.MOVIE -> movieRepository
         MediaType.SHOW -> showRepository
@@ -183,7 +174,7 @@ class SearchViewModel(
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val cachedTrending: List<Media> = emptyList(),
-    val trackings: List<Tracking> = emptyList(),
+    val trackings: List<NewTracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Loading },

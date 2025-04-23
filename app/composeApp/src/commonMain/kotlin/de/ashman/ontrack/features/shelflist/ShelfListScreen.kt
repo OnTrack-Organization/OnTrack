@@ -41,7 +41,7 @@ import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_list_all
@@ -58,7 +58,7 @@ fun ShelfListScreen(
     viewModel: ShelfListViewModel,
     userId: String,
     mediaType: MediaType,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -112,7 +112,7 @@ fun ShelfListScreen(
                                 coverUrl = it.mediaCoverUrl,
                                 onClick = {
                                     onClickItem(
-                                        MediaNavigationItems(
+                                        MediaNavigationParam(
                                             id = it.mediaId,
                                             title = it.mediaTitle,
                                             coverUrl = it.mediaCoverUrl,
