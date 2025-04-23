@@ -66,7 +66,7 @@ import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_remove_confirm_text
@@ -76,11 +76,11 @@ import org.jetbrains.compose.resources.pluralStringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    mediaNavItems: MediaNavigationItems,
+    mediaNavParam: MediaNavigationParam,
     commonUiManager: CommonUiManager,
     detailViewModel: DetailViewModel,
     recommendationViewModel: RecommendationViewModel,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -98,12 +98,15 @@ fun DetailScreen(
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(mediaNavItems.id) {
-        detailViewModel.fetchDetails(mediaNavItems)
-        detailViewModel.observeRatingStats(mediaNavItems.id, mediaNavItems.mediaType)
-        detailViewModel.observeFriendTrackings(mediaNavItems.id)
-        recommendationViewModel.observeFriendRecommendations(mediaNavItems.id)
+    LaunchedEffect(mediaNavParam.id) {
+        detailViewModel.fetchDetails(mediaNavParam)
+        detailViewModel.observeRatingStats(mediaNavParam.id, mediaNavParam.mediaType)
+        detailViewModel.observeFriendTrackings(mediaNavParam.id)
+        recommendationViewModel.observeFriendRecommendations(mediaNavParam.id)
         recommendationViewModel.fetchFriends()
+
+        // TODO decide if to use media id or tracking id...
+        detailViewModel.observeTracking(mediaNavParam.id)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -117,16 +120,16 @@ fun DetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             OnTrackTopBar(
-                title = pluralStringResource(mediaNavItems.mediaType.getMediaTypeUi().title, 1),
-                titleIcon = mediaNavItems.mediaType.getMediaTypeUi().outlinedIcon,
+                title = pluralStringResource(mediaNavParam.mediaType.getMediaTypeUi().title, 1),
+                titleIcon = mediaNavParam.mediaType.getMediaTypeUi().outlinedIcon,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 onClickNavigation = onBack,
                 dropdownMenu = {
                     DetailDropDown(
                         isRemoveEnabled = detailUiState.currentTracking != null,
                         mediaApiUrl = detailUiState.currentMedia?.detailUrl,
-                        apiTitle = mediaNavItems.mediaType.getApiType().title,
-                        apiIcon = mediaNavItems.mediaType.getApiType().icon,
+                        apiTitle = mediaNavParam.mediaType.getApiType().title,
+                        apiIcon = mediaNavParam.mediaType.getApiType().icon,
                         onClickRemove = { commonUiManager.showSheet(CurrentSheet.REMOVE) }
                     )
                 },
@@ -140,9 +143,9 @@ fun DetailScreen(
             StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
                 media = detailUiState.currentMedia,
-                mediaType = mediaNavItems.mediaType,
-                mediaTitle = mediaNavItems.title,
-                mediaCoverUrl = mediaNavItems.coverUrl,
+                mediaType = mediaNavParam.mediaType,
+                mediaTitle = mediaNavParam.title,
+                mediaCoverUrl = mediaNavParam.coverUrl,
                 status = detailUiState.currentTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = { commonUiManager.showSheet(CurrentSheet.TRACK) },
@@ -156,7 +159,7 @@ fun DetailScreen(
             when (detailUiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()
 
-                DetailResultState.Error -> ErrorContent(text = mediaNavItems.mediaType.getMediaTypeUi().error)
+                DetailResultState.Error -> ErrorContent(text = mediaNavParam.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
                     DetailContent(
@@ -208,8 +211,9 @@ fun DetailScreen(
                 ) {
                     when (commonUiState.currentSheet) {
                         CurrentSheet.TRACK -> TrackSheet(
-                            mediaType = mediaNavItems.mediaType,
+                            mediaType = mediaNavParam.mediaType,
                             selectedStatus = detailUiState.currentStatus,
+                            isSaving = detailUiState.isSaving,
                             onSelectStatus = detailViewModel::selectStatus,
                             onSave = detailViewModel::saveTracking,
                             onToReview = { commonUiManager.showSheet(CurrentSheet.REVIEW) },
@@ -252,7 +256,7 @@ fun DetailScreen(
                             onSendRecommendation = { friendId, message ->
                                 recommendationViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
                             },
-                            selectUser = { recommendationViewModel.selectFriend(it, mediaNavItems.id) },
+                            selectUser = { recommendationViewModel.selectFriend(it, mediaNavParam.id) },
                             onClickUser = onClickUser,
                         )
 
@@ -279,7 +283,7 @@ fun DetailContent(
     friendTrackings: List<Tracking>,
     receivedRecommendations: List<Recommendation>,
     columnListState: LazyListState,
-    onClickMedia: (MediaNavigationItems) -> Unit,
+    onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onClickMoreFriendsActivity: () -> Unit,
     onClickImage: (String) -> Unit,

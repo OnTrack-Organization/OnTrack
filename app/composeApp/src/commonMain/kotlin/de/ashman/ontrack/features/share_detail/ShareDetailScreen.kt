@@ -59,7 +59,7 @@ import de.ashman.ontrack.features.share.ShareCardHeader
 import de.ashman.ontrack.features.share.ShareCardMediaTitle
 import de.ashman.ontrack.features.share.ShareCardReview
 import de.ashman.ontrack.features.share.comment.CommentCard
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -75,7 +75,7 @@ fun ShareDetailScreen(
     viewModel: ShareDetailViewModel,
     // Todo maybe pass tracking instead
     trackingId: String,
-    onClickMedia: (MediaNavigationItems) -> Unit,
+    onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -123,7 +123,7 @@ fun ShareDetailScreen(
 fun ShareDetailContent(
     modifier: Modifier = Modifier,
     tracking: Tracking,
-    onClickCover: (MediaNavigationItems) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onClickLike: () -> Unit,
     onPostComment: (String) -> Unit,
@@ -173,7 +173,7 @@ fun ShareDetailContent(
 @Composable
 fun ShareDetailMainContent(
     tracking: Tracking,
-    onClickCover: (MediaNavigationItems) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     Column(
@@ -206,7 +206,7 @@ fun ShareDetailMainContent(
                 coverUrl = tracking.mediaCoverUrl,
                 onClick = {
                     onClickCover(
-                        MediaNavigationItems(
+                        MediaNavigationParam(
                             id = tracking.mediaId,
                             mediaType = tracking.mediaType,
                             title = tracking.mediaTitle,

@@ -15,7 +15,7 @@ import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.navigation.Route
 import de.ashman.ontrack.navigation.graph.NavigationGraph
 import de.ashman.ontrack.notification.notificationInit
@@ -62,7 +62,7 @@ private fun startNotificationManager(
             super.onNotificationClicked(data)
             Logger.d("Notification clicked, Notification payloadData: $data", tag = TAG)
 
-            val mediaNav = MediaNavigationItems(
+            val mediaNav = MediaNavigationParam(
                 id = data["mediaId"].toString(),
                 title = "",
                 coverUrl = "",

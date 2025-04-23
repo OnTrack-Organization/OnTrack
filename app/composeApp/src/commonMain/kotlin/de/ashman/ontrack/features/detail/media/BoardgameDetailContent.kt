@@ -6,7 +6,7 @@ import de.ashman.ontrack.features.common.MediaImageRow
 import de.ashman.ontrack.features.common.MediaPosterRow
 import de.ashman.ontrack.features.detail.components.CreatorCard
 import de.ashman.ontrack.features.detail.components.MediaDescription
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.detail_description
 import ontrack.composeapp.generated.resources.detail_designer
@@ -15,7 +15,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun LazyListScope.BoardgameDetailContent(
     boardgame: Boardgame,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onClickImage: (String) -> Unit,
 ) {
     item {

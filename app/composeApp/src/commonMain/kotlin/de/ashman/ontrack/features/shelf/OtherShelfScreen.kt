@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.CommonUiManager
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_other_empty
 
@@ -14,7 +14,7 @@ fun OtherShelfScreen(
     commonUiManager: CommonUiManager,
     userId: String,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onBack: (() -> Unit)? = null,
 ) {
     LaunchedEffect(userId) {

@@ -4,7 +4,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.room.TypeConverters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -12,6 +12,7 @@ import kotlinx.coroutines.IO
     entities = [NewTrackingEntity::class],
     version = 1
 )
+@TypeConverters(Converters::class)
 @ConstructedBy(TrackingDatabaseConstructor::class)
 abstract class TrackingDatabase : RoomDatabase() {
     abstract fun getTrackingDao(): TrackingDao
@@ -24,7 +25,7 @@ expect object TrackingDatabaseConstructor : RoomDatabaseConstructor<TrackingData
 
 fun getTrackingDatabase(builder: RoomDatabase.Builder<TrackingDatabase>): TrackingDatabase {
     return builder
-        .setDriver(BundledSQLiteDriver())
+        //.setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
 }

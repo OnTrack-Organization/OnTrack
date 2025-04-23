@@ -2,10 +2,10 @@ package de.ashman.ontrack.features.shelflist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.repository.firestore.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ShelfListViewModel(
-    private val trackingRepository: TrackingRepository,
+    private val firebaseTrackingRepository: FirebaseTrackingRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfListUiState())
     val uiState: StateFlow<ShelfListUiState> = _uiState
@@ -26,7 +26,7 @@ class ShelfListViewModel(
         )
 
     fun observeUserTrackings(userId: String) {
-        trackingRepository.observeTrackings(userId)
+        firebaseTrackingRepository.observeTrackings(userId)
             .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
             .launchIn(viewModelScope)
     }

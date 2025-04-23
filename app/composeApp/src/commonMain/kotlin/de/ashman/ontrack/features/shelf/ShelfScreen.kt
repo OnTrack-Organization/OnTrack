@@ -42,8 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.newdomains.NewTracking
 import de.ashman.ontrack.domain.newdomains.NewUser
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.CommonUiManager
@@ -54,7 +54,7 @@ import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.navigation.BottomNavItem
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.shelf_nav_title
@@ -71,7 +71,7 @@ fun ShelfScreen(
     userId: String,
     emptyText: StringResource = Res.string.shelf_own_empty,
     onClickMoreMedia: (MediaType) -> Unit,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
     onSettings: (() -> Unit)? = null,
     onBack: (() -> Unit)? = null,
 ) {
@@ -161,7 +161,7 @@ fun ShelfScreen(
                     }
 
                     MediaType.entries.forEach { mediaType ->
-                        val filteredTrackings = uiState.trackings.filter { it.mediaType == mediaType }
+                        val filteredTrackings = uiState.trackings.filter { it.media.type == mediaType }
 
                         if (filteredTrackings.isNotEmpty()) {
                             item(key = mediaType.name) {
@@ -224,7 +224,7 @@ fun UserHeader(
 
 @Composable
 fun MediaCounts(
-    trackings: List<Tracking>,
+    trackings: List<NewTracking>,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -237,7 +237,7 @@ fun MediaCounts(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             MediaType.entries.forEach { mediaType ->
-                val count = trackings.count { it.mediaType == mediaType }
+                val count = trackings.count { it.media.type == mediaType }
 
                 MediaCount(
                     icon = mediaType.getMediaTypeUi().outlinedIcon,
@@ -277,9 +277,9 @@ fun MediaCount(
 @Composable
 fun ShelfItem(
     mediaType: MediaType,
-    items: List<Tracking>?,
+    items: List<NewTracking>?,
     onClickMore: (MediaType) -> Unit,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
 ) {
     items?.let {
         Column(
@@ -331,9 +331,18 @@ fun ShelfItem(
                 items(items.take(5)) { item ->
                     MediaPoster(
                         modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                        coverUrl = item.mediaCoverUrl,
-                        trackStatusIcon = item.status?.getIcon(true),
-                        onClick = { onClickItem(MediaNavigationItems(item.mediaId, item.mediaTitle, item.mediaCoverUrl, item.mediaType)) },
+                        coverUrl = item.media.coverUrl,
+                        trackStatusIcon = item.status.getIcon(true),
+                        onClick = {
+                            onClickItem(
+                                MediaNavigationParam(
+                                    id = item.media.id,
+                                    title = item.media.title,
+                                    coverUrl = item.media.coverUrl,
+                                    mediaType = item.media.type,
+                                )
+                            )
+                        },
                     )
                 }
             }

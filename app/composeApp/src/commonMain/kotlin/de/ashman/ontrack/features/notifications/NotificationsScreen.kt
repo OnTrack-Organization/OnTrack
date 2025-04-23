@@ -39,7 +39,7 @@ import de.ashman.ontrack.features.common.MINI_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.notifications_empty
 import ontrack.composeapp.generated.resources.notifications_title
@@ -52,7 +52,7 @@ fun NotificationsScreen(
     onBack: () -> Unit,
     onNotificationClick: (String) -> Unit,
     onClickUser: (String) -> Unit,
-    onClickMedia: (MediaNavigationItems) -> Unit,
+    onClickMedia: (MediaNavigationParam) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -84,7 +84,7 @@ fun NotificationsScreen(
                         onUserClick = onClickUser,
                         onMediaClick = {
                             onClickMedia(
-                                MediaNavigationItems(
+                                MediaNavigationParam(
                                     id = it.mediaId,
                                     title = it.mediaTitle,
                                     coverUrl = it.mediaImageUrl,

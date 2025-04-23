@@ -4,7 +4,7 @@ import de.ashman.ontrack.domain.media.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MediaNavigationItems(
+data class MediaNavigationParam(
     val id: String,
     val title: String,
     val coverUrl: String?,

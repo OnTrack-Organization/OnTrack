@@ -2,9 +2,9 @@ package de.ashman.ontrack.network.services.tracking
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
 import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.TrackingDto
+import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
@@ -16,7 +16,7 @@ import io.ktor.http.HttpStatusCode
 
 interface TrackingService {
     suspend fun createTracking(dto: CreateTrackingDto): Result<NewTracking>
-    suspend fun updateTrackStatus(status: TrackStatus): Result<Unit>
+    suspend fun updateTracking(dto: UpdateTrackingDto): Result<Unit>
     suspend fun deleteTracking(trackingId: String): Result<Unit>
     suspend fun getTrackings(): Result<List<NewTracking>>
 }
@@ -35,9 +35,9 @@ class TrackingServiceImpl(
         }
     }
 
-    override suspend fun updateTrackStatus(status: TrackStatus): Result<Unit> = safeBackendApiCall<Unit> {
+    override suspend fun updateTracking(dto: UpdateTrackingDto): Result<Unit> = safeBackendApiCall<Unit> {
         httpClient.put("/tracking") {
-            setBody(status)
+            setBody(dto)
         }
     }.mapCatching {
         when (it.status) {
