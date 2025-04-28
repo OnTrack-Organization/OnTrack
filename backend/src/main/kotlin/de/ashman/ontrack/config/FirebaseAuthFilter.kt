@@ -30,10 +30,10 @@ class FirebaseAuthFilter(
         try {
             val firebaseToken = firebaseAuthService.verifyIdToken(token)
             val identity = Identity(
-                firebaseToken.uid,
-                firebaseToken.email,
-                firebaseToken.name,
-                firebaseToken.picture
+                id = firebaseToken.uid,
+                email = firebaseToken.email,
+                name = firebaseToken.name,
+                picture = firebaseToken.picture
             )
             val authentication = UsernamePasswordAuthenticationToken(identity, null, null)
             SecurityContextHolder.getContext().authentication = authentication
