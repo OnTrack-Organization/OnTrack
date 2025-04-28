@@ -74,9 +74,9 @@ class DetailViewModel(
         }
     }
 
-    fun observeTracking(mediaId: String) = viewModelScope.launch {
-        trackingRepository.getTracking(mediaId).collect { tracking ->
-            _uiState.update { it.copy(currentTracking = tracking) }
+    fun observeTracking(mediaId: String, mediaType: MediaType) = viewModelScope.launch {
+        trackingRepository.getTracking(mediaId, mediaType).collect { tracking ->
+            _uiState.update { it.copy(currentTracking = tracking, currentStatus = tracking?.status) }
         }
     }
 
@@ -98,7 +98,7 @@ class DetailViewModel(
         }
     }
 
-    fun fetchDetails(mediaNavItems: MediaNavigationParam) = viewModelScope.launch {
+    fun fetchDetails(mediaNav: MediaNavigationParam) = viewModelScope.launch {
         measureTime {
             _uiState.update {
                 it.copy(
@@ -107,7 +107,7 @@ class DetailViewModel(
                 )
             }
 
-            getRepository(mediaNavItems.mediaType).fetchDetails(mediaNavItems.id).fold(
+            getRepository(mediaNav.mediaType).fetchDetails(mediaNav.id).fold(
                 onSuccess = { media ->
                     _uiState.update {
                         it.copy(resultState = DetailResultState.Success)
@@ -125,7 +125,7 @@ class DetailViewModel(
         }
     }
 
-    fun selectStatus(status: TrackStatus) {
+    fun selectStatus(status: TrackStatus?) {
         _uiState.update { it.copy(currentStatus = status) }
     }
 
@@ -138,7 +138,7 @@ class DetailViewModel(
     }
 
     private fun createTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isSaving = true) }
+        _uiState.update { it.copy(isLoading = true) }
 
         val dto = CreateTrackingDto(
             media = _uiState.value.currentMedia!!.toDto(),
@@ -147,13 +147,11 @@ class DetailViewModel(
 
         trackingService.createTracking(dto).fold(
             onSuccess = { tracking ->
-                _uiState.update { it.copy(isSaving = false) }
-
                 commonUiManager.hideSheetAndShowSnackbar(
                     getString(
                         resource = Res.string.tracking_saved,
                         tracking.media.type.getSingularTitle(),
-                        getString(tracking.status.getLabel(tracking.media.type))
+                        getString(tracking.status.getLabel(tracking.media.type)),
                     )
                 )
 
@@ -162,15 +160,16 @@ class DetailViewModel(
                 Logger.d { "New tracking created: $tracking" }
             },
             onFailure = { exception ->
-                _uiState.update { it.copy(currentStatus = null, isSaving = false) }
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_create_error))
                 Logger.e { "Failed to create tracking: ${exception.message}" }
             }
         )
+
+        _uiState.update { it.copy(isLoading = false) }
     }
 
     private fun updateTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isSaving = true) }
+        _uiState.update { it.copy(isLoading = true) }
 
         val dto = UpdateTrackingDto(
             id = _uiState.value.currentTracking!!.id,
@@ -178,41 +177,36 @@ class DetailViewModel(
         )
 
         trackingService.updateTracking(dto).fold(
-            onSuccess = {
-                _uiState.update { it.copy(isSaving = false) }
-
+            onSuccess = { tracking ->
                 commonUiManager.hideSheetAndShowSnackbar(
                     getString(
                         resource = Res.string.tracking_saved,
-                        _uiState.value.currentMedia!!.mediaType.getSingularTitle(),
-                        getString(_uiState.value.currentStatus!!.getLabel(_uiState.value.currentMedia!!.mediaType))
+                        tracking.media.type.getSingularTitle(),
+                        getString(tracking.status.getLabel(tracking.media.type)),
                     )
                 )
 
-                // TODO maybe just get the updated tracking from api here as well
-                val updatedTracking = _uiState.value.currentTracking!!.copy(status = _uiState.value.currentStatus!!)
-                trackingRepository.addTracking(updatedTracking)
+                trackingRepository.addTracking(tracking)
 
-                Logger.d { "Tracking updated: ${_uiState.value.currentTracking}" }
+                Logger.d { "Tracking updated: $tracking" }
             },
             onFailure = { exception ->
-                _uiState.update { it.copy(currentStatus = null, isSaving = false) }
                 // TODO DONT HIDE, USE TOAST INSTEAD
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_update_error))
                 Logger.e { "Failed to update tracking: ${exception.message}" }
             }
         )
+
+        _uiState.update { it.copy(isLoading = false) }
     }
 
     fun removeTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isSaving = true) }
+        _uiState.update { it.copy(isLoading = true) }
 
         val tracking = _uiState.value.currentTracking ?: return@launch
 
         trackingService.deleteTracking(tracking.id).fold(
             onSuccess = {
-                _uiState.update { it.copy(isSaving = false) }
-
                 commonUiManager.hideSheetAndShowSnackbar(
                     getString(
                         resource = Res.string.tracking_removed,
@@ -226,11 +220,12 @@ class DetailViewModel(
                 Logger.d { "Tracking removed: $tracking" }
             },
             onFailure = { exception ->
-                _uiState.update { it.copy(currentStatus = null, isSaving = false) }
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_delete_error))
                 Logger.e { "Failed to remove tracking: ${exception.message}" }
             }
         )
+
+        _uiState.update { it.copy(isLoading = false) }
     }
 
     // TODO add back in later
@@ -279,7 +274,7 @@ data class DetailUiState(
     val friendTrackings: List<Tracking> = emptyList(),
 
     val resultState: DetailResultState = DetailResultState.Loading,
-    val isSaving: Boolean = false,
+    val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val searchDuration: Long = 0L,
 )

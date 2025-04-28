@@ -65,7 +65,7 @@ fun ShelfListScreen(
 
     LaunchedEffect(mediaType) {
         viewModel.updateSelectedMediaType(mediaType)
-        viewModel.observeUserTrackings(userId)
+        viewModel.observeTrackings()
     }
 
     Scaffold(
@@ -107,16 +107,16 @@ fun ShelfListScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        items(uiState.filteredTrackings, key = { it.mediaId }) {
+                        items(uiState.filteredTrackings, key = { it.media.id }) {
                             MediaPoster(
-                                coverUrl = it.mediaCoverUrl,
+                                coverUrl = it.media.coverUrl,
                                 onClick = {
                                     onClickItem(
                                         MediaNavigationParam(
-                                            id = it.mediaId,
-                                            title = it.mediaTitle,
-                                            coverUrl = it.mediaCoverUrl,
-                                            mediaType = it.mediaType
+                                            id = it.media.id,
+                                            title = it.media.title,
+                                            coverUrl = it.media.coverUrl,
+                                            mediaType = it.media.type,
                                         )
                                     )
                                 },

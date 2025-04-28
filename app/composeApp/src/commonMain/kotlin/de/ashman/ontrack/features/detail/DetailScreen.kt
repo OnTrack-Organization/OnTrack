@@ -76,7 +76,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    mediaNavParam: MediaNavigationParam,
+    mediaNav: MediaNavigationParam,
     commonUiManager: CommonUiManager,
     detailViewModel: DetailViewModel,
     recommendationViewModel: RecommendationViewModel,
@@ -98,15 +98,14 @@ fun DetailScreen(
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(mediaNavParam.id) {
-        detailViewModel.fetchDetails(mediaNavParam)
-        detailViewModel.observeRatingStats(mediaNavParam.id, mediaNavParam.mediaType)
-        detailViewModel.observeFriendTrackings(mediaNavParam.id)
-        recommendationViewModel.observeFriendRecommendations(mediaNavParam.id)
+    LaunchedEffect(mediaNav.id) {
+        detailViewModel.fetchDetails(mediaNav)
+        detailViewModel.observeRatingStats(mediaNav.id, mediaNav.mediaType)
+        detailViewModel.observeFriendTrackings(mediaNav.id)
+        recommendationViewModel.observeFriendRecommendations(mediaNav.id)
         recommendationViewModel.fetchFriends()
 
-        // TODO decide if to use media id or tracking id...
-        detailViewModel.observeTracking(mediaNavParam.id)
+        detailViewModel.observeTracking(mediaNav.id, mediaNav.mediaType)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -120,16 +119,16 @@ fun DetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             OnTrackTopBar(
-                title = pluralStringResource(mediaNavParam.mediaType.getMediaTypeUi().title, 1),
-                titleIcon = mediaNavParam.mediaType.getMediaTypeUi().outlinedIcon,
+                title = pluralStringResource(mediaNav.mediaType.getMediaTypeUi().title, 1),
+                titleIcon = mediaNav.mediaType.getMediaTypeUi().outlinedIcon,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 onClickNavigation = onBack,
                 dropdownMenu = {
                     DetailDropDown(
                         isRemoveEnabled = detailUiState.currentTracking != null,
                         mediaApiUrl = detailUiState.currentMedia?.detailUrl,
-                        apiTitle = mediaNavParam.mediaType.getApiType().title,
-                        apiIcon = mediaNavParam.mediaType.getApiType().icon,
+                        apiTitle = mediaNav.mediaType.getApiType().title,
+                        apiIcon = mediaNav.mediaType.getApiType().icon,
                         onClickRemove = { commonUiManager.showSheet(CurrentSheet.REMOVE) }
                     )
                 },
@@ -143,9 +142,9 @@ fun DetailScreen(
             StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
                 media = detailUiState.currentMedia,
-                mediaType = mediaNavParam.mediaType,
-                mediaTitle = mediaNavParam.title,
-                mediaCoverUrl = mediaNavParam.coverUrl,
+                mediaType = mediaNav.mediaType,
+                mediaTitle = mediaNav.title,
+                mediaCoverUrl = mediaNav.coverUrl,
                 status = detailUiState.currentTracking?.status,
                 scrollBehavior = scrollBehavior,
                 onClickAddTracking = { commonUiManager.showSheet(CurrentSheet.TRACK) },
@@ -159,7 +158,7 @@ fun DetailScreen(
             when (detailUiState.resultState) {
                 DetailResultState.Loading -> LoadingContent()
 
-                DetailResultState.Error -> ErrorContent(text = mediaNavParam.mediaType.getMediaTypeUi().error)
+                DetailResultState.Error -> ErrorContent(text = mediaNav.mediaType.getMediaTypeUi().error)
 
                 DetailResultState.Success -> {
                     DetailContent(
@@ -193,7 +192,10 @@ fun DetailScreen(
 
         if (commonUiState.showSheet) {
             ModalBottomSheet(
-                onDismissRequest = { commonUiManager.hideSheet() },
+                onDismissRequest = {
+                    commonUiManager.hideSheet()
+                    detailViewModel.selectStatus(detailUiState.currentTracking?.status)
+                },
                 sheetState = sheetState,
             ) {
                 Column(
@@ -211,9 +213,9 @@ fun DetailScreen(
                 ) {
                     when (commonUiState.currentSheet) {
                         CurrentSheet.TRACK -> TrackSheet(
-                            mediaType = mediaNavParam.mediaType,
+                            mediaType = mediaNav.mediaType,
                             selectedStatus = detailUiState.currentStatus,
-                            isSaving = detailUiState.isSaving,
+                            isSaving = detailUiState.isLoading,
                             onSelectStatus = detailViewModel::selectStatus,
                             onSave = detailViewModel::saveTracking,
                             onToReview = { commonUiManager.showSheet(CurrentSheet.REVIEW) },
@@ -238,6 +240,7 @@ fun DetailScreen(
                         CurrentSheet.REMOVE -> RemoveSheet(
                             title = Res.string.detail_remove_confirm_title,
                             text = Res.string.detail_remove_confirm_text,
+                            isDeleting = detailUiState.isLoading,
                             onConfirm = detailViewModel::removeTracking,
                             onCancel = { commonUiManager.hideSheet() },
                         )
@@ -256,13 +259,13 @@ fun DetailScreen(
                             onSendRecommendation = { friendId, message ->
                                 recommendationViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
                             },
-                            selectUser = { recommendationViewModel.selectFriend(it, mediaNavParam.id) },
+                            selectUser = { recommendationViewModel.selectFriend(it, mediaNav.id) },
                             onClickUser = onClickUser,
                         )
 
                         // TODO add in later again
                         /*CurrentSheet.TIMELINE -> TimelineSheet(
-                            mediaType = mediaNavItems.mediaType,
+                            mediaType = mediaNav.mediaType,
                             entries = tracking.history,
                         )*/
 

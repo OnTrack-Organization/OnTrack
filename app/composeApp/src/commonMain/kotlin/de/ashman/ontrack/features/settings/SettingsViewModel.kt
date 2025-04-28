@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
@@ -28,6 +29,7 @@ class SettingsViewModel(
     private val signInService: SignInService,
     private val accountService: AccountService,
     private val userDataStore: UserDataStore,
+    private val trackingRepository: TrackingRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -55,6 +57,8 @@ class SettingsViewModel(
     }
 
     fun onSave() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+
         val newUsername = _uiState.value.username
         val newName = _uiState.value.name
 
@@ -79,12 +83,16 @@ class SettingsViewModel(
                 commonUiManager.showSnackbar(Res.string.unknown_error)
             }
         )
+
+        _uiState.update { it.copy(isLoading = false) }
     }
 
     fun signOut(clearAndNavigateToStart: () -> Unit) = viewModelScope.launch {
         signInService.signOut().fold(
             onSuccess = {
                 userDataStore.clearUser()
+                trackingRepository.deleteAllTrackings()
+
                 clearAndNavigateToStart()
             },
             onFailure = {
@@ -135,6 +143,7 @@ data class SettingsUiState(
     val imageUrl: String? = null,
     val usernameError: UsernameError? = null,
     val imageUploadState: ImageUploadState = ImageUploadState.Idle,
+    val isLoading: Boolean = false,
 )
 
 enum class ImageUploadState {

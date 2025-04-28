@@ -20,6 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 fun RemoveSheet(
     title: StringResource,
     text: StringResource,
+    isDeleting: Boolean,
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -46,6 +47,7 @@ fun RemoveSheet(
             modifier = Modifier.weight(1f),
             text = Res.string.remove_button,
             icon = Icons.Default.Delete,
+            isLoading = isDeleting,
             onClick = onConfirm,
         )
     }

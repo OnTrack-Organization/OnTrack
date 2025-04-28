@@ -36,19 +36,19 @@ fun NavGraphBuilder.searchGraph(
         ),
         // TODO make this work
         deepLinks = listOf(
-            navDeepLink { uriPattern = "ontrack://detail/{mediaNavItems}" }
+            navDeepLink { uriPattern = "ontrack://detail/{mediaNav}" }
         )
     ) { backStackEntry ->
         val detail: Route.Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            mediaNavParam = detail.mediaNavItems,
+            mediaNav = detail.mediaNav,
             detailViewModel = detailViewModel,
             recommendationViewModel = recommendationViewModel,
             commonUiManager = commonUiManager,
-            onClickItem = { mediaNavItems ->
+            onClickItem = { mediaNav ->
                 // Remove all the Detail Navigations from graph before navigating
-                navController.navigate(Route.Detail(mediaNavItems)) {
+                navController.navigate(Route.Detail(mediaNav)) {
                     popUpTo<Route.Detail> {
                         inclusive = true
                     }

@@ -157,7 +157,7 @@ val appModule = module {
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
 
-    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

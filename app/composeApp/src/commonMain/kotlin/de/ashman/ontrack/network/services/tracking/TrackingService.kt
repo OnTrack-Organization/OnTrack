@@ -16,7 +16,7 @@ import io.ktor.http.HttpStatusCode
 
 interface TrackingService {
     suspend fun createTracking(dto: CreateTrackingDto): Result<NewTracking>
-    suspend fun updateTracking(dto: UpdateTrackingDto): Result<Unit>
+    suspend fun updateTracking(dto: UpdateTrackingDto): Result<NewTracking>
     suspend fun deleteTracking(trackingId: String): Result<Unit>
     suspend fun getTrackings(): Result<List<NewTracking>>
 }
@@ -30,19 +30,19 @@ class TrackingServiceImpl(
         }
     }.mapCatching { response ->
         when (response.status) {
-            HttpStatusCode.OK -> response.data.toDomain()
+            HttpStatusCode.Created -> response.data.toDomain()
             else -> error("Unexpected status: ${response.status}")
         }
     }
 
-    override suspend fun updateTracking(dto: UpdateTrackingDto): Result<Unit> = safeBackendApiCall<Unit> {
+    override suspend fun updateTracking(dto: UpdateTrackingDto): Result<NewTracking> = safeBackendApiCall<TrackingDto> {
         httpClient.put("/tracking") {
             setBody(dto)
         }
-    }.mapCatching {
-        when (it.status) {
-            HttpStatusCode.OK -> Unit
-            else -> error("Unexpected status: ${it.status}")
+    }.mapCatching { response ->
+        when (response.status) {
+            HttpStatusCode.OK -> response.data.toDomain()
+            else -> error("Unexpected status: ${response.status}")
         }
     }
 
