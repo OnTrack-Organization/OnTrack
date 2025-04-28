@@ -19,7 +19,7 @@ class TrackingController(
     @PostMapping("/tracking")
     @Transactional
     fun create(
-        @RequestBody @Valid dto: TrackingCreateDto,
+        @RequestBody @Valid dto: CreateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
         val newTracking = Tracking(
@@ -45,18 +45,18 @@ class TrackingController(
     fun update(
         @RequestBody @Valid dto: UpdateTrackingDto,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<TrackingDto> {
         val tracking = trackingRepository.getReferenceById(dto.id)
         if (tracking.userId != identity.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
         tracking.changeStatus(dto.status)
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(tracking.toDto())
     }
 
     @GetMapping("trackings")
-    fun get(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<TrackingDto>> {
+    fun getTrackingsOfLoggedInUser(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<TrackingDto>> {
         val trackings = trackingRepository.getTrackingsByUserId(identity.id)
         val trackingDtos = trackings.stream().map { it.toDto() }.toList()
 
