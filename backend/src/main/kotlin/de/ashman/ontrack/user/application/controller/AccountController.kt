@@ -1,6 +1,6 @@
 package de.ashman.ontrack.user.application.controller
 
-import com.google.firebase.auth.FirebaseToken
+import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.user.infrastructure.UserRepository
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
@@ -17,8 +17,8 @@ class AccountController(
     private val userRepository: UserRepository
 ) {
     @GetMapping("/account")
-    fun getCurrentUser(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<UserDto> {
-        val user = userRepository.getReferenceById(token.uid)
+    fun getCurrentUser(@AuthenticationPrincipal identity: Identity): ResponseEntity<UserDto> {
+        val user = userRepository.getReferenceById(identity.id)
 
         return ResponseEntity.ok(user.toDto())
     }
@@ -26,7 +26,7 @@ class AccountController(
     @PostMapping("/account")
     @Transactional
     fun updateAccountSettings(
-        @AuthenticationPrincipal token: FirebaseToken,
+        @AuthenticationPrincipal identity: Identity,
         @RequestBody @Valid accountSettings: AccountSettingsDto
     ): ResponseEntity<String> {
         val validationResult = validateUsername(accountSettings.username)
@@ -36,7 +36,7 @@ class AccountController(
                 .body(validationResult)
         }
 
-        val user = userRepository.getReferenceById(token.uid)
+        val user = userRepository.getReferenceById(identity.id)
         user.updateAccountSettings(
             name = accountSettings.name,
             username = accountSettings.username
@@ -48,10 +48,10 @@ class AccountController(
     @PostMapping("/account/profile-picture")
     @Transactional
     fun changeProfilePicture(
-        @AuthenticationPrincipal token: FirebaseToken,
+        @AuthenticationPrincipal identity: Identity,
         @RequestBody profilePictureUrl: String,
     ): ResponseEntity<Unit> {
-        val user = userRepository.getReferenceById(token.uid)
+        val user = userRepository.getReferenceById(identity.id)
 
         user.changeProfilePicture(profilePictureUrl)
 

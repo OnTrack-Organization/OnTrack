@@ -1,6 +1,6 @@
 package de.ashman.ontrack.user.application.controller
 
-import com.google.firebase.auth.FirebaseToken
+import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.user.domain.User
 import de.ashman.ontrack.user.infrastructure.UserRepository
 import jakarta.transaction.Transactional
@@ -18,10 +18,10 @@ class SignInController(
     @PostMapping("/sign-in")
     @Transactional
     fun signIn(
-        @AuthenticationPrincipal token: FirebaseToken,
+        @AuthenticationPrincipal identity: Identity,
         @RequestBody signInDto: SignInDto
     ): ResponseEntity<UserDto> {
-        var user = userRepository.findOneByEmail(token.email)
+        var user = userRepository.findOneByEmail(identity.email)
 
         if (user != null) {
             user.updateFcmToken(signInDto.fcmToken)
@@ -29,10 +29,10 @@ class SignInController(
         }
 
         user = User(
-            id = token.uid,
-            name = token.name,
-            email = token.email,
-            profilePictureUrl = token.picture
+            id = identity.id,
+            name = identity.name,
+            email = identity.email,
+            profilePictureUrl = identity.picture
         )
 
         user.updateFcmToken(signInDto.fcmToken)
@@ -45,8 +45,8 @@ class SignInController(
 
     @PostMapping("/sign-out")
     @Transactional
-    fun signOut(@AuthenticationPrincipal token: FirebaseToken): ResponseEntity<Unit> {
-        val user = userRepository.getReferenceById(token.uid)
+    fun signOut(@AuthenticationPrincipal identity: Identity): ResponseEntity<Unit> {
+        val user = userRepository.getReferenceById(identity.id)
         user.clearFcmToken()
 
         return ResponseEntity.ok().build()

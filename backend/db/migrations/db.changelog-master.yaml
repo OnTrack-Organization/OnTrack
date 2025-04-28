@@ -65,3 +65,55 @@ databaseChangeLog:
             tableName: users
             oldColumnName: image_url
             newColumnName: profile_picture_url
+  - changeSet:
+      id: 4
+      author: RiceIsNice
+      changes:
+        - createTable:
+            tableName: trackings
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: media_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: media_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cover_url
+                  type: varchar(255)
+        - addUniqueConstraint:
+            tableName: trackings
+            columnNames: user_id, media_id
+            constraintName: uniq_media_tracking_per_user
+      rollback:
+        - dropTable:
+            tableName: trackings
