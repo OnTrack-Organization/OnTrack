@@ -3,6 +3,8 @@ package de.ashman.ontrack.tracking.domain.model
 import de.ashman.ontrack.tracking.application.controller.MediaDto
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 
 @Embeddable
 data class Media(
@@ -10,6 +12,7 @@ data class Media(
     val id: String,
 
     @Column(name = "media_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     val type: MediaType,
 
     @Column(name = "title", nullable = false)
