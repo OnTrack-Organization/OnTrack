@@ -37,7 +37,7 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.SearchBar
 import de.ashman.ontrack.features.common.getIcon
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.fakeItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
@@ -50,13 +50,13 @@ import org.jetbrains.compose.resources.stringResource
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel,
-    onClickItem: (MediaNavigationItems) -> Unit,
+    onClickItem: (MediaNavigationParam) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.initUser()
+        viewModel.observeTrackings()
     }
 
     Scaffold(
@@ -124,7 +124,7 @@ fun SearchScreen(
 fun SuccessContent(
     uiState: SearchUiState,
     isLoadingShimmer: Boolean = false,
-    onClickItem: (MediaNavigationItems) -> Unit = {},
+    onClickItem: (MediaNavigationParam) -> Unit = {},
 ) {
     val itemsToDisplay = if (isLoadingShimmer) fakeItems() else uiState.searchResults
 
@@ -145,22 +145,23 @@ fun SuccessContent(
         state = uiState.posterRowState,
     ) {
         items(items = itemsToDisplay, key = { it.id }) { media ->
-            val tracking = uiState.trackings.associateBy { it.mediaId }
+            val tracking = uiState.trackings.associateBy { it.media.id }
 
             MediaPoster(
                 modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                 title = media.title,
                 coverUrl = media.coverUrl,
                 trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
-                trackStatusRating = tracking[media.id]?.rating,
+                // TODO add in later again
+                //trackStatusRating = tracking[media.id]?.rating,
                 isLoadingShimmer = isLoadingShimmer,
                 onClick = {
                     onClickItem(
-                        MediaNavigationItems(
+                        MediaNavigationParam(
                             id = media.id,
                             title = media.title,
                             coverUrl = media.coverUrl,
-                            mediaType = media.mediaType
+                            mediaType = media.mediaType,
                         )
                     )
                 },

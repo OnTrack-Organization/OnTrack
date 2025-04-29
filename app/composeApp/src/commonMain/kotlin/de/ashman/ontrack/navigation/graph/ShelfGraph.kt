@@ -48,7 +48,7 @@ fun NavGraphBuilder.shelfGraph(
             viewModel = shelfListViewModel,
             userId = shelfList.userId,
             mediaType = shelfList.mediaType,
-            onClickItem = { mediaNavItems -> navController.navigate(Route.Detail(mediaNavItems)) },
+            onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onBack = { navController.popBackStack() },
         )
     }
@@ -61,7 +61,7 @@ fun NavGraphBuilder.shelfGraph(
             commonUiManager = commonUiManager,
             userId = otherShelf.userId,
             onClickMore = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
-            onClickItem = { mediaNavItem -> navController.navigate(Route.Detail(mediaNavItem)) },
+            onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onBack = { navController.popBackStack() },
         )
     }

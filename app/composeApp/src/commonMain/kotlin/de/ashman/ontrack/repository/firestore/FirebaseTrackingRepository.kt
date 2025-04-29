@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
-interface TrackingRepository {
+interface FirebaseTrackingRepository {
     suspend fun saveTracking(tracking: Tracking)
     suspend fun removeTracking(trackingId: String, ratingId: String)
 
@@ -31,10 +31,10 @@ interface TrackingRepository {
     fun observeRatingStats(id: String): Flow<RatingStats?>
 }
 
-class TrackingRepositoryImpl(
+class FirebaseTrackingRepositoryImpl(
     firestore: FirebaseFirestore,
     private val userDataStore: UserDataStore,
-) : TrackingRepository {
+) : FirebaseTrackingRepository {
     private val userCollection = firestore.collection("users")
     private fun trackingCollection(userId: String) = userCollection.document(userId).collection("trackings")
 

@@ -2,17 +2,16 @@ package de.ashman.ontrack.features.shelflist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.repository.firestore.TrackingRepository
+import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.newdomains.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ShelfListViewModel(
     private val trackingRepository: TrackingRepository,
@@ -25,10 +24,10 @@ class ShelfListViewModel(
             _uiState.value,
         )
 
-    fun observeUserTrackings(userId: String) {
-        trackingRepository.observeTrackings(userId)
-            .onEach { trackings -> _uiState.update { it.copy(trackings = trackings) } }
-            .launchIn(viewModelScope)
+    fun observeTrackings() = viewModelScope.launch {
+        trackingRepository.getTrackings().collect { trackings ->
+            _uiState.update { it.copy(trackings = trackings) }
+        }
     }
 
     fun updateSelectedStatus(trackStatus: TrackStatus?) {
@@ -51,10 +50,10 @@ class ShelfListViewModel(
 data class ShelfListUiState(
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val selectedStatus: TrackStatus? = null,
-    val trackings: List<Tracking> = emptyList(),
+    val trackings: List<NewTracking> = emptyList(),
 ) {
-    val filteredTrackings: List<Tracking>
+    val filteredTrackings: List<NewTracking>
         get() = trackings.filter {
-            it.mediaType == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
+            it.media.type == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
         }
 }

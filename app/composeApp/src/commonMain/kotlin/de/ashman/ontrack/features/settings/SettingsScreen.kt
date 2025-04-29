@@ -189,6 +189,7 @@ fun SettingsScreen(
                     RemoveSheet(
                         title = Res.string.settings_remove_confirm_title,
                         text = Res.string.settings_remove_confirm_text,
+                        isDeleting = uiState.isLoading,
                         onConfirm = {
                             viewModel.removeUser()
                             clearAndNavigateToStart()

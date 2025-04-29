@@ -3,6 +3,7 @@ package de.ashman.ontrack.tracking.application.controller
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.tracking.domain.model.Media
 import de.ashman.ontrack.tracking.domain.model.Tracking
+import de.ashman.ontrack.tracking.domain.model.toEntity
 import de.ashman.ontrack.tracking.infrastructure.TrackingRepository
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
@@ -23,14 +24,9 @@ class TrackingController(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
         val newTracking = Tracking(
-            identity.id,
-            dto.status,
-            Media(
-                dto.media.id,
-                dto.media.type,
-                dto.media.title,
-                dto.media.coverUrl
-            )
+            userId = identity.id,
+            status = dto.status,
+            media = dto.media.toEntity(),
         )
 
         trackingRepository.save(newTracking)

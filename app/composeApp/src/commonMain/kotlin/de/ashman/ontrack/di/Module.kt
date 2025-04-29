@@ -10,14 +10,17 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.database.TrackingDao
+import de.ashman.ontrack.database.TrackingDatabase
+import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.datastore.createDataStore
 import de.ashman.ontrack.datastore.dataStoreFileName
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
+import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
@@ -40,18 +43,20 @@ import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.AccountServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
+import de.ashman.ontrack.network.services.tracking.TrackingService
+import de.ashman.ontrack.network.services.tracking.TrackingServiceImpl
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
+import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
+import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
 import de.ashman.ontrack.repository.firestore.ShareRepository
 import de.ashman.ontrack.repository.firestore.ShareRepositoryImpl
-import de.ashman.ontrack.repository.firestore.TrackingRepository
-import de.ashman.ontrack.repository.firestore.TrackingRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
 import de.ashman.ontrack.usecase.AcceptRequestUseCase
@@ -94,6 +99,7 @@ val appModule = module {
     // BACKEND
     single<SignInService> { SignInServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
     single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -107,16 +113,20 @@ val appModule = module {
     single { Firebase.functions }
     single<NotificationService> { NotificationServiceImpl(get(), get()) }
 
-    // DATABASE
+    // DATASTORE
     single<DataStore<Preferences>> { createDataStore { dataStoreFileName } }
     single { UserDataStore(get()) }
+
+    // DATABASE
+    single<TrackingDao> { get<TrackingDatabase>().getTrackingDao() }
+    single<TrackingRepository> { TrackingRepository(get()) }
 
     single { Firebase.firestore }
     single { Firebase.storage }
 
     single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<ShareRepository> { ShareRepositoryImpl(get()) }
-    single<TrackingRepository> { TrackingRepositoryImpl(get(), get()) }
+    single<FirebaseTrackingRepository> { FirebaseTrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get()) }
@@ -132,7 +142,7 @@ val appModule = module {
 
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get(), get(), get()) }
+    viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
     viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }
@@ -140,14 +150,14 @@ val appModule = module {
     viewModelDefinition { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { NotificationsViewModel() }
 
-    viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
 
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
 
-    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
@@ -155,6 +165,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
         appDeclaration()
         modules(
             appModule,
-            dataStoreModule,
+            platformModule,
         )
     }

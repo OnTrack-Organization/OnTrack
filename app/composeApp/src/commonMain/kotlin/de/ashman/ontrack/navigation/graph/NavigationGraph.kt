@@ -10,8 +10,8 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
-import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
+import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
@@ -103,7 +103,6 @@ fun NavigationGraph(
                         detailViewModel.clearViewModel()
                         shelfListViewModel.clearViewModel()
                         shelfViewModel.clearViewModel()
-                        searchViewModel.clearViewModel()
                         settingsViewModel.clearViewModel()
                         loginViewModel.clearViewModel()
                     }

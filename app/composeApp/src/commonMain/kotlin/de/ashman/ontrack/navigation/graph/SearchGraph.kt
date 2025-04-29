@@ -12,7 +12,7 @@ import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.navigation.CustomNavType
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.navigation.Route
 import kotlin.reflect.typeOf
 
@@ -32,23 +32,23 @@ fun NavGraphBuilder.searchGraph(
 
     composable<Route.Detail>(
         typeMap = mapOf(
-            typeOf<MediaNavigationItems>() to CustomNavType.MediaNavigationItemsType,
+            typeOf<MediaNavigationParam>() to CustomNavType.MediaNavigationParamType,
         ),
         // TODO make this work
         deepLinks = listOf(
-            navDeepLink { uriPattern = "ontrack://detail/{mediaNavItems}" }
+            navDeepLink { uriPattern = "ontrack://detail/{mediaNav}" }
         )
     ) { backStackEntry ->
         val detail: Route.Detail = backStackEntry.toRoute()
 
         DetailScreen(
-            mediaNavItems = detail.mediaNavItems,
+            mediaNav = detail.mediaNav,
             detailViewModel = detailViewModel,
             recommendationViewModel = recommendationViewModel,
             commonUiManager = commonUiManager,
-            onClickItem = { mediaNavItems ->
+            onClickItem = { mediaNav ->
                 // Remove all the Detail Navigations from graph before navigating
-                navController.navigate(Route.Detail(mediaNavItems)) {
+                navController.navigate(Route.Detail(mediaNav)) {
                     popUpTo<Route.Detail> {
                         inclusive = true
                     }

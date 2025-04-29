@@ -7,10 +7,10 @@ import androidx.navigation.toRoute
 import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.init.intro.IntroScreen
-import de.ashman.ontrack.features.init.login.LoginScreen
-import de.ashman.ontrack.features.init.login.LoginViewModel
 import de.ashman.ontrack.features.init.setup.SetupScreen
 import de.ashman.ontrack.features.init.setup.SetupViewModel
+import de.ashman.ontrack.features.init.signin.LoginScreen
+import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartScreen
 import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.navigation.CustomNavType

@@ -45,7 +45,7 @@ import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.notifications.formatTimeAgoString
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments_count
@@ -59,7 +59,7 @@ fun ShareCard(
     onLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
-    onClickCover: (MediaNavigationItems) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: () -> Unit,
     onClickCard: () -> Unit,
 ) {
@@ -100,7 +100,7 @@ fun ShareCard(
                     coverUrl = tracking.mediaCoverUrl,
                     onClick = {
                         onClickCover(
-                            MediaNavigationItems(
+                            MediaNavigationParam(
                                 id = tracking.mediaId,
                                 mediaType = tracking.mediaType,
                                 title = tracking.mediaTitle,

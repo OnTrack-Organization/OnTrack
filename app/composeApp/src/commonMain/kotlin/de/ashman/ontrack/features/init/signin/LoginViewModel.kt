@@ -1,14 +1,16 @@
-package de.ashman.ontrack.features.init.login
+package de.ashman.ontrack.features.init.signin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
+import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.signin.SignInResult
 import de.ashman.ontrack.network.services.signin.SignInService
+import de.ashman.ontrack.network.services.tracking.TrackingService
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,9 +23,11 @@ import ontrack.composeapp.generated.resources.login_backend_error
 import ontrack.composeapp.generated.resources.login_offline_error
 
 class LoginViewModel(
-    private val signInService: SignInService,
     private val commonUiManager: CommonUiManager,
     private val userDataStore: UserDataStore,
+    private val trackingRepository: TrackingRepository,
+    private val trackingService: TrackingService,
+    private val signInService: SignInService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -50,6 +54,12 @@ class LoginViewModel(
                                     onNavigateToSetup(signInResult.user)
                                 } else {
                                     userDataStore.saveUser(signInResult.user)
+
+                                    // Get trackings from backend and save them locally
+                                    trackingService.getTrackings().onSuccess {
+                                        trackingRepository.addTrackings(it)
+                                    }
+
                                     onNavigateToSearch()
                                 }
                             }

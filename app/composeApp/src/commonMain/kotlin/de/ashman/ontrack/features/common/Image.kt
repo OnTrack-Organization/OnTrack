@@ -59,7 +59,7 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.Season
 import de.ashman.ontrack.features.detail.components.MediaTitle
 import de.ashman.ontrack.features.settings.ImageUploadState
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
@@ -203,7 +203,7 @@ fun TrackOverlay(
 fun MediaPosterRow(
     title: String,
     items: List<Any>,
-    onClickItem: (MediaNavigationItems) -> Unit = { },
+    onClickItem: (MediaNavigationParam) -> Unit = { },
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -228,7 +228,7 @@ fun MediaPosterRow(
                             textStyle = MaterialTheme.typography.titleSmall,
                             onClick = {
                                 onClickItem(
-                                    MediaNavigationItems(
+                                    MediaNavigationParam(
                                         id = item.id,
                                         title = item.title,
                                         coverUrl = item.coverUrl,

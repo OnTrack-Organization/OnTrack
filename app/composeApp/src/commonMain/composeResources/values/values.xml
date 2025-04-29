@@ -372,6 +372,9 @@
     <string name="login_offline_error">Couldn't log in, are you offline?</string>
     <string name="logout_offline_error">Couldn't log out, are you offline?</string>
     <string name="login_backend_error">Failed to log in :(</string>
+    <string name="tracking_create_error">Failed to create tracking</string>
+    <string name="tracking_update_error">Failed to update tracking</string>
+    <string name="tracking_delete_error">Failed to delete tracking</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>

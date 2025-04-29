@@ -44,7 +44,7 @@ import de.ashman.ontrack.features.share.friend.FriendsSheet
 import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
-import de.ashman.ontrack.navigation.MediaNavigationItems
+import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_empty
 import ontrack.composeapp.generated.resources.share_nav_title
@@ -57,7 +57,7 @@ fun ShareScreen(
     friendsViewModel: FriendsViewModel,
     commonUiManager: CommonUiManager,
     onClickShareCard: (String) -> Unit,
-    onClickCover: (MediaNavigationItems) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onClickNotifications: () -> Unit,
 ) {
