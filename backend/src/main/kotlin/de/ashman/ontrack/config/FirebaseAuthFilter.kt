@@ -4,7 +4,9 @@ import de.ashman.ontrack.security.service.FirebaseAuthService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -29,15 +31,19 @@ class FirebaseAuthFilter(
 
         try {
             val firebaseToken = firebaseAuthService.verifyIdToken(token)
+
             val identity = Identity(
                 id = firebaseToken.uid,
                 email = firebaseToken.email,
                 name = firebaseToken.name,
                 picture = firebaseToken.picture
             )
-            val authentication = UsernamePasswordAuthenticationToken(identity, null, null)
+
+            val authentication = UsernamePasswordAuthenticationToken(identity, null, listOf(SimpleGrantedAuthority("ROLE_USER")))
             SecurityContextHolder.getContext().authentication = authentication
+
         } catch (_: Exception) {
+
         }
 
         filterChain.doFilter(request, response)

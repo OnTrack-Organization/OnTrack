@@ -25,6 +25,9 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
@@ -154,15 +157,26 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
         contentType(ContentType.Application.Json)
     }
 
+    install(Logging) {
+        logger = object : Logger {
+            override fun log(message: String) {
+                co.touchlab.kermit.Logger.d(message)
+            }
+        }
+        level = LogLevel.ALL
+    }
+
     install(Auth) {
         bearer {
-            loadTokens {
-                val token = auth.currentUser?.getIdToken(true) ?: return@loadTokens null
-                BearerTokens(accessToken = token, refreshToken = null)
-            }
             // Backend needs to send 401 and WWW-Authenticate header to trigger refresh
             refreshTokens {
                 val token = auth.currentUser?.getIdToken(true) ?: return@refreshTokens null
+                BearerTokens(accessToken = token, refreshToken = null)
+            }
+
+            // Only called on first request, afterwards its cached in ktor until backend returns 401
+            loadTokens {
+                val token = auth.currentUser?.getIdToken(true) ?: return@loadTokens null
                 BearerTokens(accessToken = token, refreshToken = null)
             }
         }
