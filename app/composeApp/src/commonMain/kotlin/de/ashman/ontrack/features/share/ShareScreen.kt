@@ -39,9 +39,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.OnTrackTopBar
+import de.ashman.ontrack.features.friend.FriendsSheet
+import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.share.comment.CommentsSheet
-import de.ashman.ontrack.features.share.friend.FriendsSheet
-import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationParam
@@ -200,15 +200,13 @@ fun ShareScreen(
                         CurrentSheet.FRIENDS -> {
                             FriendsSheet(
                                 uiState = friendsUiState,
-                                isRequestSent = friendsViewModel::isRequestSent,
-                                onRemoveFriend = friendsViewModel::removeFriend,
+                                onSendRequest = friendsViewModel::sendRequest,
+                                onCancelRequest = friendsViewModel::cancelRequest,
                                 onAcceptRequest = friendsViewModel::acceptRequest,
                                 onDeclineRequest = friendsViewModel::declineRequest,
-                                onCancelRequest = friendsViewModel::cancelRequest,
-                                onSendRequest = friendsViewModel::sendRequest,
+                                onRemoveFriend = friendsViewModel::removeFriend,
                                 onClickUser = { onClickUser(it) },
                                 onQueryChanged = friendsViewModel::onQueryChanged,
-                                onSelectFriend = friendsViewModel::selectFriend,
                             )
                         }
 

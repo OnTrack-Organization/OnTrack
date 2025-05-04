@@ -60,7 +60,7 @@ fun NavGraphBuilder.shelfGraph(
             viewModel = shelfViewModel,
             commonUiManager = commonUiManager,
             userId = otherShelf.userId,
-            onClickMore = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
+            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onBack = { navController.popBackStack() },
         )

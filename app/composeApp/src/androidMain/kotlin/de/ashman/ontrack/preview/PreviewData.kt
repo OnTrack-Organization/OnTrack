@@ -2,23 +2,22 @@ package de.ashman.ontrack.preview
 
 import androidx.compose.ui.tooling.preview.Preview
 import de.ashman.ontrack.domain.media.Show
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.user.User
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 annotation class OnTrackPreview
 
 val previewStatus = TrackStatus.CONSUMED
 
-val previewUser = User(
+val previewUser = NewUser(
     id = "1",
     username = "za_warudo_brando",
-    fcmToken = "test_token",
     name = "Dio Brando",
-    imageUrl = "",
+    profilePictureUrl = "",
     email = "dio.brando@theworld.com"
 )
 
@@ -37,13 +36,13 @@ val previewTimestampWeekAgo = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 10
 val previewLike = Like(
     userId = previewUser.id,
     username = previewUser.username,
-    userImageUrl = previewUser.imageUrl,
+    userImageUrl = previewUser.profilePictureUrl,
     name = previewUser.name
 )
 
 val previewComment = Comment(
     userId = previewUser.id,
-    userImageUrl = previewUser.imageUrl,
+    userImageUrl = previewUser.profilePictureUrl,
     username = previewUser.username,
     name = previewUser.name,
     comment = "This is a comment",
@@ -58,7 +57,7 @@ val previewTracking = Tracking(
     status = previewStatus,
     username = previewUser.name,
     userId = previewUser.id,
-    userImageUrl = previewUser.imageUrl,
+    userImageUrl = previewUser.profilePictureUrl,
     rating = 5.0,
     reviewTitle = "Review title",
     reviewDescription = "A short review description",

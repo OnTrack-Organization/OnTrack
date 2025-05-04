@@ -147,7 +147,7 @@ fun RecommendationCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             PersonImage(
-                userImageUrl = userImageUrl,
+                profilePictureUrl = userImageUrl,
                 onClick = onClickUser
             )
 

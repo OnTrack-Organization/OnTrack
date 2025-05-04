@@ -66,8 +66,7 @@
     <string name="feed_friends">Friends</string>
     <string name="feed_received_requests">Received Friend Requests</string>
     <string name="feed_sent_requests">Sent Friend Requests</string>
-    <string name="feed_potential_friends">Potential Friends</string>
-    <string name="feed_no_friends_and_potential">No friends yet, why not search for some?</string>
+    <string name="feed_no_friends_and_requests">No friends yet, why not search for some?</string>
     <string name="feed_no_potential_friends">No potential friends found, sad</string>
     <string name="feed_request_sent">Friend request sent</string>
     <string name="feed_request_accepted">Friend request accepted</string>
@@ -375,6 +374,14 @@
     <string name="tracking_create_error">Failed to create tracking</string>
     <string name="tracking_update_error">Failed to update tracking</string>
     <string name="tracking_delete_error">Failed to delete tracking</string>
+
+    <string name="friend_send_request_error">Failed to send friend request</string>
+    <string name="friend_accept_request_error">Failed to accept friend request</string>
+    <string name="friend_decline_request_error">Failed to decline friend request</string>
+    <string name="friend_cancel_request_error">Failed to cancel friend request</string>
+    <string name="friend_delete_error">Failed to delete friend</string>
+    <string name="shelf_get_profile_error">Failed to fetch user profile</string>
+    <string name="friends_get_error">Couldn't fetch friends and requests</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>

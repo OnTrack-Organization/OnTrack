@@ -293,7 +293,7 @@ fun UserLikeComponent(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         PersonImage(
-            userImageUrl = imageUrl,
+            profilePictureUrl = imageUrl,
             onClick = onClickUser,
         )
 

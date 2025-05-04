@@ -266,13 +266,13 @@ fun MediaPosterRow(
 
 @Composable
 fun PersonImage(
-    userImageUrl: String?,
+    profilePictureUrl: String?,
     onClick: (() -> Unit)? = null,
     isUploading: Boolean = false,
     size: Dp = 48.dp,
     modifier: Modifier = Modifier,
 ) {
-    val painter = rememberAsyncImagePainter(userImageUrl)
+    val painter = rememberAsyncImagePainter(profilePictureUrl)
     val interactionSource = remember { MutableInteractionSource() }
 
     val paddingFraction = 0.2f
@@ -352,7 +352,7 @@ fun ImagePicker(
     ) {
         PersonImage(
             modifier = Modifier.size(100.dp).align(Alignment.Center),
-            userImageUrl = imageUrl,
+            profilePictureUrl = imageUrl,
             isUploading = imageUploadState == ImageUploadState.Uploading,
             onClick = { launcher.launch() },
         )
