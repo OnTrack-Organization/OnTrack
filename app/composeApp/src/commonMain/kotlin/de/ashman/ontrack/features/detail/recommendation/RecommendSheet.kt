@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.domain.newdomains.OtherUser
 import de.ashman.ontrack.domain.recommendation.Recommendation
-import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.OnTrackTextField
 import de.ashman.ontrack.features.common.PersonImage
@@ -49,12 +50,17 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RecommendSheet(
-    selectableFriends: List<Friend>,
+    selectableFriends: List<OtherUser>,
     previousSentRecommendations: List<Recommendation>,
+    fetchFriends: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
     selectUser: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        fetchFriends()
+    }
+
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     val isAnyUserSelected = selectedUserId != null
 
@@ -87,10 +93,10 @@ fun RecommendSheet(
         ) {
             items(selectableFriends) { friend ->
                 FriendRecommendSelectorIcon(
-                    userId = friend.id,
-                    imageUrl = friend.imageUrl,
-                    name = friend.name,
-                    isSelected = selectedUserId == friend.id,
+                    userId = friend.user.id,
+                    profilePictureUrl = friend.user.profilePictureUrl,
+                    name = friend.user.name,
+                    isSelected = selectedUserId == friend.user.id,
                     isAnyUserSelected = isAnyUserSelected,
                     onSelectUser = { id ->
                         selectedUserId = id
@@ -124,7 +130,7 @@ fun RecommendSheet(
                 ) {
                     items(previousSentRecommendations) { recommendation ->
                         RecommendationCard(
-                            userImageUrl = recommendation.userImageUrl,
+                            profilePictureUrl = recommendation.userImageUrl,
                             username = recommendation.username,
                             timestamp = recommendation.timestamp.formatDateTime(),
                             message = recommendation.message,
@@ -162,11 +168,11 @@ fun RecommendSheet(
 @Composable
 fun FriendRecommendSelectorIcon(
     userId: String,
-    imageUrl: String?,
+    profilePictureUrl: String?,
     name: String,
     isSelected: Boolean,
     isAnyUserSelected: Boolean,
-    onSelectUser: (String?) -> Unit, // Accepts null to deselect
+    onSelectUser: (String?) -> Unit,
 ) {
     val shouldDim = isAnyUserSelected && !isSelected
 
@@ -180,12 +186,12 @@ fun FriendRecommendSelectorIcon(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .graphicsLayer { alpha = if (shouldDim) 0.5f else 1f },
-                userImageUrl = imageUrl,
+                profilePictureUrl = profilePictureUrl,
                 onClick = {
                     if (isSelected) {
-                        onSelectUser(null) // Deselect if currently selected
+                        onSelectUser(null)
                     } else {
-                        onSelectUser(userId) // Select if not selected
+                        onSelectUser(userId)
                     }
                 }
             )

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.share.friend
+package de.ashman.ontrack.features.friend
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

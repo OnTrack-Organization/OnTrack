@@ -12,13 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Reply
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.CommentTextField
-import de.ashman.ontrack.features.common.OnTrackIconButton
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
 import dev.gitlive.firebase.Firebase
@@ -162,15 +159,10 @@ fun CommentsSheet(
                     .weight(1f),
                 placeholder = stringResource(Res.string.share_comments_placeholder),
                 value = commentText,
-                onValueChange = { commentText = it },
-                onPostComment = {},
-            )
-
-            OnTrackIconButton(
-                modifier = Modifier.size(56.dp),
-                icon = Icons.AutoMirrored.Default.Send,
-                enabled = commentText.text.isNotBlank(),
-                onClick = {
+                onValueChange = {
+                    commentText = it
+                },
+                onPostComment = {
                     onAddComment(commentText.text)
                     replyingTo = null
                     commentText = TextFieldValue("")
@@ -232,7 +224,7 @@ fun CommentCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 PersonImage(
-                    userImageUrl = userImageUrl,
+                    profilePictureUrl = userImageUrl,
                     onClick = onClickUser
                 )
 

@@ -15,11 +15,14 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.newdomains.OtherUser
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationParam
+import de.ashman.ontrack.network.services.friend.FriendService
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
@@ -56,6 +59,7 @@ class DetailViewModel(
     private val commonUiManager: CommonUiManager,
     private val trackingService: TrackingService,
     private val trackingRepository: TrackingRepository,
+    private val friendService: FriendService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -251,6 +255,88 @@ class DetailViewModel(
         commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))*/
     }
 
+    fun fetchFriends() = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+
+        friendService.getFriends().fold(
+            onSuccess = { users ->
+                _uiState.update {
+                    it.copy(
+                        resultState = DetailResultState.Success,
+                        friends = users,
+                    )
+                }
+            },
+            onFailure = { exception ->
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
+            }
+        )
+    }
+
+    // TODO update later
+    /*fun observeFriendRecommendations(mediaId: String) = viewModelScope.launch {
+        recommendationRepository.fetchRecommendations(mediaId)
+            .collect { recommendations ->
+                _uiState.update { it.copy(receivedRecommendations = recommendations) }
+            }
+    }
+
+    fun sendRecommendation(friendId: String, message: String?, media: Media) = viewModelScope.launch {
+        val user = userDataStore.getCurrentUser()
+
+        val recommendation = Recommendation(
+            userId = user.id,
+            userImageUrl = user.profilePictureUrl,
+            username = user.name,
+            mediaId = media.id,
+            mediaType = media.mediaType,
+            mediaTitle = media.title,
+            mediaCoverUrl = media.coverUrl,
+            message = message,
+            status = RecommendationStatus.PENDING
+        )
+
+        recommendationRepository.sendRecommendation(friendId, recommendation)
+
+        val updatedRecs = listOf(recommendation) + (previousRecommendationsCache[friendId] ?: emptyList()).take(4)
+        previousRecommendationsCache[friendId] = updatedRecs
+        _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
+
+        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_sent))
+
+        notificationService.sendPushNotification(
+            userId = friendId,
+            title = getString(Res.string.notifications_new_recommendation_title),
+            body = getString(Res.string.notifications_new_recommendation_body, user.name, media.title),
+            mediaId = media.id,
+            imageUrl = media.coverUrl,
+        )
+    }
+
+    fun selectFriend(friendId: String, mediaId: String) {
+        // Clear the previous recommendations for the current mediaId to avoid showing old data
+        _uiState.update { it.copy(previousSentRecommendations = emptyList()) }
+
+        // Check if the cache contains recommendations for the given friendId and mediaId
+        val cachedRecs = previousRecommendationsCache[friendId]
+
+        // If the cache doesn't have recommendations for this friendId, fetch the previous recommendations
+        if (cachedRecs == null || cachedRecs.none { it.mediaId == mediaId }) {
+            // Cache is empty or doesn't contain recommendations for the given mediaId, so fetch them
+            getPreviousSentRecommendations(friendId, mediaId)
+        } else {
+            // Use the cached recommendations
+            _uiState.update { it.copy(previousSentRecommendations = cachedRecs) }
+        }
+    }
+
+    fun getPreviousSentRecommendations(friendId: String, mediaId: String) = viewModelScope.launch {
+        val recs = recommendationRepository.getPreviousSentRecommendations(friendId, mediaId)
+        previousRecommendationsCache[friendId] = recs
+
+        _uiState.update { it.copy(previousSentRecommendations = recs) }
+    }*/
+
     fun clearViewModel() {
         _uiState.update { DetailUiState() }
     }
@@ -272,6 +358,12 @@ data class DetailUiState(
 
     val ratingStats: RatingStats = RatingStats(),
     val friendTrackings: List<Tracking> = emptyList(),
+
+    val friends: List<OtherUser> = emptyList(),
+
+    // TODO move received and sent recommendations here from other vm and implement that
+    val receivedRecommendations: List<Recommendation> = emptyList(),
+    val previousSentRecommendations: List<Recommendation> = emptyList(),
 
     val resultState: DetailResultState = DetailResultState.Loading,
     val isLoading: Boolean = false,

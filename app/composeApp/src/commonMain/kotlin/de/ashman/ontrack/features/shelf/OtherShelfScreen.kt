@@ -13,19 +13,19 @@ fun OtherShelfScreen(
     viewModel: ShelfViewModel,
     commonUiManager: CommonUiManager,
     userId: String,
-    onClickMore: (MediaType) -> Unit,
+    onClickMoreMedia: (MediaType) -> Unit,
     onClickItem: (MediaNavigationParam) -> Unit,
     onBack: (() -> Unit)? = null,
 ) {
     LaunchedEffect(userId) {
-        viewModel.setFriendRequestStatus(userId)
+        viewModel.loadUserProfile(userId)
     }
 
     ShelfScreen(
         viewModel = viewModel,
         commonUiManager = commonUiManager,
         userId = userId,
-        onClickMoreMedia = onClickMore,
+        onClickMoreMedia = onClickMoreMedia,
         onClickItem = onClickItem,
         onBack = onBack,
         emptyText = Res.string.shelf_other_empty,

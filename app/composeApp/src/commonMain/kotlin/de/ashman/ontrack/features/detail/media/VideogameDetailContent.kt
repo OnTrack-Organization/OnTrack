@@ -69,7 +69,7 @@ fun LazyListScope.VideogameDetailContent(
     videogame.screenshots?.let {
         item {
             MediaImageRow(
-                images = it,
+                imageUrls = it,
                 onClickImage = onClickImage,
             )
         }

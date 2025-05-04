@@ -42,10 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.newdomains.FriendStatus
 import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.newdomains.NewUser
-import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.domain.user.FriendRequest
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
@@ -82,7 +80,7 @@ fun ShelfScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(userId) {
-        viewModel.loadUser(userId)
+        viewModel.loadUserProfile(userId)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -110,40 +108,18 @@ fun ShelfScreen(
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
-            uiState.user?.let { user ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        UserHeader(
-                            modifier = Modifier.weight(1f),
-                            name = user.name,
-                            username = user.username,
-                            imageUrl = user.profilePictureUrl,
-                            showLargeImage = { showImageDialog = true },
-                        )
-
-                        if (viewModel.isOtherUser()) {
-                            FriendRequestButton(
-                                friendRequestStatus = uiState.friendRequestStatus,
-                                onSendRequest = viewModel::sendRequest,
-                                onCancelRequest = viewModel::cancelRequest,
-                                onRemoveFriend = viewModel::removeFriend,
-                                onAcceptRequest = viewModel::acceptRequest,
-                                onDeclineRequest = viewModel::declineRequest,
-                            )
-                        }
-                    }
-
-                    HorizontalDivider()
-                }
-            }
+            ShelfHeader(
+                name = uiState.user?.name.orEmpty(),
+                username = uiState.user?.username.orEmpty(),
+                profilePictureUrl = uiState.user?.profilePictureUrl,
+                friendStatus = uiState.friendStatus,
+                sendRequest = viewModel::sendRequest,
+                cancelRequest = viewModel::cancelRequest,
+                acceptRequest = viewModel::acceptRequest,
+                declineRequest = viewModel::declineRequest,
+                removeFriend = viewModel::removeFriend,
+                showLargeImage = { showImageDialog = true },
+            )
 
             if (uiState.trackings.isEmpty()) {
                 EmptyShelf(text = emptyText)
@@ -187,6 +163,53 @@ fun ShelfScreen(
 }
 
 @Composable
+fun ShelfHeader(
+    name: String,
+    username: String,
+    profilePictureUrl: String?,
+    friendStatus: FriendStatus?,
+    sendRequest: () -> Unit = {},
+    cancelRequest: () -> Unit = {},
+    acceptRequest: () -> Unit = {},
+    declineRequest: () -> Unit = {},
+    removeFriend: () -> Unit = {},
+    showLargeImage: () -> Unit = {},
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            UserHeader(
+                modifier = Modifier.weight(1f),
+                name = name,
+                username = username,
+                imageUrl = profilePictureUrl,
+                showLargeImage = showLargeImage,
+            )
+
+            friendStatus?.let {
+                FriendRequestButton(
+                    friendStatus = friendStatus,
+                    onSendRequest = sendRequest,
+                    onCancelRequest = cancelRequest,
+                    onAcceptRequest = acceptRequest,
+                    onDeclineRequest = declineRequest,
+                    onRemoveFriend = removeFriend,
+                )
+            }
+        }
+
+        HorizontalDivider()
+    }
+}
+
+@Composable
 fun UserHeader(
     modifier: Modifier = Modifier,
     name: String,
@@ -200,7 +223,7 @@ fun UserHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PersonImage(
-            userImageUrl = imageUrl,
+            profilePictureUrl = imageUrl,
             size = 56.dp,
             onClick = showLargeImage,
         )
@@ -377,17 +400,3 @@ fun EmptyShelf(
         )
     }
 }
-
-fun NewUser.toFriendRequest() = FriendRequest(
-    userId = id,
-    username = username,
-    name = name,
-    imageUrl = profilePictureUrl,
-)
-
-fun NewUser.toFriend() = Friend(
-    id = id,
-    username = username,
-    imageUrl = profilePictureUrl,
-    name = name,
-)

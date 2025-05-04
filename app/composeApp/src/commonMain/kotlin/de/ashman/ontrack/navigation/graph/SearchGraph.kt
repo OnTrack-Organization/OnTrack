@@ -8,7 +8,6 @@ import androidx.navigation.toRoute
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailScreen
 import de.ashman.ontrack.features.detail.DetailViewModel
-import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.search.SearchScreen
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.navigation.CustomNavType
@@ -20,7 +19,6 @@ fun NavGraphBuilder.searchGraph(
     navController: NavController,
     searchViewModel: SearchViewModel,
     detailViewModel: DetailViewModel,
-    recommendationViewModel: RecommendationViewModel,
     commonUiManager: CommonUiManager,
 ) {
     composable<Route.Search> {
@@ -44,7 +42,6 @@ fun NavGraphBuilder.searchGraph(
         DetailScreen(
             mediaNav = detail.mediaNav,
             detailViewModel = detailViewModel,
-            recommendationViewModel = recommendationViewModel,
             commonUiManager = commonUiManager,
             onClickItem = { mediaNav ->
                 // Remove all the Detail Navigations from graph before navigating

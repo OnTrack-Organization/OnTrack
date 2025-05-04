@@ -164,8 +164,24 @@ fun ShareDetailContent(
             }
         }
 
+        // TODO move into vm
+        var commentText by remember { mutableStateOf(TextFieldValue("test")) }
+        var replyingTo by remember { mutableStateOf<String?>(null) }
+        val focusRequester = remember { FocusRequester() }
+
         CommentTextField(
-            onPostComment = onPostComment,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .focusRequester(focusRequester),
+            placeholder = stringResource(Res.string.share_comments_placeholder),
+            value = commentText,
+            onValueChange = { commentText = it },
+            isSendVisible = commentText.text.isNotBlank(),
+            onPostComment = {
+                onPostComment(commentText.text)
+                replyingTo = null
+                commentText = TextFieldValue("")
+            },
         )
     }
 }
@@ -187,7 +203,7 @@ fun ShareDetailMainContent(
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
                 ShareCardHeader(
-                    userImageUrl = tracking.userImageUrl,
+                    profilePictureUrl = tracking.userImageUrl,
                     username = tracking.username,
                     timestamp = tracking.timestamp,
                     mediaType = tracking.mediaType,
@@ -293,7 +309,7 @@ fun UserLikeComponent(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         PersonImage(
-            userImageUrl = imageUrl,
+            profilePictureUrl = imageUrl,
             onClick = onClickUser,
         )
 
@@ -359,29 +375,4 @@ fun ShareDetailCommentContent(
             }
         }
     }
-}
-
-@Composable
-fun CommentTextField(
-    onPostComment: (String) -> Unit,
-) {
-    // TODO move into vm
-    var commentText by remember { mutableStateOf(TextFieldValue("test")) }
-    var replyingTo by remember { mutableStateOf<String?>(null) }
-    val focusRequester = remember { FocusRequester() }
-
-    CommentTextField(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .focusRequester(focusRequester),
-        placeholder = stringResource(Res.string.share_comments_placeholder),
-        value = commentText,
-        onValueChange = { commentText = it },
-        isSendVisible = commentText.text.isNotBlank(),
-        onPostComment = {
-            onPostComment(commentText.text)
-            replyingTo = null
-            commentText = TextFieldValue("")
-        },
-    )
 }

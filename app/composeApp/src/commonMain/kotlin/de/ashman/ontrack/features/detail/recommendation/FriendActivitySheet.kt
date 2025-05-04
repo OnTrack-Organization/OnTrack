@@ -80,7 +80,7 @@ fun FriendsActivitySheet(
             ) {
                 items(recommendations) {
                     RecommendationCard(
-                        userImageUrl = it.userImageUrl,
+                        profilePictureUrl = it.userImageUrl,
                         username = it.username,
                         timestamp = it.timestamp.formatDateTime(),
                         message = it.message,
@@ -101,7 +101,7 @@ fun FriendsActivitySheet(
             ) {
                 items(friendTrackings) {
                     SimpleFriendTrackingCard(
-                        userImageUrl = it.userImageUrl,
+                        profilePictureUrl = it.userImageUrl,
                         username = it.username,
                         timestamp = it.timestamp,
                         mediaType = it.mediaType,
@@ -133,7 +133,7 @@ fun FriendsActivitySheet(
 
 @Composable
 fun RecommendationCard(
-    userImageUrl: String?,
+    profilePictureUrl: String?,
     username: String?,
     timestamp: String,
     message: String?,
@@ -147,7 +147,7 @@ fun RecommendationCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             PersonImage(
-                userImageUrl = userImageUrl,
+                profilePictureUrl = profilePictureUrl,
                 onClick = onClickUser
             )
 
@@ -179,7 +179,7 @@ fun RecommendationCard(
 
 @Composable
 fun SimpleFriendTrackingCard(
-    userImageUrl: String?,
+    profilePictureUrl: String?,
     username: String,
     timestamp: Long,
     mediaType: MediaType,
@@ -193,7 +193,7 @@ fun SimpleFriendTrackingCard(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ShareCardHeader(
-            userImageUrl = userImageUrl,
+            profilePictureUrl = profilePictureUrl,
             username = username,
             timestamp = timestamp,
             mediaType = mediaType,

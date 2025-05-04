@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.share.friend
+package de.ashman.ontrack.features.friend
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,40 +16,44 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.toRequest
-import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.domain.user.FriendRequest
+import de.ashman.ontrack.domain.newdomains.FriendStatus
+import de.ashman.ontrack.domain.newdomains.OtherUser
 import de.ashman.ontrack.features.common.SearchBar
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_friends
-import ontrack.composeapp.generated.resources.feed_no_friends_and_potential
+import ontrack.composeapp.generated.resources.feed_no_friends_and_requests
 import ontrack.composeapp.generated.resources.feed_no_potential_friends
-import ontrack.composeapp.generated.resources.feed_potential_friends
 import ontrack.composeapp.generated.resources.feed_received_requests
 import ontrack.composeapp.generated.resources.feed_sent_requests
+import ontrack.composeapp.generated.resources.friends_get_error
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FriendsSheet(
     uiState: FriendsUiState,
-    isRequestSent: (String) -> Boolean,
-    onRemoveFriend: () -> Unit,
-    onSelectFriend: (Friend) -> Unit,
-    onAcceptRequest: (FriendRequest) -> Unit,
-    onDeclineRequest: (FriendRequest) -> Unit,
-    onCancelRequest: (FriendRequest) -> Unit,
-    onSendRequest: (FriendRequest) -> Unit,
+    onSendRequest: (String) -> Unit,
+    onDeclineRequest: (String) -> Unit,
+    onAcceptRequest: (String) -> Unit,
+    onCancelRequest: (String) -> Unit,
+    onRemoveFriend: (String) -> Unit,
     onClickUser: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
 ) {
     var showFriendRemoveConfirmDialog by remember { mutableStateOf(false) }
+    var selectedFriend by remember { mutableStateOf<OtherUser?>(null) }
 
     val localFocusManager = LocalFocusManager.current
+
+    val friends = uiState.users.filter { it.friendStatus == FriendStatus.FRIEND }
+    val receivedRequests = uiState.users.filter { it.friendStatus == FriendStatus.REQUEST_RECEIVED }
+    val sentRequests = uiState.users.filter { it.friendStatus == FriendStatus.REQUEST_SENT }
+    val queriedUsers = uiState.users.filter { it.friendStatus == FriendStatus.STRANGER }
 
     Column(
         modifier = Modifier
@@ -68,50 +74,71 @@ fun FriendsSheet(
 
         AnimatedContent(uiState.resultState) { state ->
             when (state) {
-                FriendsResultState.Friends -> {
+                FriendsResultState.Success -> {
                     FriendsAndRequests(
-                        receivedRequests = uiState.receivedRequests,
-                        sentRequests = uiState.sentRequests,
-                        friends = uiState.friends,
-                        onAcceptRequest = onAcceptRequest,
-                        onDenyRequest = onDeclineRequest,
-                        onCancelRequest = onCancelRequest,
-                        onRemoveFriend = {
-                            onSelectFriend(it)
+                        receivedRequests = receivedRequests,
+                        sentRequests = sentRequests,
+                        friends = friends,
+                        onAccept = onAcceptRequest,
+                        onDecline = onDeclineRequest,
+                        onCancel = onCancelRequest,
+                        onRemove = {
+                            selectedFriend = it
                             showFriendRemoveConfirmDialog = true
                         },
                         onClickUser = onClickUser,
                     )
                 }
 
-                FriendsResultState.FriendsEmpty -> {
+                FriendsResultState.Empty -> {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        text = stringResource(Res.string.feed_no_friends_and_potential),
+                        text = stringResource(Res.string.feed_no_friends_and_requests),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                FriendsResultState.Potential -> {
-                    PotentialFriends(
-                        potentialFriends = uiState.potentialFriends,
-                        isRequestSent = isRequestSent,
-                        onCancelRequest = onCancelRequest,
-                        onSendRequest = onSendRequest,
+                FriendsResultState.QuerySuccess -> {
+                    QueriedUsers(
+                        users = queriedUsers,
+                        onCancel = onCancelRequest,
+                        onSend = onSendRequest,
                         onClickUser = onClickUser,
                     )
                 }
 
-                FriendsResultState.PotentialEmpty -> {
+                FriendsResultState.QueryEmpty -> {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         text = stringResource(Res.string.feed_no_potential_friends),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                FriendsResultState.Loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                FriendsResultState.Error -> {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = stringResource(Res.string.friends_get_error),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -123,8 +150,10 @@ fun FriendsSheet(
         if (showFriendRemoveConfirmDialog) {
             RemoveFriendConfirmDialog(
                 onConfirm = {
-                    onRemoveFriend()
-                    showFriendRemoveConfirmDialog = false
+                    selectedFriend?.let {
+                        onRemoveFriend(it.user.id)
+                        showFriendRemoveConfirmDialog = false
+                    }
                 },
                 onDismiss = { showFriendRemoveConfirmDialog = false },
             )
@@ -133,35 +162,24 @@ fun FriendsSheet(
 }
 
 @Composable
-fun PotentialFriends(
-    potentialFriends: List<Friend>,
-    isRequestSent: (String) -> Boolean,
-    onSendRequest: (FriendRequest) -> Unit,
-    onCancelRequest: (FriendRequest) -> Unit,
+fun QueriedUsers(
+    users: List<OtherUser>,
+    onSend: (String) -> Unit,
+    onCancel: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = stringResource(Res.string.feed_potential_friends),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
-
-        items(potentialFriends.size) { index ->
-            val friend = potentialFriends[index]
-
-            PotentialFriendCard(
-                imageUrl = friend.imageUrl,
-                username = friend.username,
-                name = friend.name,
-                onClickUser = { onClickUser(friend.id) },
-                onSendRequest = { onSendRequest(friend.toRequest()) },
-                onCancelRequest = { onCancelRequest(friend.toRequest()) },
-                isRequestSent = isRequestSent(friend.id),
+        items(users) { user ->
+            FriendCard(
+                profilePictureUrl = user.user.profilePictureUrl,
+                username = user.user.username,
+                name = user.user.name,
+                friendStatus = user.friendStatus,
+                onClickUser = { onClickUser(user.user.id) },
+                onSendRequest = { onSend(user.user.id) },
+                onCancelRequest = { onCancel(user.user.id) },
             )
         }
     }
@@ -169,13 +187,13 @@ fun PotentialFriends(
 
 @Composable
 fun FriendsAndRequests(
-    receivedRequests: List<FriendRequest>,
-    sentRequests: List<FriendRequest>,
-    friends: List<Friend>,
-    onAcceptRequest: (FriendRequest) -> Unit,
-    onDenyRequest: (FriendRequest) -> Unit,
-    onCancelRequest: (FriendRequest) -> Unit,
-    onRemoveFriend: (Friend) -> Unit,
+    receivedRequests: List<OtherUser>,
+    sentRequests: List<OtherUser>,
+    friends: List<OtherUser>,
+    onAccept: (String) -> Unit,
+    onDecline: (String) -> Unit,
+    onCancel: (String) -> Unit,
+    onRemove: (OtherUser) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     LazyColumn {
@@ -188,15 +206,15 @@ fun FriendsAndRequests(
                 )
             }
 
-            items(receivedRequests.size) { index ->
-                val request = receivedRequests[index]
-                ReceivedFriendRequestCard(
-                    imageUrl = request.imageUrl,
-                    username = request.username,
-                    name = request.name,
-                    onClickUser = { onClickUser(request.userId) },
-                    onAcceptRequest = { onAcceptRequest(request) },
-                    onDenyRequest = { onDenyRequest(request) },
+            items(receivedRequests) { request ->
+                FriendCard(
+                    profilePictureUrl = request.user.profilePictureUrl,
+                    username = request.user.username,
+                    name = request.user.name,
+                    friendStatus = request.friendStatus,
+                    onClickUser = { onClickUser(request.user.id) },
+                    onAcceptRequest = { onAccept(request.user.id) },
+                    onDenyRequest = { onDecline(request.user.id) },
                 )
             }
         }
@@ -210,14 +228,14 @@ fun FriendsAndRequests(
                 )
             }
 
-            items(friends.size) { index ->
-                val friend = friends[index]
-                CurrentFriendCard(
-                    imageUrl = friend.imageUrl,
-                    username = friend.username,
-                    name = friend.name,
-                    onClickUser = { onClickUser(friend.id) },
-                    onRemoveFriend = { onRemoveFriend(friend) },
+            items(friends) { friend ->
+                FriendCard(
+                    profilePictureUrl = friend.user.profilePictureUrl,
+                    username = friend.user.username,
+                    name = friend.user.name,
+                    friendStatus = friend.friendStatus,
+                    onClickUser = { onClickUser(friend.user.id) },
+                    onRemoveFriend = { onRemove(friend) },
                 )
             }
         }
@@ -231,14 +249,14 @@ fun FriendsAndRequests(
                 )
             }
 
-            items(sentRequests.size) { index ->
-                val request = sentRequests[index]
-                SentFriendRequestCard(
-                    imageUrl = request.imageUrl,
-                    username = request.username,
-                    name = request.name,
-                    onClickUser = { onClickUser(request.userId) },
-                    onCancelRequest = { onCancelRequest(request) },
+            items(sentRequests) { request ->
+                FriendCard(
+                    profilePictureUrl = request.user.profilePictureUrl,
+                    username = request.user.username,
+                    name = request.user.name,
+                    friendStatus = request.friendStatus,
+                    onClickUser = { onClickUser(request.user.id) },
+                    onCancelRequest = { onCancel(request.user.id) },
                 )
             }
         }
@@ -249,7 +267,7 @@ fun FriendsAndRequests(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    text = stringResource(Res.string.feed_no_friends_and_potential),
+                    text = stringResource(Res.string.feed_no_friends_and_requests),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

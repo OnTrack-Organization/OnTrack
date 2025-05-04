@@ -18,7 +18,7 @@ import de.ashman.ontrack.datastore.createDataStore
 import de.ashman.ontrack.datastore.dataStoreFileName
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
-import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
+import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
@@ -26,7 +26,6 @@ import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
@@ -41,6 +40,8 @@ import de.ashman.ontrack.network.clients.createTMDBClient
 import de.ashman.ontrack.network.clients.createTwitchTokenClient
 import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.AccountServiceImpl
+import de.ashman.ontrack.network.services.friend.FriendService
+import de.ashman.ontrack.network.services.friend.FriendServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
@@ -59,11 +60,6 @@ import de.ashman.ontrack.repository.firestore.ShareRepository
 import de.ashman.ontrack.repository.firestore.ShareRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
-import de.ashman.ontrack.usecase.AcceptRequestUseCase
-import de.ashman.ontrack.usecase.CancelRequestUseCase
-import de.ashman.ontrack.usecase.DeclineRequestUseCase
-import de.ashman.ontrack.usecase.RemoveFriendUseCase
-import de.ashman.ontrack.usecase.SendRequestUseCase
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.auth.auth
@@ -71,7 +67,6 @@ import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
@@ -100,6 +95,7 @@ val appModule = module {
     single<SignInService> { SignInServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
     single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<FriendService> { FriendServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -133,13 +129,6 @@ val appModule = module {
 
     single { CommonUiManager() }
 
-    // USE CASES
-    singleOf(::SendRequestUseCase)
-    singleOf(::CancelRequestUseCase)
-    singleOf(::AcceptRequestUseCase)
-    singleOf(::DeclineRequestUseCase)
-    singleOf(::RemoveFriendUseCase)
-
     // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get()) }
@@ -147,14 +136,13 @@ val appModule = module {
 
     viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { ShareDetailViewModel() }
-    viewModelDefinition { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { NotificationsViewModel() }
 
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { RecommendationViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
-    viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
 
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
