@@ -10,6 +10,7 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.detail.DetailViewModel
 import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
+import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
@@ -17,7 +18,6 @@ import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel

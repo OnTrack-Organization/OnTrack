@@ -5,11 +5,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.notifications.NotificationsScreen
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.share.ShareScreen
 import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share.friend.FriendsViewModel
 import de.ashman.ontrack.features.share_detail.ShareDetailScreen
 import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.navigation.Route

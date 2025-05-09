@@ -8,33 +8,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.newdomains.FriendStatus
 import de.ashman.ontrack.domain.newdomains.NewTracking
 import de.ashman.ontrack.domain.newdomains.NewUser
-import de.ashman.ontrack.domain.user.FriendRequestStatus
-import de.ashman.ontrack.repository.firestore.FriendRepository
-import de.ashman.ontrack.usecase.AcceptRequestUseCase
-import de.ashman.ontrack.usecase.CancelRequestUseCase
-import de.ashman.ontrack.usecase.DeclineRequestUseCase
-import de.ashman.ontrack.usecase.RemoveFriendUseCase
-import de.ashman.ontrack.usecase.SendRequestUseCase
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
+import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.services.friend.FriendService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.friend_accept_request_error
+import ontrack.composeapp.generated.resources.friend_cancel_request_error
+import ontrack.composeapp.generated.resources.friend_decline_request_error
+import ontrack.composeapp.generated.resources.friend_delete_error
+import ontrack.composeapp.generated.resources.friend_send_request_error
+import ontrack.composeapp.generated.resources.shelf_get_profile_error
 
 class ShelfViewModel(
-    private val friendRepository: FriendRepository,
-    private val sendFriendRequest: SendRequestUseCase,
-    private val cancelFriendRequest: CancelRequestUseCase,
-    private val acceptFriendRequest: AcceptRequestUseCase,
-    private val declineFriendRequest: DeclineRequestUseCase,
-    private val removeFriend: RemoveFriendUseCase,
     private val userDataStore: UserDataStore,
     private val trackingRepository: TrackingRepository,
+    private val friendService: FriendService,
+    private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
     val uiState: StateFlow<ShelfUiState> = _uiState
@@ -46,20 +43,35 @@ class ShelfViewModel(
 
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
-    fun loadUser(userId: String) = viewModelScope.launch {
-        // TODO make a call to a backend method instead later
-        val user = userDataStore.getCurrentUser()
-        _uiState.update {
-            it.copy(
-                user = user,
-                isCurrentUser = user.id == Firebase.auth.currentUser?.uid
+    fun loadUserProfile(userId: String) = viewModelScope.launch {
+        val currentUser = userDataStore.getCurrentUser()
+        val isCurrentUser = userId == currentUser.id
+
+        if (isCurrentUser) {
+            _uiState.update {
+                it.copy(
+                    user = currentUser,
+                )
+            }
+            observeTrackings()
+        } else {
+            friendService.getUserProfile(userId).fold(
+                onSuccess = { profile ->
+                    _uiState.update {
+                        it.copy(
+                            user = profile.user.user,
+                            friendStatus = profile.user.friendStatus,
+                            trackings = profile.trackings
+                        )
+                    }
+                },
+                onFailure = {
+                    commonUiManager.showSnackbar(Res.string.shelf_get_profile_error)
+                }
             )
         }
-
-        observeTrackings()
     }
 
-    // TODO fix later when we can get trackings from other users as well
     fun observeTrackings() = viewModelScope.launch {
         trackingRepository.getTrackings().collect { trackings ->
             _uiState.update { it.copy(trackings = trackings) }
@@ -67,49 +79,59 @@ class ShelfViewModel(
     }
 
     fun sendRequest() = viewModelScope.launch {
-        _uiState.value.user?.let { user ->
-            sendFriendRequest(user.toFriendRequest())
-            _uiState.update { it.copy(friendRequestStatus = FriendRequestStatus.PENDING) }
-        }
-    }
-
-    fun cancelRequest() = viewModelScope.launch {
-        _uiState.value.user?.let { user ->
-            cancelFriendRequest(user.toFriendRequest())
-            _uiState.update { it.copy(friendRequestStatus = FriendRequestStatus.NONE) }
-        }
-    }
-
-    fun removeFriend() = viewModelScope.launch {
-        _uiState.value.user?.let {
-            val friend = it.toFriend()
-            removeFriend(friend)
-            _uiState.update { it.copy(friendRequestStatus = FriendRequestStatus.NONE) }
-        }
-    }
-
-    fun declineRequest() = viewModelScope.launch {
-        _uiState.value.user?.let {
-            val friendRequest = it.toFriendRequest()
-            declineFriendRequest(friendRequest)
-            _uiState.update { it.copy(friendRequestStatus = FriendRequestStatus.NONE) }
-        }
+        friendService.sendRequest(uiState.value.user?.id.orEmpty()).fold(
+            onSuccess = {
+                _uiState.update { it.copy(friendStatus = FriendStatus.REQUEST_SENT) }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.friend_send_request_error)
+            }
+        )
     }
 
     fun acceptRequest() = viewModelScope.launch {
-        _uiState.value.user?.let {
-            val friendRequest = it.toFriendRequest()
-            acceptFriendRequest(friendRequest)
-            _uiState.update { it.copy(friendRequestStatus = FriendRequestStatus.ACCEPTED) }
-        }
+        friendService.acceptRequest(uiState.value.user?.id.orEmpty()).fold(
+            onSuccess = {
+                _uiState.update { it.copy(friendStatus = FriendStatus.FRIEND) }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.friend_accept_request_error)
+            }
+        )
     }
 
-    fun setFriendRequestStatus(userId: String) = viewModelScope.launch {
-        val status = friendRepository.getFriendStatus(userId)
-        _uiState.update { it.copy(friendRequestStatus = status) }
+    fun declineRequest() = viewModelScope.launch {
+        friendService.declineRequest(uiState.value.user?.id.orEmpty()).fold(
+            onSuccess = {
+                _uiState.update { it.copy(friendStatus = FriendStatus.STRANGER) }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.friend_decline_request_error)
+            }
+        )
     }
 
-    fun isOtherUser() = uiState.value.user?.id != Firebase.auth.currentUser?.uid
+    fun cancelRequest() = viewModelScope.launch {
+        friendService.cancelRequest(uiState.value.user?.id.orEmpty()).fold(
+            onSuccess = {
+                _uiState.update { it.copy(friendStatus = FriendStatus.STRANGER) }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.friend_cancel_request_error)
+            }
+        )
+    }
+
+    fun removeFriend() = viewModelScope.launch {
+        friendService.deleteFriend(uiState.value.user?.id.orEmpty()).fold(
+            onSuccess = {
+                _uiState.update { it.copy(friendStatus = FriendStatus.STRANGER) }
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.friend_delete_error)
+            }
+        )
+    }
 
     fun clearViewModel() {
         _uiState.update { ShelfUiState() }
@@ -118,7 +140,6 @@ class ShelfViewModel(
 
 data class ShelfUiState(
     val user: NewUser? = null,
-    val isCurrentUser: Boolean = false,
-    val friendRequestStatus: FriendRequestStatus = FriendRequestStatus.NONE,
+    val friendStatus: FriendStatus? = null,
     val trackings: List<NewTracking> = emptyList(),
 )

@@ -145,7 +145,7 @@ fun ShareCardHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PersonImage(
-            userImageUrl = userImageUrl,
+            profilePictureUrl = userImageUrl,
             onClick = onClickUser
         )
 
@@ -287,7 +287,7 @@ fun ShareCardFooter(
                     ) {
                         likeImages.forEachIndexed { index, imageUrl ->
                             PersonImage(
-                                userImageUrl = imageUrl,
+                                profilePictureUrl = imageUrl,
                                 onClick = onShowLikes,
                                 modifier = Modifier
                                     .zIndex((likeImages.size - index).toFloat()),

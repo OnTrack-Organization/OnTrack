@@ -180,7 +180,7 @@ fun FriendRecommendSelectorIcon(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .graphicsLayer { alpha = if (shouldDim) 0.5f else 1f },
-                userImageUrl = imageUrl,
+                profilePictureUrl = imageUrl,
                 onClick = {
                     if (isSelected) {
                         onSelectUser(null) // Deselect if currently selected

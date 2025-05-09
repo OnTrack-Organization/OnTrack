@@ -90,7 +90,7 @@ fun LikeCard(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         PersonImage(
-            userImageUrl = userImageUrl,
+            profilePictureUrl = userImageUrl,
             onClick = onClick,
         )
         Text(
