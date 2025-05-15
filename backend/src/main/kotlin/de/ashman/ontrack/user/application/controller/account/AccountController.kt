@@ -1,7 +1,7 @@
-package de.ashman.ontrack.user.application.controller
+package de.ashman.ontrack.user.application.controller.account
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.user.infrastructure.UserRepository
+import de.ashman.ontrack.user.domain.repository.UserRepository
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,10 +17,10 @@ class AccountController(
     private val userRepository: UserRepository
 ) {
     @GetMapping("/account")
-    fun getCurrentUser(@AuthenticationPrincipal identity: Identity): ResponseEntity<UserDto> {
-        val user = userRepository.getReferenceById(identity.id)
+    fun getCurrentUser(@AuthenticationPrincipal identity: Identity): ResponseEntity<AccountDto> {
+        val user = userRepository.getById(identity.id)
 
-        return ResponseEntity.ok(user.toDto())
+        return ResponseEntity.ok(user.toAccountDto())
     }
 
     @PostMapping("/account")
@@ -36,7 +36,7 @@ class AccountController(
                 .body(validationResult)
         }
 
-        val user = userRepository.getReferenceById(identity.id)
+        val user = userRepository.getById(identity.id)
         user.updateAccountSettings(
             name = accountSettings.name,
             username = accountSettings.username
@@ -51,7 +51,7 @@ class AccountController(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody profilePictureUrl: String,
     ): ResponseEntity<Unit> {
-        val user = userRepository.getReferenceById(identity.id)
+        val user = userRepository.getById(identity.id)
 
         user.changeProfilePicture(profilePictureUrl)
 

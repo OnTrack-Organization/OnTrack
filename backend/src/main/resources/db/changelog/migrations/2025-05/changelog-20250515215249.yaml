@@ -1,0 +1,166 @@
+databaseChangeLog:
+- changeSet:
+    id: 1747345975217-1
+    author: root (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: friendsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: receiver_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sender_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: status
+            type: VARCHAR(255)
+        tableName: friends
+- changeSet:
+    id: 1747345975217-2
+    author: root (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: friendshipsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: user_id1
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id2
+            type: VARCHAR(255)
+        tableName: friendships
+- changeSet:
+    id: 1747345975217-3
+    author: root (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: trackingsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            name: cover_url
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: title
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: status
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: trackings
+- changeSet:
+    id: 1747345975217-4
+    author: root (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: usersPK
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: fcm_token
+            type: VARCHAR(255)
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: profile_picture_url
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            name: username
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1747345975217-5
+    author: root (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: UC_USERSEMAIL_COL
+        tableName: users
+- changeSet:
+    id: 1747345975217-6
+    author: root (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: UC_USERSUSERNAME_COL
+        tableName: users
+- changeSet:
+    id: 1747345975217-7
+    author: root (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: user_id1, user_id2
+        constraintName: uniq_friends
+        tableName: friendships
+- changeSet:
+    id: 1747345975217-8
+    author: root (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: id, user_id
+        constraintName: uniq_media_tracking_per_user
+        tableName: trackings
+
