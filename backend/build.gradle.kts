@@ -1,4 +1,6 @@
 import org.springframework.boot.gradle.tasks.run.BootRun
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
     alias(libs.plugins.kotlinJvm)
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.springBoot)
     alias(libs.plugins.springDependencyManagement)
     alias(libs.plugins.kotlinJpa)
+    alias(libs.plugins.liquibase)
 }
 
 group = "de.ashman"
@@ -21,6 +24,12 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    dependencies {
+        classpath(libs.liquibase.core)
+    }
+}
+
 dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterSecurity)
@@ -34,6 +43,44 @@ dependencies {
     testImplementation(libs.kotlinTestJunit5)
     testImplementation(libs.springSecurityTest)
     testRuntimeOnly(libs.junitPlatformLauncher)
+
+    liquibaseRuntime(libs.liquibase.core)
+    liquibaseRuntime(libs.picocli)
+    liquibaseRuntime(libs.postgresql)
+    liquibaseRuntime(libs.liquibase.hibernate)
+    liquibaseRuntime(sourceSets.main.get().output)
+    liquibaseRuntime(libs.springBootStarterDataJpa)
+    liquibaseRuntime(libs.kotlinReflect)
+}
+
+val commonArgs = mapOf(
+    "url" to "jdbc:postgresql://db:5432/ontrack",
+    "username" to "default",
+    "password" to "demo",
+    "driver" to "org.postgresql.Driver",
+)
+
+val now = Date()
+val timestamp: String = SimpleDateFormat("yyyyMMddHHmmss").format(now)
+val monthOfYear: String = SimpleDateFormat("yyyy-MM").format(now)
+val changelogDir = "src/main/resources/db/changelog"
+
+liquibase {
+    activities.register("main") {
+        this.arguments = commonArgs + mapOf(
+            "changelogFile" to "$changelogDir/db.changelog-master.yaml",
+            "count" to (System.getProperty("count") ?: "1")
+        )
+    }
+
+    activities.register("diff") {
+        this.arguments = commonArgs + mapOf(
+            "changelogFile" to "$changelogDir/migrations/$monthOfYear/changelog-$timestamp.yaml",
+            "referenceUrl" to "hibernate:spring:de.ashman.ontrack?dialect=org.hibernate.dialect.PostgreSQLDialect",
+        )
+    }
+
+    runList = System.getProperty("runList") ?: "main"
 }
 
 kotlin {
