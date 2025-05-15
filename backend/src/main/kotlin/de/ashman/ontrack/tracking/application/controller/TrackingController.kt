@@ -1,17 +1,16 @@
 package de.ashman.ontrack.tracking.application.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.tracking.domain.model.Media
 import de.ashman.ontrack.tracking.domain.model.Tracking
 import de.ashman.ontrack.tracking.domain.model.toEntity
-import de.ashman.ontrack.tracking.infrastructure.TrackingRepository
+import de.ashman.ontrack.tracking.domain.repository.TrackingRepository
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 
 @RestController
 class TrackingController(
@@ -42,7 +41,7 @@ class TrackingController(
         @RequestBody @Valid dto: UpdateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
-        val tracking = trackingRepository.getReferenceById(dto.id)
+        val tracking = trackingRepository.getById(dto.id)
         if (tracking.userId != identity.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
@@ -65,7 +64,7 @@ class TrackingController(
         @PathVariable id: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        val tracking = trackingRepository.getReferenceById(id)
+        val tracking = trackingRepository.getById(id)
         if (tracking.userId != identity.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
