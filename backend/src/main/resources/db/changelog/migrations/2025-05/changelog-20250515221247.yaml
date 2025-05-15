@@ -1,7 +1,7 @@
 databaseChangeLog:
 - changeSet:
-    id: 1747345975217-1
-    author: root (generated)
+    id: 1747347172660-1
+    author: Quan Vu Anh
     changes:
     - createTable:
         columns:
@@ -29,8 +29,8 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: friends
 - changeSet:
-    id: 1747345975217-2
-    author: root (generated)
+    id: 1747347172660-2
+    author: Quan Vu Anh
     changes:
     - createTable:
         columns:
@@ -53,8 +53,8 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: friendships
 - changeSet:
-    id: 1747345975217-3
-    author: root (generated)
+    id: 1747347172660-3
+    author: Quan Vu Anh
     changes:
     - createTable:
         columns:
@@ -100,8 +100,8 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: trackings
 - changeSet:
-    id: 1747345975217-4
-    author: root (generated)
+    id: 1747347172660-4
+    author: Quan Vu Anh
     changes:
     - createTable:
         columns:
@@ -132,32 +132,32 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1747345975217-5
-    author: root (generated)
+    id: 1747347172660-5
+    author: Quan Vu Anh
     changes:
     - addUniqueConstraint:
         columnNames: email
         constraintName: UC_USERSEMAIL_COL
         tableName: users
 - changeSet:
-    id: 1747345975217-6
-    author: root (generated)
+    id: 1747347172660-6
+    author: Quan Vu Anh
     changes:
     - addUniqueConstraint:
         columnNames: username
         constraintName: UC_USERSUSERNAME_COL
         tableName: users
 - changeSet:
-    id: 1747345975217-7
-    author: root (generated)
+    id: 1747347172660-7
+    author: Quan Vu Anh
     changes:
     - addUniqueConstraint:
         columnNames: user_id1, user_id2
         constraintName: uniq_friends
         tableName: friendships
 - changeSet:
-    id: 1747345975217-8
-    author: root (generated)
+    id: 1747347172660-8
+    author: Quan Vu Anh
     changes:
     - addUniqueConstraint:
         columnNames: id, user_id

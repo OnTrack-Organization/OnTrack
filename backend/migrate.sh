@@ -14,6 +14,9 @@ show_help() {
 # Ensure an argument is provided
 [[ $# -eq 0 || "$1" == "help" ]] && show_help
 
+git_username=$(git config user.name)
+echo "Running as Git user: $git_username"
+
 # Handle commands
 case "$1" in
   update)   docker compose exec backend ./gradlew update;;
@@ -25,6 +28,6 @@ case "$1" in
       count=1
     fi
     docker compose exec backend ./gradlew rollbackCount -Dcount="$count";;
-  diff)     docker compose exec backend ./gradlew diffChangelog -DrunList=diff;;
+  diff)     docker compose exec backend ./gradlew diffChangelog -DrunList=diff -Dauthor="$git_username";;
   *)        show_help;;
 esac
