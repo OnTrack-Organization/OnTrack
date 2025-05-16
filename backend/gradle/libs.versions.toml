@@ -3,6 +3,9 @@ kotlin = "1.9.25"
 springBoot = "3.4.3"
 springDependencyManagement = "1.1.7"
 firebaseAdmin = "9.4.3"
+liquibase = "4.31.1"
+liquibasePlugin = "3.0.2"
+picocli = "4.6.1"
 
 [libraries]
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
@@ -17,6 +20,9 @@ kotlinTestJunit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5"
 springSecurityTest = { group = "org.springframework.security", name = "spring-security-test" }
 junitPlatformLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 firebase-admin = { group = "com.google.firebase", name = "firebase-admin", version.ref = "firebaseAdmin" }
+liquibase-hibernate = { group = "org.liquibase.ext", name = "liquibase-hibernate6", version.ref = "liquibase" }
+liquibase-core = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase" }
+picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
 
 [plugins]
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -24,3 +30,4 @@ kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotli
 springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
 springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
 kotlinJpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+liquibase = { id = "org.liquibase.gradle", version.ref = "liquibasePlugin" }

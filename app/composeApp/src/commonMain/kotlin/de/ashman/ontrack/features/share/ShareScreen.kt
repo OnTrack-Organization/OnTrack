@@ -180,7 +180,10 @@ fun ShareScreen(
 
             if (commonUiState.showSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { commonUiManager.hideSheet() },
+                    onDismissRequest = {
+                        commonUiManager.hideSheet()
+                        friendsViewModel.clearQuery()
+                    },
                     sheetState = bottomSheetState,
                     tonalElevation = 0.dp,
                 ) {
@@ -200,6 +203,7 @@ fun ShareScreen(
                         CurrentSheet.FRIENDS -> {
                             FriendsSheet(
                                 uiState = friendsUiState,
+                                fetchFriendsAndRequests = friendsViewModel::fetchFriendsAndRequests,
                                 onSendRequest = friendsViewModel::sendRequest,
                                 onCancelRequest = friendsViewModel::cancelRequest,
                                 onAcceptRequest = friendsViewModel::acceptRequest,

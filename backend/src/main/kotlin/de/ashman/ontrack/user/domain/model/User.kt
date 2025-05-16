@@ -1,4 +1,4 @@
-package de.ashman.ontrack.user.domain
+package de.ashman.ontrack.user.domain.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

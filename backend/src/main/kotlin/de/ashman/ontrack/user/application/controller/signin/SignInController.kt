@@ -1,8 +1,10 @@
-package de.ashman.ontrack.user.application.controller
+package de.ashman.ontrack.user.application.controller.signin
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.user.domain.User
-import de.ashman.ontrack.user.infrastructure.UserRepository
+import de.ashman.ontrack.user.application.controller.account.AccountDto
+import de.ashman.ontrack.user.application.controller.account.toAccountDto
+import de.ashman.ontrack.user.domain.model.User
+import de.ashman.ontrack.user.domain.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,12 +22,12 @@ class SignInController(
     fun signIn(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody signInDto: SignInDto
-    ): ResponseEntity<UserDto> {
-        var user = userRepository.findOneByEmail(identity.email)
+    ): ResponseEntity<AccountDto> {
+        var user = userRepository.findByEmail(identity.email)
 
         if (user != null) {
             user.updateFcmToken(signInDto.fcmToken)
-            return ResponseEntity.ok(user.toDto())
+            return ResponseEntity.ok(user.toAccountDto())
         }
 
         user = User(
@@ -40,13 +42,13 @@ class SignInController(
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(user.toDto())
+            .body(user.toAccountDto())
     }
 
     @PostMapping("/sign-out")
     @Transactional
     fun signOut(@AuthenticationPrincipal identity: Identity): ResponseEntity<Unit> {
-        val user = userRepository.getReferenceById(identity.id)
+        val user = userRepository.getById(identity.id)
         user.clearFcmToken()
 
         return ResponseEntity.ok().build()

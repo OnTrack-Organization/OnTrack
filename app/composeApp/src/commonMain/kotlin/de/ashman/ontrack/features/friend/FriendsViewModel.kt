@@ -36,7 +36,6 @@ class FriendsViewModel(
     val uiState: StateFlow<FriendsUiState> = _uiState
         .onStart {
             observeSearchQuery()
-            fetchFriendsAndRequests()
         }
         .stateIn(
             viewModelScope,
@@ -95,12 +94,8 @@ class FriendsViewModel(
         friendService.getUsersByQuery(query).fold(
             onSuccess = { users ->
                 _uiState.update {
-                    val newUsers = users.filter { newUser ->
-                        it.users.none { existingUser -> existingUser.user.id == newUser.user.id }
-                    }
-
                     it.copy(
-                        users = it.users + newUsers,
+                        users = users,
                         resultState = FriendsResultState.QuerySuccess,
                     )
                 }
@@ -202,6 +197,10 @@ class FriendsViewModel(
 
     fun onQueryChanged(query: String) {
         _uiState.update { it.copy(query = query) }
+    }
+
+    fun clearQuery() {
+        _uiState.update { it.copy(query = "") }
     }
 
     fun clearViewModel() {

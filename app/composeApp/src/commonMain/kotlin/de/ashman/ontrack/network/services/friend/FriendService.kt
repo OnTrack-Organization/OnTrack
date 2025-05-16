@@ -1,11 +1,15 @@
 package de.ashman.ontrack.network.services.friend
 
+import co.touchlab.kermit.Logger
 import de.ashman.ontrack.api.utils.safeApiCall
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.newdomains.OtherUser
 import de.ashman.ontrack.domain.newdomains.UserProfile
 import de.ashman.ontrack.network.services.friend.dto.OtherUserDto
 import de.ashman.ontrack.network.services.friend.dto.UserProfileDto
 import de.ashman.ontrack.network.services.friend.dto.toDomain
+import de.ashman.ontrack.network.services.signin.dto.UserDto
+import de.ashman.ontrack.network.services.signin.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -13,10 +17,10 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 
 interface FriendService {
-    suspend fun getUsersByQuery(query: String): Result<List<OtherUser>>
-
-    suspend fun getFriends(): Result<List<OtherUser>>
+    suspend fun getFriends(): Result<List<NewUser>>
     suspend fun getFriendsAndRequests(): Result<List<OtherUser>>
+
+    suspend fun getUsersByQuery(query: String): Result<List<OtherUser>>
 
     suspend fun sendRequest(userId: String): Result<Unit>
     suspend fun acceptRequest(userId: String): Result<Unit>
@@ -32,16 +36,18 @@ class FriendServiceImpl(
     private val httpClient: HttpClient,
 ) : FriendService {
 
-    override suspend fun getUsersByQuery(query: String): Result<List<OtherUser>> = safeApiCall {
-        httpClient.get("/user?username=$query").body<List<OtherUserDto>>().map { it.toDomain() }
-    }
-
-    override suspend fun getFriends(): Result<List<OtherUser>> = safeApiCall {
-        httpClient.get("/friends").body<List<OtherUserDto>>().map { it.toDomain() }
+    override suspend fun getFriends(): Result<List<NewUser>> = safeApiCall {
+        httpClient.get("/friends").body<List<UserDto>>().map { it.toDomain() }
     }
 
     override suspend fun getFriendsAndRequests(): Result<List<OtherUser>> = safeApiCall {
-        httpClient.get("/friends-and-requests").body<List<OtherUserDto>>().map { it.toDomain() }
+        val response = httpClient.get("/friends-and-requests").body<List<OtherUserDto>>().map { it.toDomain() }
+        Logger.d("Friends and requests: $response")
+        response
+    }
+
+    override suspend fun getUsersByQuery(query: String): Result<List<OtherUser>> = safeApiCall {
+        httpClient.get("/user/search?username=$query").body<List<OtherUserDto>>().map { it.toDomain() }
     }
 
     override suspend fun sendRequest(userId: String): Result<Unit> = safeApiCall {
