@@ -4,7 +4,9 @@ import de.ashman.ontrack.domain.newdomains.FriendStatus
 import de.ashman.ontrack.domain.newdomains.OtherUser
 import de.ashman.ontrack.network.services.signin.dto.UserDto
 import de.ashman.ontrack.network.services.signin.dto.toDomain
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class OtherUserDto(
     val user: UserDto,
     val friendStatus: FriendStatus,

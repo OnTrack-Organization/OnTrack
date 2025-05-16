@@ -1,7 +1,7 @@
 package de.ashman.ontrack.user.application.controller.friend
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.user.application.controller.FriendShipStatus
+import de.ashman.ontrack.user.application.controller.FriendStatus
 import de.ashman.ontrack.user.application.controller.OtherUserDto
 import de.ashman.ontrack.user.application.controller.user.UserDto
 import de.ashman.ontrack.user.application.controller.user.toUserDto
@@ -32,7 +32,7 @@ class FriendController(
         return ResponseEntity.ok(friendDtos)
     }
 
-    @GetMapping("friend-and-requests")
+    @GetMapping("friends-and-requests")
     fun findFriendsAndFriendRequests(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<OtherUserDto>>
@@ -46,13 +46,13 @@ class FriendController(
         val incomingFriends = userRepository.findAllById(incomingFriendIds)
 
         val friendDtos = friends.map {
-            OtherUserDto(it.toUserDto(), FriendShipStatus.FRIEND)
+            OtherUserDto(it.toUserDto(), FriendStatus.FRIEND)
         }
         val outcomingFriendDtos = outcomingFriends.map {
-            OtherUserDto(it.toUserDto(), FriendShipStatus.REQUEST_SENT)
+            OtherUserDto(it.toUserDto(), FriendStatus.REQUEST_SENT)
         }
         val incomingFriendDtos = incomingFriends.map {
-            OtherUserDto(it.toUserDto(), FriendShipStatus.REQUEST_RECEIVED)
+            OtherUserDto(it.toUserDto(), FriendStatus.REQUEST_RECEIVED)
         }
 
         return ResponseEntity.ok(friendDtos + outcomingFriendDtos + incomingFriendDtos)

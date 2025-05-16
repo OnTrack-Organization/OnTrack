@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,13 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.newdomains.OtherUser
+import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.recommendation.Recommendation
-import de.ashman.ontrack.features.common.OnTrackIconButton
-import de.ashman.ontrack.features.common.OnTrackTextField
+import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
 import ontrack.composeapp.generated.resources.Res
@@ -50,7 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RecommendSheet(
-    selectableFriends: List<OtherUser>,
+    selectableFriends: List<NewUser>,
     previousSentRecommendations: List<Recommendation>,
     fetchFriends: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
@@ -64,7 +62,7 @@ fun RecommendSheet(
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     val isAnyUserSelected = selectedUserId != null
 
-    var message by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -93,10 +91,10 @@ fun RecommendSheet(
         ) {
             items(selectableFriends) { friend ->
                 FriendRecommendSelectorIcon(
-                    userId = friend.user.id,
-                    profilePictureUrl = friend.user.profilePictureUrl,
-                    name = friend.user.name,
-                    isSelected = selectedUserId == friend.user.id,
+                    userId = friend.id,
+                    profilePictureUrl = friend.profilePictureUrl,
+                    name = friend.name,
+                    isSelected = selectedUserId == friend.id,
                     isAnyUserSelected = isAnyUserSelected,
                     onSelectUser = { id ->
                         selectedUserId = id
@@ -141,27 +139,19 @@ fun RecommendSheet(
             }
         }
 
-        Row(
+        CommentTextField(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OnTrackTextField(
-                modifier = Modifier.weight(1f),
-                placeholder = stringResource(Res.string.detail_recommend_textfield_placeholder),
-                value = message,
-                onValueChange = { message = it },
-            )
-
-            OnTrackIconButton(
-                modifier = Modifier.size(56.dp),
-                icon = Icons.AutoMirrored.Default.Send,
-                enabled = isAnyUserSelected,
-                onClick = { onSendRecommendation(selectedUserId.orEmpty(), message) },
-            )
-        }
+                .padding(horizontal = 16.dp),
+            placeholder = stringResource(Res.string.detail_recommend_textfield_placeholder),
+            value = message,
+            onValueChange = { message = it },
+            isSendVisible = isAnyUserSelected,
+            onPostComment = {
+                selectedUserId?.let {
+                    onSendRecommendation(it, message.text)
+                }
+            },
+        )
     }
 }
 

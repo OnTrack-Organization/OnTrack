@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun FriendsSheet(
     uiState: FriendsUiState,
+    fetchFriendsAndRequests: () -> Unit,
     onSendRequest: (String) -> Unit,
     onDeclineRequest: (String) -> Unit,
     onAcceptRequest: (String) -> Unit,
@@ -54,6 +56,10 @@ fun FriendsSheet(
     val receivedRequests = uiState.users.filter { it.friendStatus == FriendStatus.REQUEST_RECEIVED }
     val sentRequests = uiState.users.filter { it.friendStatus == FriendStatus.REQUEST_SENT }
     val queriedUsers = uiState.users.filter { it.friendStatus == FriendStatus.STRANGER }
+
+    LaunchedEffect(Unit) {
+        fetchFriendsAndRequests()
+    }
 
     Column(
         modifier = Modifier

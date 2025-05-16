@@ -1,5 +1,5 @@
 package de.ashman.ontrack.user.application.controller
 
-enum class FriendShipStatus {
+enum class FriendStatus {
     FRIEND, STRANGER, REQUEST_RECEIVED, REQUEST_SENT
 }
