@@ -64,7 +64,6 @@ import de.ashman.ontrack.features.detail.media.VideogameDetailContent
 import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
-import de.ashman.ontrack.features.detail.recommendation.RecommendationViewModel
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -79,14 +78,12 @@ fun DetailScreen(
     mediaNav: MediaNavigationParam,
     commonUiManager: CommonUiManager,
     detailViewModel: DetailViewModel,
-    recommendationViewModel: RecommendationViewModel,
     onClickItem: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
     val detailUiState by detailViewModel.uiState.collectAsStateWithLifecycle()
-    val recommendationUiState by recommendationViewModel.uiState.collectAsStateWithLifecycle()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -100,12 +97,10 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNav.id) {
         detailViewModel.fetchDetails(mediaNav)
+        detailViewModel.observeTracking(mediaNav.id, mediaNav.mediaType)
+
         detailViewModel.observeRatingStats(mediaNav.id, mediaNav.mediaType)
         detailViewModel.observeFriendTrackings(mediaNav.id)
-        recommendationViewModel.observeFriendRecommendations(mediaNav.id)
-        recommendationViewModel.fetchFriends()
-
-        detailViewModel.observeTracking(mediaNav.id, mediaNav.mediaType)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -166,7 +161,7 @@ fun DetailScreen(
                         currentTracking = detailUiState.currentTracking,
                         ratingStats = detailUiState.ratingStats,
                         friendTrackings = detailUiState.friendTrackings,
-                        receivedRecommendations = recommendationUiState.receivedRecommendations,
+                        receivedRecommendations = detailUiState.receivedRecommendations,
                         columnListState = listState,
                         onClickMedia = onClickItem,
                         onClickUser = onClickUser,
@@ -246,7 +241,7 @@ fun DetailScreen(
                         )
 
                         CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
-                            recommendations = recommendationUiState.receivedRecommendations,
+                            recommendations = detailUiState.receivedRecommendations,
                             friendTrackings = detailUiState.friendTrackings,
                             hasTracking = detailUiState.currentTracking != null,
                             onUserClick = onClickUser,
@@ -254,12 +249,15 @@ fun DetailScreen(
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendSheet(
-                            selectableFriends = recommendationUiState.friends,
-                            previousSentRecommendations = recommendationUiState.previousSentRecommendations,
+                            selectableFriends = detailUiState.friends,
+                            previousSentRecommendations = detailUiState.previousSentRecommendations,
+                            fetchFriends = detailViewModel::fetchFriends,
                             onSendRecommendation = { friendId, message ->
-                                recommendationViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
+                                //detailViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
                             },
-                            selectUser = { recommendationViewModel.selectFriend(it, mediaNav.id) },
+                            selectUser = {
+                                //detailViewModel.selectFriend(it, mediaNav.id)
+                            },
                             onClickUser = onClickUser,
                         )
 

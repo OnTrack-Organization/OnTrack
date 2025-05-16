@@ -116,9 +116,9 @@ fun SettingsScreen(
                     horizontalAlignment = CenterHorizontally
                 ) {
                     ImagePicker(
-                        imageUrl = uiState.imageUrl,
+                        profilePictureUrl = uiState.imageUrl,
                         imageUploadState = uiState.imageUploadState,
-                        onImagePicked = viewModel::onImagePicked,
+                        onProfilePictureSelected = viewModel::onImagePicked,
                     )
 
                     OnTrackUsernameTextField(

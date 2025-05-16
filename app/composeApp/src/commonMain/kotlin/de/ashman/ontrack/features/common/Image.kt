@@ -266,13 +266,13 @@ fun MediaPosterRow(
 
 @Composable
 fun PersonImage(
-    userImageUrl: String?,
+    profilePictureUrl: String?,
     onClick: (() -> Unit)? = null,
     isUploading: Boolean = false,
     size: Dp = 48.dp,
     modifier: Modifier = Modifier,
 ) {
-    val painter = rememberAsyncImagePainter(userImageUrl)
+    val painter = rememberAsyncImagePainter(profilePictureUrl)
     val interactionSource = remember { MutableInteractionSource() }
 
     val paddingFraction = 0.2f
@@ -331,18 +331,19 @@ fun PersonImage(
 
 @Composable
 fun ImagePicker(
-    imageUrl: String?,
+    profilePictureUrl: String?,
     imageUploadState: ImageUploadState,
-    onImagePicked: (ByteArray?) -> Unit,
+    onProfilePictureSelected: (ByteArray?) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
+
     val launcher = rememberFilePickerLauncher(
         type = PickerType.Image,
         mode = PickerMode.Single,
     ) { file ->
         coroutineScope.launch {
             val fileBytes = file?.readBytes()
-            onImagePicked(fileBytes)
+            onProfilePictureSelected(fileBytes)
         }
     }
 
@@ -352,7 +353,7 @@ fun ImagePicker(
     ) {
         PersonImage(
             modifier = Modifier.size(100.dp).align(Alignment.Center),
-            userImageUrl = imageUrl,
+            profilePictureUrl = profilePictureUrl,
             isUploading = imageUploadState == ImageUploadState.Uploading,
             onClick = { launcher.launch() },
         )
@@ -433,7 +434,7 @@ fun LargerImageDialog(
 
 @Composable
 fun MediaImageRow(
-    images: List<String>,
+    imageUrls: List<String>,
     onClickImage: (String) -> Unit,
 ) {
     Column(
@@ -449,7 +450,7 @@ fun MediaImageRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
-            items(images) { imageUrl ->
+            items(imageUrls) { imageUrl ->
                 val painter = rememberAsyncImagePainter(imageUrl)
 
                 Surface(

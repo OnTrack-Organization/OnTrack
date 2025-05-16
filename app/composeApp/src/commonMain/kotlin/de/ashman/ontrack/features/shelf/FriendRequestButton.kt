@@ -10,7 +10,7 @@ import androidx.compose.material.icons.rounded.PersonRemove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.user.FriendRequestStatus
+import de.ashman.ontrack.domain.newdomains.FriendStatus
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.accept_request_button
@@ -28,25 +28,25 @@ data class FriendRequestButtonUiState(
 
 @Composable
 fun friendRequestButtonUiState(
-    friendRequestStatus: FriendRequestStatus,
+    friendStatus: FriendStatus,
     onSendRequest: () -> Unit,
     onCancelRequest: () -> Unit,
     onRemoveFriend: () -> Unit,
 ): FriendRequestButtonUiState? {
-    return when (friendRequestStatus) {
-        FriendRequestStatus.NONE -> FriendRequestButtonUiState(
+    return when (friendStatus) {
+        FriendStatus.STRANGER -> FriendRequestButtonUiState(
             text = Res.string.send_request_button,
             icon = Icons.Rounded.GroupAdd,
             onClick = onSendRequest
         )
 
-        FriendRequestStatus.PENDING -> FriendRequestButtonUiState(
+        FriendStatus.REQUEST_SENT -> FriendRequestButtonUiState(
             text = Res.string.cancel_request_button,
             icon = Icons.Rounded.Close,
             onClick = onCancelRequest
         )
 
-        FriendRequestStatus.ACCEPTED -> FriendRequestButtonUiState(
+        FriendStatus.FRIEND -> FriendRequestButtonUiState(
             text = Res.string.remove_friend_button,
             icon = Icons.Rounded.PersonRemove,
             onClick = onRemoveFriend
@@ -58,7 +58,7 @@ fun friendRequestButtonUiState(
 
 @Composable
 fun FriendRequestButton(
-    friendRequestStatus: FriendRequestStatus,
+    friendStatus: FriendStatus,
     onSendRequest: () -> Unit,
     onCancelRequest: () -> Unit,
     onRemoveFriend: () -> Unit,
@@ -66,13 +66,13 @@ fun FriendRequestButton(
     onDeclineRequest: () -> Unit,
 ) {
     val buttonState = friendRequestButtonUiState(
-        friendRequestStatus = friendRequestStatus,
+        friendStatus = friendStatus,
         onSendRequest = onSendRequest,
         onCancelRequest = onCancelRequest,
         onRemoveFriend = onRemoveFriend,
     )
 
-    if (friendRequestStatus == FriendRequestStatus.RECEIVED) {
+    if (friendStatus == FriendStatus.REQUEST_RECEIVED) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -87,14 +87,13 @@ fun FriendRequestButton(
                 onClick = onDeclineRequest
             )
         }
-        return
-    }
-
-    buttonState?.let {
-        OnTrackOutlinedButton(
-            text = it.text,
-            icon = it.icon,
-            onClick = it.onClick
-        )
+    } else {
+        buttonState?.let {
+            OnTrackOutlinedButton(
+                text = it.text,
+                icon = it.icon,
+                onClick = it.onClick
+            )
+        }
     }
 }

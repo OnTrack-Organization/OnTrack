@@ -5,7 +5,6 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.toDomain
 import de.ashman.ontrack.domain.user.Friend
 import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.FriendRequestStatus
 import de.ashman.ontrack.entity.toEntity
 import de.ashman.ontrack.entity.user.FriendEntity
 import de.ashman.ontrack.entity.user.FriendRequestEntity
@@ -26,8 +25,6 @@ interface FriendRepository {
     suspend fun acceptRequest(friendRequest: FriendRequest)
     suspend fun declineRequest(friendRequest: FriendRequest)
     suspend fun cancelRequest(friendRequest: FriendRequest)
-
-    suspend fun getFriendStatus(friendId: String): FriendRequestStatus
 }
 
 class FriendRepositoryImpl(
@@ -127,45 +124,6 @@ class FriendRepositoryImpl(
             .collection("receivedRequests")
             .document(userDataStore.getCurrentUserId()).delete()
     }
-
-    // TODO this is ugly af rn
-    override suspend fun getFriendStatus(friendId: String): FriendRequestStatus {
-        val currentUserId = userDataStore.getCurrentUserId()
-
-        // 1. Check if already friends
-        val friendDoc = userCollection.document(currentUserId)
-            .collection("friends")
-            .document(friendId)
-            .get()
-
-        if (friendDoc.exists) {
-            return FriendRequestStatus.ACCEPTED
-        }
-
-        // 2. Check if you have sent them a request (waiting for them to accept)
-        val sentRequestDoc = userCollection.document(currentUserId)
-            .collection("sentRequests")
-            .document(friendId)
-            .get()
-
-        if (sentRequestDoc.exists) {
-            return FriendRequestStatus.PENDING
-        }
-
-        // 3. Check if you have received a request from them (waiting for you to accept)
-        val receivedRequestDoc = userCollection.document(currentUserId)
-            .collection("receivedRequests")
-            .document(friendId)
-            .get()
-
-        if (receivedRequestDoc.exists) {
-            return FriendRequestStatus.RECEIVED
-        }
-
-        // 4. No relationship found
-        return FriendRequestStatus.NONE
-    }
-
 
     override suspend fun acceptRequest(friendRequest: FriendRequest) {
         val currentUserId = userDataStore.getCurrentUserId()

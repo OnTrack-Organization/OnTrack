@@ -50,7 +50,7 @@ fun LazyListScope.BoardgameDetailContent(
     boardgame.images?.let {
         item {
             MediaImageRow(
-                images = it,
+                imageUrls = it,
                 onClickImage = onClickImage,
             )
         }

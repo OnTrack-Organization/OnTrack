@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 interface SelectedMediaRepository {
     val selectedMedia: StateFlow<Media?>
-    fun selectMedia(media: Media?)
     fun getSelectedMedia(): Media?
-    fun clearSelection()
+    fun selectMedia(media: Media?)
 }
 
 class SelectedMediaRepositoryImpl : SelectedMediaRepository {
@@ -23,9 +22,5 @@ class SelectedMediaRepositoryImpl : SelectedMediaRepository {
 
     override fun getSelectedMedia(): Media? {
         return _selectedMedia.value
-    }
-
-    override fun clearSelection() {
-        _selectedMedia.value = null
     }
 }

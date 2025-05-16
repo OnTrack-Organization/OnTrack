@@ -74,7 +74,7 @@ fun LazyListScope.ShowDetailContent(
     show.images?.let {
         item {
             MediaImageRow(
-                images = it,
+                imageUrls = it,
                 onClickImage = onClickImage,
             )
         }

@@ -81,7 +81,7 @@ fun ShareCard(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     ShareCardHeader(
-                        userImageUrl = tracking.userImageUrl,
+                        profilePictureUrl = tracking.userImageUrl,
                         username = tracking.username,
                         timestamp = tracking.timestamp,
                         mediaType = tracking.mediaType,
@@ -133,7 +133,7 @@ fun ShareCard(
 
 @Composable
 fun ShareCardHeader(
-    userImageUrl: String?,
+    profilePictureUrl: String?,
     username: String,
     timestamp: Long,
     mediaType: MediaType,
@@ -145,7 +145,7 @@ fun ShareCardHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PersonImage(
-            userImageUrl = userImageUrl,
+            profilePictureUrl = profilePictureUrl,
             onClick = onClickUser
         )
 
@@ -287,7 +287,7 @@ fun ShareCardFooter(
                     ) {
                         likeImages.forEachIndexed { index, imageUrl ->
                             PersonImage(
-                                userImageUrl = imageUrl,
+                                profilePictureUrl = imageUrl,
                                 onClick = onShowLikes,
                                 modifier = Modifier
                                     .zIndex((likeImages.size - index).toFloat()),

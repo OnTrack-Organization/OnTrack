@@ -111,7 +111,7 @@ fun FriendActivityIcon(
         ) {
             PersonImage(
                 modifier = Modifier.align(Alignment.TopCenter),
-                userImageUrl = imageUrl,
+                profilePictureUrl = imageUrl,
                 onClick = { onUserClick(userId) }
             )
 

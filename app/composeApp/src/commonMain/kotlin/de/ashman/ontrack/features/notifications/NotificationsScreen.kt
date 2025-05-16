@@ -144,7 +144,7 @@ fun NotificationUserImage(
     Box {
         PersonImage(
             modifier = Modifier.align(Alignment.TopStart),
-            userImageUrl = imageUrl,
+            profilePictureUrl = imageUrl,
             onClick = { onUserClick(userId) }
         )
 

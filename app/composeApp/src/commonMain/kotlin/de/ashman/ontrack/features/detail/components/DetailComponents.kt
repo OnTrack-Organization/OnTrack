@@ -196,7 +196,7 @@ fun CreatorCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 PersonImage(
-                    userImageUrl = imageUrl,
+                    profilePictureUrl = imageUrl,
                 )
 
                 Column(
