@@ -3,7 +3,7 @@ package de.ashman.ontrack.features.init.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.ImageUploadState
 import de.ashman.ontrack.network.services.account.AccountResult
@@ -33,7 +33,7 @@ class SetupViewModel(
             _uiState.value,
         )
 
-    fun preFillUserDataFromLogin(user: NewUser) {
+    fun preFillUserDataFromLogin(user: User) {
         _uiState.update {
             it.copy(
                 user = user,
@@ -98,7 +98,7 @@ class SetupViewModel(
 
 data class SetupUiState(
     // TODO maybe remove and do differently
-    val user: NewUser? = null,
+    val user: User? = null,
     val name: String = "",
     val username: String = "",
     val imageUrl: String? = null,

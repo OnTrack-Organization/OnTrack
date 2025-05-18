@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.account.AccountResult
 import de.ashman.ontrack.network.services.account.AccountService
@@ -136,7 +136,7 @@ class SettingsViewModel(
 }
 
 data class SettingsUiState(
-    val user: NewUser? = null,
+    val user: User? = null,
     val name: String = "",
     val username: String = "",
     val email: String = "",

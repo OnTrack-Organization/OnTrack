@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.FriendStatus
 import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.FriendStatus
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.friend.FriendService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -139,7 +139,7 @@ class ShelfViewModel(
 }
 
 data class ShelfUiState(
-    val user: NewUser? = null,
+    val user: User? = null,
     val friendStatus: FriendStatus? = null,
     val trackings: List<NewTracking> = emptyList(),
 )

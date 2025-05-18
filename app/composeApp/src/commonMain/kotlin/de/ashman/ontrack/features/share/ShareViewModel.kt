@@ -4,16 +4,14 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.user.Friend
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
-import de.ashman.ontrack.repository.firestore.FriendRepository
 import de.ashman.ontrack.repository.firestore.ShareRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +31,6 @@ import org.jetbrains.compose.resources.getString
 class ShareViewModel(
     private val shareRepository: ShareRepository,
     private val firebaseTrackingRepository: FirebaseTrackingRepository,
-    private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
     private val userDataStore: UserDataStore,
     private val commonUiManager: CommonUiManager,
@@ -42,9 +39,6 @@ class ShareViewModel(
     private val _uiState = MutableStateFlow(ShareUiState())
     val uiState: StateFlow<ShareUiState> = _uiState
         .onStart {
-            viewModelScope.launch {
-                friendRepository.observeFriends().collect { friends -> _uiState.update { it.copy(friends = friends) } }
-            }
             viewModelScope.launch {
                 userDataStore.currentUser.collect { user -> _uiState.update { it.copy(user = user) } }
             }
@@ -63,7 +57,7 @@ class ShareViewModel(
         delay(1000L)
 
         // Fetch the first page of the feed
-        val firstPage = shareRepository.fetchPage(friendIds = uiState.value.friendIds, pageSize = pageSize)
+        val firstPage = shareRepository.fetchPage(friendIds = emptyList(), pageSize = pageSize)
         lastTimestamp = if (firstPage.isNotEmpty()) firstPage.last().timestamp else null
 
         // Update the state with the new data from the first page
@@ -82,7 +76,7 @@ class ShareViewModel(
         _uiState.update { it.copy(shareResultState = ShareResultState.LoadingMore) }
         delay(1000L)
 
-        val nextPage = shareRepository.fetchPage(uiState.value.friendIds, pageSize, lastTimestamp)
+        val nextPage = shareRepository.fetchPage(emptyList(), pageSize, lastTimestamp)
         lastTimestamp = if (nextPage.isNotEmpty()) nextPage.last().timestamp else null
 
         // Append the next page to the feed trackings
@@ -207,8 +201,7 @@ class ShareViewModel(
 }
 
 data class ShareUiState(
-    val user: NewUser? = null,
-    val friends: List<Friend> = emptyList(),
+    val user: User? = null,
     val trackings: List<Tracking> = emptyList(),
     val selectedTrackingId: String? = null,
     val shareResultState: ShareResultState = ShareResultState.Loading,
@@ -219,9 +212,6 @@ data class ShareUiState(
 ) {
     val selectedTracking: Tracking?
         get() = trackings.find { it.id == selectedTrackingId }
-
-    val friendIds: List<String>
-        get() = listOfNotNull(user?.id) + friends.map { it.id }
 }
 
 enum class ShareResultState {

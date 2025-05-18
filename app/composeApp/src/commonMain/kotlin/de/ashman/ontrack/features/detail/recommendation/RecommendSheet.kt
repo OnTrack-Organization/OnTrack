@@ -34,8 +34,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.formatDateTime
@@ -48,7 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RecommendSheet(
-    selectableFriends: List<NewUser>,
+    selectableFriends: List<User>,
     previousSentRecommendations: List<Recommendation>,
     fetchFriends: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,

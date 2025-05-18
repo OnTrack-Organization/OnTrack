@@ -10,7 +10,7 @@ import androidx.compose.material.icons.rounded.PersonRemove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.newdomains.FriendStatus
+import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.accept_request_button

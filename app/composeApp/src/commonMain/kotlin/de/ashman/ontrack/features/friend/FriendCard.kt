@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.newdomains.FriendStatus
+import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.common.PersonImage
 
 @Composable

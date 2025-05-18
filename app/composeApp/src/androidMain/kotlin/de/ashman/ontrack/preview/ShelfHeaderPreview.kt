@@ -1,7 +1,7 @@
 package de.ashman.ontrack.preview
 
 import androidx.compose.runtime.Composable
-import de.ashman.ontrack.domain.newdomains.FriendStatus
+import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.shelf.ShelfHeader
 import de.ashman.ontrack.theme.OnTrackTheme
 

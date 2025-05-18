@@ -2,8 +2,8 @@ package de.ashman.ontrack.features.friend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.domain.newdomains.FriendStatus
-import de.ashman.ontrack.domain.newdomains.OtherUser
+import de.ashman.ontrack.domain.user.FriendStatus
+import de.ashman.ontrack.domain.user.OtherUser
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.friend.FriendService
 import kotlinx.coroutines.FlowPreview

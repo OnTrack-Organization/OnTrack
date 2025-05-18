@@ -1,7 +1,7 @@
 package de.ashman.ontrack.navigation
 
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,7 +18,7 @@ sealed class Route {
 
     @Serializable
     data class Setup(
-        val user: NewUser,
+        val user: User,
     ) : Route()
 
     // BOTTOM NAVIGATION

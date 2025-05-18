@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.firebase.apple.AppleButtonUiContainer
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
@@ -49,7 +49,7 @@ fun LoginScreen(
     viewModel: LoginViewModel,
     commonUiManager: CommonUiManager,
     onNavigateToSearch: () -> Unit,
-    onNavigateToSetup: (NewUser) -> Unit,
+    onNavigateToSetup: (User) -> Unit,
     onBack: () -> Unit,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsState()

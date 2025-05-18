@@ -52,8 +52,6 @@ import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
 import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FriendRepository
-import de.ashman.ontrack.repository.firestore.FriendRepositoryImpl
 import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
 import de.ashman.ontrack.repository.firestore.ShareRepository
@@ -120,7 +118,6 @@ val appModule = module {
     single { Firebase.firestore }
     single { Firebase.storage }
 
-    single<FriendRepository> { FriendRepositoryImpl(get(), get()) }
     single<ShareRepository> { ShareRepositoryImpl(get()) }
     single<FirebaseTrackingRepository> { FirebaseTrackingRepositoryImpl(get(), get()) }
     single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
@@ -134,7 +131,7 @@ val appModule = module {
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
-    viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { ShareDetailViewModel() }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { NotificationsViewModel() }

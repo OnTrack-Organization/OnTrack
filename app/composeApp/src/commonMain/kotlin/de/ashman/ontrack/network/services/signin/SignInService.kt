@@ -1,7 +1,7 @@
 package de.ashman.ontrack.network.services.signin
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.network.services.signin.dto.SignInDto
 import de.ashman.ontrack.network.services.signin.dto.UserDto
 import de.ashman.ontrack.network.services.signin.dto.toDomain
@@ -45,6 +45,6 @@ class SignInServiceImpl(
 }
 
 sealed class SignInResult {
-    data class ExistingUser(val user: NewUser) : SignInResult()
-    data class NewUserCreated(val user: NewUser) : SignInResult()
+    data class ExistingUser(val user: User) : SignInResult()
+    data class NewUserCreated(val user: User) : SignInResult()
 }

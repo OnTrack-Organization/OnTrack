@@ -15,10 +15,10 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.newdomains.NewUser
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationParam
@@ -359,7 +359,7 @@ data class DetailUiState(
     val ratingStats: RatingStats = RatingStats(),
     val friendTrackings: List<Tracking> = emptyList(),
 
-    val friends: List<NewUser> = emptyList(),
+    val friends: List<User> = emptyList(),
 
     // TODO move received and sent recommendations here from other vm and implement that
     val receivedRecommendations: List<Recommendation> = emptyList(),

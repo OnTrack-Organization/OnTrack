@@ -4,25 +4,10 @@ import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Entry
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.domain.user.Friend
-import de.ashman.ontrack.domain.user.FriendRequest
-import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.entity.share.CommentEntity
 import de.ashman.ontrack.entity.share.LikeEntity
 import de.ashman.ontrack.entity.tracking.EntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
-import de.ashman.ontrack.entity.user.FriendEntity
-import de.ashman.ontrack.entity.user.FriendRequestEntity
-import de.ashman.ontrack.entity.user.UserEntity
-
-fun User.toEntity() = UserEntity(
-    id = id,
-    fcmToken = fcmToken,
-    email = email,
-    name = name,
-    username = username,
-    imageUrl = imageUrl,
-)
 
 fun Tracking.toEntity() = TrackingEntity(
     id = id,
@@ -75,19 +60,3 @@ fun Like.toEntity() = LikeEntity(
     name = name,
     userImageUrl = userImageUrl,
 )
-
-fun Friend.toEntity() =
-    FriendEntity(
-        id = id,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-    )
-
-fun FriendRequest.toEntity() =
-    FriendRequestEntity(
-        userId = userId,
-        username = username,
-        name = name,
-        imageUrl = imageUrl,
-    )

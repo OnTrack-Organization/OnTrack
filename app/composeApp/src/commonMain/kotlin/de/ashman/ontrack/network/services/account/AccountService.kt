@@ -2,7 +2,7 @@ package de.ashman.ontrack.network.services.account
 
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.api.utils.safeBackendApiCall
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.network.services.account.dto.AccountSettingsDto
 import de.ashman.ontrack.network.services.signin.dto.UserDto
 import de.ashman.ontrack.network.services.signin.dto.toDomain
@@ -14,7 +14,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
 interface AccountService {
-    suspend fun getCurrentUser(): Result<NewUser>
+    suspend fun getCurrentUser(): Result<User>
     suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult>
     suspend fun updateProfilePicture(profilePictureUrl: String): Result<Unit>
 
@@ -25,7 +25,7 @@ class AccountServiceImpl(
     private val httpClient: HttpClient,
 ) : AccountService {
 
-    override suspend fun getCurrentUser(): Result<NewUser> = safeApiCall {
+    override suspend fun getCurrentUser(): Result<User> = safeApiCall {
         httpClient.get("/account").body<UserDto>().toDomain()
     }
 

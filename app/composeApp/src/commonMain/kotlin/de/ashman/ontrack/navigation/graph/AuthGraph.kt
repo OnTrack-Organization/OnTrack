@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.init.intro.IntroScreen
 import de.ashman.ontrack.features.init.setup.SetupScreen
@@ -59,7 +59,7 @@ fun NavGraphBuilder.authGraph(
 
     composable<Route.Setup>(
         typeMap = mapOf(
-            typeOf<NewUser>() to CustomNavType.NewUserType,
+            typeOf<User>() to CustomNavType.UserType,
         )
     ) { backStackEntry ->
         val setup: Route.Setup = backStackEntry.toRoute()

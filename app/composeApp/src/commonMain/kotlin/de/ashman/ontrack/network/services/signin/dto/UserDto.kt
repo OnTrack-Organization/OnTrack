@@ -1,6 +1,6 @@
 package de.ashman.ontrack.network.services.signin.dto
 
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,7 +12,7 @@ data class UserDto(
     val profilePictureUrl: String,
 )
 
-fun UserDto.toDomain() = NewUser(
+fun UserDto.toDomain() = User(
     id = id,
     name = name,
     username = username,

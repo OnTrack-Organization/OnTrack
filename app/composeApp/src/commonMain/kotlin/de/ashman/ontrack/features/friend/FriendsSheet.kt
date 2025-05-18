@@ -23,8 +23,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.newdomains.FriendStatus
-import de.ashman.ontrack.domain.newdomains.OtherUser
+import de.ashman.ontrack.domain.user.FriendStatus
+import de.ashman.ontrack.domain.user.OtherUser
 import de.ashman.ontrack.features.common.SearchBar
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.feed_friends

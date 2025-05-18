@@ -6,7 +6,7 @@ import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.NewUser
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.signin.SignInResult
 import de.ashman.ontrack.network.services.signin.SignInService
@@ -40,7 +40,7 @@ class LoginViewModel(
     fun signIn(
         loginResult: Result<FirebaseUser?>,
         onNavigateToSearch: () -> Unit,
-        onNavigateToSetup: (NewUser) -> Unit,
+        onNavigateToSetup: (User) -> Unit,
     ) = viewModelScope.launch {
         loginResult.fold(
             onSuccess = { user ->
