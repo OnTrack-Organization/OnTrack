@@ -161,7 +161,7 @@ fun SuccessContent(
                             id = media.id,
                             title = media.title,
                             coverUrl = media.coverUrl,
-                            mediaType = media.mediaType,
+                            type = media.mediaType,
                         )
                     )
                 },

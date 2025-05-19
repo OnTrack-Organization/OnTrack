@@ -42,6 +42,8 @@ import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.AccountServiceImpl
 import de.ashman.ontrack.network.services.friend.FriendService
 import de.ashman.ontrack.network.services.friend.FriendServiceImpl
+import de.ashman.ontrack.network.services.recommendation.RecommendationService
+import de.ashman.ontrack.network.services.recommendation.RecommendationServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
@@ -52,8 +54,6 @@ import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
 import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
 import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepositoryImpl
-import de.ashman.ontrack.repository.firestore.RecommendationRepository
-import de.ashman.ontrack.repository.firestore.RecommendationRepositoryImpl
 import de.ashman.ontrack.repository.firestore.ShareRepository
 import de.ashman.ontrack.repository.firestore.ShareRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
@@ -81,7 +81,6 @@ val appModule = module {
     single(named(TWITCH_TOKEN_CLIENT_NAME)) { createTwitchTokenClient() }
     single(named(BACKEND_CLIENT_NAME)) { createBackendClient(get()) }
 
-    // API
     single { MovieRepository(get(named(TMDB_CLIENT_NAME))) }
     single { ShowRepository(get(named(TMDB_CLIENT_NAME))) }
     single { BookRepository(get(named(OPEN_LIB_CLIENT_NAME))) }
@@ -89,11 +88,12 @@ val appModule = module {
     single { VideogameRepository(get(named(IGDB_CLIENT_NAME)), get(named(TWITCH_TOKEN_CLIENT_NAME))) }
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
-    // BACKEND
+    // SERVICES
     single<SignInService> { SignInServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
     single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<FriendService> { FriendServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<RecommendationService> { RecommendationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -107,11 +107,10 @@ val appModule = module {
     single { Firebase.functions }
     single<NotificationService> { NotificationServiceImpl(get(), get()) }
 
-    // DATASTORE
+    // DATABASE
     single<DataStore<Preferences>> { createDataStore { dataStoreFileName } }
     single { UserDataStore(get()) }
 
-    // DATABASE
     single<TrackingDao> { get<TrackingDatabase>().getTrackingDao() }
     single<TrackingRepository> { TrackingRepository(get()) }
 
@@ -120,13 +119,12 @@ val appModule = module {
 
     single<ShareRepository> { ShareRepositoryImpl(get()) }
     single<FirebaseTrackingRepository> { FirebaseTrackingRepositoryImpl(get(), get()) }
-    single<RecommendationRepository> { RecommendationRepositoryImpl(get(), get()) }
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get()) }
 
+    // UI
     single { CommonUiManager() }
 
-    // VIEWMODEL
     viewModelDefinition { StartViewModel() }
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
@@ -137,7 +135,7 @@ val appModule = module {
     viewModelDefinition { NotificationsViewModel() }
 
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }

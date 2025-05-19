@@ -34,25 +34,24 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.recommendation.NewRecommendation
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.formatDateTime
+import de.ashman.ontrack.features.common.SendMessageTextField
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_recommend_friends_empty
-import ontrack.composeapp.generated.resources.detail_recommend_previous
-import ontrack.composeapp.generated.resources.detail_recommend_textfield_placeholder
-import ontrack.composeapp.generated.resources.detail_recommend_title
+import ontrack.composeapp.generated.resources.recommendation_friends_empty
+import ontrack.composeapp.generated.resources.recommendation_sent
+import ontrack.composeapp.generated.resources.recommendation_textfield_placeholder
+import ontrack.composeapp.generated.resources.recommendation_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RecommendSheet(
-    selectableFriends: List<User>,
-    previousSentRecommendations: List<Recommendation>,
+    friends: List<User>,
+    sentRecommendations: List<NewRecommendation>,
+    isSending: Boolean,
     fetchFriends: () -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
-    selectUser: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -61,7 +60,6 @@ fun RecommendSheet(
 
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     val isAnyUserSelected = selectedUserId != null
-
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
@@ -69,16 +67,16 @@ fun RecommendSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.detail_recommend_title),
+            text = stringResource(Res.string.recommendation_title),
             style = MaterialTheme.typography.titleMedium,
         )
 
-        if (selectableFriends.isEmpty()) {
+        if (friends.isEmpty()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = stringResource(Res.string.detail_recommend_friends_empty),
+                text = stringResource(Res.string.recommendation_friends_empty),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -89,7 +87,7 @@ fun RecommendSheet(
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
-            items(selectableFriends) { friend ->
+            items(friends) { friend ->
                 FriendRecommendSelectorIcon(
                     userId = friend.id,
                     profilePictureUrl = friend.profilePictureUrl,
@@ -98,10 +96,6 @@ fun RecommendSheet(
                     isAnyUserSelected = isAnyUserSelected,
                     onSelectUser = { id ->
                         selectedUserId = id
-
-                        selectedUserId?.let {
-                            selectUser(it)
-                        }
                     }
                 )
             }
@@ -112,13 +106,13 @@ fun RecommendSheet(
                 .weight(1f, false)
                 .heightIn(max = 200.dp)
                 .padding(horizontal = 16.dp),
-            visible = previousSentRecommendations.isNotEmpty() && isAnyUserSelected,
+            visible = sentRecommendations.isNotEmpty() && isAnyUserSelected,
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = stringResource(Res.string.detail_recommend_previous),
+                    text = stringResource(Res.string.recommendation_sent),
                     style = MaterialTheme.typography.titleMedium,
                 )
 
@@ -126,27 +120,27 @@ fun RecommendSheet(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    items(previousSentRecommendations) { recommendation ->
+                    items(sentRecommendations) { recommendation ->
                         RecommendationCard(
-                            profilePictureUrl = recommendation.userImageUrl,
-                            username = recommendation.username,
-                            timestamp = recommendation.timestamp.formatDateTime(),
+                            profilePictureUrl = recommendation.user.profilePictureUrl,
+                            username = recommendation.user.name,
+                            timestamp = recommendation.timestamp,
                             message = recommendation.message,
-                            onClickUser = { onClickUser(recommendation.userId) },
+                            onClickUser = { onClickUser(recommendation.user.id) },
                         )
                     }
                 }
             }
         }
 
-        CommentTextField(
-            modifier = Modifier
-                .padding(horizontal = 16.dp),
-            placeholder = stringResource(Res.string.detail_recommend_textfield_placeholder),
+        SendMessageTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            placeholder = stringResource(Res.string.recommendation_textfield_placeholder),
             value = message,
             onValueChange = { message = it },
             isSendVisible = isAnyUserSelected,
-            onPostComment = {
+            isSending = isSending,
+            onSend = {
                 selectedUserId?.let {
                     onSendRecommendation(it, message.text)
                 }

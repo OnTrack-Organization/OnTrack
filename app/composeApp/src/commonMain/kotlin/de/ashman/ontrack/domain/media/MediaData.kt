@@ -1,6 +1,5 @@
-package de.ashman.ontrack.domain.newdomains
+package de.ashman.ontrack.domain.media
 
-import de.ashman.ontrack.domain.media.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable

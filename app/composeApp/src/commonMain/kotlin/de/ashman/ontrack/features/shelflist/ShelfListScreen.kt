@@ -116,7 +116,7 @@ fun ShelfListScreen(
                                             id = it.media.id,
                                             title = it.media.title,
                                             coverUrl = it.media.coverUrl,
-                                            mediaType = it.media.type,
+                                            type = it.media.type,
                                         )
                                     )
                                 },

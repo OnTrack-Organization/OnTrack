@@ -66,7 +66,7 @@ private fun startNotificationManager(
                 id = data["mediaId"].toString(),
                 title = "",
                 coverUrl = "",
-                mediaType = MediaType.MOVIE,
+                type = MediaType.MOVIE,
             )
 
             try {

@@ -14,52 +14,51 @@ import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
-import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.recommendation.FriendsActivity
+import de.ashman.ontrack.domain.recommendation.NewRecommendation
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.network.services.friend.FriendService
+import de.ashman.ontrack.network.services.recommendation.RecommendationService
+import de.ashman.ontrack.network.services.recommendation.dto.CreateRecommendationDto
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
 import de.ashman.ontrack.repository.SelectedMediaRepository
-import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
-import de.ashman.ontrack.repository.firestore.RecommendationRepository
 import de.ashman.ontrack.util.getSingularTitle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.recommendation_send
+import ontrack.composeapp.generated.resources.recommendation_send_error
 import ontrack.composeapp.generated.resources.tracking_create_error
 import ontrack.composeapp.generated.resources.tracking_delete_error
 import ontrack.composeapp.generated.resources.tracking_removed
 import ontrack.composeapp.generated.resources.tracking_saved
 import ontrack.composeapp.generated.resources.tracking_update_error
 import org.jetbrains.compose.resources.getString
-import kotlin.time.measureTime
 
 class DetailViewModel(
+    private val commonUiManager: CommonUiManager,
     private val movieRepository: MovieRepository,
     private val showRepository: ShowRepository,
     private val bookRepository: BookRepository,
     private val videogameRepository: VideogameRepository,
     private val boardgameRepository: BoardgameRepository,
     private val albumRepository: AlbumRepository,
-    private val firebaseTrackingRepository: FirebaseTrackingRepository,
-    private val recommendationRepository: RecommendationRepository,
     private val selectedMediaRepository: SelectedMediaRepository,
-    private val commonUiManager: CommonUiManager,
-    private val trackingService: TrackingService,
     private val trackingRepository: TrackingRepository,
+    private val trackingService: TrackingService,
     private val friendService: FriendService,
+    private val recommendationService: RecommendationService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
@@ -84,49 +83,33 @@ class DetailViewModel(
         }
     }
 
-    fun observeFriendTrackings(mediaId: String) = viewModelScope.launch {
-        firebaseTrackingRepository.observeFriendTrackingsForMedia(mediaId).collect { friendTrackings ->
-            _uiState.update { state ->
-                state.copy(
-                    friendTrackings = friendTrackings
-                )
-            }
-        }
-    }
-
     fun observeRatingStats(mediaId: String, mediaType: MediaType) = viewModelScope.launch {
-        firebaseTrackingRepository.observeRatingStats("${mediaType}_$mediaId").collectLatest { ratingStats ->
+        /*firebaseTrackingRepository.observeRatingStats("${mediaType}_$mediaId").collectLatest { ratingStats ->
             ratingStats?.let {
                 _uiState.update { it.copy(ratingStats = ratingStats) }
             }
-        }
+        }*/
     }
 
     fun fetchDetails(mediaNav: MediaNavigationParam) = viewModelScope.launch {
-        measureTime {
-            _uiState.update {
-                it.copy(
-                    resultState = DetailResultState.Loading,
-                    ratingStats = RatingStats(),
-                )
-            }
-
-            getRepository(mediaNav.mediaType).fetchDetails(mediaNav.id).fold(
-                onSuccess = { media ->
-                    _uiState.update {
-                        it.copy(resultState = DetailResultState.Success)
-                    }
-
-                    selectedMediaRepository.selectMedia(media)
-                },
-                onFailure = { exception ->
-                    _uiState.update { it.copy(resultState = DetailResultState.Error) }
-                    Logger.e { "FAILED TO FETCH MEDIA DETAILS: ${exception.message}" }
-                }
+        _uiState.update {
+            it.copy(
+                apiResultState = ApiResultState.ApiLoading,
+                ratingStats = RatingStats(),
             )
-        }.also { duration ->
-            _uiState.update { it.copy(searchDuration = duration.inWholeMilliseconds) }
         }
+
+        getRepository(mediaNav.type).fetchDetails(mediaNav.id).fold(
+            onSuccess = { media ->
+                _uiState.update { it.copy(apiResultState = ApiResultState.ApiSuccess) }
+                selectedMediaRepository.selectMedia(media)
+                Logger.d { "Fetched details: $media" }
+            },
+            onFailure = { exception ->
+                _uiState.update { it.copy(apiResultState = ApiResultState.ApiError) }
+                Logger.e { "Failed to fetch details: ${exception.message}" }
+            }
+        )
     }
 
     fun selectStatus(status: TrackStatus?) {
@@ -135,19 +118,19 @@ class DetailViewModel(
 
     fun saveTracking() {
         if (_uiState.value.currentTracking == null) {
-            createTracking()
+            val dto = CreateTrackingDto(
+                media = _uiState.value.currentMedia!!.toDto(),
+                status = _uiState.value.currentStatus!!,
+            )
+
+            createTracking(dto)
         } else {
             updateTracking()
         }
     }
 
-    private fun createTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-
-        val dto = CreateTrackingDto(
-            media = _uiState.value.currentMedia!!.toDto(),
-            status = _uiState.value.currentStatus!!,
-        )
+    private fun createTracking(dto: CreateTrackingDto) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
         trackingService.createTracking(dto).fold(
             onSuccess = { tracking ->
@@ -161,6 +144,8 @@ class DetailViewModel(
 
                 trackingRepository.addTracking(tracking)
 
+                _uiState.update { it.copy(resultState = DetailResultState.Success) }
+
                 Logger.d { "New tracking created: $tracking" }
             },
             onFailure = { exception ->
@@ -168,12 +153,10 @@ class DetailViewModel(
                 Logger.e { "Failed to create tracking: ${exception.message}" }
             }
         )
-
-        _uiState.update { it.copy(isLoading = false) }
     }
 
     private fun updateTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
         val dto = UpdateTrackingDto(
             id = _uiState.value.currentTracking!!.id,
@@ -192,6 +175,8 @@ class DetailViewModel(
 
                 trackingRepository.addTracking(tracking)
 
+                _uiState.update { it.copy(resultState = DetailResultState.Success) }
+
                 Logger.d { "Tracking updated: $tracking" }
             },
             onFailure = { exception ->
@@ -200,12 +185,10 @@ class DetailViewModel(
                 Logger.e { "Failed to update tracking: ${exception.message}" }
             }
         )
-
-        _uiState.update { it.copy(isLoading = false) }
     }
 
     fun removeTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
         val tracking = _uiState.value.currentTracking ?: return@launch
 
@@ -221,6 +204,8 @@ class DetailViewModel(
 
                 trackingRepository.deleteTracking(tracking.id)
 
+                _uiState.update { it.copy(resultState = DetailResultState.Success) }
+
                 Logger.d { "Tracking removed: $tracking" }
             },
             onFailure = { exception ->
@@ -228,31 +213,6 @@ class DetailViewModel(
                 Logger.e { "Failed to remove tracking: ${exception.message}" }
             }
         )
-
-        _uiState.update { it.copy(isLoading = false) }
-    }
-
-    // TODO add back in later
-    fun addRecommendationToCatalog() = viewModelScope.launch {
-        /*val media = _uiState.value.selectedMedia ?: return@launch
-        recommendationRepository.catalogRecommendation(media.id)
-
-        _uiState.value.user?.let { user ->
-            val catalogTracking = Tracking(
-                userId = user.id,
-                username = user.name,
-                userImageUrl = user.profilePictureUrl,
-                mediaId = media.id,
-                mediaType = media.mediaType,
-                mediaTitle = media.title,
-                mediaCoverUrl = media.coverUrl,
-                status = TrackStatus.CATALOG,
-                timestamp = System.now().toEpochMilliseconds(),
-            )
-            saveTracking(catalogTracking)
-        }
-
-        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_added_to_catalog))*/
     }
 
     fun fetchFriends() = viewModelScope.launch {
@@ -266,76 +226,65 @@ class DetailViewModel(
                         friends = users,
                     )
                 }
+                Logger.d { "Fetched friends: $users" }
             },
             onFailure = { exception ->
                 _uiState.update { it.copy(resultState = DetailResultState.Error) }
+                Logger.e { "Failed to fetch friends: ${exception.message}" }
             }
         )
     }
 
-    // TODO update later
-    /*fun observeFriendRecommendations(mediaId: String) = viewModelScope.launch {
-        recommendationRepository.fetchRecommendations(mediaId)
-            .collect { recommendations ->
-                _uiState.update { it.copy(receivedRecommendations = recommendations) }
-            }
-    }
+    fun sendRecommendation(userId: String, message: String?) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-    fun sendRecommendation(friendId: String, message: String?, media: Media) = viewModelScope.launch {
-        val user = userDataStore.getCurrentUser()
-
-        val recommendation = Recommendation(
-            userId = user.id,
-            userImageUrl = user.profilePictureUrl,
-            username = user.name,
-            mediaId = media.id,
-            mediaType = media.mediaType,
-            mediaTitle = media.title,
-            mediaCoverUrl = media.coverUrl,
+        val dto = CreateRecommendationDto(
+            userId = userId,
+            media = _uiState.value.currentMedia!!.toDto(),
             message = message,
-            status = RecommendationStatus.PENDING
         )
 
-        recommendationRepository.sendRecommendation(friendId, recommendation)
-
-        val updatedRecs = listOf(recommendation) + (previousRecommendationsCache[friendId] ?: emptyList()).take(4)
-        previousRecommendationsCache[friendId] = updatedRecs
-        _uiState.update { it.copy(previousSentRecommendations = updatedRecs) }
-
-        commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.detail_recommendation_sent))
-
-        notificationService.sendPushNotification(
-            userId = friendId,
-            title = getString(Res.string.notifications_new_recommendation_title),
-            body = getString(Res.string.notifications_new_recommendation_body, user.name, media.title),
-            mediaId = media.id,
-            imageUrl = media.coverUrl,
+        recommendationService.sendRecommendation(dto).fold(
+            onSuccess = {
+                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.recommendation_send))
+                _uiState.update { it.copy(resultState = DetailResultState.Success) }
+                Logger.d { "Recommendation sent to user: $userId" }
+            },
+            onFailure = { exception ->
+                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.recommendation_send_error))
+                Logger.e { "Failed to send recommendation to user: $userId, ${exception.message}" }
+            }
         )
     }
 
-    fun selectFriend(friendId: String, mediaId: String) {
-        // Clear the previous recommendations for the current mediaId to avoid showing old data
-        _uiState.update { it.copy(previousSentRecommendations = emptyList()) }
+    fun fetchFriendsActivity(mediaType: MediaType, mediaId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        // Check if the cache contains recommendations for the given friendId and mediaId
-        val cachedRecs = previousRecommendationsCache[friendId]
-
-        // If the cache doesn't have recommendations for this friendId, fetch the previous recommendations
-        if (cachedRecs == null || cachedRecs.none { it.mediaId == mediaId }) {
-            // Cache is empty or doesn't contain recommendations for the given mediaId, so fetch them
-            getPreviousSentRecommendations(friendId, mediaId)
-        } else {
-            // Use the cached recommendations
-            _uiState.update { it.copy(previousSentRecommendations = cachedRecs) }
-        }
+        recommendationService.getFriendsActivity(mediaType, mediaId).fold(
+            onSuccess = { friendsActivity ->
+                _uiState.update {
+                    it.copy(
+                        friendsActivity = friendsActivity,
+                        resultState = DetailResultState.Success,
+                    )
+                }
+                Logger.d { "Fetched friends activity: $friendsActivity" }
+            },
+            onFailure = { exception ->
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
+                Logger.e { "Failed to fetch friends activity: ${exception.message}" }
+            }
+        )
     }
 
-    fun getPreviousSentRecommendations(friendId: String, mediaId: String) = viewModelScope.launch {
-        val recs = recommendationRepository.getPreviousSentRecommendations(friendId, mediaId)
-        previousRecommendationsCache[friendId] = recs
+    fun catalogRecommendation() {
+        val dto = CreateTrackingDto(
+            media = _uiState.value.currentMedia!!.toDto(),
+            status = TrackStatus.CATALOG,
+        )
 
-        _uiState.update { it.copy(previousSentRecommendations = recs) }
-    }*/
+        createTracking(dto)
+    }
 
     fun clearViewModel() {
         _uiState.update { DetailUiState() }
@@ -357,22 +306,24 @@ data class DetailUiState(
     val currentStatus: TrackStatus? = null,
 
     val ratingStats: RatingStats = RatingStats(),
-    val friendTrackings: List<Tracking> = emptyList(),
 
     val friends: List<User> = emptyList(),
+    val friendsActivity: FriendsActivity? = null,
 
-    // TODO move received and sent recommendations here from other vm and implement that
-    val receivedRecommendations: List<Recommendation> = emptyList(),
-    val previousSentRecommendations: List<Recommendation> = emptyList(),
+    val sentRecommendations: List<NewRecommendation> = emptyList(),
 
+    val apiResultState: ApiResultState = ApiResultState.ApiLoading,
     val resultState: DetailResultState = DetailResultState.Loading,
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val searchDuration: Long = 0L,
 )
 
 enum class DetailResultState {
     Loading,
     Success,
     Error,
+}
+
+enum class ApiResultState {
+    ApiLoading,
+    ApiSuccess,
+    ApiError,
 }

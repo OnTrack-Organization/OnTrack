@@ -1,7 +1,7 @@
 package de.ashman.ontrack.network.services.tracking.dto
 
+import de.ashman.ontrack.domain.media.MediaData
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.MediaData
 import kotlinx.serialization.Serializable
 
 @Serializable

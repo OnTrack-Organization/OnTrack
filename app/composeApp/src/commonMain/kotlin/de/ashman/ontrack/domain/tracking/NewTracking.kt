@@ -1,6 +1,6 @@
-package de.ashman.ontrack.domain.newdomains
+package de.ashman.ontrack.domain.tracking
 
-import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.media.MediaData
 
 data class NewTracking(
     val id: String,

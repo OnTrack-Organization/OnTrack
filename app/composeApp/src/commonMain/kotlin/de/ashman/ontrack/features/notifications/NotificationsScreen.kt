@@ -88,7 +88,7 @@ fun NotificationsScreen(
                                     id = it.mediaId,
                                     title = it.mediaTitle,
                                     coverUrl = it.mediaImageUrl,
-                                    mediaType = it.mediaType,
+                                    type = it.mediaType,
                                 )
                             )
                         },

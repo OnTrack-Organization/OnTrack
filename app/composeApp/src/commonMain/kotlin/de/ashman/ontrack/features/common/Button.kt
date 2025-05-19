@@ -132,6 +132,7 @@ fun OnTrackIconButton(
     modifier: Modifier = Modifier.size(48.dp),
     icon: ImageVector,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
@@ -148,13 +149,20 @@ fun OnTrackIconButton(
             contentColor = animatedContentColor,
             containerColor = animatedContainerColor,
         )
-
     ) {
-        Icon(
-            modifier = Modifier.fillMaxSize(0.5f),
-            imageVector = icon,
-            contentDescription = icon.name,
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.fillMaxSize(0.5f),
+                color = animatedContentColor,
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Icon(
+                modifier = Modifier.fillMaxSize(0.5f),
+                imageVector = icon,
+                contentDescription = icon.name,
+            )
+        }
     }
 }
 

@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
@@ -362,7 +362,7 @@ fun ShelfItem(
                                     id = item.media.id,
                                     title = item.media.title,
                                     coverUrl = item.media.coverUrl,
-                                    mediaType = item.media.type,
+                                    type = item.media.type,
                                 )
                             )
                         },

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +24,7 @@ class ShelfListViewModel(
             _uiState.value,
         )
 
+    // TODO load trackings either from other user or current user.
     fun observeTrackings() = viewModelScope.launch {
         trackingRepository.getTrackings().collect { trackings ->
             _uiState.update { it.copy(trackings = trackings) }

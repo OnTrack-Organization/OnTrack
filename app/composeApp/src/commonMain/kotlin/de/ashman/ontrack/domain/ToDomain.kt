@@ -11,6 +11,7 @@ import de.ashman.ontrack.entity.share.LikeEntity
 import de.ashman.ontrack.entity.tracking.EntryEntity
 import de.ashman.ontrack.entity.tracking.TrackingEntity
 
+// TODO remove, this is old
 fun TrackingEntity.toDomain() = Tracking(
     id = id,
     mediaId = mediaId,

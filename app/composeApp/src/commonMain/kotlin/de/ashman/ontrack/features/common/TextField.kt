@@ -100,13 +100,14 @@ fun SearchBar(
 }
 
 @Composable
-fun CommentTextField(
+fun SendMessageTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
+    isSending: Boolean,
     isSendVisible: Boolean = true,
-    onPostComment: () -> Unit,
+    onSend: () -> Unit,
 ) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
@@ -126,9 +127,9 @@ fun CommentTextField(
                 OnTrackIconButton(
                     modifier = Modifier.size(42.dp),
                     icon = Icons.AutoMirrored.Default.Send,
-                    onClick = onPostComment,
+                    isLoading = isSending,
+                    onClick = onSend,
                 )
-
             }
         },
     )
