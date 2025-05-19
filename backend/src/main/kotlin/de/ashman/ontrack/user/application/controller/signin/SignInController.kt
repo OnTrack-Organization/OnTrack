@@ -32,9 +32,9 @@ class SignInController(
 
         user = User(
             id = identity.id,
-            name = identity.name,
             email = identity.email,
-            profilePictureUrl = identity.picture
+            name = identity.name.orEmpty(),
+            profilePictureUrl = identity.picture.orEmpty(),
         )
 
         user.updateFcmToken(signInDto.fcmToken)

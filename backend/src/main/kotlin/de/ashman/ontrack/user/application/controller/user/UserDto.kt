@@ -9,7 +9,7 @@ data class UserDto(
     val profilePictureUrl: String,
 )
 
-fun User.toUserDto() = UserDto(
+fun User.toDto() = UserDto(
     id,
     username!!,
     name,
