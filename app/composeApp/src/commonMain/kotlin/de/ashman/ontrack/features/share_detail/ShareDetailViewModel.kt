@@ -47,4 +47,11 @@ class ShareDetailViewModel(
 
 data class ShareDetailUiState(
     val tracking: Tracking? = null,
+    val resultState: ShareDetailResultState = ShareDetailResultState.Loading,
 )
+
+enum class ShareDetailResultState {
+    Loading,
+    Success,
+    Error,
+}

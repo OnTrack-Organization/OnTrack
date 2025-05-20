@@ -41,8 +41,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
-import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.formatDateTime
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -153,7 +153,7 @@ fun CommentsSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            CommentTextField(
+            SendMessageTextField(
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f),
@@ -162,7 +162,8 @@ fun CommentsSheet(
                 onValueChange = {
                     commentText = it
                 },
-                onPostComment = {
+                isSending = false,
+                onSend = {
                     onAddComment(commentText.text)
                     replyingTo = null
                     commentText = TextFieldValue("")

@@ -19,9 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.PersonImage
@@ -29,102 +28,97 @@ import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.share.ShareCardHeader
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_friends_activity_empty
-import ontrack.composeapp.generated.resources.detail_friends_activity_title
-import ontrack.composeapp.generated.resources.recommendations_add_to_catalog_button
+import ontrack.composeapp.generated.resources.add_to_catalog_button
+import ontrack.composeapp.generated.resources.friends_activity_empty
+import ontrack.composeapp.generated.resources.friends_activity_title
 import ontrack.composeapp.generated.resources.recommendations_title
 import ontrack.composeapp.generated.resources.trackings_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FriendsActivitySheet(
-    recommendations: List<Recommendation>,
-    // TODO maybe new FriendTracking domain
-    friendTrackings: List<Tracking>,
-    hasTracking: Boolean,
+    friendsActivity: FriendsActivity?,
+    isMediaUntracked: Boolean,
+    mediaType: MediaType,
+    isAddingToCatalog: Boolean,
     onUserClick: (String) -> Unit,
-    onAddToCatalogClick: () -> Unit,
+    onCatalogRecommendation: () -> Unit,
 ) {
-    val buttonsVisible = recommendations.isNotEmpty()
+    if (friendsActivity == null) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.friends_activity_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        if (recommendations.isEmpty() && friendTrackings.isEmpty()) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.friends_activity_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+            )
+        }
+    } else {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (friendsActivity.recommendations.isNotEmpty()) {
                 Text(
-                    text = stringResource(Res.string.detail_friends_activity_title),
+                    text = stringResource(Res.string.recommendations_title),
                     style = MaterialTheme.typography.titleMedium,
                 )
 
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(friendsActivity.recommendations) {
+                        RecommendationCard(
+                            profilePictureUrl = it.user.profilePictureUrl,
+                            username = it.user.name,
+                            timestamp = it.timestamp,
+                            message = it.message,
+                            onClickUser = { onUserClick(it.user.id) },
+                        )
+                    }
+                }
+            }
+
+            if (friendsActivity.trackings.isNotEmpty()) {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.detail_friends_activity_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
+                    text = stringResource(Res.string.trackings_title),
+                    style = MaterialTheme.typography.titleMedium,
                 )
-            }
-            return@Column
-        }
 
-        if (recommendations.isNotEmpty()) {
-            Text(
-                text = stringResource(Res.string.recommendations_title),
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                items(recommendations) {
-                    RecommendationCard(
-                        profilePictureUrl = it.userImageUrl,
-                        username = it.username,
-                        timestamp = it.timestamp.formatDateTime(),
-                        message = it.message,
-                        onClickUser = { onUserClick(it.userId) },
-                    )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(friendsActivity.trackings) {
+                        SimpleFriendTrackingCard(
+                            profilePictureUrl = it.user.profilePictureUrl,
+                            username = it.user.name,
+                            timestamp = it.timestamp,
+                            mediaType = mediaType,
+                            trackStatus = it.status,
+                            // TODO
+                            rating = null,
+                            reviewTitle = null,
+                            reviewDescription = null,
+                            onUserClick = { onUserClick(it.user.id) },
+                        )
+                    }
                 }
             }
-        }
 
-        if (friendTrackings.isNotEmpty()) {
-            Text(
-                text = stringResource(Res.string.trackings_title),
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                items(friendTrackings) {
-                    SimpleFriendTrackingCard(
-                        profilePictureUrl = it.userImageUrl,
-                        username = it.username,
-                        timestamp = it.timestamp,
-                        mediaType = it.mediaType,
-                        trackStatus = it.status!!,
-                        rating = it.rating,
-                        reviewTitle = it.reviewTitle,
-                        reviewDescription = it.reviewDescription,
-                        onUserClick = { onUserClick(it.userId) },
-                    )
-                }
-            }
-        }
-
-        if (buttonsVisible) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+            if (friendsActivity.recommendations.isNotEmpty()) {
                 OnTrackButton(
-                    modifier = Modifier.weight(1f),
-                    text = Res.string.recommendations_add_to_catalog_button,
+                    modifier = Modifier.fillMaxWidth(),
+                    text = Res.string.add_to_catalog_button,
                     icon = Icons.Default.Bookmark,
-                    enabled = !hasTracking,
-                    onClick = onAddToCatalogClick,
+                    enabled = isMediaUntracked,
+                    isLoading = isAddingToCatalog,
+                    onClick = onCatalogRecommendation,
                 )
             }
         }
@@ -134,8 +128,8 @@ fun FriendsActivitySheet(
 @Composable
 fun RecommendationCard(
     profilePictureUrl: String?,
-    username: String?,
-    timestamp: String,
+    username: String,
+    timestamp: Long,
     message: String?,
     onClickUser: () -> Unit,
 ) {
@@ -152,15 +146,13 @@ fun RecommendationCard(
             )
 
             Column {
-                username?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
                 Text(
-                    text = timestamp,
+                    text = username,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = timestamp.formatDateTime(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

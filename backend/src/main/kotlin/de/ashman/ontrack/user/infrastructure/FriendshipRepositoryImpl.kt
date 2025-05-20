@@ -18,7 +18,7 @@ class FriendshipRepositoryImpl(
         friendshipJpaRepository.deleteByUserId1AndUserId2(first, second)
     }
 
-    override fun getFriends(userId: String): List<String> {
+    override fun getFriendIds(userId: String): List<String> {
         return friendshipJpaRepository.findFriendsOfUser(userId)
     }
 

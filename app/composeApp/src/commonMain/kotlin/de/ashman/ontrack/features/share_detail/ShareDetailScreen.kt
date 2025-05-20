@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.tracking.Tracking
-import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.notifications.formatTimeAgoString
 import de.ashman.ontrack.features.share.ShareCardHeader
@@ -109,6 +109,7 @@ fun ShareDetailScreen(
                         })
                     },
                 tracking = it,
+                isSending = uiState.resultState == ShareDetailResultState.Loading,
                 onClickCover = onClickMedia,
                 onClickUser = onClickUser,
                 // TODO
@@ -123,6 +124,7 @@ fun ShareDetailScreen(
 fun ShareDetailContent(
     modifier: Modifier = Modifier,
     tracking: Tracking,
+    isSending: Boolean = false,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onClickLike: () -> Unit,
@@ -169,7 +171,7 @@ fun ShareDetailContent(
         var replyingTo by remember { mutableStateOf<String?>(null) }
         val focusRequester = remember { FocusRequester() }
 
-        CommentTextField(
+        SendMessageTextField(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .focusRequester(focusRequester),
@@ -177,7 +179,8 @@ fun ShareDetailContent(
             value = commentText,
             onValueChange = { commentText = it },
             isSendVisible = commentText.text.isNotBlank(),
-            onPostComment = {
+            isSending = isSending,
+            onSend = {
                 onPostComment(commentText.text)
                 replyingTo = null
                 commentText = TextFieldValue("")
@@ -224,7 +227,7 @@ fun ShareDetailMainContent(
                     onClickCover(
                         MediaNavigationParam(
                             id = tracking.mediaId,
-                            mediaType = tracking.mediaType,
+                            type = tracking.mediaType,
                             title = tracking.mediaTitle,
                             coverUrl = tracking.mediaCoverUrl,
                         )

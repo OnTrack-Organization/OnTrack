@@ -42,8 +42,8 @@ class FirebaseAuthFilter(
             val authentication = UsernamePasswordAuthenticationToken(identity, null, listOf(SimpleGrantedAuthority("ROLE_USER")))
             SecurityContextHolder.getContext().authentication = authentication
 
-        } catch (_: Exception) {
-
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         filterChain.doFilter(request, response)

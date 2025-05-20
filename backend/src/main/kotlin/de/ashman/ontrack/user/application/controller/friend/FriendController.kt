@@ -4,7 +4,7 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.user.application.controller.FriendStatus
 import de.ashman.ontrack.user.application.controller.OtherUserDto
 import de.ashman.ontrack.user.application.controller.user.UserDto
-import de.ashman.ontrack.user.application.controller.user.toUserDto
+import de.ashman.ontrack.user.application.controller.user.toDto
 import de.ashman.ontrack.user.domain.repository.FriendRequestRepository
 import de.ashman.ontrack.user.domain.repository.FriendshipRepository
 import de.ashman.ontrack.user.domain.repository.UserRepository
@@ -25,9 +25,9 @@ class FriendController(
     @GetMapping("friends")
     fun findFriends(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<UserDto>>
     {
-        val friendIds = friendshipRepository.getFriends(identity.id)
+        val friendIds = friendshipRepository.getFriendIds(identity.id)
         val friends = userRepository.findAllById(friendIds)
-        val friendDtos = friends.stream().map { it.toUserDto() }.toList()
+        val friendDtos = friends.stream().map { it.toDto() }.toList()
 
         return ResponseEntity.ok(friendDtos)
     }
@@ -37,7 +37,7 @@ class FriendController(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<OtherUserDto>>
     {
-        val friendIds = friendshipRepository.getFriends(identity.id)
+        val friendIds = friendshipRepository.getFriendIds(identity.id)
         val outcomingFriendIds = friendRequestRepository.findReceiversOfSentRequests(identity.id)
         val incomingFriendIds = friendRequestRepository.findSendersOfReceivedRequests(identity.id)
 
@@ -46,13 +46,13 @@ class FriendController(
         val incomingFriends = userRepository.findAllById(incomingFriendIds)
 
         val friendDtos = friends.map {
-            OtherUserDto(it.toUserDto(), FriendStatus.FRIEND)
+            OtherUserDto(it.toDto(), FriendStatus.FRIEND)
         }
         val outcomingFriendDtos = outcomingFriends.map {
-            OtherUserDto(it.toUserDto(), FriendStatus.REQUEST_SENT)
+            OtherUserDto(it.toDto(), FriendStatus.REQUEST_SENT)
         }
         val incomingFriendDtos = incomingFriends.map {
-            OtherUserDto(it.toUserDto(), FriendStatus.REQUEST_RECEIVED)
+            OtherUserDto(it.toDto(), FriendStatus.REQUEST_RECEIVED)
         }
 
         return ResponseEntity.ok(friendDtos + outcomingFriendDtos + incomingFriendDtos)

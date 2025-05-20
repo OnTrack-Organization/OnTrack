@@ -119,20 +119,18 @@
 
     <string name="detail_timeline_title">Tracking Timeline</string>
 
-    <!-- DETAIL FRIENDS ACTIVITY -->
-    <string name="detail_friends_activity_title">Friend's Activity</string>
+    <!-- FRIENDS ACTIVITY/RECOMMENDATION -->
+    <string name="friends_activity_title">Friend's Activity</string>
     <string name="recommendations_title">Recommendations</string>
     <string name="trackings_title">Trackings</string>
-    <string name="recommendations_add_to_catalog_button">Add to Catalog</string>
-    <string name="detail_friends_activity_empty">No friend's activity yet</string>
-    <string name="detail_recommendation_added_to_catalog">Recommendation added to Catalog</string>
+    <string name="friends_activity_empty">No friend's activity yet</string>
+    <string name="add_to_catalog_button">Add to Catalog</string>
 
-    <!-- DETAIL RECOMMEND -->
-    <string name="detail_recommend_title">Recommend</string>
-    <string name="detail_recommend_textfield_placeholder">Send a message…</string>
-    <string name="detail_recommend_previous">Recently Sent Recommendations</string>
-    <string name="detail_recommend_friends_empty">No friends to recommend to</string>
-    <string name="detail_recommendation_sent">Recommendation sent</string>
+    <string name="recommendation_title">Send Recommendation</string>
+    <string name="recommendation_textfield_placeholder">Send a message…</string>
+    <string name="recommendation_sent">Sent Recommendations</string>
+    <string name="recommendation_friends_empty">No friends to recommend to</string>
+    <string name="recommendation_send">Recommendation sent</string>
 
     <!-- DETAIL CONTENT -->
     <string name="ratings_overview">Ratings</string>
@@ -381,7 +379,11 @@
     <string name="friend_cancel_request_error">Failed to cancel friend request</string>
     <string name="friend_delete_error">Failed to delete friend</string>
     <string name="shelf_get_profile_error">Failed to fetch user profile</string>
-    <string name="friends_get_error">Couldn't fetch friends and requests</string>
+    <string name="friends_get_error">>Failed to fetch friends and requests</string>
+
+    <string name="recommendation_friends_error">Failed to fetch friends</string>
+    <string name="recommendation_send_error">Failed to send recommendation</string>
+    <string name="recommendation_added_to_catalog_error">Failed to add recommendation to catalog</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>

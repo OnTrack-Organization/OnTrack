@@ -1,6 +1,6 @@
 package de.ashman.ontrack.database
 
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 
 fun NewTracking.toEntity() = NewTrackingEntity(
     id = id,

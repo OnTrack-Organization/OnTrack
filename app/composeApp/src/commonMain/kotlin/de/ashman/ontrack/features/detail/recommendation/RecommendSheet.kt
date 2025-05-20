@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,32 +35,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.user.User
-import de.ashman.ontrack.features.common.CommentTextField
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.formatDateTime
+import de.ashman.ontrack.features.common.SendMessageTextField
+import de.ashman.ontrack.features.detail.DetailResultState
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_recommend_friends_empty
-import ontrack.composeapp.generated.resources.detail_recommend_previous
-import ontrack.composeapp.generated.resources.detail_recommend_textfield_placeholder
-import ontrack.composeapp.generated.resources.detail_recommend_title
+import ontrack.composeapp.generated.resources.recommendation_friends_empty
+import ontrack.composeapp.generated.resources.recommendation_friends_error
+import ontrack.composeapp.generated.resources.recommendation_sent
+import ontrack.composeapp.generated.resources.recommendation_textfield_placeholder
+import ontrack.composeapp.generated.resources.recommendation_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RecommendSheet(
-    selectableFriends: List<User>,
-    previousSentRecommendations: List<Recommendation>,
-    fetchFriends: () -> Unit,
+    resultState: DetailResultState,
+    friends: List<User>,
+    sentRecommendations: List<Recommendation>,
+    fetchSentRecommendations: (String) -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
-    selectUser: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        fetchFriends()
-    }
-
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     val isAnyUserSelected = selectedUserId != null
-
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
@@ -69,89 +64,108 @@ fun RecommendSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.detail_recommend_title),
+            text = stringResource(Res.string.recommendation_title),
             style = MaterialTheme.typography.titleMedium,
         )
 
-        if (selectableFriends.isEmpty()) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                text = stringResource(Res.string.detail_recommend_friends_empty),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            return@Column
-        }
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        ) {
-            items(selectableFriends) { friend ->
-                FriendRecommendSelectorIcon(
-                    userId = friend.id,
-                    profilePictureUrl = friend.profilePictureUrl,
-                    name = friend.name,
-                    isSelected = selectedUserId == friend.id,
-                    isAnyUserSelected = isAnyUserSelected,
-                    onSelectUser = { id ->
-                        selectedUserId = id
-
-                        selectedUserId?.let {
-                            selectUser(it)
-                        }
-                    }
-                )
+        when (resultState) {
+            DetailResultState.Loading -> {
             }
-        }
 
-        AnimatedVisibility(
-            modifier = Modifier
-                .weight(1f, false)
-                .heightIn(max = 200.dp)
-                .padding(horizontal = 16.dp),
-            visible = previousSentRecommendations.isNotEmpty() && isAnyUserSelected,
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = stringResource(Res.string.detail_recommend_previous),
-                    style = MaterialTheme.typography.titleMedium,
-                )
+            DetailResultState.Success -> {
+                if (friends.isEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = stringResource(Res.string.recommendation_friends_empty),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    return@Column
+                }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
-                    items(previousSentRecommendations) { recommendation ->
-                        RecommendationCard(
-                            profilePictureUrl = recommendation.userImageUrl,
-                            username = recommendation.username,
-                            timestamp = recommendation.timestamp.formatDateTime(),
-                            message = recommendation.message,
-                            onClickUser = { onClickUser(recommendation.userId) },
+                    items(friends) { friend ->
+                        FriendRecommendSelectorIcon(
+                            userId = friend.id,
+                            profilePictureUrl = friend.profilePictureUrl,
+                            name = friend.name,
+                            isSelected = selectedUserId == friend.id,
+                            isAnyUserSelected = isAnyUserSelected,
+                            onSelectUser = { id ->
+                                selectedUserId = id
+
+                                id?.let {
+                                    fetchSentRecommendations(it)
+                                }
+                            }
                         )
                     }
                 }
+
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .weight(1f, false)
+                        .heightIn(max = 200.dp)
+                        .padding(horizontal = 16.dp),
+                    visible = sentRecommendations.isNotEmpty() && isAnyUserSelected,
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.recommendation_sent),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            items(sentRecommendations) { recommendation ->
+                                RecommendationCard(
+                                    profilePictureUrl = recommendation.user.profilePictureUrl,
+                                    username = recommendation.user.name,
+                                    timestamp = recommendation.timestamp,
+                                    message = recommendation.message,
+                                    onClickUser = { onClickUser(recommendation.user.id) },
+                                )
+                            }
+                        }
+                    }
+                }
+
+                SendMessageTextField(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    placeholder = stringResource(Res.string.recommendation_textfield_placeholder),
+                    value = message,
+                    onValueChange = { message = it },
+                    isSendVisible = isAnyUserSelected,
+                    isSending = resultState == DetailResultState.Loading,
+                    onSend = {
+                        selectedUserId?.let {
+                            onSendRecommendation(it, message.text)
+                        }
+                    },
+                )
+            }
+
+            DetailResultState.Error -> {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    text = stringResource(Res.string.recommendation_friends_error),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
-
-        CommentTextField(
-            modifier = Modifier
-                .padding(horizontal = 16.dp),
-            placeholder = stringResource(Res.string.detail_recommend_textfield_placeholder),
-            value = message,
-            onValueChange = { message = it },
-            isSendVisible = isAnyUserSelected,
-            onPostComment = {
-                selectedUserId?.let {
-                    onSendRecommendation(it, message.text)
-                }
-            },
-        )
     }
 }
 

@@ -1,8 +1,7 @@
 package de.ashman.ontrack.database
 
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.newdomains.toDomain
+import de.ashman.ontrack.domain.tracking.NewTracking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

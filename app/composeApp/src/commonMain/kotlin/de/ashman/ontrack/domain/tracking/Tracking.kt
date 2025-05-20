@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+@Deprecated("REMOVE WHEN FINALLY UNUSED")
 @CommonParcelize
 @Serializable
 data class Tracking(

@@ -12,7 +12,7 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

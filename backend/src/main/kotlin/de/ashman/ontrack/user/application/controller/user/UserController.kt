@@ -27,7 +27,7 @@ class UserController(
         @RequestParam username: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<OtherUserDto>> {
-        val friendIds = friendshipRepository.getFriends(identity.id)
+        val friendIds = friendshipRepository.getFriendIds(identity.id)
         val outcomingFriendIds = friendRequestRepository.findReceiversOfSentRequests(identity.id)
         val incomingFriendIds = friendRequestRepository.findSendersOfReceivedRequests(identity.id)
 
@@ -42,7 +42,7 @@ class UserController(
                 in incomingFriendIds -> FriendStatus.REQUEST_RECEIVED
                 else -> FriendStatus.STRANGER
             }
-            OtherUserDto(user.toUserDto(), status)
+            OtherUserDto(user.toDto(), status)
         }
 
         return ResponseEntity.ok(searchResult)
@@ -71,7 +71,7 @@ class UserController(
         val trackingDtos = trackings.map { it.toDto() }
         val profileDto = UserProfileDto(
             OtherUserDto(
-                user.toUserDto(),
+                user.toDto(),
                 friendStatus
             ),
             trackingDtos

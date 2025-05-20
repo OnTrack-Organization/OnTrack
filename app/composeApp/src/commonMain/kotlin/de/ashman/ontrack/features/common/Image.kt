@@ -232,7 +232,7 @@ fun MediaPosterRow(
                                         id = item.id,
                                         title = item.title,
                                         coverUrl = item.coverUrl,
-                                        mediaType = item.mediaType
+                                        type = item.mediaType
                                     )
                                 )
                             },

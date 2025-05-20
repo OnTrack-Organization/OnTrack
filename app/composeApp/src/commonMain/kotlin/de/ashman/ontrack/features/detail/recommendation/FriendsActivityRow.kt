@@ -28,23 +28,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.getIcon
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_friends_activity_title
+import ontrack.composeapp.generated.resources.friends_activity_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun FriendActivityRow(
-    friendTrackings: List<Tracking>,
-    friendRecommendations: List<Recommendation>,
-    onUserClick: (String) -> Unit,
-    onMoreClick: () -> Unit,
+fun FriendsActivityRow(
+    friendsActivity: FriendsActivity,
+    onClickUser: (String) -> Unit,
+    onClickMore: () -> Unit,
 ) {
-    val uniqueFriends = (friendTrackings.map { it.userId } + friendRecommendations.map { it.userId }).distinct()
+    val uniqueUsers = (friendsActivity.trackings.map { it.user } + friendsActivity.recommendations.map { it.user }).distinctBy { it.id }
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -52,12 +50,12 @@ fun FriendActivityRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(Res.string.detail_friends_activity_title),
+            text = stringResource(Res.string.friends_activity_title),
             style = MaterialTheme.typography.titleMedium,
         )
 
         IconButton(
-            onClick = onMoreClick,
+            onClick = onClickMore,
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
@@ -71,35 +69,28 @@ fun FriendActivityRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        items(uniqueFriends) { userId ->
-            val userTracking = friendTrackings.find { it.userId == userId }
-            val userRecommendation = friendRecommendations.find { it.userId == userId }
+        items(uniqueUsers) { user ->
+            val userTracking = friendsActivity.trackings.find { it.user.id == user.id }
+            val userRecommendation = friendsActivity.recommendations.find { it.user.id == user.id }
 
-            val userImageUrl = userTracking?.userImageUrl ?: userRecommendation?.userImageUrl
-            val name = userTracking?.username ?: userRecommendation?.username
-            val status = userTracking?.status
-            val isRecommended = userRecommendation != null
-
-            FriendActivityIcon(
-                userId = userId,
-                imageUrl = userImageUrl,
-                name = name.orEmpty(),
-                status = status,
-                isRecommended = isRecommended,
-                onUserClick = onUserClick
+            FriendsActivityIcon(
+                profilePictureUrl = user.profilePictureUrl,
+                name = user.name,
+                status = userTracking?.status,
+                hasRecommendation = userRecommendation != null,
+                onClickUser = { onClickUser(user.id) },
             )
         }
     }
 }
 
 @Composable
-fun FriendActivityIcon(
-    userId: String,
-    imageUrl: String?,
+fun FriendsActivityIcon(
+    profilePictureUrl: String?,
     name: String,
     status: TrackStatus?,
-    isRecommended: Boolean,
-    onUserClick: (String) -> Unit,
+    hasRecommendation: Boolean,
+    onClickUser: () -> Unit,
 ) {
     Column(
         modifier = Modifier,
@@ -111,11 +102,11 @@ fun FriendActivityIcon(
         ) {
             PersonImage(
                 modifier = Modifier.align(Alignment.TopCenter),
-                profilePictureUrl = imageUrl,
-                onClick = { onUserClick(userId) }
+                profilePictureUrl = profilePictureUrl,
+                onClick = onClickUser,
             )
 
-            if (isRecommended) {
+            if (hasRecommendation) {
                 Surface(
                     modifier = Modifier
                         .size(24.dp)
@@ -127,8 +118,7 @@ fun FriendActivityIcon(
                     Icon(
                         imageVector = Icons.Default.VolunteerActivism,
                         contentDescription = "Recommended Icon",
-                        modifier = Modifier
-                            .padding(4.dp)
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }
@@ -144,9 +134,8 @@ fun FriendActivityIcon(
                 ) {
                     Icon(
                         imageVector = it.getIcon(true),
-                        contentDescription = "Trackstatus Icon",
-                        modifier = Modifier
-                            .padding(4.dp)
+                        contentDescription = "Track Status Icon",
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }
@@ -158,8 +147,7 @@ fun FriendActivityIcon(
             fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .width(64.dp),
+            modifier = Modifier.width(64.dp),
             textAlign = TextAlign.Center,
         )
     }

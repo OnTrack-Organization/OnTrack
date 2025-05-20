@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager

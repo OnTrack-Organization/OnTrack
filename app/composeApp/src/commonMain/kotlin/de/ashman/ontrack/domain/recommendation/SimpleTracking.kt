@@ -1,9 +1,10 @@
 package de.ashman.ontrack.domain.recommendation
 
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.user.User
 
-data class Recommendation(
+data class SimpleTracking(
     val user: User,
-    val message: String,
+    val status: TrackStatus,
     val timestamp: Long,
 )

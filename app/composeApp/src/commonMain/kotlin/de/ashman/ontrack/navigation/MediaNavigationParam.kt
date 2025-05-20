@@ -8,5 +8,5 @@ data class MediaNavigationParam(
     val id: String,
     val title: String,
     val coverUrl: String?,
-    val mediaType: MediaType,
+    val type: MediaType,
 )

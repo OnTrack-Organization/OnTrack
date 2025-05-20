@@ -102,7 +102,7 @@ fun ShareCard(
                         onClickCover(
                             MediaNavigationParam(
                                 id = tracking.mediaId,
-                                mediaType = tracking.mediaType,
+                                type = tracking.mediaType,
                                 title = tracking.mediaTitle,
                                 coverUrl = tracking.mediaCoverUrl,
                             )
@@ -154,7 +154,7 @@ fun ShareCardHeader(
         ) {
             Text(
                 text = username,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -169,7 +169,7 @@ fun ShareCardHeader(
                 )
                 Text(
                     text = "${stringResource(trackStatus.getLabel(mediaType))} - ${timestamp.formatTimeAgoString()}",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

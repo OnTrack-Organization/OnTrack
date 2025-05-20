@@ -1,7 +1,7 @@
 package de.ashman.ontrack.network.services.tracking
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
-import de.ashman.ontrack.domain.newdomains.NewTracking
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.TrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto

@@ -42,9 +42,8 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.Movie
 import de.ashman.ontrack.domain.media.Show
 import de.ashman.ontrack.domain.media.Videogame
-import de.ashman.ontrack.domain.newdomains.NewTracking
-import de.ashman.ontrack.domain.recommendation.Recommendation
-import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.recommendation.FriendsActivity
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.ErrorContent
@@ -61,7 +60,7 @@ import de.ashman.ontrack.features.detail.media.BookDetailContent
 import de.ashman.ontrack.features.detail.media.MovieDetailContent
 import de.ashman.ontrack.features.detail.media.ShowDetailContent
 import de.ashman.ontrack.features.detail.media.VideogameDetailContent
-import de.ashman.ontrack.features.detail.recommendation.FriendActivityRow
+import de.ashman.ontrack.features.detail.recommendation.FriendsActivityRow
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
@@ -97,10 +96,10 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNav.id) {
         detailViewModel.fetchDetails(mediaNav)
-        detailViewModel.observeTracking(mediaNav.id, mediaNav.mediaType)
-
-        detailViewModel.observeRatingStats(mediaNav.id, mediaNav.mediaType)
-        detailViewModel.observeFriendTrackings(mediaNav.id)
+        detailViewModel.observeTracking(mediaNav.id, mediaNav.type)
+        detailViewModel.fetchFriends()
+        detailViewModel.fetchFriendsActivity(mediaNav.type, mediaNav.id)
+        //detailViewModel.observeRatingStats(mediaNav.id, mediaNav.mediaType)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -114,16 +113,16 @@ fun DetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             OnTrackTopBar(
-                title = pluralStringResource(mediaNav.mediaType.getMediaTypeUi().title, 1),
-                titleIcon = mediaNav.mediaType.getMediaTypeUi().outlinedIcon,
+                title = pluralStringResource(mediaNav.type.getMediaTypeUi().title, 1),
+                titleIcon = mediaNav.type.getMediaTypeUi().outlinedIcon,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 onClickNavigation = onBack,
                 dropdownMenu = {
                     DetailDropDown(
                         isRemoveEnabled = detailUiState.currentTracking != null,
                         mediaApiUrl = detailUiState.currentMedia?.detailUrl,
-                        apiTitle = mediaNav.mediaType.getApiType().title,
-                        apiIcon = mediaNav.mediaType.getApiType().icon,
+                        apiTitle = mediaNav.type.getApiType().title,
+                        apiIcon = mediaNav.type.getApiType().icon,
                         onClickRemove = { commonUiManager.showSheet(CurrentSheet.REMOVE) }
                     )
                 },
@@ -137,7 +136,7 @@ fun DetailScreen(
             StickyHeader(
                 imageModifier = Modifier.padding(horizontal = 16.dp),
                 media = detailUiState.currentMedia,
-                mediaType = mediaNav.mediaType,
+                mediaType = mediaNav.type,
                 mediaTitle = mediaNav.title,
                 mediaCoverUrl = mediaNav.coverUrl,
                 status = detailUiState.currentTracking?.status,
@@ -150,18 +149,17 @@ fun DetailScreen(
                 }
             )
 
-            when (detailUiState.resultState) {
-                DetailResultState.Loading -> LoadingContent()
+            when (detailUiState.apiResultState) {
+                ApiResultState.ApiLoading -> LoadingContent()
 
-                DetailResultState.Error -> ErrorContent(text = mediaNav.mediaType.getMediaTypeUi().error)
+                ApiResultState.ApiError -> ErrorContent(text = mediaNav.type.getMediaTypeUi().error)
 
-                DetailResultState.Success -> {
+                ApiResultState.ApiSuccess -> {
                     DetailContent(
                         media = detailUiState.currentMedia,
                         currentTracking = detailUiState.currentTracking,
                         ratingStats = detailUiState.ratingStats,
-                        friendTrackings = detailUiState.friendTrackings,
-                        receivedRecommendations = detailUiState.receivedRecommendations,
+                        friendsActivity = detailUiState.friendsActivity,
                         columnListState = listState,
                         onClickMedia = onClickItem,
                         onClickUser = onClickUser,
@@ -208,9 +206,9 @@ fun DetailScreen(
                 ) {
                     when (commonUiState.currentSheet) {
                         CurrentSheet.TRACK -> TrackSheet(
-                            mediaType = mediaNav.mediaType,
+                            mediaType = mediaNav.type,
                             selectedStatus = detailUiState.currentStatus,
-                            isSaving = detailUiState.isLoading,
+                            isSaving = detailUiState.resultState == DetailResultState.Loading,
                             onSelectStatus = detailViewModel::selectStatus,
                             onSave = detailViewModel::saveTracking,
                             onToReview = { commonUiManager.showSheet(CurrentSheet.REVIEW) },
@@ -235,29 +233,28 @@ fun DetailScreen(
                         CurrentSheet.REMOVE -> RemoveSheet(
                             title = Res.string.detail_remove_confirm_title,
                             text = Res.string.detail_remove_confirm_text,
-                            isDeleting = detailUiState.isLoading,
+                            isDeleting = detailUiState.resultState == DetailResultState.Loading,
                             onConfirm = detailViewModel::removeTracking,
                             onCancel = { commonUiManager.hideSheet() },
                         )
 
                         CurrentSheet.FRIEND_ACTIVITY -> FriendsActivitySheet(
-                            recommendations = detailUiState.receivedRecommendations,
-                            friendTrackings = detailUiState.friendTrackings,
-                            hasTracking = detailUiState.currentTracking != null,
+                            friendsActivity = detailUiState.friendsActivity,
+                            isMediaUntracked = detailUiState.currentTracking == null,
+                            mediaType = mediaNav.type,
+                            isAddingToCatalog = detailUiState.resultState == DetailResultState.Loading,
                             onUserClick = onClickUser,
-                            onAddToCatalogClick = detailViewModel::addRecommendationToCatalog,
+                            onCatalogRecommendation = detailViewModel::catalogRecommendation,
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendSheet(
-                            selectableFriends = detailUiState.friends,
-                            previousSentRecommendations = detailUiState.previousSentRecommendations,
-                            fetchFriends = detailViewModel::fetchFriends,
-                            onSendRecommendation = { friendId, message ->
-                                //detailViewModel.sendRecommendation(friendId, message, detailUiState.currentMedia!!)
+                            resultState = detailUiState.resultState,
+                            friends = detailUiState.friends,
+                            sentRecommendations = detailUiState.sentRecommendations,
+                            fetchSentRecommendations = { userId ->
+                                detailViewModel.fetchSentRecommendations(mediaNav.type, mediaNav.id, userId)
                             },
-                            selectUser = {
-                                //detailViewModel.selectFriend(it, mediaNav.id)
-                            },
+                            onSendRecommendation = detailViewModel::sendRecommendation,
                             onClickUser = onClickUser,
                         )
 
@@ -281,8 +278,7 @@ fun DetailContent(
     media: Media?,
     currentTracking: NewTracking?,
     ratingStats: RatingStats,
-    friendTrackings: List<Tracking>,
-    receivedRecommendations: List<Recommendation>,
+    friendsActivity: FriendsActivity?,
     columnListState: LazyListState,
     onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
@@ -314,13 +310,12 @@ fun DetailContent(
                 }
             }*/
 
-            if (friendTrackings.isNotEmpty() || receivedRecommendations.isNotEmpty()) {
+            friendsActivity?.let {
                 item {
-                    FriendActivityRow(
-                        friendTrackings = friendTrackings,
-                        friendRecommendations = receivedRecommendations,
-                        onUserClick = onClickUser,
-                        onMoreClick = onClickMoreFriendsActivity
+                    FriendsActivityRow(
+                        friendsActivity = friendsActivity,
+                        onClickUser = onClickUser,
+                        onClickMore = onClickMoreFriendsActivity
                     )
                 }
             }
