@@ -1,10 +1,7 @@
 package de.ashman.ontrack.recommendation.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.recommendation.controller.dto.CreateRecommendationDto
-import de.ashman.ontrack.recommendation.controller.dto.FriendsActivityDto
-import de.ashman.ontrack.recommendation.controller.dto.toDto
-import de.ashman.ontrack.recommendation.controller.dto.toSimpleDto
+import de.ashman.ontrack.recommendation.controller.dto.*
 import de.ashman.ontrack.recommendation.domain.Recommendation
 import de.ashman.ontrack.recommendation.repository.RecommendationService
 import de.ashman.ontrack.tracking.domain.model.MediaType
@@ -41,7 +38,6 @@ class RecommendationController(
         return ResponseEntity.ok().build()
     }
 
-    // TODO change this, since its ugly af
     @GetMapping("/friends-activity/{mediaType}/{mediaId}")
     fun getFriendsActivity(
         @PathVariable mediaType: MediaType,
@@ -82,5 +78,27 @@ class RecommendationController(
         )
 
         return ResponseEntity.ok(friendsActivityDto)
+    }
+
+    // TODO maybe change so that we get all the sent recommendations, not just for a selected user
+    @GetMapping("/sent-recommendations/{mediaType}/{mediaId}/{userId}")
+    fun getSentRecommendations(
+        @PathVariable mediaType: MediaType,
+        @PathVariable mediaId: String,
+        @PathVariable userId: String,
+        @AuthenticationPrincipal identity: Identity
+    ): ResponseEntity<List<RecommendationDto>> {
+        val sender = userRepository.getById(identity.id)
+
+        val recommendations = recommendationService.findBySenderAndReceiverAndMedia(
+            senderId = identity.id,
+            receiverId = userId,
+            mediaId = mediaId,
+            mediaType = mediaType
+        )
+
+        val recommendationDtos = recommendations.map { it.toDto(sender.toDto()) }
+
+        return ResponseEntity.ok(recommendationDtos)
     }
 }

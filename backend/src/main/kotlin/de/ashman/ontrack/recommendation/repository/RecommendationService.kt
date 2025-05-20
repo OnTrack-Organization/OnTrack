@@ -13,4 +13,8 @@ class RecommendationService(
     fun findByReceiverAndMedia(receiverId: String, mediaId: String, mediaType: MediaType): List<Recommendation> {
         return recommendationRepository.findByReceiverIdAndMediaIdAndMediaType(receiverId, mediaId, mediaType)
     }
+
+    fun findBySenderAndReceiverAndMedia(senderId: String, receiverId: String, mediaId: String, mediaType: MediaType): List<Recommendation> {
+        return recommendationRepository.findBySenderIdAndReceiverIdAndMediaIdAndMediaType(senderId, receiverId, mediaId, mediaType)
+    }
 }

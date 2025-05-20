@@ -379,8 +379,9 @@
     <string name="friend_cancel_request_error">Failed to cancel friend request</string>
     <string name="friend_delete_error">Failed to delete friend</string>
     <string name="shelf_get_profile_error">Failed to fetch user profile</string>
-    <string name="friends_get_error">Couldn't fetch friends and requests</string>
+    <string name="friends_get_error">>Failed to fetch friends and requests</string>
 
+    <string name="recommendation_friends_error">Failed to fetch friends</string>
     <string name="recommendation_send_error">Failed to send recommendation</string>
     <string name="recommendation_added_to_catalog_error">Failed to add recommendation to catalog</string>
 

@@ -1,6 +1,6 @@
 package de.ashman.ontrack.network.services.recommendation.dto
 
-import de.ashman.ontrack.domain.recommendation.NewRecommendation
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.network.services.signin.dto.UserDto
 import de.ashman.ontrack.network.services.signin.dto.toDomain
 import kotlinx.serialization.Serializable
@@ -12,7 +12,7 @@ data class RecommendationDto(
     val timestamp: Long,
 )
 
-fun RecommendationDto.toDomain() = NewRecommendation(
+fun RecommendationDto.toDomain() = Recommendation(
     user = user.toDomain(),
     message = message,
     timestamp = timestamp,

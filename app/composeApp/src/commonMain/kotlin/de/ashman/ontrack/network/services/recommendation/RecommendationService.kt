@@ -3,7 +3,7 @@ package de.ashman.ontrack.network.services.recommendation
 import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
-import de.ashman.ontrack.domain.recommendation.NewRecommendation
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.network.services.recommendation.dto.CreateRecommendationDto
 import de.ashman.ontrack.network.services.recommendation.dto.FriendsActivityDto
 import de.ashman.ontrack.network.services.recommendation.dto.RecommendationDto
@@ -17,7 +17,7 @@ import io.ktor.client.request.setBody
 interface RecommendationService {
     suspend fun sendRecommendation(dto: CreateRecommendationDto): Result<Unit>
     suspend fun getFriendsActivity(mediaType: MediaType, mediaId: String): Result<FriendsActivity?>
-    suspend fun getSentRecommendations(mediaType: MediaType, mediaId: String, userId: String): Result<List<NewRecommendation>>
+    suspend fun getSentRecommendations(mediaType: MediaType, mediaId: String, userId: String): Result<List<Recommendation>>
 }
 
 class RecommendationServiceImpl(
@@ -33,7 +33,7 @@ class RecommendationServiceImpl(
         httpClient.get("/friends-activity/$mediaType/$mediaId").body<FriendsActivityDto>().toDomain()
     }
 
-    override suspend fun getSentRecommendations(mediaType: MediaType, mediaId: String, userId: String): Result<List<NewRecommendation>> = safeApiCall {
+    override suspend fun getSentRecommendations(mediaType: MediaType, mediaId: String, userId: String): Result<List<Recommendation>> = safeApiCall {
         httpClient.get("/sent-recommendations/$mediaType/$mediaId/$userId").body<List<RecommendationDto>>().map { it.toDomain() }
     }
 }

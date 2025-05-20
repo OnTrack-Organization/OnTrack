@@ -13,4 +13,11 @@ interface RecommendationRepository: JpaRepository<Recommendation, UUID> {
         mediaId: String,
         mediaType: MediaType
     ): List<Recommendation>
+
+    fun findBySenderIdAndReceiverIdAndMediaIdAndMediaType(
+        senderId: String,
+        receiverId: String,
+        mediaId: String,
+        mediaType: MediaType
+    ): List<Recommendation>
 }

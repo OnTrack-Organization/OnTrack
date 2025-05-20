@@ -97,6 +97,7 @@ fun DetailScreen(
     LaunchedEffect(mediaNav.id) {
         detailViewModel.fetchDetails(mediaNav)
         detailViewModel.observeTracking(mediaNav.id, mediaNav.type)
+        detailViewModel.fetchFriends()
         detailViewModel.fetchFriendsActivity(mediaNav.type, mediaNav.id)
         //detailViewModel.observeRatingStats(mediaNav.id, mediaNav.mediaType)
     }
@@ -247,10 +248,12 @@ fun DetailScreen(
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendSheet(
+                            resultState = detailUiState.resultState,
                             friends = detailUiState.friends,
                             sentRecommendations = detailUiState.sentRecommendations,
-                            isSending = detailUiState.resultState == DetailResultState.Loading,
-                            fetchFriends = detailViewModel::fetchFriends,
+                            fetchSentRecommendations = { userId ->
+                                detailViewModel.fetchSentRecommendations(mediaNav.type, mediaNav.id, userId)
+                            },
                             onSendRecommendation = detailViewModel::sendRecommendation,
                             onClickUser = onClickUser,
                         )

@@ -15,7 +15,7 @@ import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
-import de.ashman.ontrack.domain.recommendation.NewRecommendation
+import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.user.User
@@ -257,6 +257,26 @@ class DetailViewModel(
         )
     }
 
+    fun fetchSentRecommendations(mediaType: MediaType, mediaId: String, userId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+
+        recommendationService.getSentRecommendations(mediaType, mediaId, userId).fold(
+            onSuccess = { sentRecommendations ->
+                _uiState.update {
+                    it.copy(
+                        sentRecommendations = sentRecommendations,
+                        resultState = DetailResultState.Success,
+                    )
+                }
+                Logger.d { "Fetched sent recommendations: $sentRecommendations" }
+            },
+            onFailure = { exception ->
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
+                Logger.e { "Failed to fetch sent recommendations: ${exception.message}" }
+            }
+        )
+    }
+
     fun fetchFriendsActivity(mediaType: MediaType, mediaId: String) = viewModelScope.launch {
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
@@ -310,7 +330,7 @@ data class DetailUiState(
     val friends: List<User> = emptyList(),
     val friendsActivity: FriendsActivity? = null,
 
-    val sentRecommendations: List<NewRecommendation> = emptyList(),
+    val sentRecommendations: List<Recommendation> = emptyList(),
 
     val apiResultState: ApiResultState = ApiResultState.ApiLoading,
     val resultState: DetailResultState = DetailResultState.Loading,
