@@ -150,6 +150,7 @@ class DetailViewModel(
             },
             onFailure = { exception ->
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_create_error))
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
                 Logger.e { "Failed to create tracking: ${exception.message}" }
             }
         )
@@ -182,6 +183,7 @@ class DetailViewModel(
             onFailure = { exception ->
                 // TODO DONT HIDE, USE TOAST INSTEAD
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_update_error))
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
                 Logger.e { "Failed to update tracking: ${exception.message}" }
             }
         )
@@ -210,6 +212,7 @@ class DetailViewModel(
             },
             onFailure = { exception ->
                 commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_delete_error))
+                _uiState.update { it.copy(resultState = DetailResultState.Error) }
                 Logger.e { "Failed to remove tracking: ${exception.message}" }
             }
         )

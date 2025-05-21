@@ -15,7 +15,6 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter
 class SecurityConfig(
     private val firebaseAuthFilter: FirebaseAuthFilter
 ) {
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -35,11 +34,6 @@ class SecurityConfig(
         return http.build()
     }
 
-    /**
-     * Disables [FirebaseAuthFilter] in embedded container as per
-     * [spring security doc](https://docs.spring.io/spring-security/reference/servlet/architecture.html#_declaring_your_filter_as_a_bean).
-     * to avoid duplicate execution
-     */
     @Bean
     fun firebaseAuthFilterRegistration(filter: FirebaseAuthFilter): FilterRegistrationBean<FirebaseAuthFilter> {
         val registration: FilterRegistrationBean<FirebaseAuthFilter> = FilterRegistrationBean<FirebaseAuthFilter>(filter)

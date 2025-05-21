@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 class FirebaseInitializer {
     init {
         val cred = GoogleCredentials.getApplicationDefault()
+
         val options = FirebaseOptions.builder()
             // Looks for Google credentials in env GOOGLE_APPLICATION_CREDENTIALS
             .setCredentials(cred)
