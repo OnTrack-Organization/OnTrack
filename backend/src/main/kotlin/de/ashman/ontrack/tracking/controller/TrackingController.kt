@@ -1,9 +1,13 @@
-package de.ashman.ontrack.tracking.application.controller
+package de.ashman.ontrack.tracking.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.tracking.domain.model.Tracking
-import de.ashman.ontrack.tracking.domain.model.toEntity
-import de.ashman.ontrack.tracking.domain.repository.TrackingRepository
+import de.ashman.ontrack.tracking.controller.dto.CreateTrackingDto
+import de.ashman.ontrack.tracking.controller.dto.TrackingDto
+import de.ashman.ontrack.tracking.controller.dto.UpdateTrackingDto
+import de.ashman.ontrack.tracking.controller.dto.toDto
+import de.ashman.ontrack.tracking.domain.Tracking
+import de.ashman.ontrack.tracking.domain.toEntity
+import de.ashman.ontrack.tracking.repository.TrackingService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -14,7 +18,7 @@ import java.util.*
 
 @RestController
 class TrackingController(
-    val trackingRepository: TrackingRepository
+    val trackingService: TrackingService,
 ) {
     @PostMapping("/tracking")
     @Transactional
@@ -28,7 +32,7 @@ class TrackingController(
             media = dto.media.toEntity(),
         )
 
-        trackingRepository.save(newTracking)
+        trackingService.save(newTracking)
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -41,10 +45,12 @@ class TrackingController(
         @RequestBody @Valid dto: UpdateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
-        val tracking = trackingRepository.getById(dto.id)
+        val tracking = trackingService.getById(dto.id)
+
         if (tracking.userId != identity.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
+
         tracking.changeStatus(dto.status)
 
         return ResponseEntity.ok(tracking.toDto())
@@ -52,7 +58,7 @@ class TrackingController(
 
     @GetMapping("trackings")
     fun getTrackingsOfLoggedInUser(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<TrackingDto>> {
-        val trackings = trackingRepository.getTrackingsByUserId(identity.id)
+        val trackings = trackingService.getTrackingsByUserId(identity.id)
         val trackingDtos = trackings.stream().map { it.toDto() }.toList()
 
         return ResponseEntity.ok(trackingDtos)
@@ -64,11 +70,13 @@ class TrackingController(
         @PathVariable id: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        val tracking = trackingRepository.getById(id)
+        val tracking = trackingService.getById(id)
+
         if (tracking.userId != identity.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
-        trackingRepository.delete(tracking)
+
+        trackingService.delete(tracking)
 
         return ResponseEntity.ok().build()
     }

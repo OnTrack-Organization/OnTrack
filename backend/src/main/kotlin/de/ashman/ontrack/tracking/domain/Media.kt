@@ -1,6 +1,6 @@
-package de.ashman.ontrack.tracking.domain.model
+package de.ashman.ontrack.tracking.domain
 
-import de.ashman.ontrack.tracking.application.controller.MediaDto
+import de.ashman.ontrack.tracking.controller.dto.MediaDto
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 import jakarta.persistence.EnumType
@@ -22,7 +22,7 @@ data class Media(
     val coverUrl: String?
 )
 
-fun MediaDto.toEntity(): Media = Media(
+fun MediaDto.toEntity() = Media(
     id = id,
     type = type,
     title = title,

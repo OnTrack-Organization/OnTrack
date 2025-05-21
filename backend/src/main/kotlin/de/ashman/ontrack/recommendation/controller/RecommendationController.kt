@@ -4,9 +4,9 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.recommendation.controller.dto.*
 import de.ashman.ontrack.recommendation.domain.Recommendation
 import de.ashman.ontrack.recommendation.repository.RecommendationService
-import de.ashman.ontrack.tracking.domain.model.MediaType
-import de.ashman.ontrack.tracking.domain.model.toEntity
-import de.ashman.ontrack.tracking.domain.repository.TrackingRepository
+import de.ashman.ontrack.tracking.domain.MediaType
+import de.ashman.ontrack.tracking.domain.toEntity
+import de.ashman.ontrack.tracking.repository.TrackingService
 import de.ashman.ontrack.user.application.controller.user.toDto
 import de.ashman.ontrack.user.domain.repository.FriendshipRepository
 import de.ashman.ontrack.user.domain.repository.UserRepository
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class RecommendationController(
     private val recommendationService: RecommendationService,
-    private val trackingRepository: TrackingRepository,
+    private val trackingService: TrackingService,
     private val friendshipRepository: FriendshipRepository,
     private val userRepository: UserRepository,
 ) {
@@ -54,7 +54,7 @@ class RecommendationController(
             mediaType = mediaType
         )
 
-        val trackings = trackingRepository.getTrackingsByUserIdAndMedia(
+        val trackings = trackingService.getTrackingsByUserIdAndMedia(
             userIds = friendIds,
             mediaId = mediaId,
             mediaType = mediaType,

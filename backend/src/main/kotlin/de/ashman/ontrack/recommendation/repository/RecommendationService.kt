@@ -1,7 +1,7 @@
 package de.ashman.ontrack.recommendation.repository
 
 import de.ashman.ontrack.recommendation.domain.Recommendation
-import de.ashman.ontrack.tracking.domain.model.MediaType
+import de.ashman.ontrack.tracking.domain.MediaType
 import org.springframework.stereotype.Service
 
 @Service

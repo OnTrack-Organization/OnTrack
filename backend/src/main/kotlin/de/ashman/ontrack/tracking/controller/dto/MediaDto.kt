@@ -1,7 +1,7 @@
-package de.ashman.ontrack.tracking.application.controller
+package de.ashman.ontrack.tracking.controller.dto
 
-import de.ashman.ontrack.tracking.domain.model.Media
-import de.ashman.ontrack.tracking.domain.model.MediaType
+import de.ashman.ontrack.tracking.domain.Media
+import de.ashman.ontrack.tracking.domain.MediaType
 
 data class MediaDto(
     val id: String,

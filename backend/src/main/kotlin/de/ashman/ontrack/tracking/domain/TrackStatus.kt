@@ -1,4 +1,4 @@
-package de.ashman.ontrack.tracking.domain.model
+package de.ashman.ontrack.tracking.domain
 
 enum class TrackStatus {
     CATALOG, CONSUMING, CONSUMED, DROPPED

@@ -1,8 +1,7 @@
-package de.ashman.ontrack.tracking.application.controller
+package de.ashman.ontrack.tracking.controller.dto
 
-import de.ashman.ontrack.tracking.domain.model.TrackStatus
-import de.ashman.ontrack.tracking.domain.model.Tracking
-import java.time.LocalDateTime
+import de.ashman.ontrack.tracking.domain.TrackStatus
+import de.ashman.ontrack.tracking.domain.Tracking
 import java.time.ZoneOffset
 import java.util.*
 

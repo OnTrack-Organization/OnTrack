@@ -1,8 +1,8 @@
 package de.ashman.ontrack.user.application.controller.user
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.tracking.application.controller.toDto
-import de.ashman.ontrack.tracking.infrastructure.TrackingJpaRepository
+import de.ashman.ontrack.tracking.controller.dto.toDto
+import de.ashman.ontrack.tracking.repository.TrackingService
 import de.ashman.ontrack.user.application.controller.FriendStatus
 import de.ashman.ontrack.user.application.controller.OtherUserDto
 import de.ashman.ontrack.user.domain.repository.FriendRequestRepository
@@ -20,7 +20,7 @@ class UserController(
     private val userRepository: UserRepository,
     private val friendshipRepository: FriendshipRepository,
     private val friendRequestRepository: FriendRequestRepository,
-    private val trackingRepository: TrackingJpaRepository
+    private val trackingService: TrackingService,
 ) {
     @GetMapping("user/search")
     fun search(
@@ -54,7 +54,7 @@ class UserController(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<UserProfileDto> {
         val user = userRepository.getById(id)
-        val trackings = trackingRepository.getTrackingsByUserId(user.id)
+        val trackings = trackingService.getTrackingsByUserId(user.id)
 
         val areFriends = friendshipRepository.areFriends(
             identity.id,

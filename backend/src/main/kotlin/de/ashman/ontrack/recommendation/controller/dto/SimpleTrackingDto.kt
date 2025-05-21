@@ -1,7 +1,7 @@
 package de.ashman.ontrack.recommendation.controller.dto
 
-import de.ashman.ontrack.tracking.domain.model.TrackStatus
-import de.ashman.ontrack.tracking.domain.model.Tracking
+import de.ashman.ontrack.tracking.domain.TrackStatus
+import de.ashman.ontrack.tracking.domain.Tracking
 import de.ashman.ontrack.user.application.controller.user.UserDto
 import java.time.ZoneOffset
 

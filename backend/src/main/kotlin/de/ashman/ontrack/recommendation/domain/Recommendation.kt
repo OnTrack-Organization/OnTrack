@@ -1,6 +1,6 @@
 package de.ashman.ontrack.recommendation.domain
 
-import de.ashman.ontrack.tracking.domain.model.Media
+import de.ashman.ontrack.tracking.domain.Media
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
