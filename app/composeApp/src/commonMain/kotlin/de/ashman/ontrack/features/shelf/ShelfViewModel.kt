@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.user.FriendStatus
@@ -51,6 +51,7 @@ class ShelfViewModel(
             _uiState.update {
                 it.copy(
                     user = currentUser,
+                    friendStatus = null,
                 )
             }
             observeTrackings()

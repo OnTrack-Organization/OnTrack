@@ -1,4 +1,4 @@
-package de.ashman.ontrack.database
+package de.ashman.ontrack.database.tracking
 
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -25,3 +25,4 @@ fun NewTrackingEntity.toDomain() = NewTracking(
     status = status,
     timestamp = timestamp,
 )
+

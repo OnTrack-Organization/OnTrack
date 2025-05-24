@@ -5,12 +5,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.AndroidSQLiteDriver
 
-fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<TrackingDatabase> {
+fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<OnTrackDatabase> {
     val appContext = context.applicationContext
-    val dbFile = appContext.getDatabasePath("tracking_database.db")
+    val dbFile = appContext.getDatabasePath("ontrack_database.db")
 
     return Room
-        .databaseBuilder<TrackingDatabase>(
+        .databaseBuilder<OnTrackDatabase>(
             context = appContext,
             name = dbFile.absolutePath,
         )

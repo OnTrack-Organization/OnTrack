@@ -7,10 +7,10 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-fun getDatabaseBuilder(): RoomDatabase.Builder<TrackingDatabase> {
-    val dbFilePath = documentDirectory() + "/tracking_database.db"
+fun getDatabaseBuilder(): RoomDatabase.Builder<OnTrackDatabase> {
+    val dbFilePath = documentDirectory() + "/ontrack_database.db"
 
-    return Room.databaseBuilder<TrackingDatabase>(
+    return Room.databaseBuilder<OnTrackDatabase>(
         name = dbFilePath,
     )
 }

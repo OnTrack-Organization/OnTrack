@@ -17,7 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -38,14 +41,16 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ReviewSheet(
     rating: Double?,
-    reviewTitle: String?,
-    reviewDescription: String?,
+    title: String?,
+    description: String?,
     trackStatus: TrackStatus?,
-    onRatingChange: (Double) -> Unit,
-    onReviewTitleChange: (String) -> Unit,
-    onReviewDescriptionChange: (String) -> Unit,
-    onSave: () -> Unit,
+    isSaving: Boolean,
+    onSave: (Double, String?, String?) -> Unit,
 ) {
+    var rating by remember { mutableStateOf(rating) }
+    var title by remember { mutableStateOf(title) }
+    var description by remember { mutableStateOf(description) }
+
     Text(
         text = stringResource(Res.string.review_title),
         style = MaterialTheme.typography.titleMedium,
@@ -53,29 +58,35 @@ fun ReviewSheet(
 
     SelectableStarRatingBar(
         rating = rating,
-        onRatingChange = onRatingChange,
+        onRatingChange = { rating = it },
         trackStatus = trackStatus,
     )
 
     OnTrackTextField(
         placeholder = stringResource(Res.string.review_title_label),
-        value = reviewTitle,
-        onValueChange = onReviewTitleChange,
+        value = title,
+        onValueChange = { title = it.takeIf { it.isNotBlank() } },
         singleLine = true,
     )
 
     OnTrackTextField(
         modifier = Modifier.height(100.dp),
         placeholder = stringResource(Res.string.review_description_label),
-        value = reviewDescription,
-        onValueChange = onReviewDescriptionChange,
+        value = description,
+        onValueChange = { description = it.takeIf { it.isNotBlank() } },
     )
 
     OnTrackButton(
         modifier = Modifier.fillMaxWidth(),
         text = Res.string.save_button,
         icon = Icons.Default.Save,
-        onClick = onSave,
+        enabled = rating != null && !isSaving,
+        isLoading = isSaving,
+        onClick = {
+            rating?.let {
+                onSave(it, title, description)
+            }
+        },
     )
 }
 

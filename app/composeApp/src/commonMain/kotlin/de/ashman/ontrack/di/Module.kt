@@ -10,9 +10,11 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.database.TrackingDao
-import de.ashman.ontrack.database.TrackingDatabase
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.OnTrackDatabase
+import de.ashman.ontrack.database.review.ReviewDao
+import de.ashman.ontrack.database.review.ReviewRepository
+import de.ashman.ontrack.database.tracking.TrackingDao
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.datastore.createDataStore
 import de.ashman.ontrack.datastore.dataStoreFileName
@@ -44,6 +46,8 @@ import de.ashman.ontrack.network.services.friend.FriendService
 import de.ashman.ontrack.network.services.friend.FriendServiceImpl
 import de.ashman.ontrack.network.services.recommendation.RecommendationService
 import de.ashman.ontrack.network.services.recommendation.RecommendationServiceImpl
+import de.ashman.ontrack.network.services.review.ReviewService
+import de.ashman.ontrack.network.services.review.ReviewServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
@@ -94,6 +98,7 @@ val appModule = module {
     single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<FriendService> { FriendServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<RecommendationService> { RecommendationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<ReviewService> { ReviewServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -111,8 +116,11 @@ val appModule = module {
     single<DataStore<Preferences>> { createDataStore { dataStoreFileName } }
     single { UserDataStore(get()) }
 
-    single<TrackingDao> { get<TrackingDatabase>().getTrackingDao() }
+    single<TrackingDao> { get<OnTrackDatabase>().getTrackingDao() }
     single<TrackingRepository> { TrackingRepository(get()) }
+
+    single<ReviewDao> { get<OnTrackDatabase>().getReviewDao() }
+    single<ReviewRepository> { ReviewRepository(get()) }
 
     single { Firebase.firestore }
     single { Firebase.storage }
@@ -126,7 +134,7 @@ val appModule = module {
     single { CommonUiManager() }
 
     viewModelDefinition { StartViewModel() }
-    viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
     viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get()) }
@@ -135,12 +143,12 @@ val appModule = module {
     viewModelDefinition { NotificationsViewModel() }
 
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
 
-    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

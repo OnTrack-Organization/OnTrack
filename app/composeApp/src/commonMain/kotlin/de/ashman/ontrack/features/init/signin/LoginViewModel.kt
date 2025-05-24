@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.mmk.kmpnotifier.notification.NotifierManager
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.review.ReviewRepository
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.services.review.ReviewService
 import de.ashman.ontrack.network.services.signin.SignInResult
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.tracking.TrackingService
@@ -26,7 +28,9 @@ class LoginViewModel(
     private val commonUiManager: CommonUiManager,
     private val userDataStore: UserDataStore,
     private val trackingRepository: TrackingRepository,
+    private val reviewRepository: ReviewRepository,
     private val trackingService: TrackingService,
+    private val reviewService: ReviewService,
     private val signInService: SignInService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -55,9 +59,12 @@ class LoginViewModel(
                                 } else {
                                     userDataStore.saveUser(signInResult.user)
 
-                                    // Get trackings from backend and save them locally
                                     trackingService.getTrackings().onSuccess {
                                         trackingRepository.addTrackings(it)
+                                    }
+
+                                    reviewService.getReviews().onSuccess {
+                                        reviewRepository.addReviews(it)
                                     }
 
                                     onNavigateToSearch()

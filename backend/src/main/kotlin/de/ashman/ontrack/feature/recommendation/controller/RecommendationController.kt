@@ -5,6 +5,8 @@ import de.ashman.ontrack.feature.friend.repository.FriendshipService
 import de.ashman.ontrack.feature.recommendation.controller.dto.*
 import de.ashman.ontrack.feature.recommendation.domain.Recommendation
 import de.ashman.ontrack.feature.recommendation.repository.RecommendationService
+import de.ashman.ontrack.feature.review.controller.dto.toDto
+import de.ashman.ontrack.feature.review.repository.ReviewService
 import de.ashman.ontrack.feature.tracking.domain.MediaType
 import de.ashman.ontrack.feature.tracking.domain.toEntity
 import de.ashman.ontrack.feature.tracking.repository.TrackingService
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*
 class RecommendationController(
     private val recommendationService: RecommendationService,
     private val trackingService: TrackingService,
+    private val reviewService: ReviewService,
     private val userService: UserService,
     private val friendshipService: FriendshipService,
 ) {
@@ -60,6 +63,7 @@ class RecommendationController(
             mediaType = mediaType,
         )
 
+
         val recommendationDtos = recommendations.mapNotNull { recommendation ->
             friendsById[recommendation.senderId]?.toDto()?.let { userDto ->
                 recommendation.toDto(userDto)
@@ -67,8 +71,11 @@ class RecommendationController(
         }
 
         val trackingDtos = trackings.mapNotNull { tracking ->
+            val review = reviewService.getByTrackingId(tracking.id)
+            val reviewDto = review?.toDto()
+
             friendsById[tracking.userId]?.toDto()?.let { userDto ->
-                tracking.toSimpleDto(userDto)
+                tracking.toSimpleDto(userDto, reviewDto)
             }
         }
 

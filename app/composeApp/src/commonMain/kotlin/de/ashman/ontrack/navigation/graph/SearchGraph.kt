@@ -41,7 +41,7 @@ fun NavGraphBuilder.searchGraph(
 
         DetailScreen(
             mediaNav = detail.mediaNav,
-            detailViewModel = detailViewModel,
+            viewModel = detailViewModel,
             commonUiManager = commonUiManager,
             onClickItem = { mediaNav ->
                 // Remove all the Detail Navigations from graph before navigating

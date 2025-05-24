@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
+import de.ashman.ontrack.domain.review.Review
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
@@ -95,16 +96,13 @@ fun FriendsActivitySheet(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     items(friendsActivity.trackings) {
-                        SimpleFriendTrackingCard(
+                        SimpleTrackingCard(
                             profilePictureUrl = it.user.profilePictureUrl,
                             username = it.user.name,
                             timestamp = it.timestamp,
                             mediaType = mediaType,
                             trackStatus = it.status,
-                            // TODO
-                            rating = null,
-                            reviewTitle = null,
-                            reviewDescription = null,
+                            review = it.review,
                             onUserClick = { onUserClick(it.user.id) },
                         )
                     }
@@ -170,15 +168,13 @@ fun RecommendationCard(
 }
 
 @Composable
-fun SimpleFriendTrackingCard(
+fun SimpleTrackingCard(
     profilePictureUrl: String?,
     username: String,
     timestamp: Long,
     mediaType: MediaType,
     trackStatus: TrackStatus,
-    rating: Double?,
-    reviewTitle: String?,
-    reviewDescription: String?,
+    review: Review?,
     onUserClick: () -> Unit,
 ) {
     Column(
@@ -193,28 +189,28 @@ fun SimpleFriendTrackingCard(
             onClickUser = onUserClick,
         )
 
-        Column(modifier = Modifier.padding(start = 56.dp)) {
-            rating?.let {
+        review?.let {
+            Column(modifier = Modifier.padding(start = 56.dp)) {
                 MiniStarRatingBar(
-                    rating = it,
+                    rating = it.rating,
                     starColor = contentColorFor(trackStatus.getColor()),
                 )
             }
-        }
 
-        Column(modifier = Modifier.padding(start = 56.dp)) {
-            reviewTitle?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            reviewDescription?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+            Column(modifier = Modifier.padding(start = 56.dp)) {
+                it.title?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                it.description?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
         }
     }

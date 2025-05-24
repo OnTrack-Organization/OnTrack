@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.domain.review.Review
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
@@ -283,55 +284,56 @@ fun DetailDropDown(
 }
 
 @Composable
-fun OwnTrackingCard(
-    trackStatus: TrackStatus,
-    rating: Double?,
-    reviewTitle: String?,
-    reviewDescription: String?,
+fun ReviewCard(
+    trackStatus: TrackStatus?,
+    review: Review,
     onClickTimeline: () -> Unit,
     onClickCard: () -> Unit,
 ) {
-    rating?.let {
-        OutlinedCard(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            onClick = onClickCard,
+    OutlinedCard(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        onClick = onClickCard,
+    ) {
+        Column(
+            modifier = Modifier.padding(
+                top = 4.dp,
+                start = 16.dp,
+                end = 4.dp,
+                bottom = if (review.title != null || review.description != null) 16.dp else 0.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 4.dp, bottom = if (reviewDescription != null || reviewTitle != null) 16.dp else 0.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    MiniStarRatingBar(
-                        modifier = Modifier.weight(1f),
-                        rating = rating,
-                        starColor = contentColorFor(trackStatus.getColor()),
-                    )
+                MiniStarRatingBar(
+                    modifier = Modifier.weight(1f),
+                    rating = review.rating,
+                    starColor = contentColorFor(trackStatus.getColor()),
+                )
 
-                    IconButton(onClickTimeline) {
-                        Icon(
-                            imageVector = Icons.Default.Timeline,
-                            contentDescription = null,
-                        )
-                    }
+                IconButton(onClickTimeline) {
+                    Icon(
+                        imageVector = Icons.Default.Timeline,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            Column {
+                review.title?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
 
-                Column {
-                    reviewTitle?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-
-                    reviewDescription?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleSmall,
-                        )
-                    }
+                review.description?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
                 }
             }
         }

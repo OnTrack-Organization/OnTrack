@@ -2,7 +2,8 @@ package de.ashman.ontrack.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.review.ReviewRepository
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
@@ -30,6 +31,7 @@ class SettingsViewModel(
     private val accountService: AccountService,
     private val userDataStore: UserDataStore,
     private val trackingRepository: TrackingRepository,
+    private val reviewRepository: ReviewRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -92,6 +94,7 @@ class SettingsViewModel(
             onSuccess = {
                 userDataStore.clearUser()
                 trackingRepository.deleteAllTrackings()
+                reviewRepository.deleteAllReviews()
 
                 clearAndNavigateToStart()
             },

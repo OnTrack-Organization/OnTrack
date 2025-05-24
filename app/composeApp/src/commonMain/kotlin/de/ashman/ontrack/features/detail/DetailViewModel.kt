@@ -9,13 +9,15 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.review.ReviewRepository
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.recommendation.Recommendation
+import de.ashman.ontrack.domain.review.Review
 import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.user.User
@@ -25,14 +27,20 @@ import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.network.services.friend.FriendService
 import de.ashman.ontrack.network.services.recommendation.RecommendationService
 import de.ashman.ontrack.network.services.recommendation.dto.CreateRecommendationDto
+import de.ashman.ontrack.network.services.review.ReviewService
+import de.ashman.ontrack.network.services.review.dto.CreateReviewDto
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.util.getSingularTitle
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,7 +64,9 @@ class DetailViewModel(
     private val albumRepository: AlbumRepository,
     private val selectedMediaRepository: SelectedMediaRepository,
     private val trackingRepository: TrackingRepository,
+    private val reviewRepository: ReviewRepository,
     private val trackingService: TrackingService,
+    private val reviewService: ReviewService,
     private val friendService: FriendService,
     private val recommendationService: RecommendationService,
 ) : ViewModel() {
@@ -72,23 +82,9 @@ class DetailViewModel(
     init {
         viewModelScope.launch {
             selectedMediaRepository.selectedMedia.collect { media ->
-                _uiState.update { it.copy(currentMedia = media) }
+                _uiState.update { it.copy(media = media) }
             }
         }
-    }
-
-    fun observeTracking(mediaId: String, mediaType: MediaType) = viewModelScope.launch {
-        trackingRepository.getTracking(mediaId, mediaType).collect { tracking ->
-            _uiState.update { it.copy(currentTracking = tracking, currentStatus = tracking?.status) }
-        }
-    }
-
-    fun observeRatingStats(mediaId: String, mediaType: MediaType) = viewModelScope.launch {
-        /*firebaseTrackingRepository.observeRatingStats("${mediaType}_$mediaId").collectLatest { ratingStats ->
-            ratingStats?.let {
-                _uiState.update { it.copy(ratingStats = ratingStats) }
-            }
-        }*/
     }
 
     fun fetchDetails(mediaNav: MediaNavigationParam) = viewModelScope.launch {
@@ -112,28 +108,76 @@ class DetailViewModel(
         )
     }
 
-    fun selectStatus(status: TrackStatus?) {
-        _uiState.update { it.copy(currentStatus = status) }
-    }
+    // TODO this is ugly, but seems to work for now
+    private var trackingJob: Job? = null
 
-    fun saveTracking() {
-        if (_uiState.value.currentTracking == null) {
-            val dto = CreateTrackingDto(
-                media = _uiState.value.currentMedia!!.toDto(),
-                status = _uiState.value.currentStatus!!,
-            )
-
-            createTracking(dto)
-        } else {
-            updateTracking()
+    fun observeTrackingAndReview(mediaId: String, mediaType: MediaType) {
+        trackingJob?.cancel()
+        trackingJob = viewModelScope.launch {
+            trackingRepository.getTracking(mediaId, mediaType)
+                .onEach { tracking ->
+                    _uiState.update {
+                        it.copy(
+                            tracking = tracking,
+                            status = tracking?.status,
+                            review = null // reset review until it's reloaded
+                        )
+                    }
+                }
+                .flatMapLatest { tracking ->
+                    tracking?.let { reviewRepository.getReview(it.id) } ?: flowOf(null)
+                }
+                .collect { review ->
+                    _uiState.update { it.copy(review = review) }
+                }
         }
     }
 
-    private fun createTracking(dto: CreateTrackingDto) = viewModelScope.launch {
+    fun saveChanges() = viewModelScope.launch {
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        trackingService.createTracking(dto).fold(
-            onSuccess = { tracking ->
+        saveOrUpdateTracking()?.let { tracking ->
+            commonUiManager.hideSheetAndShowSnackbar(
+                getString(
+                    resource = Res.string.tracking_saved,
+                    tracking.media.type.getSingularTitle(),
+                    getString(tracking.status.getLabel(tracking.media.type)),
+                )
+            )
+
+            _uiState.update {
+                it.copy(
+                    resultState = DetailResultState.Success
+                )
+            }
+
+            Logger.d { "Tracking saved: $tracking" }
+        }
+    }
+
+    fun saveChangesWithReview(rating: Double, title: String?, description: String?) = viewModelScope.launch {
+        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+
+        val tracking = saveOrUpdateTracking()
+        if (tracking == null) return@launch
+
+        val reviewDto = CreateReviewDto(
+            trackingId = tracking.id,
+            rating = rating,
+            title = title,
+            description = description
+        )
+
+        val reviewResult = if (_uiState.value.review == null) {
+            reviewService.createReview(reviewDto)
+        } else {
+            reviewService.updateReview(reviewDto)
+        }
+
+        reviewResult.fold(
+            onSuccess = { review ->
+                reviewRepository.addReview(review)
+
                 commonUiManager.hideSheetAndShowSnackbar(
                     getString(
                         resource = Res.string.tracking_saved,
@@ -142,49 +186,47 @@ class DetailViewModel(
                     )
                 )
 
-                trackingRepository.addTracking(tracking)
+                _uiState.update {
+                    it.copy(
+                        resultState = DetailResultState.Success
+                    )
+                }
 
-                _uiState.update { it.copy(resultState = DetailResultState.Success) }
-
-                Logger.d { "New tracking created: $tracking" }
+                Logger.d { "Review saved: $review" }
             },
-            onFailure = { exception ->
-                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_create_error))
+            onFailure = { e ->
                 _uiState.update { it.copy(resultState = DetailResultState.Error) }
-                Logger.e { "Failed to create tracking: ${exception.message}" }
+                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_update_error))
+                Logger.e { "Failed to save review: ${e.message}" }
             }
         )
     }
 
-    private fun updateTracking() = viewModelScope.launch {
-        _uiState.update { it.copy(resultState = DetailResultState.Loading) }
+    private suspend fun saveOrUpdateTracking(): NewTracking? {
+        val result = if (_uiState.value.tracking == null) {
+            val dto = CreateTrackingDto(
+                media = _uiState.value.media!!.toDto(),
+                status = _uiState.value.status!!
+            )
+            trackingService.createTracking(dto)
+        } else {
+            val dto = UpdateTrackingDto(
+                id = _uiState.value.tracking!!.id,
+                status = _uiState.value.status!!
+            )
+            trackingService.updateTracking(dto)
+        }
 
-        val dto = UpdateTrackingDto(
-            id = _uiState.value.currentTracking!!.id,
-            status = _uiState.value.currentStatus!!,
-        )
-
-        trackingService.updateTracking(dto).fold(
+        return result.fold(
             onSuccess = { tracking ->
-                commonUiManager.hideSheetAndShowSnackbar(
-                    getString(
-                        resource = Res.string.tracking_saved,
-                        tracking.media.type.getSingularTitle(),
-                        getString(tracking.status.getLabel(tracking.media.type)),
-                    )
-                )
-
                 trackingRepository.addTracking(tracking)
-
-                _uiState.update { it.copy(resultState = DetailResultState.Success) }
-
-                Logger.d { "Tracking updated: $tracking" }
+                tracking
             },
-            onFailure = { exception ->
-                // TODO DONT HIDE, USE TOAST INSTEAD
-                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_update_error))
+            onFailure = { e ->
                 _uiState.update { it.copy(resultState = DetailResultState.Error) }
-                Logger.e { "Failed to update tracking: ${exception.message}" }
+                commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.tracking_create_error))
+                Logger.e { "Failed to save tracking: ${e.message}" }
+                null
             }
         )
     }
@@ -192,7 +234,7 @@ class DetailViewModel(
     fun removeTracking() = viewModelScope.launch {
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        val tracking = _uiState.value.currentTracking ?: return@launch
+        val tracking = _uiState.value.tracking ?: return@launch
 
         trackingService.deleteTracking(tracking.id).fold(
             onSuccess = {
@@ -243,7 +285,7 @@ class DetailViewModel(
 
         val dto = CreateRecommendationDto(
             userId = userId,
-            media = _uiState.value.currentMedia!!.toDto(),
+            media = _uiState.value.media!!.toDto(),
             message = message,
         )
 
@@ -302,11 +344,16 @@ class DetailViewModel(
 
     fun catalogRecommendation() {
         val dto = CreateTrackingDto(
-            media = _uiState.value.currentMedia!!.toDto(),
+            media = _uiState.value.media!!.toDto(),
             status = TrackStatus.CATALOG,
         )
 
-        createTracking(dto)
+        // TODO add in again
+        //createTracking(dto)
+    }
+
+    fun selectStatus(status: TrackStatus?) {
+        _uiState.update { it.copy(status = status) }
     }
 
     fun clearViewModel() {
@@ -324,9 +371,11 @@ class DetailViewModel(
 }
 
 data class DetailUiState(
-    val currentMedia: Media? = null,
-    val currentTracking: NewTracking? = null,
-    val currentStatus: TrackStatus? = null,
+    val media: Media? = null,
+    val tracking: NewTracking? = null,
+    val status: TrackStatus? = null,
+
+    val review: Review? = null,
 
     val ratingStats: RatingStats = RatingStats(),
 

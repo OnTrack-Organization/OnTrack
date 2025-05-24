@@ -2,7 +2,7 @@ package de.ashman.ontrack.features.shelflist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.ashman.ontrack.database.TrackingRepository
+import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus

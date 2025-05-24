@@ -1,4 +1,4 @@
-package de.ashman.ontrack.database
+package de.ashman.ontrack.database.tracking
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -10,20 +10,20 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrackingDao {
     @Query("SELECT * FROM tracking")
-    fun getTrackings(): Flow<List<NewTrackingEntity>>
+    fun getAll(): Flow<List<NewTrackingEntity>>
 
     @Query("SELECT * FROM tracking WHERE media_id = :mediaId AND media_type = :mediaType LIMIT 1")
-    fun getTracking(mediaId: String, mediaType: MediaType): Flow<NewTrackingEntity?>
+    fun get(mediaId: String, mediaType: MediaType): Flow<NewTrackingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addTracking(tracking: NewTrackingEntity)
+    suspend fun add(tracking: NewTrackingEntity)
 
     @Insert
-    suspend fun addTrackings(trackings: List<NewTrackingEntity>)
+    suspend fun add(trackings: List<NewTrackingEntity>)
 
     @Query("DELETE FROM tracking WHERE id = :id")
-    suspend fun deleteTracking(id: String)
+    suspend fun delete(id: String)
 
     @Query("DELETE FROM tracking")
-    suspend fun deleteAllTrackings()
+    suspend fun deleteAll()
 }

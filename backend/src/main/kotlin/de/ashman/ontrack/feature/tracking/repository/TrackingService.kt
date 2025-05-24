@@ -18,13 +18,9 @@ class TrackingService(
             mediaType = mediaType,
         )
 
-    fun save(tracking: Tracking) {
-        trackingRepository.save(tracking)
-    }
+    fun save(tracking: Tracking) = trackingRepository.save(tracking)
 
-    fun delete(tracking: Tracking) {
-        trackingRepository.delete(tracking)
-    }
+    fun delete(tracking: Tracking) = trackingRepository.delete(tracking)
 
     fun getById(id: UUID): Tracking = trackingRepository.getReferenceById(id)
 }
