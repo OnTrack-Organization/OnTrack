@@ -4,7 +4,6 @@ import de.ashman.ontrack.feature.review.controller.dto.ReviewDto
 import de.ashman.ontrack.feature.tracking.domain.TrackStatus
 import de.ashman.ontrack.feature.tracking.domain.Tracking
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
-import java.time.ZoneOffset
 
 data class SimpleTrackingDto(
     val user: UserDto,
@@ -17,5 +16,5 @@ fun Tracking.toSimpleDto(userDto: UserDto, reviewDto: ReviewDto?) = SimpleTracki
     user = userDto,
     status = status,
     review = reviewDto,
-    timestamp = createdAt.toInstant(ZoneOffset.UTC).toEpochMilli(),
+    timestamp = updatedAt.toEpochMilli(),
 )

@@ -1,7 +1,7 @@
 package de.ashman.ontrack.feature.recommendation.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.friend.repository.FriendshipService
+import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.recommendation.controller.dto.*
 import de.ashman.ontrack.feature.recommendation.domain.Recommendation
 import de.ashman.ontrack.feature.recommendation.repository.RecommendationService
@@ -22,16 +22,19 @@ class RecommendationController(
     private val trackingService: TrackingService,
     private val reviewService: ReviewService,
     private val userService: UserService,
-    private val friendshipService: FriendshipService,
+    private val friendService: FriendService,
 ) {
     @PostMapping("/recommend")
     fun createRecommendation(
         @RequestBody dto: CreateRecommendationDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
+        val sender = userService.getById(identity.id)
+        val receiver = userService.getById(dto.userId)
+
         val recommendation = Recommendation(
-            senderId = identity.id,
-            receiverId = dto.userId,
+            sender = sender,
+            receiver = receiver,
             media = dto.media.toEntity(),
             message = dto.message,
         )
@@ -47,7 +50,7 @@ class RecommendationController(
         @PathVariable mediaId: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<FriendsActivityDto> {
-        val friendIds = friendshipService.getFriendIds(identity.id)
+        val friendIds = friendService.getFriendIds(identity.id)
         val friends = userService.findAllById(friendIds)
         val friendsById = friends.associateBy { it.id }
 
@@ -63,9 +66,8 @@ class RecommendationController(
             mediaType = mediaType,
         )
 
-
         val recommendationDtos = recommendations.mapNotNull { recommendation ->
-            friendsById[recommendation.senderId]?.toDto()?.let { userDto ->
+            friendsById[recommendation.sender.id]?.toDto()?.let { userDto ->
                 recommendation.toDto(userDto)
             }
         }
@@ -74,7 +76,7 @@ class RecommendationController(
             val review = reviewService.getByTrackingId(tracking.id)
             val reviewDto = review?.toDto()
 
-            friendsById[tracking.userId]?.toDto()?.let { userDto ->
+            friendsById[tracking.user.id]?.toDto()?.let { userDto ->
                 tracking.toSimpleDto(userDto, reviewDto)
             }
         }

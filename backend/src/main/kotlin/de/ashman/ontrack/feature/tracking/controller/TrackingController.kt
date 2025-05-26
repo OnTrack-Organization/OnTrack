@@ -2,6 +2,7 @@ package de.ashman.ontrack.feature.tracking.controller
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.review.repository.ReviewService
+import de.ashman.ontrack.feature.share.service.PostService
 import de.ashman.ontrack.feature.tracking.controller.dto.CreateTrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.TrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.UpdateTrackingDto
@@ -9,6 +10,7 @@ import de.ashman.ontrack.feature.tracking.controller.dto.toDto
 import de.ashman.ontrack.feature.tracking.domain.Tracking
 import de.ashman.ontrack.feature.tracking.domain.toEntity
 import de.ashman.ontrack.feature.tracking.repository.TrackingService
+import de.ashman.ontrack.feature.user.repository.UserService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -21,12 +23,15 @@ import java.util.*
 class TrackingController(
     val trackingService: TrackingService,
     val reviewService: ReviewService,
+    val userService: UserService,
+    private val postService: PostService,
 ) {
     @GetMapping("trackings")
     fun getTrackingsOfCurrentUser(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<TrackingDto>> {
-        val trackings = trackingService.getTrackingsByUserId(identity.id)
+        val user = userService.getById(identity.id)
+        val trackings = trackingService.getTrackingsByUserId(user.id)
         val trackingDtos = trackings.map { it.toDto() }
 
         return ResponseEntity.ok(trackingDtos)
@@ -38,13 +43,17 @@ class TrackingController(
         @RequestBody @Valid dto: CreateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
+        val user = userService.getById(identity.id)
+
         val newTracking = Tracking(
-            userId = identity.id,
+            user = user,
             status = dto.status,
             media = dto.media.toEntity(),
         )
 
         trackingService.save(newTracking)
+
+        postService.createPostForTracking(newTracking)
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -57,9 +66,10 @@ class TrackingController(
         @RequestBody @Valid dto: UpdateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
+        val user = userService.getById(identity.id)
         val tracking = trackingService.getById(dto.id)
 
-        if (tracking.userId != identity.id) {
+        if (tracking.user.id != user.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
 
@@ -74,18 +84,16 @@ class TrackingController(
         @PathVariable id: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
+        val user = userService.getById(identity.id)
         val tracking = trackingService.getById(id)
         val review = reviewService.getByTrackingId(id)
 
-        if (tracking.userId != identity.id) {
+        if (tracking.user.id != user.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
 
         trackingService.delete(tracking)
-
-        review?.let {
-            reviewService.delete(it)
-        }
+        review?.let { reviewService.delete(it) }
 
         return ResponseEntity.ok().build()
     }

@@ -77,7 +77,9 @@ liquibase {
         this.arguments = commonArgs + mapOf(
             "changelogFile" to "$changelogDir/migrations/$monthOfYear/changelog-$timestamp.yaml",
             "referenceUrl" to "hibernate:spring:de.ashman.ontrack?dialect=org.hibernate.dialect.PostgreSQLDialect",
-            "author" to (System.getProperty("author") ?: "generated")
+            "author" to (System.getProperty("author") ?: "generated"),
+            //"hibernate.physical_naming_strategy" to "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy",
+            //"hibernate.implicit_naming_strategy" to "org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy",
         )
     }
 

@@ -1,7 +1,9 @@
 package de.ashman.ontrack.feature.review.domain
 
+import de.ashman.ontrack.feature.tracking.domain.Tracking
+import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.*
 
 @Entity
@@ -9,18 +11,20 @@ import java.util.*
     name = "reviews",
     uniqueConstraints = [UniqueConstraint(columnNames = ["tracking_id"])]
 )
-final class Review(
+data class Review(
     @Id
     val id: UUID = UUID.randomUUID(),
-    @Column(name = "user_id")
-    val userId: String,
-    @Column(name = "tracking_id")
-    val trackingId: UUID,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: User,
+    @OneToOne(fetch = FetchType.LAZY)
+    val tracking: Tracking,
+
     var rating: Double,
     var title: String?,
     var description: String?,
-    @Column(name = "created_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name = "updated_at")
+    var updatedAt: Instant = Instant.now(),
 ) {
     fun update(
         rating: Double,
@@ -30,6 +34,6 @@ final class Review(
         this.rating = rating
         this.title = title
         this.description = description
-        updatedAt = LocalDateTime.now()
+        updatedAt = Instant.now()
     }
 }

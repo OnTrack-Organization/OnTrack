@@ -1,7 +1,8 @@
 package de.ashman.ontrack.feature.tracking.domain
 
+import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.*
 
 @Entity
@@ -14,27 +15,25 @@ import java.util.*
         )
     ]
 )
-final class Tracking(
-    @Column(name = "user_id", nullable = false)
-    val userId: String,
-    status: TrackStatus,
-    @Embedded
-    val media: Media
-) {
+data class Tracking(
     @Id
-    @Column(name = "id", nullable = false)
-    val id: UUID = UUID.randomUUID()
+    val id: UUID = UUID.randomUUID(),
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: User,
 
-    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: TrackStatus = status
-        private set
+    var status: TrackStatus,
 
+    @Embedded
+    val media: Media,
+
+    @Column(name = "updated_at")
+    var updatedAt: Instant = Instant.now()
+) {
     fun changeStatus(newStatus: TrackStatus) {
         status = newStatus
+        updatedAt = Instant.now()
     }
 }
 

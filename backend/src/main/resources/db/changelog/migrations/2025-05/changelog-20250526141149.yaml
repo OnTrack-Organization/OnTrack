@@ -1,0 +1,578 @@
+databaseChangeLog:
+- changeSet:
+    id: 1748268711462-1
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: comment_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: comment_mentioned_users
+- changeSet:
+    id: 1748268711462-2
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: commentsPK
+            name: id
+            type: UUID
+        - column:
+            name: created_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: message
+            type: VARCHAR(255)
+        - column:
+            name: post_id
+            type: UUID
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: comments
+- changeSet:
+    id: 1748268711462-3
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: friend_requestsPK
+            name: id
+            type: UUID
+        - column:
+            name: status
+            type: VARCHAR(255)
+        - column:
+            name: receiver_id
+            type: VARCHAR(255)
+        - column:
+            name: sender_id
+            type: VARCHAR(255)
+        tableName: friend_requests
+- changeSet:
+    id: 1748268711462-4
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: friendshipsPK
+            name: id
+            type: UUID
+        - column:
+            name: user1_id
+            type: VARCHAR(255)
+        - column:
+            name: user2_id
+            type: VARCHAR(255)
+        tableName: friendships
+- changeSet:
+    id: 1748268711462-5
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: likesPK
+            name: id
+            type: UUID
+        - column:
+            name: created_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: post_id
+            type: UUID
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: likes
+- changeSet:
+    id: 1748268711462-6
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: postsPK
+            name: id
+            type: UUID
+        - column:
+            name: updated_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: review_id
+            type: UUID
+        - column:
+            name: tracking_id
+            type: UUID
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: posts
+- changeSet:
+    id: 1748268711462-7
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: recommendationsPK
+            name: id
+            type: UUID
+        - column:
+            name: created_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: media_cover_url
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_title
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_type
+            type: VARCHAR(255)
+        - column:
+            name: message
+            type: VARCHAR(255)
+        - column:
+            name: receiver_id
+            type: VARCHAR(255)
+        - column:
+            name: sender_id
+            type: VARCHAR(255)
+        tableName: recommendations
+- changeSet:
+    id: 1748268711462-8
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: reviewsPK
+            name: id
+            type: UUID
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: rating
+            type: FLOAT(53)
+        - column:
+            name: title
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: tracking_id
+            type: UUID
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: reviews
+- changeSet:
+    id: 1748268711462-9
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: trackingsPK
+            name: id
+            type: UUID
+        - column:
+            name: media_cover_url
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_title
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: media_type
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: trackings
+- changeSet:
+    id: 1748268711462-10
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: usersPK
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: fcm_token
+            type: VARCHAR(255)
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: profile_picture_url
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            name: username
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1748268711462-11
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: review_id
+        constraintName: UC_POSTSREVIEW_ID_COL
+        tableName: posts
+- changeSet:
+    id: 1748268711462-12
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: tracking_id
+        constraintName: UC_POSTSTRACKING_ID_COL
+        tableName: posts
+- changeSet:
+    id: 1748268711462-13
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: UC_USERSEMAIL_COL
+        tableName: users
+- changeSet:
+    id: 1748268711462-14
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: UC_USERSUSERNAME_COL
+        tableName: users
+- changeSet:
+    id: 1748268711462-15
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: tracking_id
+        constraintName: UKn4xgb3c6iwcp8mf4xo0y18m48
+        tableName: reviews
+- changeSet:
+    id: 1748268711462-16
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: user1_id, user2_id
+        constraintName: uniq_friends
+        tableName: friendships
+- changeSet:
+    id: 1748268711462-17
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addUniqueConstraint:
+        columnNames: id, user_id
+        constraintName: uniq_media_tracking_per_user
+        tableName: trackings
+- changeSet:
+    id: 1748268711462-18
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sender_id
+        baseTableName: recommendations
+        constraintName: FK26qgf9fgb1u9gag10fgs3v39d
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-19
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user2_id
+        baseTableName: friendships
+        constraintName: FK3ii24jylf37bx29q6navneqa7
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-20
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: trackings
+        constraintName: FK46pqx73trht863vq20x6iau7h
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-21
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: posts
+        constraintName: FK5lidm6cqbc7u4xhqpxm898qme
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-22
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tracking_id
+        baseTableName: posts
+        constraintName: FK80umpky5eia4fwqrkd4u00jnd
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: trackings
+        validate: true
+- changeSet:
+    id: 1748268711462-23
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: comments
+        constraintName: FK8omq0tc18jd43bu5tjh6jvraq
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-24
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: receiver_id
+        baseTableName: recommendations
+        constraintName: FK9s4w5sfq507dr75jpoods5guh
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-25
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user1_id
+        baseTableName: friendships
+        constraintName: FKbni8hh12wpbcinmrrm7icj9pa
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-26
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sender_id
+        baseTableName: friend_requests
+        constraintName: FKcchlh48b4347amfvmke793bg7
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-27
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: reviews
+        constraintName: FKcgy7qjc1r99dp117y9en6lxye
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-28
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: comment_mentioned_users
+        constraintName: FKg5thxjy9oquf9nw9r19frewdg
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-29
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tracking_id
+        baseTableName: reviews
+        constraintName: FKgc0uch1yq2aecqmn5i3ilk1ho
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: trackings
+        validate: true
+- changeSet:
+    id: 1748268711462-30
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: post_id
+        baseTableName: comments
+        constraintName: FKh4c7lvsc298whoyd4w9ta25cr
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: posts
+        validate: true
+- changeSet:
+    id: 1748268711462-31
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: comment_id
+        baseTableName: comment_mentioned_users
+        constraintName: FKiemx7nct4w8pcq1q0fsmwbdqr
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: comments
+        validate: true
+- changeSet:
+    id: 1748268711462-32
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: likes
+        constraintName: FKnvx9seeqqyy71bij291pwiwrg
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-33
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: post_id
+        baseTableName: likes
+        constraintName: FKry8tnr4x2vwemv2bb0h5hyl0x
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: posts
+        validate: true
+- changeSet:
+    id: 1748268711462-34
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: receiver_id
+        baseTableName: friend_requests
+        constraintName: FKtcmqalc5v4qdt1slgcsa544i5
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748268711462-35
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: review_id
+        baseTableName: posts
+        constraintName: FKtijor4453mtlnk0g5b4kdw15q
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: reviews
+        validate: true
+

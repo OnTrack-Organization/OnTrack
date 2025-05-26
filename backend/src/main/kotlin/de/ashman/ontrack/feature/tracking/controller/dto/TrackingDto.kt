@@ -2,7 +2,6 @@ package de.ashman.ontrack.feature.tracking.controller.dto
 
 import de.ashman.ontrack.feature.tracking.domain.TrackStatus
 import de.ashman.ontrack.feature.tracking.domain.Tracking
-import java.time.ZoneOffset
 import java.util.*
 
 data class TrackingDto(
@@ -15,8 +14,8 @@ data class TrackingDto(
 
 fun Tracking.toDto() = TrackingDto(
     id = id,
-    userId = userId,
+    userId = user.id,
     media = media.toDto(),
     status = status,
-    timestamp = createdAt.toInstant(ZoneOffset.UTC).toEpochMilli(),
+    timestamp = updatedAt.toEpochMilli(),
 )

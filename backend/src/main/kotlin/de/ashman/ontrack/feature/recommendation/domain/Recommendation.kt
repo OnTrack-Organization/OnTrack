@@ -1,26 +1,27 @@
 package de.ashman.ontrack.feature.recommendation.domain
 
 import de.ashman.ontrack.feature.tracking.domain.Media
+import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.*
 
 @Entity
 @Table(name = "recommendations")
-final class Recommendation(
-    @Column(name = "sender_id", nullable = false)
-    val senderId: String,
-    @Column(name = "receiver_id", nullable = false)
-    val receiverId: String,
+data class Recommendation(
+    @Id
+    val id: UUID = UUID.randomUUID(),
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val sender: User,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val receiver: User,
+
     @Embedded
     val media: Media,
-    @Column(name = "message")
-    val message: String?,
-) {
-    @Id
-    @Column(name = "id", nullable = false)
-    val id: UUID = UUID.randomUUID()
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now()
-}
+    val message: String? = null,
+
+    @Column(name = "created_at")
+    val createdAt: Instant = Instant.now(),
+)

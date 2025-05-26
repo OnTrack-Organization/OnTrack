@@ -4,8 +4,8 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.tracking.controller.dto.toDto
 import de.ashman.ontrack.feature.tracking.repository.TrackingService
 import de.ashman.ontrack.feature.friend.domain.FriendStatus
-import de.ashman.ontrack.feature.friend.repository.FriendRequestService
-import de.ashman.ontrack.feature.friend.repository.FriendshipService
+import de.ashman.ontrack.feature.friend.service.FriendRequestService
+import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
 import de.ashman.ontrack.feature.user.controller.dto.UserProfileDto
 import de.ashman.ontrack.feature.user.controller.dto.toDto
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(
     private val userService: UserService,
-    private val friendshipService: FriendshipService,
+    private val friendService: FriendService,
     private val friendRequestService: FriendRequestService,
     private val trackingService: TrackingService,
 ) {
@@ -29,21 +29,22 @@ class UserController(
         @RequestParam username: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<OtherUserDto>> {
-        val friendIds = friendshipService.getFriendIds(identity.id)
-        val outcomingFriendIds = friendRequestService.findReceiversOfSentRequests(identity.id)
-        val incomingFriendIds = friendRequestService.findSendersOfReceivedRequests(identity.id)
+        val currentUser = userService.getById(identity.id)
 
-        // TODO right now this only returns users where the username matches exactly
+        val friends = friendService.getFriends(currentUser)
+        val sentRequests = friendRequestService.findReceiversOfSentRequests(currentUser)
+        val receivedRequests = friendRequestService.findSendersOfReceivedRequests(currentUser)
+
         val users = userService.searchByUsername(username)
 
-        // 3) map each User → UserSearchResult by checking membership in those sets
         val searchResult = users.map { user ->
-            val status = when (user.id) {
-                in friendIds -> FriendStatus.FRIEND
-                in outcomingFriendIds -> FriendStatus.REQUEST_SENT
-                in incomingFriendIds -> FriendStatus.REQUEST_RECEIVED
+            val status = when (user) {
+                in friends -> FriendStatus.FRIEND
+                in sentRequests -> FriendStatus.REQUEST_SENT
+                in receivedRequests -> FriendStatus.REQUEST_RECEIVED
                 else -> FriendStatus.STRANGER
             }
+
             OtherUserDto(user = user.toDto(), friendStatus = status)
         }
 
@@ -52,34 +53,28 @@ class UserController(
 
     @GetMapping("user/{id}")
     fun getProfile(
-        @PathVariable("id") id: String,
+        @PathVariable id: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<UserProfileDto> {
-        val user = userService.getById(id)
-        val trackings = trackingService.getTrackingsByUserId(user.id)
+        val currentUser = userService.getById(identity.id)
+        val otherUser = userService.getById(id)
 
-        val areFriends = friendshipService.areFriends(
-            identity.id,
-            user.id
-        )
-        val sentRequest = friendRequestService.findBySenderAndReceiver(identity.id, user.id)
-        val receivedRequest = friendRequestService.findBySenderAndReceiver(user.id, identity.id)
+        val trackings = trackingService.getTrackingsByUserId(otherUser.id)
+
+        val areFriends = friendService.areFriends(currentUser.id, otherUser.id)
+        val sentRequest = friendRequestService.findBySenderAndReceiver(currentUser, otherUser)
+        val receivedRequest = friendRequestService.findBySenderAndReceiver(otherUser, currentUser)
 
         val friendStatus = when {
             areFriends -> FriendStatus.FRIEND
-            sentRequest !== null -> FriendStatus.REQUEST_SENT
-            receivedRequest !== null -> FriendStatus.REQUEST_RECEIVED
+            sentRequest != null -> FriendStatus.REQUEST_SENT
+            receivedRequest != null -> FriendStatus.REQUEST_RECEIVED
             else -> FriendStatus.STRANGER
         }
 
-        val trackingDtos = trackings.map { it.toDto() }
-
         val profileDto = UserProfileDto(
-            user = OtherUserDto(
-                user.toDto(),
-                friendStatus
-            ),
-            trackings = trackingDtos
+            user = OtherUserDto(otherUser.toDto(), friendStatus),
+            trackings = trackings.map { it.toDto() }
         )
 
         return ResponseEntity.ok(profileDto)

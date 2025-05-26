@@ -2,8 +2,8 @@ package de.ashman.ontrack.feature.friend.controller
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.domain.FriendStatus
-import de.ashman.ontrack.feature.friend.repository.FriendRequestService
-import de.ashman.ontrack.feature.friend.repository.FriendshipService
+import de.ashman.ontrack.feature.friend.service.FriendRequestService
+import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import de.ashman.ontrack.feature.user.controller.dto.toDto
@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class FriendController(
     private val userService: UserService,
-    private val friendshipService: FriendshipService,
+    private val friendService: FriendService,
     private val friendRequestService: FriendRequestService,
 ) {
     @GetMapping("friends")
     fun findFriends(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<UserDto>> {
-        val friendIds = friendshipService.getFriendIds(identity.id)
-        val friends = userService.findAllById(friendIds)
-        val friendDtos = friends.stream().map { it.toDto() }.toList()
+        val user = userService.getById(identity.id)
+        val friends = friendService.getFriends(user)
+        val friendDtos = friends.map { it.toDto() }
 
         return ResponseEntity.ok(friendDtos)
     }
@@ -35,25 +35,23 @@ class FriendController(
     fun findFriendsAndFriendRequests(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<OtherUserDto>> {
-        val friendIds = friendshipService.getFriendIds(identity.id)
-        val outcomingFriendIds = friendRequestService.findReceiversOfSentRequests(identity.id)
-        val incomingFriendIds = friendRequestService.findSendersOfReceivedRequests(identity.id)
+        val user = userService.getById(identity.id)
 
-        val friends = userService.findAllById(friendIds)
-        val outcomingFriends = userService.findAllById(outcomingFriendIds)
-        val incomingFriends = userService.findAllById(incomingFriendIds)
+        val friends = friendService.getFriends(user)
+        val sentRequests = friendRequestService.findReceiversOfSentRequests(user)
+        val receivedRequests = friendRequestService.findSendersOfReceivedRequests(user)
 
         val friendDtos = friends.map {
             OtherUserDto(it.toDto(), FriendStatus.FRIEND)
         }
-        val outcomingFriendDtos = outcomingFriends.map {
+        val sentRequestDtos = sentRequests.map {
             OtherUserDto(it.toDto(), FriendStatus.REQUEST_SENT)
         }
-        val incomingFriendDtos = incomingFriends.map {
+        val receivedRequestDtos = receivedRequests.map {
             OtherUserDto(it.toDto(), FriendStatus.REQUEST_RECEIVED)
         }
 
-        return ResponseEntity.ok(friendDtos + outcomingFriendDtos + incomingFriendDtos)
+        return ResponseEntity.ok(friendDtos + sentRequestDtos + receivedRequestDtos)
     }
 
     @Transactional
@@ -62,7 +60,10 @@ class FriendController(
         @PathVariable("id") friendId: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        friendshipService.endFriendship(identity.id, friendId)
+        val user = userService.getById(identity.id)
+        val friend = userService.getById(friendId)
+
+        friendService.endFriendship(user, friend)
 
         return ResponseEntity.ok().build()
     }

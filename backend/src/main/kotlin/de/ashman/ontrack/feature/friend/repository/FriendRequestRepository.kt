@@ -2,6 +2,7 @@ package de.ashman.ontrack.feature.friend.repository
 
 import de.ashman.ontrack.feature.friend.domain.FriendRequest
 import de.ashman.ontrack.feature.friend.domain.FriendRequestStatus
+import de.ashman.ontrack.feature.user.domain.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -10,11 +11,11 @@ import java.util.UUID
 
 @Repository
 interface FriendRequestRepository : JpaRepository<FriendRequest, UUID> {
-    fun findFriendRequestBySenderIdAndReceiverIdAndStatus(sender: String, receiver: String, status: FriendRequestStatus): FriendRequest?
+    fun findFriendRequestBySenderAndReceiverAndStatus(sender: User, receiver: User, status: FriendRequestStatus): FriendRequest?
 
-    @Query("select f.receiverId from FriendRequest f where f.senderId = :sender and f.status = 'PENDING'")
-    fun findReceiversOfPendingRequests(@Param("sender") sender: String): List<String>
+    @Query("SELECT fr.sender FROM FriendRequest fr WHERE fr.receiver = :receiver AND fr.status = 'PENDING'")
+    fun findSendersOfPendingRequests(receiver: User): List<User>
 
-    @Query("select f.senderId from FriendRequest f where f.receiverId = :receiver and f.status = 'PENDING'")
-    fun findSendersOfPendingRequests(@Param("receiver") receiver: String): List<String>
+    @Query("SELECT fr.receiver FROM FriendRequest fr WHERE fr.sender = :sender AND fr.status = 'PENDING'")
+    fun findReceiversOfPendingRequests(sender: User): List<User>
 }

@@ -13,5 +13,5 @@ data class RecommendationDto(
 fun Recommendation.toDto(userDto: UserDto) = RecommendationDto(
     user = userDto,
     message = message,
-    timestamp = createdAt.toInstant(ZoneOffset.UTC).toEpochMilli(),
+    timestamp = createdAt.toEpochMilli(),
 )

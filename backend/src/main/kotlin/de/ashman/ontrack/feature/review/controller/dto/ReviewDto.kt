@@ -1,7 +1,6 @@
 package de.ashman.ontrack.feature.review.controller.dto
 
 import de.ashman.ontrack.feature.review.domain.Review
-import java.time.ZoneOffset
 import java.util.UUID
 
 data class ReviewDto(
@@ -15,9 +14,9 @@ data class ReviewDto(
 
 fun Review.toDto() = ReviewDto(
     id = id,
-    trackingId = trackingId,
+    trackingId = tracking.id,
     rating = rating,
     title = title,
     description = description,
-    timestamp = updatedAt.toInstant(ZoneOffset.UTC).toEpochMilli(),
+    timestamp = updatedAt.toEpochMilli(),
 )

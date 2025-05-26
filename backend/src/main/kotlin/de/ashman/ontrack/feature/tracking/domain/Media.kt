@@ -15,10 +15,10 @@ data class Media(
     @Enumerated(EnumType.STRING)
     val type: MediaType,
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "media_title", nullable = false)
     val title: String,
 
-    @Column(name = "cover_url")
+    @Column(name = "media_cover_url")
     val coverUrl: String?
 )
 

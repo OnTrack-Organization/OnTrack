@@ -6,6 +6,9 @@ import de.ashman.ontrack.feature.review.controller.dto.ReviewDto
 import de.ashman.ontrack.feature.review.controller.dto.toDto
 import de.ashman.ontrack.feature.review.domain.Review
 import de.ashman.ontrack.feature.review.repository.ReviewService
+import de.ashman.ontrack.feature.share.service.PostService
+import de.ashman.ontrack.feature.tracking.repository.TrackingService
+import de.ashman.ontrack.feature.user.repository.UserService
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ReviewController(
     val reviewService: ReviewService,
+    val userService: UserService,
+    val trackingService: TrackingService,
+    val postService: PostService,
 ) {
     @GetMapping("reviews")
     fun getReviewsOfCurrentUser(
@@ -35,15 +41,24 @@ class ReviewController(
         @RequestBody dto: CreateReviewDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<ReviewDto> {
+        val user = userService.getById(identity.id)
+        val tracking = trackingService.getById(dto.trackingId)
+
+        if (tracking.user.id != user.id) {
+            return ResponseEntity.status(403).build()
+        }
+
         val newReview = Review(
-            userId = identity.id,
-            trackingId = dto.trackingId,
+            user = user,
+            tracking = tracking,
             rating = dto.rating,
             title = dto.title,
             description = dto.description,
         )
 
         reviewService.save(newReview)
+
+        postService.updatePostWithReview(newReview)
 
         return ResponseEntity.ok(newReview.toDto())
     }
@@ -54,10 +69,15 @@ class ReviewController(
         @RequestBody dto: CreateReviewDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<ReviewDto> {
+        val user = userService.getById(identity.id)
         val review = reviewService.getByTrackingId(dto.trackingId)
 
-        review?.update(dto.rating, dto.title, dto.description)
+        if (review?.user?.id != user.id) {
+            return ResponseEntity.status(403).build()
+        }
 
-        return ResponseEntity.ok(review?.toDto())
+        review.update(dto.rating, dto.title, dto.description)
+
+        return ResponseEntity.ok(review.toDto())
     }
 }

@@ -1,0 +1,22 @@
+package de.ashman.ontrack.feature.share.domain
+
+import de.ashman.ontrack.feature.user.domain.User
+import jakarta.persistence.*
+import java.time.Instant
+import java.util.*
+
+@Entity
+@Table(name = "likes")
+data class Like(
+    @Id
+    val id: UUID = UUID.randomUUID(),
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val post: Post,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: User,
+
+    @Column(name = "created_at")
+    val createdAt: Instant = Instant.now()
+)

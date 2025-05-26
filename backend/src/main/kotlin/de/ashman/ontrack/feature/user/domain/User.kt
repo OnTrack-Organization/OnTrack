@@ -4,43 +4,29 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Entity
 @Table(name = "users")
-final class User(
-    id: String,
-    name: String,
-    email: String,
-    profilePictureUrl: String
-) {
+data class User(
     @Id
-    @Column(name = "id")
-    val id: String = id
+    val id: String,
 
-    @Column(name = "name")
-    var name: String = name
-        private set
-
-    @Column(name = "username", unique = true, nullable = true)
-    var username: String? = null
-        private set
-
-    @Column(name = "email", unique = true)
-    var email: String = email
-        private set
+    var name: String,
+    @Column(unique = true, nullable = true)
+    var username: String? = null,
+    @Column(unique = true)
+    var email: String,
 
     @Column(name = "profile_picture_url")
-    var profilePictureUrl: String = profilePictureUrl
-        private set
-
-    @Column(name = "updated_at")
-    private var updatedAt: LocalDateTime = LocalDateTime.now()
+    var profilePictureUrl: String,
 
     @Column(name = "fcm_token")
-    var fcmToken: String? = null
-        private set
+    var fcmToken: String? = null,
 
+    @Column(name = "updated_at")
+    var updatedAt: Instant = Instant.now(),
+) {
     fun updateFcmToken(token: String) {
         fcmToken = token
         updateLastModified()
@@ -48,6 +34,7 @@ final class User(
 
     fun clearFcmToken() {
         fcmToken = null
+        updateLastModified()
     }
 
     fun updateAccountSettings(name: String, username: String) {
@@ -62,6 +49,7 @@ final class User(
     }
 
     private fun updateLastModified() {
-        updatedAt = LocalDateTime.now()
+        updatedAt = Instant.now()
     }
 }
+

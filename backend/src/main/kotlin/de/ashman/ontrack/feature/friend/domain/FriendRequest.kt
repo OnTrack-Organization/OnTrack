@@ -1,29 +1,24 @@
 package de.ashman.ontrack.feature.friend.domain
 
 import de.ashman.ontrack.feature.friend.domain.exception.FriendRequestAlreadyProcessedException
+import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
 import java.util.*
 
 @Entity
-@Table(name = "friends")
+@Table(name = "friend_requests")
 class FriendRequest(
-    @Column(name = "sender_id", nullable = false)
-    val senderId: String,
-    @Column(name = "receiver_id", nullable = false)
-    val receiverId: String
-) {
     @Id
-    @Column(name = "id", nullable = false)
-    private val id: UUID = UUID.randomUUID()
+    val id: UUID = UUID.randomUUID(),
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private var status: FriendRequestStatus = FriendRequestStatus.PENDING
+    var status: FriendRequestStatus = FriendRequestStatus.PENDING,
 
-    fun getStatus(): FriendRequestStatus {
-        return status
-    }
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    val sender: User,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val receiver: User,
+) {
     fun accept() {
         if (status !== FriendRequestStatus.PENDING) throw FriendRequestAlreadyProcessedException()
 

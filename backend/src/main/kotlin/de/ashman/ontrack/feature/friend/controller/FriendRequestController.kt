@@ -2,8 +2,8 @@ package de.ashman.ontrack.feature.friend.controller
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.domain.FriendRequest
-import de.ashman.ontrack.feature.friend.repository.FriendRequestService
-import de.ashman.ontrack.feature.friend.repository.FriendshipService
+import de.ashman.ontrack.feature.friend.service.FriendRequestService
+import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.user.repository.UserService
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
@@ -11,78 +11,83 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/friend-request")
 class FriendRequestController(
     private val userService: UserService,
     private val friendRequestService: FriendRequestService,
-    private val friendshipService: FriendshipService
+    private val friendService: FriendService
 ) {
-    @PostMapping("friend-request/send/{userId}")
+    @PostMapping("/send/{userId}")
     @Transactional
     fun sendFriendRequest(
         @AuthenticationPrincipal identity: Identity,
-        @PathVariable("userId") userId: String
+        @PathVariable userId: String
     ): ResponseEntity<Unit> {
         if (!userService.exists(userId)) {
             return ResponseEntity.notFound().build()
         }
 
-        val friendRequest = FriendRequest(identity.id, userId)
+        val sender = userService.getById(identity.id)
+        val receiver = userService.getById(userId)
+
+        val friendRequest = FriendRequest(sender = sender, receiver = receiver)
 
         friendRequestService.save(friendRequest)
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @PostMapping("friend-request/accept/{userId}")
+    @PostMapping("/accept/{userId}")
     @Transactional
     fun acceptFriendRequest(
         @AuthenticationPrincipal identity: Identity,
-        @PathVariable("userId") userId: String
+        @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val request = friendRequestService.findBySenderAndReceiver(userId, identity.id)
+        val sender = userService.getById(userId)
+        val receiver = userService.getById(identity.id)
 
-        if (request === null) {
-            return ResponseEntity.notFound().build()
-        }
+        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
+            ?: return ResponseEntity.notFound().build()
 
         request.accept()
 
-        friendshipService.beginFriendship(userId, identity.id)
+        friendService.beginFriendship(sender, receiver)
 
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping("friend-request/decline/{userId}")
+    @PostMapping("/decline/{userId}")
     @Transactional
     fun declineFriendRequest(
         @AuthenticationPrincipal identity: Identity,
-        @PathVariable("userId") userId: String
+        @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val request = friendRequestService.findBySenderAndReceiver(userId, identity.id)
+        val sender = userService.getById(userId)
+        val receiver = userService.getById(identity.id)
 
-        if (request === null) {
-            return ResponseEntity.notFound().build()
-        }
+        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
+            ?: return ResponseEntity.notFound().build()
 
         request.decline()
 
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping("friend-request/cancel/{userId}")
+    @PostMapping("/cancel/{userId}")
     @Transactional
     fun cancelFriendRequest(
         @AuthenticationPrincipal identity: Identity,
-        @PathVariable("userId") userId: String
+        @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val request = friendRequestService.findBySenderAndReceiver(identity.id, userId)
+        val sender = userService.getById(identity.id)
+        val receiver = userService.getById(userId)
 
-        if (request === null) {
-            return ResponseEntity.notFound().build()
-        }
+        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
+            ?: return ResponseEntity.notFound().build()
 
         request.cancel()
 
