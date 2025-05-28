@@ -8,26 +8,24 @@ import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.notifications.NotificationsScreen
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
+import de.ashman.ontrack.features.share.PostViewModel
+import de.ashman.ontrack.features.share.ShareDetailScreen
 import de.ashman.ontrack.features.share.ShareScreen
-import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share_detail.ShareDetailScreen
-import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
 import de.ashman.ontrack.navigation.Route
 
 fun NavGraphBuilder.shareGraph(
     navController: NavController,
-    shareViewModel: ShareViewModel,
+    postViewModel: PostViewModel,
     friendsViewModel: FriendsViewModel,
-    shareDetailViewModel: ShareDetailViewModel,
     notificationsViewModel: NotificationsViewModel,
     commonUiManager: CommonUiManager,
 ) {
     composable<Route.Share> {
         ShareScreen(
-            shareViewModel = shareViewModel,
+            postViewModel = postViewModel,
             friendsViewModel = friendsViewModel,
             commonUiManager = commonUiManager,
-            onClickShareCard = { navController.navigate(Route.ShareDetail(it)) },
+            onClickPost = { navController.navigate(Route.ShareDetail(it)) },
             onClickCover = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onClickUser = { userId ->
                 commonUiManager.hideSheet()
@@ -41,8 +39,8 @@ fun NavGraphBuilder.shareGraph(
         val shareDetail: Route.ShareDetail = backStackEntry.toRoute()
 
         ShareDetailScreen(
-            viewModel = shareDetailViewModel,
-            trackingId = shareDetail.trackingId,
+            viewModel = postViewModel,
+            postId = shareDetail.trackingId,
             onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) },
             onBack = { navController.popBackStack() },

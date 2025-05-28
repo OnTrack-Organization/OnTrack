@@ -18,3 +18,5 @@ fun NewTracking.toEntity() = NewTrackingEntity(
     status = status,
     timestamp = timestamp,
 )
+
+const val MAX_RATING = 5

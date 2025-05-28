@@ -39,6 +39,7 @@
 
     <!-- SHARE -->
     <string name="share_empty">Add some friends or track some media to share it in your feed!</string>
+    <string name="share_error">Couldn't load posts, sorry! Try again later.</string>
 
     <string name="share_comments_placeholder">Write a comment…</string>
     <string name="share_remove_comment_confirm_title">Remove comment?</string>

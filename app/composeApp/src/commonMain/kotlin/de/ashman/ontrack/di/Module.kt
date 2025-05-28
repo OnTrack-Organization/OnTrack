@@ -27,8 +27,7 @@ import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
-import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
+import de.ashman.ontrack.features.share.PostViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.network.clients.createBGGClient
@@ -48,6 +47,8 @@ import de.ashman.ontrack.network.services.recommendation.RecommendationService
 import de.ashman.ontrack.network.services.recommendation.RecommendationServiceImpl
 import de.ashman.ontrack.network.services.review.ReviewService
 import de.ashman.ontrack.network.services.review.ReviewServiceImpl
+import de.ashman.ontrack.network.services.share.PostService
+import de.ashman.ontrack.network.services.share.PostServiceImpl
 import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
@@ -56,10 +57,6 @@ import de.ashman.ontrack.notification.NotificationService
 import de.ashman.ontrack.notification.NotificationServiceImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
-import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepository
-import de.ashman.ontrack.repository.firestore.FirebaseTrackingRepositoryImpl
-import de.ashman.ontrack.repository.firestore.ShareRepository
-import de.ashman.ontrack.repository.firestore.ShareRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
 import dev.gitlive.firebase.Firebase
@@ -99,6 +96,7 @@ val appModule = module {
     single<FriendService> { FriendServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<RecommendationService> { RecommendationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<ReviewService> { ReviewServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<PostService> { PostServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -125,8 +123,6 @@ val appModule = module {
     single { Firebase.firestore }
     single { Firebase.storage }
 
-    single<ShareRepository> { ShareRepositoryImpl(get()) }
-    single<FirebaseTrackingRepository> { FirebaseTrackingRepositoryImpl(get(), get()) }
     single<SelectedMediaRepository> { SelectedMediaRepositoryImpl() }
     single<StorageRepository> { StorageRepositoryImpl(get()) }
 
@@ -137,8 +133,7 @@ val appModule = module {
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
-    viewModelDefinition { ShareViewModel(get(), get(), get(), get(), get()) }
-    viewModelDefinition { ShareDetailViewModel() }
+    viewModelDefinition { PostViewModel(get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { NotificationsViewModel() }
 

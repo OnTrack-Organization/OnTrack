@@ -16,8 +16,7 @@ import de.ashman.ontrack.features.init.start.StartViewModel
 import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
-import de.ashman.ontrack.features.share.ShareViewModel
-import de.ashman.ontrack.features.share_detail.ShareDetailViewModel
+import de.ashman.ontrack.features.share.PostViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
 import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.MainScaffold
@@ -32,8 +31,7 @@ fun NavigationGraph(
     navController: NavHostController,
     startViewModel: StartViewModel = koinInject(),
     loginViewModel: LoginViewModel = koinInject(),
-    shareViewModel: ShareViewModel = koinInject(),
-    shareDetailViewModel: ShareDetailViewModel = koinInject(),
+    postViewModel: PostViewModel = koinInject(),
     friendsViewModel: FriendsViewModel = koinInject(),
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
@@ -71,9 +69,8 @@ fun NavigationGraph(
 
             shareGraph(
                 navController = navController,
-                shareViewModel = shareViewModel,
+                postViewModel = postViewModel,
                 friendsViewModel = friendsViewModel,
-                shareDetailViewModel = shareDetailViewModel,
                 notificationsViewModel = notificationsViewModel,
                 commonUiManager = commonUiManager,
             )
@@ -96,7 +93,7 @@ fun NavigationGraph(
                     clearViewModels = {
                         // TODO different way
                         friendsViewModel.clearViewModel()
-                        shareViewModel.clearViewModel()
+                        postViewModel.clearViewModel()
                         detailViewModel.clearViewModel()
                         shelfListViewModel.clearViewModel()
                         shelfViewModel.clearViewModel()

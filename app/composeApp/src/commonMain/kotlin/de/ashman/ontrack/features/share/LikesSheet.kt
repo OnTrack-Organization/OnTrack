@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.share.like
+package de.ashman.ontrack.features.share
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +29,19 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun LikesSheet(
     likes: List<Like>,
+    postResultState: PostResultState,
     onClickUser: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
+
+    /*LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                if (visibleItems.isNotEmpty() && visibleItems.last().index == likes.lastIndex) {
+                    onFetchLikes()
+                }
+            }
+    }*/
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -62,12 +73,25 @@ fun LikesSheet(
                         )
                     }
                 } else {
-                    items(items = likes, key = { it.userId }) {
+                    items(items = likes, key = { it.id }) {
                         LikeCard(
-                            userImageUrl = it.userImageUrl,
-                            name = it.name,
-                            onClick = { onClickUser(it.userId) },
+                            profilePictureUrl = it.user.profilePictureUrl,
+                            name = it.user.name,
+                            onClick = { onClickUser(it.user.id) },
                         )
+                    }
+
+                    if (postResultState == PostResultState.LoadingMore) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
                     }
                 }
             }
@@ -77,7 +101,7 @@ fun LikesSheet(
 
 @Composable
 fun LikeCard(
-    userImageUrl: String,
+    profilePictureUrl: String,
     name: String,
     onClick: () -> Unit,
 ) {
@@ -90,7 +114,7 @@ fun LikeCard(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         PersonImage(
-            profilePictureUrl = userImageUrl,
+            profilePictureUrl = profilePictureUrl,
             onClick = onClick,
         )
         Text(

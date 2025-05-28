@@ -1,43 +1,19 @@
 package de.ashman.ontrack.features.detail.review
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.pushpal.jetlime.EventPointType
-import com.pushpal.jetlime.ItemsList
-import com.pushpal.jetlime.JetLimeColumn
-import com.pushpal.jetlime.JetLimeDefaults
-import com.pushpal.jetlime.JetLimeEvent
-import com.pushpal.jetlime.JetLimeEventDefaults
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.Entry
-import de.ashman.ontrack.features.common.MiniStarRatingBar
-import de.ashman.ontrack.features.common.getColor
-import de.ashman.ontrack.features.common.getIcon
-import de.ashman.ontrack.features.common.getLabel
-import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.detail_timeline_title
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TimelineSheet(
     mediaType: MediaType,
-    entries: List<Entry>,
+    entries: List<String>,
 ) {
-    Text(
+    /*Text(
         text = stringResource(Res.string.detail_timeline_title),
         style = MaterialTheme.typography.titleMedium,
     )
@@ -98,7 +74,7 @@ fun TimelineSheet(
                 }
             }
         }
-    }
+    }*/
 }
 
 fun paddedPainter(

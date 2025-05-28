@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.share.comment
+package de.ashman.ontrack.features.share
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Reply
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,26 +53,35 @@ import ontrack.composeapp.generated.resources.share_comments_empty
 import ontrack.composeapp.generated.resources.share_comments_placeholder
 import org.jetbrains.compose.resources.stringResource
 
-// TODO maybe remove this sheet altogether
 @Composable
 fun CommentsSheet(
     comments: List<Comment>,
-    onAddComment: (String) -> Unit,
-    onRemoveComment: (Comment) -> Unit,
+    postResultState: PostResultState,
+    onAddComment: (String, List<String>) -> Unit,
+    onRemoveComment: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var commentText by remember { mutableStateOf(TextFieldValue("")) }
-    var replyingTo by remember { mutableStateOf<String?>(null) }
+    var mentionedUsers by remember { mutableStateOf<String?>(null) }
 
-    var showCommentRemoveConfirmDialog by remember { mutableStateOf(false) }
+    var commentIdToRemove by remember { mutableStateOf<String?>(null) }
 
     val localFocusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
 
+    /*LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                if (visibleItems.isNotEmpty() && visibleItems.last().index == likes.lastIndex) {
+                    onFetchLikes()
+                }
+            }
+    }*/
+
     LaunchedEffect(comments.size) {
         if (comments.isNotEmpty()) {
-            listState.animateScrollToItem(comments.size - 1)
+            listState.animateScrollToItem(comments.lastIndex)
         }
     }
 
@@ -115,37 +125,47 @@ fun CommentsSheet(
                     items(items = comments, key = { it.id }) {
                         CommentCard(
                             modifier = Modifier.animateItem(),
-                            userImageUrl = it.userImageUrl,
-                            name = it.name,
-                            timestamp = it.timestamp.formatDateTime(),
-                            comment = it.comment,
-                            onShowRemoveCommentConfirmDialog = {
-                                showCommentRemoveConfirmDialog = true
-                            },
+                            comment = it,
+                            onShowRemoveCommentConfirmDialog = { commentIdToRemove = it.id },
                             onReply = {
-                                val newText = "@${it.username} "
+                                val newText = "@${it.user.username} "
                                 commentText = TextFieldValue(
                                     text = newText,
                                     selection = TextRange(newText.length)
                                 )
                                 focusRequester.requestFocus()
                             },
-                            onClickUser = { onClickUser(it.userId) },
-                            isOwnComment = it.userId == Firebase.auth.currentUser?.uid,
+                            onClickUser = { onClickUser(it.user.id) },
+                            isOwnComment = it.user.id == Firebase.auth.currentUser?.uid,
                         )
+                    }
 
-                        if (showCommentRemoveConfirmDialog) {
-                            RemoveCommentConfirmDialog(
-                                onConfirm = {
-                                    onRemoveComment(it)
-                                    showCommentRemoveConfirmDialog = false
-                                },
-                                onDismiss = { showCommentRemoveConfirmDialog = false },
-                            )
+                    if (postResultState == PostResultState.LoadingMore) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
             }
+        }
+
+        if (commentIdToRemove != null) {
+            RemoveCommentConfirmDialog(
+                onConfirm = {
+                    commentIdToRemove?.let { onRemoveComment(it) }
+                    commentIdToRemove = null
+                },
+                onDismiss = {
+                    commentIdToRemove = null
+                },
+            )
         }
 
         Row(
@@ -162,10 +182,16 @@ fun CommentsSheet(
                 onValueChange = {
                     commentText = it
                 },
-                isSending = false,
+                isSending = postResultState == PostResultState.Loading,
                 onSend = {
-                    onAddComment(commentText.text)
-                    replyingTo = null
+                    val mentionedUsernames = "@\\w+".toRegex()
+                        .findAll(commentText.text)
+                        .map { it.value.removePrefix("@") }
+                        .distinct()
+                        .toList()
+
+                    onAddComment(commentText.text, mentionedUsernames)
+                    mentionedUsers = null
                     commentText = TextFieldValue("")
                 },
             )
@@ -177,19 +203,16 @@ fun CommentsSheet(
 @Composable
 fun CommentCard(
     modifier: Modifier = Modifier,
-    userImageUrl: String,
-    name: String,
-    timestamp: String,
-    comment: String,
+    comment: Comment,
     onShowRemoveCommentConfirmDialog: () -> Unit,
     onReply: () -> Unit,
     onClickUser: () -> Unit,
-    isOwnComment: Boolean = false,
+    isOwnComment: Boolean,
 ) {
     val annotatedString = buildAnnotatedString {
-        append(comment)
+        append(comment.message)
         val regex = "@\\S+".toRegex()
-        regex.findAll(comment).forEach { matchResult ->
+        regex.findAll(comment.message).forEach { matchResult ->
             addStyle(
                 style = SpanStyle(
                     color = MaterialTheme.colorScheme.primary,
@@ -218,6 +241,7 @@ fun CommentCard(
             )
     ) {
         Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
@@ -225,7 +249,7 @@ fun CommentCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 PersonImage(
-                    profilePictureUrl = userImageUrl,
+                    profilePictureUrl = comment.user.profilePictureUrl,
                     onClick = onClickUser
                 )
 
@@ -233,13 +257,13 @@ fun CommentCard(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = name,
+                        text = comment.user.name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                     )
 
                     Text(
-                        text = timestamp,
+                        text = comment.timestamp.formatDateTime(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

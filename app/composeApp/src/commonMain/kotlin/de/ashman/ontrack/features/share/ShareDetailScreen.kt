@@ -1,9 +1,8 @@
-package de.ashman.ontrack.features.share_detail
+package de.ashman.ontrack.features.share
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -40,6 +40,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -47,19 +48,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
-import de.ashman.ontrack.domain.tracking.Tracking
+import de.ashman.ontrack.domain.share.Post
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.getColor
-import de.ashman.ontrack.features.notifications.formatTimeAgoString
-import de.ashman.ontrack.features.share.ShareCardHeader
-import de.ashman.ontrack.features.share.ShareCardMediaTitle
-import de.ashman.ontrack.features.share.ShareCardReview
-import de.ashman.ontrack.features.share.comment.CommentCard
 import de.ashman.ontrack.navigation.MediaNavigationParam
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -72,9 +70,8 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareDetailScreen(
-    viewModel: ShareDetailViewModel,
-    // Todo maybe pass tracking instead
-    trackingId: String,
+    viewModel: PostViewModel,
+    postId: String,
     onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
@@ -82,8 +79,8 @@ fun ShareDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val localFocusManager = LocalFocusManager.current
 
-    LaunchedEffect(trackingId) {
-        viewModel.fetchTracking(trackingId)
+    LaunchedEffect(postId) {
+        viewModel.fetchPost(postId)
     }
 
     Scaffold(
@@ -97,7 +94,7 @@ fun ShareDetailScreen(
             )
         },
     ) { contentPadding ->
-        uiState.tracking?.let {
+        uiState.selectedPost?.let {
             ShareDetailContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -108,13 +105,13 @@ fun ShareDetailScreen(
                             localFocusManager.clearFocus()
                         })
                     },
-                tracking = it,
-                isSending = uiState.resultState == ShareDetailResultState.Loading,
+                post = it,
+                isSending = uiState.resultState == PostResultState.Loading,
                 onClickCover = onClickMedia,
                 onClickUser = onClickUser,
-                // TODO
-                onClickLike = {},
-                onPostComment = {},
+                onClickLike = { viewModel.toggleLike(postId) },
+                onPostComment = viewModel::addComment,
+                onRemoveComment = viewModel::removeComment,
             )
         }
     }
@@ -123,22 +120,38 @@ fun ShareDetailScreen(
 @Composable
 fun ShareDetailContent(
     modifier: Modifier = Modifier,
-    tracking: Tracking,
+    post: Post,
     isSending: Boolean = false,
-    onClickCover: (MediaNavigationParam) -> Unit,
-    onClickUser: (String) -> Unit,
-    onClickLike: () -> Unit,
-    onPostComment: (String) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit = {},
+    onClickUser: (String) -> Unit = {},
+    onClickLike: () -> Unit = {},
+    onPostComment: (String, List<String>) -> Unit = { _, _ -> },
+    onRemoveComment: (String) -> Unit = {},
 ) {
+    var commentText by remember { mutableStateOf(TextFieldValue("")) }
+    var replyingTo by remember { mutableStateOf<String?>(null) }
+
+    val focusRequester = remember { FocusRequester() }
+    val listState = rememberLazyListState()
+
+    var shouldScrollAfterComment by remember { mutableStateOf(false) }
+
+    LaunchedEffect(post.comments.size) {
+        if (shouldScrollAfterComment) {
+            listState.animateScrollToItem(post.comments.lastIndex)
+            shouldScrollAfterComment = false
+        }
+    }
+
     Column(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(16.dp),
+            state = listState,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
                 ShareDetailMainContent(
-                    tracking = tracking,
+                    post = post,
                     onClickCover = onClickCover,
                     onClickUser = onClickUser,
                 )
@@ -148,8 +161,8 @@ fun ShareDetailContent(
 
             item {
                 ShareDetailLikeContent(
-                    isLiked = false,
-                    likes = tracking.likes,
+                    isLiked = post.likedByCurrentUser,
+                    likes = post.likes,
                     onClickUser = onClickUser,
                     onClickLike = onClickLike,
                 )
@@ -160,20 +173,24 @@ fun ShareDetailContent(
             item {
                 ShareDetailCommentContent(
                     modifier = Modifier.weight(1f),
-                    comments = tracking.comments,
+                    comments = post.comments,
                     onClickUser = onClickUser,
+                    onReply = {
+                        val newText = "@${it} "
+                        commentText = TextFieldValue(
+                            text = newText,
+                            selection = TextRange(newText.length)
+                        )
+                        focusRequester.requestFocus()
+                    },
+                    onRemoveComment = onRemoveComment,
                 )
             }
         }
 
-        // TODO move into vm
-        var commentText by remember { mutableStateOf(TextFieldValue("test")) }
-        var replyingTo by remember { mutableStateOf<String?>(null) }
-        val focusRequester = remember { FocusRequester() }
-
         SendMessageTextField(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 .focusRequester(focusRequester),
             placeholder = stringResource(Res.string.share_comments_placeholder),
             value = commentText,
@@ -181,9 +198,17 @@ fun ShareDetailContent(
             isSendVisible = commentText.text.isNotBlank(),
             isSending = isSending,
             onSend = {
-                onPostComment(commentText.text)
+                val mentionedUsernames = "@\\w+".toRegex()
+                    .findAll(commentText.text)
+                    .map { it.value.removePrefix("@") }
+                    .distinct()
+                    .toList()
+
+                onPostComment(commentText.text, mentionedUsernames)
                 replyingTo = null
                 commentText = TextFieldValue("")
+
+                shouldScrollAfterComment = true
             },
         )
     }
@@ -191,11 +216,12 @@ fun ShareDetailContent(
 
 @Composable
 fun ShareDetailMainContent(
-    tracking: Tracking,
+    post: Post,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
@@ -206,30 +232,30 @@ fun ShareDetailMainContent(
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
                 ShareCardHeader(
-                    profilePictureUrl = tracking.userImageUrl,
-                    username = tracking.username,
-                    timestamp = tracking.timestamp,
-                    mediaType = tracking.mediaType,
-                    trackStatus = tracking.status!!,
-                    onClickUser = { onClickUser(tracking.userId) },
+                    profilePictureUrl = post.user.profilePictureUrl,
+                    username = post.user.username,
+                    timestamp = post.tracking.timestamp,
+                    mediaType = post.tracking.media.type,
+                    trackStatus = post.tracking.status,
+                    onClickUser = { onClickUser(post.user.id) },
                 )
 
                 ShareCardMediaTitle(
-                    mediaType = tracking.mediaType,
-                    mediaTitle = tracking.mediaTitle,
+                    mediaType = post.tracking.media.type,
+                    mediaTitle = post.tracking.media.title,
                 )
             }
 
             MediaPoster(
                 modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                coverUrl = tracking.mediaCoverUrl,
+                coverUrl = post.tracking.media.coverUrl,
                 onClick = {
                     onClickCover(
                         MediaNavigationParam(
-                            id = tracking.mediaId,
-                            type = tracking.mediaType,
-                            title = tracking.mediaTitle,
-                            coverUrl = tracking.mediaCoverUrl,
+                            id = post.tracking.media.id,
+                            type = post.tracking.media.type,
+                            title = post.tracking.media.title,
+                            coverUrl = post.tracking.media.coverUrl,
                         )
                     )
                 },
@@ -237,10 +263,8 @@ fun ShareDetailMainContent(
         }
 
         ShareCardReview(
-            reviewTitle = tracking.reviewTitle,
-            reviewDescription = tracking.reviewDescription,
-            reviewRating = tracking.rating,
-            starColor = contentColorFor(tracking.status.getColor()),
+            review = post.review,
+            starColor = contentColorFor(post.tracking.status.getColor()),
         )
     }
 }
@@ -253,6 +277,7 @@ fun ShareDetailLikeContent(
     onClickLike: () -> Unit,
 ) {
     Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -281,9 +306,9 @@ fun ShareDetailLikeContent(
                 ) {
                     items(likes) {
                         UserLikeComponent(
-                            imageUrl = it.userImageUrl,
-                            name = it.name,
-                            onClickUser = { onClickUser(it.userId) },
+                            profilePictureUrl = it.user.profilePictureUrl,
+                            name = it.user.username,
+                            onClickUser = { onClickUser(it.user.id) },
                         )
                     }
                 }
@@ -302,8 +327,63 @@ fun ShareDetailLikeContent(
 }
 
 @Composable
+fun ShareDetailCommentContent(
+    modifier: Modifier = Modifier,
+    comments: List<Comment>,
+    onClickUser: (String) -> Unit,
+    onReply: (String) -> Unit,
+    onRemoveComment: (String) -> Unit,
+) {
+    var commentIdToRemove by remember { mutableStateOf<String?>(null) }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = stringResource(Res.string.share_comments, comments.size, comments.size),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+
+        if (comments.isEmpty()) {
+            Text(
+                text = stringResource(Res.string.share_comments_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp),
+            )
+        } else {
+            comments.forEach { comment ->
+                CommentCard(
+                    comment = comment,
+                    onClickUser = { onClickUser(comment.user.id) },
+                    onReply = { onReply(comment.user.username) },
+                    onShowRemoveCommentConfirmDialog = { commentIdToRemove = comment.id },
+                    isOwnComment = comment.user.id == Firebase.auth.currentUser?.uid,
+                )
+            }
+        }
+
+        if (commentIdToRemove != null) {
+            RemoveCommentConfirmDialog(
+                onConfirm = {
+                    commentIdToRemove?.let { onRemoveComment(it) }
+                    commentIdToRemove = null
+                },
+                onDismiss = {
+                    commentIdToRemove = null
+                },
+            )
+        }
+    }
+}
+
+@Composable
 fun UserLikeComponent(
-    imageUrl: String?,
+    profilePictureUrl: String?,
     name: String,
     onClickUser: () -> Unit,
 ) {
@@ -312,7 +392,7 @@ fun UserLikeComponent(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         PersonImage(
-            profilePictureUrl = imageUrl,
+            profilePictureUrl = profilePictureUrl,
             onClick = onClickUser,
         )
 
@@ -326,56 +406,5 @@ fun UserLikeComponent(
                 .width(64.dp),
             textAlign = TextAlign.Center,
         )
-    }
-}
-
-@Composable
-fun ShareDetailCommentContent(
-    modifier: Modifier = Modifier,
-    comments: List<Comment>,
-    onClickUser: (String) -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.share_comments, comments.size, comments.size),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        if (comments.isEmpty()) {
-            // TODO make this centered vertically
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = stringResource(Res.string.share_comments_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        } else {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                comments.forEach {
-                    CommentCard(
-                        userImageUrl = it.userImageUrl,
-                        name = it.name,
-                        timestamp = it.timestamp.formatTimeAgoString(),
-                        comment = it.comment,
-                        onShowRemoveCommentConfirmDialog = {},
-                        onReply = {},
-                        onClickUser = { onClickUser(it.userId) },
-                    )
-                }
-            }
-        }
     }
 }

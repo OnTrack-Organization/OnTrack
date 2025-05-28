@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.share
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -29,68 +32,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.domain.share.SimplePost
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.friend.FriendsSheet
 import de.ashman.ontrack.features.friend.FriendsViewModel
-import de.ashman.ontrack.features.share.comment.CommentsSheet
-import de.ashman.ontrack.features.share.like.LikesSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_empty
+import ontrack.composeapp.generated.resources.share_error
 import ontrack.composeapp.generated.resources.share_nav_title
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareScreen(
-    shareViewModel: ShareViewModel,
+    postViewModel: PostViewModel,
     friendsViewModel: FriendsViewModel,
     commonUiManager: CommonUiManager,
-    onClickShareCard: (String) -> Unit,
+    onClickPost: (String) -> Unit,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onClickNotifications: () -> Unit,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
-    val shareUiState by shareViewModel.uiState.collectAsStateWithLifecycle()
+    val postUiState by postViewModel.uiState.collectAsStateWithLifecycle()
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
 
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(Unit) {
-        if (shareUiState.isFirstLaunch) {
-            shareViewModel.fetchInitial()
-        }
-    }
-
-    // Refresh when scrolling to bottom
-    LaunchedEffect(shareUiState.listState) {
-        snapshotFlow { shareUiState.listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                if (visibleItems.isNotEmpty() && visibleItems.last().index == shareUiState.trackings.lastIndex) {
-                    shareViewModel.fetchNextPage()
-                }
-            }
-    }
-
-    // Scroll to top when refreshing
-    /* LaunchedEffect(feedUiState.feedTrackings) {
-         if (feedUiState.isRefreshing) {
-             feedUiState.listState.scrollToItem(0)
-         }
-     }*/
 
     LaunchedEffect(commonUiState.snackbarMessage) {
         commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
@@ -111,10 +90,11 @@ fun ShareScreen(
                 title = stringResource(Res.string.share_nav_title),
                 navigationIcon = Icons.Default.Group,
                 actionIcon = Icons.Default.Notifications,
-                showActionBadge = shareUiState.hasNewNotifications,
+                // TODO add later
+                showActionBadge = false,
                 onClickNavigation = { commonUiManager.showSheet(CurrentSheet.FRIENDS) },
                 onClickAction = {
-                    shareViewModel.updateHasNewNotifications(false)
+                    //shareViewModel.updateHasNewNotifications(false)
                     onClickNotifications()
                 },
                 scrollBehavior = appBarScrollBehavior,
@@ -123,80 +103,70 @@ fun ShareScreen(
     ) { contentPadding ->
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
-            isRefreshing = shareUiState.shareResultState == ShareResultState.Loading,
-            onRefresh = { shareViewModel.fetchInitial() },
+            isRefreshing = postUiState.resultState == PostResultState.Loading,
+            onRefresh = { postViewModel.fetchPosts(true) },
         ) {
-            if (shareUiState.trackings.isEmpty()) {
-                EmptyFeed()
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(bottom = 80.dp),
-                    //contentPadding = PaddingValues(16.dp),
-                    state = shareUiState.listState,
-                ) {
-                    items(items = shareUiState.trackings, key = { it.id }) {
-                        ShareCard(
-                            tracking = it,
-                            onLike = { shareViewModel.likeTracking(it) },
+            AnimatedContent(
+                targetState = postUiState.resultState,
+                label = "ResultStateAnimation"
+            ) { state ->
+                when (state) {
+                    PostResultState.Success -> {
+                        ShareSuccessContent(
+                            posts = postUiState.posts,
+                            resultState = postUiState.resultState,
+                            refreshPosts = { postViewModel.fetchPosts(true) },
+                            toggleLike = postViewModel::toggleLike,
                             onShowComments = {
-                                shareViewModel.selectTrackingAndShowSheet(
-                                    userId = it.userId,
-                                    trackingId = it.id,
-                                    currentSheet = CurrentSheet.COMMENTS
-                                )
+                                commonUiManager.showSheet(CurrentSheet.COMMENTS)
+                                postViewModel.fetchComments(it)
                             },
                             onShowLikes = {
-                                shareViewModel.selectTrackingAndShowSheet(
-                                    userId = it.userId,
-                                    trackingId = it.id,
-                                    currentSheet = CurrentSheet.LIKES
-                                )
+                                postViewModel.fetchLikes(it)
+                                commonUiManager.showSheet(CurrentSheet.LIKES)
                             },
-                            onClickCard = { onClickShareCard(it.id) },
+                            onClickPost = onClickPost,
                             onClickCover = onClickCover,
-                            onClickUser = { onClickUser(it.userId) },
+                            onClickUser = onClickUser,
                         )
-
-                        if (it != shareUiState.trackings.last()) {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-                        }
                     }
 
-                    if (shareUiState.shareResultState == ShareResultState.LoadingMore) {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
+                    PostResultState.Error -> {
+                        ShareErrorContent()
+                    }
+
+                    PostResultState.Empty -> {
+                        ShareEmptyContent()
+                    }
+
+                    PostResultState.Loading -> {
+                        //TODO()
+                    }
+
+                    PostResultState.LoadingMore -> {
+                        //TODO()
                     }
                 }
             }
 
             if (commonUiState.showSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = {
-                        commonUiManager.hideSheet()
-                        friendsViewModel.clearQuery()
-                    },
+                    onDismissRequest = { commonUiManager.hideSheet() },
                     sheetState = bottomSheetState,
                     tonalElevation = 0.dp,
                 ) {
                     when (commonUiState.currentSheet) {
                         CurrentSheet.COMMENTS -> CommentsSheet(
-                            comments = shareUiState.selectedTracking?.comments ?: emptyList(),
-                            onAddComment = shareViewModel::addComment,
-                            onRemoveComment = shareViewModel::removeComment,
+                            comments = postUiState.selectedPost?.comments.orEmpty(),
+                            postResultState = postUiState.resultState,
+                            onAddComment = postViewModel::addComment,
+                            onRemoveComment = postViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
                         )
 
                         CurrentSheet.LIKES -> LikesSheet(
-                            likes = shareUiState.selectedTracking?.likes ?: emptyList(),
+                            likes = postUiState.selectedPost?.likes.orEmpty(),
+                            postResultState = postUiState.resultState,
                             onClickUser = { onClickUser(it) },
                         )
 
@@ -223,7 +193,68 @@ fun ShareScreen(
 }
 
 @Composable
-fun EmptyFeed(
+fun ShareSuccessContent(
+    posts: List<SimplePost>,
+    resultState: PostResultState,
+    refreshPosts: () -> Unit,
+    toggleLike: (String) -> Unit,
+    onShowComments: (String) -> Unit,
+    onShowLikes: (String) -> Unit,
+    onClickPost: (String) -> Unit,
+    onClickCover: (MediaNavigationParam) -> Unit,
+    onClickUser: (String) -> Unit,
+) {
+    val listState = rememberLazyListState()
+
+    // TODO fix
+    // Refresh when scrolling to bottom
+    /*LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                if (visibleItems.isNotEmpty() && visibleItems.last().index == posts.lastIndex) {
+                    refreshPosts()
+                }
+            }
+    }*/
+
+    LazyColumn(
+        modifier = Modifier
+            .padding(bottom = 80.dp),
+        state = listState,
+    ) {
+        items(items = posts, key = { it.id }) {
+            PostCard(
+                post = it,
+                onLike = { toggleLike(it.id) },
+                onShowComments = { onShowComments(it.id) },
+                onShowLikes = { onShowLikes(it.id) },
+                onClickCard = { onClickPost(it.id) },
+                onClickCover = onClickCover,
+                onClickUser = { onClickUser(it.user.id) },
+            )
+
+            if (it != posts.last()) {
+                HorizontalDivider()
+            }
+        }
+
+        if (resultState == PostResultState.LoadingMore) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShareEmptyContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -243,6 +274,36 @@ fun EmptyFeed(
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(
                     text = stringResource(Res.string.share_empty),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ShareErrorContent(
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Default.WifiOff,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                Text(
+                    text = stringResource(Res.string.share_error),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

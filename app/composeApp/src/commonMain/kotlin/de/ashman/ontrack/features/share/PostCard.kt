@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,8 +32,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.review.Review
+import de.ashman.ontrack.domain.share.Like
+import de.ashman.ontrack.domain.share.SimplePost
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.PersonImage
@@ -54,8 +53,8 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ShareCard(
-    tracking: Tracking,
+fun PostCard(
+    post: SimplePost,
     onLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
@@ -63,71 +62,64 @@ fun ShareCard(
     onClickUser: () -> Unit,
     onClickCard: () -> Unit,
 ) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        onClick = onClickCard,
+    Column(
+        modifier = Modifier
+            .clickable { onClickCard() }
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ){
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                ) {
-                    ShareCardHeader(
-                        profilePictureUrl = tracking.userImageUrl,
-                        username = tracking.username,
-                        timestamp = tracking.timestamp,
-                        mediaType = tracking.mediaType,
-                        trackStatus = tracking.status!!,
-                        onClickUser = onClickUser,
-                    )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+            ) {
+                ShareCardHeader(
+                    profilePictureUrl = post.user.profilePictureUrl,
+                    username = post.user.username,
+                    timestamp = post.tracking.timestamp,
+                    mediaType = post.tracking.media.type,
+                    trackStatus = post.tracking.status,
+                    onClickUser = onClickUser,
+                )
 
-                    ShareCardMediaTitle(
-                        mediaType = tracking.mediaType,
-                        mediaTitle = tracking.mediaTitle,
-                    )
-                }
-
-                MediaPoster(
-                    modifier = Modifier.height(SMALL_POSTER_HEIGHT),
-                    coverUrl = tracking.mediaCoverUrl,
-                    onClick = {
-                        onClickCover(
-                            MediaNavigationParam(
-                                id = tracking.mediaId,
-                                type = tracking.mediaType,
-                                title = tracking.mediaTitle,
-                                coverUrl = tracking.mediaCoverUrl,
-                            )
-                        )
-                    },
+                ShareCardMediaTitle(
+                    mediaType = post.tracking.media.type,
+                    mediaTitle = post.tracking.media.title,
                 )
             }
 
-            ShareCardReview(
-                reviewTitle = tracking.reviewTitle,
-                reviewDescription = tracking.reviewDescription,
-                reviewRating = tracking.rating,
-                starColor = contentColorFor(tracking.status.getColor()),
-            )
-
-            ShareCardFooter(
-                isLiked = tracking.isLikedByCurrentUser,
-                likeCount = tracking.likeCount,
-                likeImages = tracking.likeImages,
-                commentCount = tracking.commentCount,
-                onLikeTracking = onLike,
-                onShowComments = onShowComments,
-                onShowLikes = onShowLikes,
+            MediaPoster(
+                modifier = Modifier.height(SMALL_POSTER_HEIGHT),
+                coverUrl = post.tracking.media.coverUrl,
+                onClick = {
+                    onClickCover(
+                        MediaNavigationParam(
+                            id = post.tracking.media.id,
+                            type = post.tracking.media.type,
+                            title = post.tracking.media.title,
+                            coverUrl = post.tracking.media.coverUrl,
+                        )
+                    )
+                },
             )
         }
+
+        ShareCardReview(
+            review = post.review,
+            starColor = contentColorFor(post.tracking.status.getColor()),
+        )
+
+        ShareCardFooter(
+            isLiked = post.likedByCurrentUser,
+            likeCount = post.likeCount,
+            likesPreview = post.likePreview,
+            commentCount = post.commentCount,
+            onLikeTracking = onLike,
+            onShowComments = onShowComments,
+            onShowLikes = onShowLikes,
+        )
     }
 }
 
@@ -204,39 +196,37 @@ fun ShareCardMediaTitle(
 
 @Composable
 fun ShareCardReview(
-    reviewTitle: String?,
-    reviewDescription: String?,
-    reviewRating: Double?,
+    review: Review?,
     starColor: Color,
 ) {
-    reviewRating?.let {
+    review?.let {
         MiniStarRatingBar(
-            rating = reviewRating,
+            rating = it.rating,
             starColor = starColor,
         )
-    }
 
-    if (!reviewDescription.isNullOrBlank() || !reviewTitle.isNullOrBlank()) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (!reviewTitle.isNullOrBlank()) {
-                Text(
-                    text = reviewTitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+        if (!it.description.isNullOrBlank() || !it.title.isNullOrBlank()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (!it.title.isNullOrBlank()) {
+                    Text(
+                        text = it.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
 
-            if (!reviewDescription.isNullOrBlank()) {
-                Text(
-                    text = reviewDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (!it.description.isNullOrBlank()) {
+                    Text(
+                        text = it.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
@@ -247,7 +237,7 @@ fun ShareCardFooter(
     isLiked: Boolean,
     likeCount: Int,
     commentCount: Int,
-    likeImages: List<String>,
+    likesPreview: List<Like>,
     onLikeTracking: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
@@ -257,27 +247,25 @@ fun ShareCardFooter(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        IconButton(
-            onClick = onLikeTracking
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = null,
-            )
-        }
+            IconButton(onLikeTracking) {
+                Icon(
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = null,
+                )
+            }
 
-        AnimatedVisibility(
-            visible = likeImages.isNotEmpty(),
-            enter = fadeIn(animationSpec = tween(300)),
-            exit = fadeOut(animationSpec = tween(300)),
-        ) {
-            Box(
-                modifier = Modifier.clickable {
-                    onShowLikes()
-                },
+            AnimatedVisibility(
+                visible = likesPreview.isNotEmpty(),
+                enter = fadeIn(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300)),
             ) {
                 Row(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier
+                        .clickable { onShowLikes() }
+                        .padding(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -285,12 +273,12 @@ fun ShareCardFooter(
                         horizontalArrangement = Arrangement.spacedBy((-8).dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        likeImages.forEachIndexed { index, imageUrl ->
+                        likesPreview.forEachIndexed { index, like ->
                             PersonImage(
-                                profilePictureUrl = imageUrl,
+                                profilePictureUrl = like.user.profilePictureUrl,
                                 onClick = onShowLikes,
                                 modifier = Modifier
-                                    .zIndex((likeImages.size - index).toFloat()),
+                                    .zIndex((likesPreview.size - index).toFloat()),
                                 size = 24.dp,
                             )
                         }
@@ -310,7 +298,10 @@ fun ShareCardFooter(
         Spacer(modifier = Modifier.weight(1f))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .clickable { onShowComments() }
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (commentCount > 0) {
@@ -321,14 +312,10 @@ fun ShareCardFooter(
                 )
             }
 
-            IconButton(
-                onClick = onShowComments
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.Chat,
-                    contentDescription = null,
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.Chat,
+                contentDescription = null,
+            )
         }
     }
 }

@@ -1,11 +1,13 @@
 package de.ashman.ontrack.preview
 
 import androidx.compose.ui.tooling.preview.Preview
-import de.ashman.ontrack.domain.media.Show
+import de.ashman.ontrack.domain.media.MediaData
+import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
+import de.ashman.ontrack.domain.share.Post
+import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
-import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
@@ -21,11 +23,11 @@ val previewUser = User(
     email = "dio.brando@theworld.com"
 )
 
-val previewMedia = Show(
+val previewMedia = MediaData(
     id = "1",
+    type = MediaType.SHOW,
     title = "Jojo's Bizarre Adventure",
     coverUrl = null,
-    detailUrl = "",
 )
 
 val previewTimestampNow = System.currentTimeMillis()
@@ -34,35 +36,36 @@ val previewTimestampYesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
 val previewTimestampWeekAgo = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000
 
 val previewLike = Like(
-    userId = previewUser.id,
-    username = previewUser.username,
-    userImageUrl = previewUser.profilePictureUrl,
-    name = previewUser.name
-)
-
-val previewComment = Comment(
-    userId = previewUser.id,
-    userImageUrl = previewUser.profilePictureUrl,
-    username = previewUser.username,
-    name = previewUser.name,
-    comment = "This is a comment",
+    id = "1",
+    postId = "1",
+    user = previewUser,
     timestamp = previewTimestampNow,
 )
 
-val previewTracking = Tracking(
-    mediaId = previewMedia.id,
-    mediaType = previewMedia.mediaType,
-    mediaTitle = previewMedia.title,
-    mediaCoverUrl = previewMedia.coverUrl,
-    status = previewStatus,
-    username = previewUser.name,
+val previewComment = Comment(
+    id = "1",
+    postId = "1",
+    user = previewUser,
+    message = "This is a comment",
+    mentionedUsers = listOf(previewUser),
+    likeCount = 0,
+    timestamp = previewTimestampNow,
+)
+
+val previewTracking = NewTracking(
+    id = "1",
     userId = previewUser.id,
-    userImageUrl = previewUser.profilePictureUrl,
-    rating = 5.0,
-    reviewTitle = "Review title",
-    reviewDescription = "A short review description",
-    timestamp = previewTimestampWeekAgo,
+    media = previewMedia,
+    status = previewStatus,
+    timestamp = previewTimestampNow,
+)
+
+val previewPost = Post(
+    id = "1",
+    user = previewUser,
+    tracking = previewTracking,
+    review = null,
+    likedByCurrentUser = false,
     likes = listOf(previewLike),
     comments = listOf(previewComment),
 )
-
