@@ -79,10 +79,11 @@ class PostController(
     fun getComments(
         @PathVariable postId: UUID,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @AuthenticationPrincipal identity: Identity,
     ): ResponseEntity<Page<CommentDto>> {
         val pageable = PageRequest.of(page, size)
-        val comments = postService.getComments(postId = postId, pageable = pageable)
+        val comments = postService.getComments(postId = postId, currentUserId = identity.id, pageable = pageable)
 
         return ResponseEntity.ok(comments)
     }
@@ -91,7 +92,8 @@ class PostController(
     fun getLikes(
         @PathVariable postId: UUID,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @AuthenticationPrincipal identity: Identity,
     ): ResponseEntity<Page<LikeDto>> {
         val pageable = PageRequest.of(page, size)
         val likes = postService.getLikes(postId = postId, pageable = pageable)

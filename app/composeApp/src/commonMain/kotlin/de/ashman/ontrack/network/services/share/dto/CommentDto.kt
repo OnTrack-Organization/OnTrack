@@ -13,6 +13,7 @@ data class CommentDto(
     val mentionedUsers: List<UserDto>,
     val message: String,
     val likeCount: Int,
+    val postedByCurrentUser: Boolean,
     val timestamp: Long,
 )
 
@@ -23,5 +24,6 @@ fun CommentDto.toDomain() = Comment(
     mentionedUsers = mentionedUsers.map { it.toDomain() },
     message = message,
     likeCount = likeCount,
+    postedByCurrentUser = postedByCurrentUser,
     timestamp = timestamp,
 )

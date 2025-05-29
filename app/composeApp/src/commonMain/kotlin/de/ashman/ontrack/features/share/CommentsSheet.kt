@@ -56,6 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun CommentsSheet(
     comments: List<Comment>,
+    commentCount: Int,
     postResultState: PostResultState,
     onAddComment: (String, List<String>) -> Unit,
     onRemoveComment: (String) -> Unit,
@@ -94,7 +95,7 @@ fun CommentsSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.share_comments, comments.size, comments.size),
+            text = stringResource(Res.string.share_comments, commentCount, commentCount),
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -136,7 +137,7 @@ fun CommentsSheet(
                                 focusRequester.requestFocus()
                             },
                             onClickUser = { onClickUser(it.user.id) },
-                            isOwnComment = it.user.id == Firebase.auth.currentUser?.uid,
+                            isOwnComment = it.postedByCurrentUser,
                         )
                     }
 

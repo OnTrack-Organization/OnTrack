@@ -12,10 +12,11 @@ data class CommentDto(
     val mentionedUsers: List<UserDto>,
     val message: String,
     val likeCount: Int,
+    val postedByCurrentUser: Boolean,
     val timestamp: Long,
 )
 
-fun Comment.toDto() = CommentDto(
+fun Comment.toDto(currentUserId: String) = CommentDto(
     id = id,
     postId = post.id,
     user = user.toDto(),
@@ -23,5 +24,6 @@ fun Comment.toDto() = CommentDto(
     message = message,
     // TODO
     likeCount = 0,
+    postedByCurrentUser = user.id == currentUserId,
     timestamp = createdAt.toEpochMilli(),
 )

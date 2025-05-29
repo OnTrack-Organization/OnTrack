@@ -24,4 +24,6 @@ fun SimplePost.toPost() = Post(
     likes = likePreview,
     comments = commentPreview,
     likedByCurrentUser = likedByCurrentUser,
+    likeCount = likeCount,
+    commentCount = commentCount
 )

@@ -18,6 +18,8 @@ data class PostDto(
     val likes: List<LikeDto>,
     val comments: List<CommentDto>,
     val likedByCurrentUser: Boolean,
+    val likeCount: Int,
+    val commentCount: Int,
 )
 
 fun PostDto.toDomain() = Post(
@@ -28,4 +30,6 @@ fun PostDto.toDomain() = Post(
     likes = likes.map { it.toDomain() },
     comments = comments.map { it.toDomain() },
     likedByCurrentUser = likedByCurrentUser,
+    likeCount = likeCount,
+    commentCount = commentCount,
 )

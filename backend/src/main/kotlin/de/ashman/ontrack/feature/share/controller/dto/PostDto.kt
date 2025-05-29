@@ -13,4 +13,6 @@ data class PostDto(
     val likes: List<LikeDto>,
     val comments: List<CommentDto>,
     val likedByCurrentUser: Boolean,
+    val likeCount: Int,
+    val commentCount: Int,
 )

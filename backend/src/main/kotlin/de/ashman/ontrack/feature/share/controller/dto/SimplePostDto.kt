@@ -14,5 +14,5 @@ data class SimplePostDto(
     val commentPreview: List<CommentDto>,
     val likedByCurrentUser: Boolean,
     val likeCount: Int,
-    val commentCount: Int
+    val commentCount: Int,
 )

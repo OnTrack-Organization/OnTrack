@@ -362,7 +362,7 @@ fun ShareDetailCommentContent(
                     onClickUser = { onClickUser(comment.user.id) },
                     onReply = { onReply(comment.user.username) },
                     onShowRemoveCommentConfirmDialog = { commentIdToRemove = comment.id },
-                    isOwnComment = comment.user.id == Firebase.auth.currentUser?.uid,
+                    isOwnComment = comment.postedByCurrentUser,
                 )
             }
         }

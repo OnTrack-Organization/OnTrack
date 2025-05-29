@@ -158,6 +158,7 @@ fun ShareScreen(
                     when (commonUiState.currentSheet) {
                         CurrentSheet.COMMENTS -> CommentsSheet(
                             comments = postUiState.selectedPost?.comments.orEmpty(),
+                            commentCount = postUiState.selectedPost?.commentCount ?: 0,
                             postResultState = postUiState.resultState,
                             onAddComment = postViewModel::addComment,
                             onRemoveComment = postViewModel::removeComment,
@@ -166,6 +167,7 @@ fun ShareScreen(
 
                         CurrentSheet.LIKES -> LikesSheet(
                             likes = postUiState.selectedPost?.likes.orEmpty(),
+                            likeCount = postUiState.selectedPost?.likeCount ?: 0,
                             postResultState = postUiState.resultState,
                             onClickUser = { onClickUser(it) },
                         )

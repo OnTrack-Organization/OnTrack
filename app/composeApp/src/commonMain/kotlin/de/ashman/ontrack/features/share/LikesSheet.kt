@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun LikesSheet(
     likes: List<Like>,
+    likeCount: Int,
     postResultState: PostResultState,
     onClickUser: (String) -> Unit,
 ) {
@@ -49,7 +50,7 @@ fun LikesSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.share_likes, likes.size, likes.size),
+            text = stringResource(Res.string.share_likes, likeCount, likeCount),
             style = MaterialTheme.typography.titleMedium,
         )
 

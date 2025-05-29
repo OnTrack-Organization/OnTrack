@@ -49,6 +49,7 @@ val previewComment = Comment(
     message = "This is a comment",
     mentionedUsers = listOf(previewUser),
     likeCount = 0,
+    postedByCurrentUser = false,
     timestamp = previewTimestampNow,
 )
 
@@ -68,4 +69,6 @@ val previewPost = Post(
     likedByCurrentUser = false,
     likes = listOf(previewLike),
     comments = listOf(previewComment),
+    likeCount = 1,
+    commentCount = 1,
 )

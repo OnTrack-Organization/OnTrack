@@ -44,7 +44,7 @@ class PostService(
                 .toList()
 
             val commentPreview = commentRepository.findByPostId(post.id, pageRequest)
-                .map { it.toDto() }
+                .map { it.toDto(currentUserId) }
                 .toList()
 
             SimplePostDto(
@@ -64,13 +64,15 @@ class PostService(
     fun getPost(postId: UUID, currentUserId: String): PostDto {
         val pageRequest = Pageable.unpaged()
         val post = postRepository.getReferenceById(postId)
+        val likeCount = likeRepository.countByPostId(post.id)
+        val commentCount = commentRepository.countByPostId(post.id)
 
         val likes = likeRepository.findByPostId(postId, pageRequest)
             .map { it.toDto() }
             .toList()
 
         val comments = commentRepository.findByPostId(postId, pageRequest)
-            .map { it.toDto() }
+            .map { it.toDto(currentUserId) }
             .toList()
 
         val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(postId, currentUserId)
@@ -82,7 +84,9 @@ class PostService(
             review = post.review?.toDto(),
             likes = likes,
             comments = comments,
-            likedByCurrentUser = likedByCurrentUser
+            likedByCurrentUser = likedByCurrentUser,
+            likeCount = likeCount,
+            commentCount = commentCount,
         )
     }
 
@@ -135,7 +139,7 @@ class PostService(
             mentionedUsers = mentionedUsers,
         )
 
-        return commentRepository.save(comment).toDto()
+        return commentRepository.save(comment).toDto(userId)
     }
 
     fun removeComment(postId: UUID, commentId: UUID, userId: String) {
@@ -148,7 +152,7 @@ class PostService(
         commentRepository.delete(comment)
     }
 
-    fun getComments(postId: UUID, pageable: Pageable): Page<CommentDto> = commentRepository.findByPostId(postId, pageable).map { it.toDto() }
+    fun getComments(postId: UUID, currentUserId: String, pageable: Pageable): Page<CommentDto> = commentRepository.findByPostId(postId, pageable).map { it.toDto(currentUserId) }
 
     fun getLikes(postId: UUID, pageable: Pageable): Page<LikeDto> = likeRepository.findByPostId(postId, pageable).map { it.toDto() }
 }
