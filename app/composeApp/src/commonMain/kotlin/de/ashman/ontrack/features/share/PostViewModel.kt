@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.share.Post
-import de.ashman.ontrack.domain.share.SimplePost
-import de.ashman.ontrack.domain.share.toPost
 import de.ashman.ontrack.network.services.share.PostService
 import de.ashman.ontrack.network.services.share.dto.CreateCommentDto
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,8 +71,8 @@ class PostViewModel(
     fun fetchComments(postId: String) = viewModelScope.launch {
         _uiState.update { state ->
             if (state.selectedPost?.id != postId) {
-                val preview = state.posts.find { it.id == postId }
-                state.copy(selectedPost = preview?.toPost())
+                val post = state.posts.find { it.id == postId }
+                state.copy(selectedPost = post)
             } else state
         }
 
@@ -100,7 +98,7 @@ class PostViewModel(
         _uiState.update { state ->
             if (state.selectedPost == null) {
                 val post = state.posts.find { it.id == postId }
-                state.copy(selectedPost = post?.toPost())
+                state.copy(selectedPost = post)
             } else state
         }
 
@@ -133,16 +131,16 @@ class PostViewModel(
                         val wasLiked = post.likedByCurrentUser
                         val newLikeCount = if (wasLiked) post.likeCount - 1 else post.likeCount + 1
 
-                        val updatedPreview = if (wasLiked) {
-                            post.likePreview.filterNot { it.user.id == like.user.id }
+                        val updatedLikes = if (wasLiked) {
+                            post.likes.filterNot { it.user.id == like.user.id }
                         } else {
-                            (listOf(like) + post.likePreview).distinctBy { it.user.id }.take(3)
+                            (listOf(like) + post.likes).distinctBy { it.user.id }.take(3)
                         }
 
                         post.copy(
                             likedByCurrentUser = !wasLiked,
                             likeCount = newLikeCount,
-                            likePreview = updatedPreview
+                            likes = updatedLikes
                         )
                     }
 
@@ -245,7 +243,7 @@ class PostViewModel(
 }
 
 data class PostUiState(
-    val posts: List<SimplePost> = emptyList(),
+    val posts: List<Post> = emptyList(),
     val selectedPost: Post? = null,
     val resultState: PostResultState = PostResultState.Loading,
     val canLoadMore: Boolean = false,

@@ -4,13 +4,11 @@ import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.share.Post
-import de.ashman.ontrack.domain.share.SimplePost
 import de.ashman.ontrack.network.services.share.dto.CommentDto
 import de.ashman.ontrack.network.services.share.dto.CreateCommentDto
 import de.ashman.ontrack.network.services.share.dto.LikeDto
 import de.ashman.ontrack.network.services.share.dto.Page
 import de.ashman.ontrack.network.services.share.dto.PostDto
-import de.ashman.ontrack.network.services.share.dto.SimplePostDto
 import de.ashman.ontrack.network.services.share.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -21,7 +19,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
 interface PostService {
-    suspend fun getPosts(page: Int, size: Int): Result<List<SimplePost>>
+    suspend fun getPosts(page: Int, size: Int): Result<List<Post>>
     suspend fun getPost(postId: String): Result<Post>
     suspend fun toggleLike(postId: String): Result<Like>
     suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Comment>
@@ -34,11 +32,11 @@ class PostServiceImpl(
     private val httpClient: HttpClient,
 ) : PostService {
 
-    override suspend fun getPosts(page: Int, size: Int): Result<List<SimplePost>> = safeApiCall {
+    override suspend fun getPosts(page: Int, size: Int): Result<List<Post>> = safeApiCall {
         httpClient.get("/posts") {
             parameter("page", page)
             parameter("size", size)
-        }.body<Page<SimplePostDto>>().content.map { it.toDomain() }
+        }.body<Page<PostDto>>().content.map { it.toDomain() }
     }
 
     override suspend fun getPost(postId: String): Result<Post> = safeApiCall {

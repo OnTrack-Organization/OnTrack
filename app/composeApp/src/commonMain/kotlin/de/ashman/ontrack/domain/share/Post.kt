@@ -12,4 +12,6 @@ data class Post(
     val likes: List<Like>,
     val comments: List<Comment>,
     val likedByCurrentUser: Boolean,
+    val likeCount: Int,
+    val commentCount: Int,
 )

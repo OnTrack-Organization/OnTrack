@@ -38,7 +38,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.ashman.ontrack.domain.share.SimplePost
+import de.ashman.ontrack.domain.share.Post
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.OnTrackTopBar
@@ -196,7 +196,7 @@ fun ShareScreen(
 
 @Composable
 fun ShareSuccessContent(
-    posts: List<SimplePost>,
+    posts: List<Post>,
     resultState: PostResultState,
     refreshPosts: () -> Unit,
     toggleLike: (String) -> Unit,

@@ -34,7 +34,7 @@ import androidx.compose.ui.zIndex
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.review.Review
 import de.ashman.ontrack.domain.share.Like
-import de.ashman.ontrack.domain.share.SimplePost
+import de.ashman.ontrack.domain.share.Post
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.MiniStarRatingBar
@@ -54,7 +54,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostCard(
-    post: SimplePost,
+    post: Post,
     onLike: () -> Unit,
     onShowComments: () -> Unit,
     onShowLikes: () -> Unit,
@@ -113,8 +113,8 @@ fun PostCard(
 
         ShareCardFooter(
             isLiked = post.likedByCurrentUser,
+            likesPreview = post.likes,
             likeCount = post.likeCount,
-            likesPreview = post.likePreview,
             commentCount = post.commentCount,
             onLikeTracking = onLike,
             onShowComments = onShowComments,

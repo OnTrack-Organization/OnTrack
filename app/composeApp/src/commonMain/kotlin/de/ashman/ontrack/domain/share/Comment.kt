@@ -9,5 +9,6 @@ data class Comment(
     val mentionedUsers: List<User>,
     val message: String,
     val likeCount: Int,
+    val postedByCurrentUser: Boolean,
     val timestamp: Long,
 )
