@@ -50,6 +50,7 @@ val previewComment = Comment(
     mentionedUsers = listOf(previewUser),
     likeCount = 0,
     postedByCurrentUser = false,
+    deletable = false,
     timestamp = previewTimestampNow,
 )
 

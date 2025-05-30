@@ -217,7 +217,10 @@ class PostViewModel(
                 _uiState.update { state ->
                     val updatedComments = state.selectedPost?.comments.orEmpty().filterNot { it.id == commentId }
 
-                    val updatedSelectedPost = state.selectedPost?.copy(comments = updatedComments)
+                    val updatedSelectedPost = state.selectedPost?.copy(
+                        comments = updatedComments,
+                        commentCount = updatedComments.size
+                    )
 
                     val updatedPosts = state.posts.map { post ->
                         if (post.id == postId) {

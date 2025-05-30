@@ -24,7 +24,7 @@ class TrackingController(
     val trackingService: TrackingService,
     val reviewService: ReviewService,
     val userService: UserService,
-    private val postService: PostService,
+    val postService: PostService,
 ) {
     @GetMapping("trackings")
     fun getTrackingsOfCurrentUser(
@@ -88,10 +88,13 @@ class TrackingController(
         val tracking = trackingService.getById(id)
         val review = reviewService.getByTrackingId(id)
 
+        val postId = postService.getPostIdByTrackingId(tracking.id)
+
         if (tracking.user.id != user.id) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
 
+        postId?.let { postService.deletePost(it) }
         trackingService.delete(tracking)
         review?.let { reviewService.delete(it) }
 

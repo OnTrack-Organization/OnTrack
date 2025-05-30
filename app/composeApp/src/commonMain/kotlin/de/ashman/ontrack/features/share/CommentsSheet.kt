@@ -45,8 +45,6 @@ import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.formatDateTime
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -102,7 +100,7 @@ fun CommentsSheet(
         AnimatedContent(
             modifier = Modifier
                 .weight(1f, false)
-                .heightIn(max = 300.dp),
+                .heightIn(max = 500.dp),
             targetState = comments.isNotEmpty(),
             label = "Comment List Animation"
         ) { hasComments ->
@@ -137,7 +135,8 @@ fun CommentsSheet(
                                 focusRequester.requestFocus()
                             },
                             onClickUser = { onClickUser(it.user.id) },
-                            isOwnComment = it.postedByCurrentUser,
+                            byCurrentUser = it.postedByCurrentUser,
+                            isDeletable = it.deletable,
                         )
                     }
 
@@ -208,7 +207,8 @@ fun CommentCard(
     onShowRemoveCommentConfirmDialog: () -> Unit,
     onReply: () -> Unit,
     onClickUser: () -> Unit,
-    isOwnComment: Boolean,
+    byCurrentUser: Boolean,
+    isDeletable: Boolean,
 ) {
     val annotatedString = buildAnnotatedString {
         append(comment.message)
@@ -237,7 +237,7 @@ fun CommentCard(
             .then(
                 modifier.combinedClickable(
                     onClick = {},
-                    onLongClick = { if (isOwnComment) onShowRemoveCommentConfirmDialog() },
+                    onLongClick = { if (isDeletable) onShowRemoveCommentConfirmDialog() },
                 ),
             )
     ) {
@@ -272,7 +272,7 @@ fun CommentCard(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (!isOwnComment) {
+                if (!byCurrentUser) {
                     IconButton(onClick = onReply) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.Reply,

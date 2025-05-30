@@ -5,7 +5,6 @@ import de.ashman.ontrack.feature.share.controller.dto.CommentDto
 import de.ashman.ontrack.feature.share.controller.dto.CreateCommentDto
 import de.ashman.ontrack.feature.share.controller.dto.LikeDto
 import de.ashman.ontrack.feature.share.controller.dto.PostDto
-import de.ashman.ontrack.feature.share.controller.dto.SimplePostDto
 import de.ashman.ontrack.feature.share.service.PostService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -26,9 +25,9 @@ class PostController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<Page<SimplePostDto>> {
+    ): ResponseEntity<Page<PostDto>> {
         val pageable = PageRequest.of(page, size)
-        val posts = postService.getSimplePosts(pageable = pageable, currentUserId = identity.id)
+        val posts = postService.getPosts(pageable = pageable, currentUserId = identity.id)
 
         return ResponseEntity.ok(posts)
     }

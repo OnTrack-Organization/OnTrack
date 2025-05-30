@@ -14,6 +14,8 @@ data class CommentDto(
     val message: String,
     val likeCount: Int,
     val postedByCurrentUser: Boolean,
+    // TODO why not working bruh
+    val deletable: Boolean,
     val timestamp: Long,
 )
 
@@ -25,5 +27,6 @@ fun CommentDto.toDomain() = Comment(
     message = message,
     likeCount = likeCount,
     postedByCurrentUser = postedByCurrentUser,
+    deletable = this@toDomain.deletable,
     timestamp = timestamp,
 )

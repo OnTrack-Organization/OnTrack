@@ -29,7 +29,7 @@ class PostService(
     private val userRepository: UserRepository,
     private val friendRepository: FriendRepository,
 ) {
-    fun getSimplePosts(pageable: Pageable, currentUserId: String): Page<SimplePostDto> {
+    fun getPosts(pageable: Pageable, currentUserId: String): Page<PostDto> {
         val pageRequest = PageRequest.of(0, 3)
         val userIds = friendRepository.findFriendIdsOf(currentUserId) + currentUserId
         val posts = postRepository.findByUserIds(userIds, pageable)
@@ -39,21 +39,21 @@ class PostService(
             val commentCount = commentRepository.countByPostId(post.id)
             val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(post.id, currentUserId)
 
-            val likePreview = likeRepository.findByPostId(post.id, pageRequest)
+            val likes = likeRepository.findByPostId(post.id, pageRequest)
                 .map { it.toDto() }
                 .toList()
 
-            val commentPreview = commentRepository.findByPostId(post.id, pageRequest)
-                .map { it.toDto(currentUserId) }
+            val comments = commentRepository.findByPostId(post.id, pageRequest)
+                .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
                 .toList()
 
-            SimplePostDto(
+            PostDto(
                 id = post.id,
                 user = post.user.toDto(),
                 tracking = post.tracking.toDto(),
                 review = post.review?.toDto(),
-                likePreview = likePreview,
-                commentPreview = commentPreview,
+                likes = likes,
+                comments = comments,
                 likedByCurrentUser = likedByCurrentUser,
                 likeCount = likeCount,
                 commentCount = commentCount,
@@ -72,7 +72,7 @@ class PostService(
             .toList()
 
         val comments = commentRepository.findByPostId(postId, pageRequest)
-            .map { it.toDto(currentUserId) }
+            .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
             .toList()
 
         val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(postId, currentUserId)
@@ -139,7 +139,7 @@ class PostService(
             mentionedUsers = mentionedUsers,
         )
 
-        return commentRepository.save(comment).toDto(userId)
+        return commentRepository.save(comment).toDto(userId, post.user.id)
     }
 
     fun removeComment(postId: UUID, commentId: UUID, userId: String) {
@@ -152,7 +152,20 @@ class PostService(
         commentRepository.delete(comment)
     }
 
-    fun getComments(postId: UUID, currentUserId: String, pageable: Pageable): Page<CommentDto> = commentRepository.findByPostId(postId, pageable).map { it.toDto(currentUserId) }
+    fun getComments(postId: UUID, currentUserId: String, pageable: Pageable): Page<CommentDto> {
+        val post = postRepository.getReferenceById(postId)
+
+        return commentRepository.findByPostId(postId, pageable)
+            .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
+    }
 
     fun getLikes(postId: UUID, pageable: Pageable): Page<LikeDto> = likeRepository.findByPostId(postId, pageable).map { it.toDto() }
+
+    fun deletePost(postId: UUID) {
+        commentRepository.deleteAllByPostId(postId)
+        likeRepository.deleteAllByPostId(postId)
+        postRepository.deleteById(postId)
+    }
+
+    fun getPostIdByTrackingId(trackingId: UUID): UUID? = postRepository.findByTrackingId(trackingId)?.id
 }

@@ -56,8 +56,6 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.navigation.MediaNavigationParam
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -362,7 +360,8 @@ fun ShareDetailCommentContent(
                     onClickUser = { onClickUser(comment.user.id) },
                     onReply = { onReply(comment.user.username) },
                     onShowRemoveCommentConfirmDialog = { commentIdToRemove = comment.id },
-                    isOwnComment = comment.postedByCurrentUser,
+                    byCurrentUser = comment.postedByCurrentUser,
+                    isDeletable = comment.deletable,
                 )
             }
         }

@@ -9,4 +9,5 @@ import java.util.*
 interface CommentRepository : JpaRepository<Comment, UUID> {
     fun findByPostId(postId: UUID, pageable: Pageable): Page<Comment>
     fun countByPostId(postId: UUID): Int
+    fun deleteAllByPostId(postId: UUID)
 }
