@@ -3,12 +3,14 @@ package de.ashman.ontrack.features.share
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -30,11 +32,12 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -78,7 +81,7 @@ fun ShareScreen(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
+        //modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(
                 modifier = Modifier.padding(bottom = 600.dp),
@@ -103,7 +106,7 @@ fun ShareScreen(
     ) { contentPadding ->
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
-            isRefreshing = postUiState.resultState == PostResultState.Loading,
+            isRefreshing = postUiState.loading,
             onRefresh = { postViewModel.fetchPosts(true) },
         ) {
             AnimatedContent(
@@ -114,20 +117,20 @@ fun ShareScreen(
                     PostResultState.Success -> {
                         ShareSuccessContent(
                             posts = postUiState.posts,
-                            resultState = postUiState.resultState,
-                            refreshPosts = { postViewModel.fetchPosts(true) },
+                            loadingMore = postUiState.loadingMore,
                             toggleLike = postViewModel::toggleLike,
                             onShowComments = {
+                                postViewModel.fetchComments(it, true)
                                 commonUiManager.showSheet(CurrentSheet.COMMENTS)
-                                postViewModel.fetchComments(it)
                             },
                             onShowLikes = {
-                                postViewModel.fetchLikes(it)
+                                postViewModel.fetchLikes(it, true)
                                 commonUiManager.showSheet(CurrentSheet.LIKES)
                             },
                             onClickPost = onClickPost,
                             onClickCover = onClickCover,
                             onClickUser = onClickUser,
+                            fetchNextPage = { postViewModel.fetchPosts(false) },
                         )
                     }
 
@@ -137,14 +140,6 @@ fun ShareScreen(
 
                     PostResultState.Empty -> {
                         ShareEmptyContent()
-                    }
-
-                    PostResultState.Loading -> {
-                        //TODO()
-                    }
-
-                    PostResultState.LoadingMore -> {
-                        //TODO()
                     }
                 }
             }
@@ -160,6 +155,7 @@ fun ShareScreen(
                             comments = postUiState.selectedPost?.comments.orEmpty(),
                             commentCount = postUiState.selectedPost?.commentCount ?: 0,
                             postResultState = postUiState.resultState,
+                            onFetchNextPage = { postViewModel.fetchComments(postUiState.selectedPost?.id.orEmpty(), true) },
                             onAddComment = postViewModel::addComment,
                             onRemoveComment = postViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
@@ -197,32 +193,25 @@ fun ShareScreen(
 @Composable
 fun ShareSuccessContent(
     posts: List<Post>,
-    resultState: PostResultState,
-    refreshPosts: () -> Unit,
+    loadingMore: Boolean,
     toggleLike: (String) -> Unit,
     onShowComments: (String) -> Unit,
     onShowLikes: (String) -> Unit,
     onClickPost: (String) -> Unit,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
+    fetchNextPage: () -> Unit,
 ) {
     val listState = rememberLazyListState()
 
-    // TODO fix
-    // Refresh when scrolling to bottom
-    /*LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                if (visibleItems.isNotEmpty() && visibleItems.last().index == posts.lastIndex) {
-                    refreshPosts()
-                }
-            }
-    }*/
+    InfiniteListHandler(
+        listState = listState,
+        onLoadMore = fetchNextPage
+    )
 
     LazyColumn(
-        modifier = Modifier
-            .padding(bottom = 80.dp),
         state = listState,
+        contentPadding = PaddingValues(bottom = 80.dp),
     ) {
         items(items = posts, key = { it.id }) {
             PostCard(
@@ -240,15 +229,17 @@ fun ShareSuccessContent(
             }
         }
 
-        if (resultState == PostResultState.LoadingMore) {
+        if (loadingMore) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                    )
                 }
             }
         }
@@ -312,5 +303,29 @@ fun ShareErrorContent(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun InfiniteListHandler(
+    listState: LazyListState,
+    buffer: Int = 1,
+    onLoadMore: () -> Unit
+) {
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+            lastVisibleIndex >= totalItemsCount - buffer
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        snapshotFlow { shouldLoadMore.value }
+            .collect { loadMore ->
+                if (loadMore) {
+                    onLoadMore()
+                }
+            }
     }
 }

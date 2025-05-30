@@ -104,7 +104,8 @@ fun ShareDetailScreen(
                         })
                     },
                 post = it,
-                isSending = uiState.resultState == PostResultState.Loading,
+                // TODO
+                isSending = false,
                 onClickCover = onClickMedia,
                 onClickUser = onClickUser,
                 onClickLike = { viewModel.toggleLike(postId) },

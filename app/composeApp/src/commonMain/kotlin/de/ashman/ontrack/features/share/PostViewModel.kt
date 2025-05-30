@@ -30,10 +30,13 @@ class PostViewModel(
     fun fetchPosts(initial: Boolean = false) = viewModelScope.launch {
         if (initial) {
             postsPage = 0
-            _uiState.update { it.copy(resultState = PostResultState.Loading) }
+            _uiState.update { it.copy(loading = true) }
         } else {
-            _uiState.update { it.copy(resultState = PostResultState.LoadingMore) }
+            if (!_uiState.value.canLoadMore) return@launch
+            _uiState.update { it.copy(loadingMore = true) }
         }
+
+        //delay(3000)
 
         postService.getPosts(postsPage, pageSize).fold(
             onSuccess = { posts ->
@@ -45,14 +48,16 @@ class PostViewModel(
                         canLoadMore = posts.size == pageSize
                     )
                 }
+                Logger.d { "Fetched posts (size: ${posts.size}, page: $postsPage, initial: $initial): $posts" }
                 postsPage++
-                Logger.d { "Fetched posts: $posts" }
             },
             onFailure = {
                 _uiState.update { it.copy(resultState = PostResultState.Error) }
                 Logger.e { "Failed to fetch posts: ${it.message}" }
             }
         )
+
+        _uiState.update { it.copy(loading = false, loadingMore = false) }
     }
 
     fun fetchPost(postId: String) = viewModelScope.launch {
@@ -68,23 +73,25 @@ class PostViewModel(
         )
     }
 
-    fun fetchComments(postId: String) = viewModelScope.launch {
-        _uiState.update { state ->
-            if (state.selectedPost?.id != postId) {
-                val post = state.posts.find { it.id == postId }
-                state.copy(selectedPost = post)
-            } else state
-        }
+    // TODO maybe change these type of methods to return the complete new postdto instead
+    fun fetchComments(postId: String, initial: Boolean = false) = viewModelScope.launch {
+        if (initial) commentsPage = 0
 
         postService.getComments(postId, commentsPage, pageSize).fold(
             onSuccess = { newComments ->
                 _uiState.update { state ->
-                    val updatedPost = state.selectedPost?.copy(comments = newComments)
-                    state.copy(selectedPost = updatedPost)
+                    val currentPost = state.selectedPost ?: state.posts.find { it.id == postId }
+                    val updatedComments = if (initial) newComments else currentPost?.comments.orEmpty() + newComments
+
+                    val updatedPost = currentPost?.copy(comments = updatedComments)
+
+                    state.copy(
+                        resultState = PostResultState.Success,
+                        selectedPost = updatedPost,
+                    )
                 }
 
-                // TODO add later
-                //commentsPage++
+                commentsPage++
                 Logger.d { "Fetched comments: $newComments" }
             },
             onFailure = {
@@ -93,25 +100,21 @@ class PostViewModel(
         )
     }
 
-    // TODO maybe change these type of methods to return the complete new postdto instead
-    fun fetchLikes(postId: String) = viewModelScope.launch {
-        _uiState.update { state ->
-            if (state.selectedPost == null) {
-                val post = state.posts.find { it.id == postId }
-                state.copy(selectedPost = post)
-            } else state
-        }
+    fun fetchLikes(postId: String, initial: Boolean = false) = viewModelScope.launch {
+        if (initial) likesPage = 0
 
         postService.getLikes(postId, likesPage, pageSize).fold(
             onSuccess = { newLikes ->
-                _uiState.update {
-                    val updatedPost = it.selectedPost?.copy(likes = newLikes)
+                _uiState.update { state ->
+                    val currentPost = state.selectedPost ?: state.posts.find { it.id == postId }
+                    val updatedLikes = if (initial) newLikes else currentPost?.likes.orEmpty() + newLikes
 
-                    it.copy(selectedPost = updatedPost)
+                    val updatedPost = currentPost?.copy(likes = updatedLikes)
+
+                    state.copy(selectedPost = updatedPost)
                 }
 
-                // TODO add later
-                //likesPage++
+                likesPage++
                 Logger.d { "Fetched likes: $newLikes" }
             },
             onFailure = {
@@ -248,14 +251,14 @@ class PostViewModel(
 data class PostUiState(
     val posts: List<Post> = emptyList(),
     val selectedPost: Post? = null,
-    val resultState: PostResultState = PostResultState.Loading,
+    val resultState: PostResultState = PostResultState.Empty,
+    val loading: Boolean = false,
+    val loadingMore: Boolean = false,
     val canLoadMore: Boolean = false,
 )
 
 enum class PostResultState {
-    Loading,
     Success,
     Error,
     Empty,
-    LoadingMore
 }

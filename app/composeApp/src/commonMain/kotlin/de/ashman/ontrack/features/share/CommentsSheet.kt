@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Reply
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -45,6 +45,7 @@ import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.formatDateTime
+import kotlinx.coroutines.flow.distinctUntilChanged
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -56,6 +57,7 @@ fun CommentsSheet(
     comments: List<Comment>,
     commentCount: Int,
     postResultState: PostResultState,
+    onFetchNextPage: () -> Unit,
     onAddComment: (String, List<String>) -> Unit,
     onRemoveComment: (String) -> Unit,
     onClickUser: (String) -> Unit,
@@ -69,20 +71,27 @@ fun CommentsSheet(
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
 
-    /*LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                if (visibleItems.isNotEmpty() && visibleItems.last().index == likes.lastIndex) {
-                    onFetchLikes()
+    LaunchedEffect(listState, comments.size) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+            val lastVisibleItem = visibleItems.lastOrNull()
+            val totalItemsCount = layoutInfo.totalItemsCount
+            lastVisibleItem?.index == totalItemsCount - 1
+        }
+            .distinctUntilChanged()
+            .collect { isAtEnd ->
+                if (isAtEnd) {
+                    onFetchNextPage()
                 }
             }
-    }*/
+    }
 
-    LaunchedEffect(comments.size) {
+    /*LaunchedEffect(comments.size) {
         if (comments.isNotEmpty()) {
             listState.animateScrollToItem(comments.lastIndex)
         }
-    }
+    }*/
 
     Column(
         modifier = Modifier
@@ -140,7 +149,7 @@ fun CommentsSheet(
                         )
                     }
 
-                    if (postResultState == PostResultState.LoadingMore) {
+                    /*if (postResultState == PostResultState.LoadingMore) {
                         item {
                             Column(
                                 modifier = Modifier
@@ -151,7 +160,7 @@ fun CommentsSheet(
                                 CircularProgressIndicator()
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -182,7 +191,8 @@ fun CommentsSheet(
                 onValueChange = {
                     commentText = it
                 },
-                isSending = postResultState == PostResultState.Loading,
+                // TODO
+                isSending = false,
                 onSend = {
                     val mentionedUsernames = "@\\w+".toRegex()
                         .findAll(commentText.text)
