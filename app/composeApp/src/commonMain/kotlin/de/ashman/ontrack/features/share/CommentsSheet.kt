@@ -22,12 +22,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -45,7 +43,6 @@ import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.formatDateTime
-import kotlinx.coroutines.flow.distinctUntilChanged
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -71,7 +68,7 @@ fun CommentsSheet(
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listState, comments.size) {
+    /*LaunchedEffect(listState, comments.size) {
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
             val visibleItems = layoutInfo.visibleItemsInfo
@@ -85,7 +82,7 @@ fun CommentsSheet(
                     onFetchNextPage()
                 }
             }
-    }
+    }*/
 
     /*LaunchedEffect(comments.size) {
         if (comments.isNotEmpty()) {

@@ -91,8 +91,8 @@ class PostViewModel(
                     )
                 }
 
-                commentsPage++
-                Logger.d { "Fetched comments: $newComments" }
+                Logger.d { "Fetched comments (size: ${newComments.size}, page: $commentsPage, initial: $initial): $newComments" }
+                //commentsPage++
             },
             onFailure = {
                 Logger.e { "Failed to fetch comments: ${it.message}" }
@@ -114,8 +114,8 @@ class PostViewModel(
                     state.copy(selectedPost = updatedPost)
                 }
 
-                likesPage++
-                Logger.d { "Fetched likes: $newLikes" }
+                Logger.d { "Fetched likes (size: ${newLikes.size}, page: $likesPage, initial: $initial): $newLikes" }
+                //likesPage++
             },
             onFailure = {
                 Logger.e { "Failed to fetch likes: ${it.message}" }
@@ -127,46 +127,20 @@ class PostViewModel(
     fun toggleLike(postId: String) = viewModelScope.launch {
         postService.toggleLike(postId).fold(
             onSuccess = { like ->
-                _uiState.update { state ->
-                    val updatedPosts = state.posts.map { post ->
-                        if (post.id != postId) return@map post
+                updatePost(postId) { post ->
+                    val wasLiked = post.likedByCurrentUser
+                    val newLikeCount = if (wasLiked) post.likeCount - 1 else post.likeCount + 1
 
-                        val wasLiked = post.likedByCurrentUser
-                        val newLikeCount = if (wasLiked) post.likeCount - 1 else post.likeCount + 1
-
-                        val updatedLikes = if (wasLiked) {
-                            post.likes.filterNot { it.user.id == like.user.id }
-                        } else {
-                            (listOf(like) + post.likes).distinctBy { it.user.id }.take(3)
-                        }
-
-                        post.copy(
-                            likedByCurrentUser = !wasLiked,
-                            likeCount = newLikeCount,
-                            likes = updatedLikes
-                        )
+                    val updatedLikes = if (wasLiked) {
+                        post.likes.filterNot { it.user.id == like.user.id }
+                    } else {
+                        (listOf(like) + post.likes).distinctBy { it.user.id }.take(3)
                     }
 
-                    val updatedSelectedPost = state.selectedPost?.let { post ->
-                        if (post.id != postId) return@let post
-
-                        val wasLiked = post.likedByCurrentUser
-
-                        val updatedLikes = if (wasLiked) {
-                            post.likes.filterNot { it.user.id == like.user.id }
-                        } else {
-                            (listOf(like) + post.likes).distinctBy { it.user.id }.take(3)
-                        }
-
-                        post.copy(
-                            likedByCurrentUser = !wasLiked,
-                            likes = updatedLikes
-                        )
-                    }
-
-                    state.copy(
-                        posts = updatedPosts,
-                        selectedPost = updatedSelectedPost
+                    post.copy(
+                        likedByCurrentUser = !wasLiked,
+                        likeCount = newLikeCount,
+                        likes = updatedLikes
                     )
                 }
 
@@ -184,23 +158,11 @@ class PostViewModel(
 
         postService.addComment(postId, dto).fold(
             onSuccess = { comment ->
-                _uiState.update { state ->
-                    val updatedComments = state.selectedPost?.comments.orEmpty() + comment
-
-                    val updatedSelectedPost = state.selectedPost?.copy(
+                updatePost(postId) { post ->
+                    val updatedComments = post.comments + comment
+                    post.copy(
                         comments = updatedComments,
-                        commentCount = updatedComments.size
-                    )
-
-                    val updatedPosts = state.posts.map { post ->
-                        if (post.id == postId) {
-                            post.copy(commentCount = updatedComments.size)
-                        } else post
-                    }
-
-                    state.copy(
-                        selectedPost = updatedSelectedPost,
-                        posts = updatedPosts
+                        commentCount = post.commentCount + 1
                     )
                 }
 
@@ -217,23 +179,11 @@ class PostViewModel(
 
         postService.deleteComment(postId, commentId).fold(
             onSuccess = {
-                _uiState.update { state ->
-                    val updatedComments = state.selectedPost?.comments.orEmpty().filterNot { it.id == commentId }
-
-                    val updatedSelectedPost = state.selectedPost?.copy(
+                updatePost(postId) { post ->
+                    val updatedComments = post.comments.filterNot { it.id == commentId }
+                    post.copy(
                         comments = updatedComments,
-                        commentCount = updatedComments.size
-                    )
-
-                    val updatedPosts = state.posts.map { post ->
-                        if (post.id == postId) {
-                            post.copy(commentCount = updatedComments.size)
-                        } else post
-                    }
-
-                    state.copy(
-                        selectedPost = updatedSelectedPost,
-                        posts = updatedPosts
+                        commentCount = post.commentCount - 1
                     )
                 }
 
@@ -243,6 +193,23 @@ class PostViewModel(
                 Logger.e { "Failed to remove comment: ${it.message}" }
             }
         )
+    }
+
+    private fun updatePost(postId: String, update: (Post) -> Post) {
+        _uiState.update { state ->
+            val updatedPosts = state.posts.map { post ->
+                if (post.id == postId) update(post) else post
+            }
+
+            val updatedSelectedPost = state.selectedPost?.let { post ->
+                if (post.id == postId) update(post) else post
+            }
+
+            state.copy(
+                posts = updatedPosts,
+                selectedPost = updatedSelectedPost
+            )
+        }
     }
 
     fun clearViewModel() {}
