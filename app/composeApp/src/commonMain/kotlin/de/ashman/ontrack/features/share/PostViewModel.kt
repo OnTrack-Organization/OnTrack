@@ -126,25 +126,9 @@ class PostViewModel(
     // TODO ugly, change it!
     fun toggleLike(postId: String) = viewModelScope.launch {
         postService.toggleLike(postId).fold(
-            onSuccess = { like ->
-                updatePost(postId) { post ->
-                    val wasLiked = post.likedByCurrentUser
-                    val newLikeCount = if (wasLiked) post.likeCount - 1 else post.likeCount + 1
-
-                    val updatedLikes = if (wasLiked) {
-                        post.likes.filterNot { it.user.id == like.user.id }
-                    } else {
-                        (listOf(like) + post.likes).distinctBy { it.user.id }.take(3)
-                    }
-
-                    post.copy(
-                        likedByCurrentUser = !wasLiked,
-                        likeCount = newLikeCount,
-                        likes = updatedLikes
-                    )
-                }
-
-                Logger.d { "Toggled like: $like" }
+            onSuccess = { updatedPost ->
+                replacePost(updatedPost)
+                Logger.d { "Toggled like, updated post: $updatedPost" }
             },
             onFailure = {
                 Logger.e { "Failed to toggle like: ${it.message}" }
@@ -157,16 +141,9 @@ class PostViewModel(
         val dto = CreateCommentDto(mentionedUsers = mentionedUsers, message = commentText)
 
         postService.addComment(postId, dto).fold(
-            onSuccess = { comment ->
-                updatePost(postId) { post ->
-                    val updatedComments = post.comments + comment
-                    post.copy(
-                        comments = updatedComments,
-                        commentCount = post.commentCount + 1
-                    )
-                }
-
-                Logger.d { "Added comment: $comment" }
+            onSuccess = { updatedPost ->
+                replacePost(updatedPost)
+                Logger.d { "Added comment, updated post: $updatedPost" }
             },
             onFailure = {
                 Logger.e { "Failed to add comment: ${it.message}" }
@@ -178,16 +155,9 @@ class PostViewModel(
         val postId = _uiState.value.selectedPost?.id ?: return@launch
 
         postService.deleteComment(postId, commentId).fold(
-            onSuccess = {
-                updatePost(postId) { post ->
-                    val updatedComments = post.comments.filterNot { it.id == commentId }
-                    post.copy(
-                        comments = updatedComments,
-                        commentCount = post.commentCount - 1
-                    )
-                }
-
-                Logger.d { "Removed comment: $commentId" }
+            onSuccess = { updatedPost ->
+                replacePost(updatedPost)
+                Logger.d { "Removed comment, updated post: $updatedPost" }
             },
             onFailure = {
                 Logger.e { "Failed to remove comment: ${it.message}" }
@@ -195,21 +165,17 @@ class PostViewModel(
         )
     }
 
-    private fun updatePost(postId: String, update: (Post) -> Post) {
+    private fun replacePost(updatedPost: Post) {
         _uiState.update { state ->
-            val updatedPosts = state.posts.map { post ->
-                if (post.id == postId) update(post) else post
-            }
-
-            val updatedSelectedPost = state.selectedPost?.let { post ->
-                if (post.id == postId) update(post) else post
-            }
-
             state.copy(
-                posts = updatedPosts,
-                selectedPost = updatedSelectedPost
+                posts = state.posts.map { if (it.id == updatedPost.id) updatedPost else it },
+                selectedPost = if (state.selectedPost?.id == updatedPost.id) updatedPost else state.selectedPost
             )
         }
+    }
+
+    fun setSelectedPost(post: Post) {
+        _uiState.update { it.copy(selectedPost = post) }
     }
 
     fun clearViewModel() {}
