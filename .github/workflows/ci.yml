@@ -49,7 +49,7 @@ jobs:
       - name: Run Liquibase Migrations
         run: |
           docker run --rm \
-            -v ${{ github.workspace }}/backend/src/main/resources/db.changelog:/liquibase/changelog \
+            -v ${{ github.workspace }}/backend/src/main/resources/db/changelog:/liquibase/changelog \
             liquibase/liquibase:latest \
             --url='${{ secrets.DB_URL }}' \
             --username='${{ secrets.DB_USERNAME }}' \
