@@ -21,9 +21,9 @@ import io.ktor.client.request.setBody
 interface PostService {
     suspend fun getPosts(page: Int, size: Int): Result<List<Post>>
     suspend fun getPost(postId: String): Result<Post>
-    suspend fun toggleLike(postId: String): Result<Like>
-    suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Comment>
-    suspend fun deleteComment(postId: String, commentId: String): Result<Unit>
+    suspend fun toggleLike(postId: String): Result<Post>
+    suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Post>
+    suspend fun deleteComment(postId: String, commentId: String): Result<Post>
     suspend fun getComments(postId: String, page: Int, size: Int): Result<List<Comment>>
     suspend fun getLikes(postId: String, page: Int, size: Int): Result<List<Like>>
 }
@@ -43,18 +43,20 @@ class PostServiceImpl(
         httpClient.get("/posts/$postId").body<PostDto>().toDomain()
     }
 
-    override suspend fun toggleLike(postId: String): Result<Like> = safeApiCall {
-        httpClient.post("/posts/$postId/like").body<LikeDto>().toDomain()
+    override suspend fun toggleLike(postId: String): Result<Post> = safeApiCall {
+        httpClient.post("/posts/$postId/like")
+            .body<PostDto>()
+            .toDomain()
     }
 
-    override suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Comment> = safeApiCall {
+    override suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Post> = safeApiCall {
         httpClient.post("/posts/$postId/comment") {
             setBody(dto)
-        }.body<CommentDto>().toDomain()
+        }.body<PostDto>().toDomain()
     }
 
-    override suspend fun deleteComment(postId: String, commentId: String): Result<Unit> = safeApiCall {
-        httpClient.delete("/posts/$postId/comment/$commentId")
+    override suspend fun deleteComment(postId: String, commentId: String): Result<Post> = safeApiCall {
+        httpClient.delete("/posts/$postId/comment/$commentId").body<PostDto>().toDomain()
     }
 
     override suspend fun getComments(postId: String, page: Int, size: Int): Result<List<Comment>> = safeApiCall {

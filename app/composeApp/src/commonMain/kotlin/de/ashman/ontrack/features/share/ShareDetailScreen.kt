@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -58,11 +59,14 @@ import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
+import ontrack.composeapp.generated.resources.share_comments_count
 import ontrack.composeapp.generated.resources.share_comments_empty
 import ontrack.composeapp.generated.resources.share_comments_placeholder
 import ontrack.composeapp.generated.resources.share_detail_title
 import ontrack.composeapp.generated.resources.share_likes
+import ontrack.composeapp.generated.resources.share_likes_count
 import ontrack.composeapp.generated.resources.share_likes_empty
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -162,6 +166,7 @@ fun ShareDetailContent(
                 ShareDetailLikeContent(
                     isLiked = post.likedByCurrentUser,
                     likes = post.likes,
+                    likeCount = post.likeCount,
                     onClickUser = onClickUser,
                     onClickLike = onClickLike,
                 )
@@ -173,6 +178,7 @@ fun ShareDetailContent(
                 ShareDetailCommentContent(
                     modifier = Modifier.weight(1f),
                     comments = post.comments,
+                    commentCount = post.commentCount,
                     onClickUser = onClickUser,
                     onReply = {
                         val newText = "@${it} "
@@ -272,6 +278,7 @@ fun ShareDetailMainContent(
 fun ShareDetailLikeContent(
     isLiked: Boolean,
     likes: List<Like>,
+    likeCount: Int,
     onClickUser: (String) -> Unit,
     onClickLike: () -> Unit,
 ) {
@@ -280,7 +287,7 @@ fun ShareDetailLikeContent(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = stringResource(Res.string.share_likes, likes.size, likes.size),
+            text = if (likeCount == 0) stringResource(Res.string.share_likes) else pluralStringResource(Res.plurals.share_likes_count, likeCount, likeCount),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
         )
@@ -329,6 +336,7 @@ fun ShareDetailLikeContent(
 fun ShareDetailCommentContent(
     modifier: Modifier = Modifier,
     comments: List<Comment>,
+    commentCount: Int,
     onClickUser: (String) -> Unit,
     onReply: (String) -> Unit,
     onRemoveComment: (String) -> Unit,
@@ -340,7 +348,7 @@ fun ShareDetailCommentContent(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = stringResource(Res.string.share_comments, comments.size, comments.size),
+            text = if (commentCount == 0) stringResource(Res.string.share_comments) else pluralStringResource(Res.plurals.share_comments_count, commentCount, commentCount),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -350,9 +358,12 @@ fun ShareDetailCommentContent(
             Text(
                 text = stringResource(Res.string.share_comments_empty),
                 style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp),
+                    // TODO different
+                    .padding(top = 200.dp),
             )
         } else {
             comments.forEach { comment ->

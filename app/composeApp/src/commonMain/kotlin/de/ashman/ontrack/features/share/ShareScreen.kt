@@ -120,11 +120,13 @@ fun ShareScreen(
                             loadingMore = postUiState.loadingMore,
                             toggleLike = postViewModel::toggleLike,
                             onShowComments = {
-                                postViewModel.fetchComments(it, true)
+                                postViewModel.setSelectedPost(it)
+                                postViewModel.fetchComments(it.id, true)
                                 commonUiManager.showSheet(CurrentSheet.COMMENTS)
                             },
                             onShowLikes = {
-                                postViewModel.fetchLikes(it, true)
+                                postViewModel.setSelectedPost(it)
+                                postViewModel.fetchLikes(it.id, true)
                                 commonUiManager.showSheet(CurrentSheet.LIKES)
                             },
                             onClickPost = onClickPost,
@@ -195,8 +197,8 @@ fun ShareSuccessContent(
     posts: List<Post>,
     loadingMore: Boolean,
     toggleLike: (String) -> Unit,
-    onShowComments: (String) -> Unit,
-    onShowLikes: (String) -> Unit,
+    onShowComments: (Post) -> Unit,
+    onShowLikes: (Post) -> Unit,
     onClickPost: (String) -> Unit,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
@@ -217,8 +219,8 @@ fun ShareSuccessContent(
             PostCard(
                 post = it,
                 onLike = { toggleLike(it.id) },
-                onShowComments = { onShowComments(it.id) },
-                onShowLikes = { onShowLikes(it.id) },
+                onShowComments = { onShowComments(it) },
+                onShowLikes = { onShowLikes(it) },
                 onClickCard = { onClickPost(it.id) },
                 onClickCover = onClickCover,
                 onClickUser = { onClickUser(it.user.id) },

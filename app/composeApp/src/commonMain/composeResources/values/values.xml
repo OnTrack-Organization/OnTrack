@@ -45,6 +45,9 @@
     <string name="share_remove_comment_confirm_title">Remove comment?</string>
     <string name="share_remove_comment_confirm_text">Are you sure you want to remove this comment?</string>
 
+    <string name="share_likes">Likes</string>
+    <string name="share_comments">Comments</string>
+
     <plurals name="share_likes_count">
         <item quantity="one">%1$s Like</item>
         <item quantity="other">%1$s Likes</item>
@@ -56,9 +59,6 @@
 
     <!-- SHARE DETAIL -->
     <string name="share_detail_title">Tracking</string>
-
-    <string name="share_likes">Likes (%1$d)</string>
-    <string name="share_comments">Comments (%1$d)</string>
 
     <string name="share_comments_empty">No comments yet</string>
     <string name="share_likes_empty">No likes yet</string>

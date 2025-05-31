@@ -22,7 +22,9 @@ import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.features.common.PersonImage
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_likes
+import ontrack.composeapp.generated.resources.share_likes_count
 import ontrack.composeapp.generated.resources.share_likes_empty
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -49,7 +51,7 @@ fun LikesSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.share_likes, likeCount, likeCount),
+            text = if (likeCount == 0) stringResource(Res.string.share_likes) else pluralStringResource(Res.plurals.share_likes_count, likeCount, likeCount),
             style = MaterialTheme.typography.titleMedium,
         )
 

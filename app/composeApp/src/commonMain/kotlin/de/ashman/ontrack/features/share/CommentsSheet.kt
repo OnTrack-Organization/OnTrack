@@ -45,8 +45,10 @@ import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.formatDateTime
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
+import ontrack.composeapp.generated.resources.share_comments_count
 import ontrack.composeapp.generated.resources.share_comments_empty
 import ontrack.composeapp.generated.resources.share_comments_placeholder
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -99,7 +101,7 @@ fun CommentsSheet(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.share_comments, commentCount, commentCount),
+            text = if (commentCount == 0) stringResource(Res.string.share_comments) else pluralStringResource(Res.plurals.share_comments_count, commentCount, commentCount),
             style = MaterialTheme.typography.titleMedium,
         )
 

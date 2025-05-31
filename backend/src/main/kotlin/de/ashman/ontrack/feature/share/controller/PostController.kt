@@ -46,10 +46,11 @@ class PostController(
     fun toggleLike(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<LikeDto> {
-        val like = postService.toggleLike(postId = postId, userId = identity.id)
+    ): ResponseEntity<PostDto> {
+        postService.toggleLike(postId = postId, userId = identity.id)
+        val updatedPost = postService.getPost(postId, identity.id)
 
-        return ResponseEntity.ok(like)
+        return ResponseEntity.ok(updatedPost)
     }
 
     @PostMapping("/{postId}/comment")
@@ -57,10 +58,11 @@ class PostController(
         @PathVariable postId: UUID,
         @RequestBody @Valid dto: CreateCommentDto,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<CommentDto> {
-        val comment = postService.addComment(postId = postId, userId = identity.id, dto = dto)
+    ): ResponseEntity<PostDto> {
+        postService.addComment(postId = postId, userId = identity.id, dto = dto)
+        val updatedPost = postService.getPost(postId, identity.id)
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(comment)
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedPost)
     }
 
     @DeleteMapping("/{postId}/comment/{commentId}")
@@ -68,10 +70,11 @@ class PostController(
         @PathVariable postId: UUID,
         @PathVariable commentId: UUID,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<PostDto> {
         postService.removeComment(postId = postId, commentId = commentId, userId = identity.id)
+        val updatedPost = postService.getPost(postId, identity.id)
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(updatedPost)
     }
 
     @GetMapping("/{postId}/comments")
