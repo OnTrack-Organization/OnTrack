@@ -54,9 +54,9 @@ dependencies {
 }
 
 val commonArgs = mapOf(
-    "url" to "jdbc:postgresql://db:5432/ontrack",
-    "username" to "default",
-    "password" to "demo",
+    "url" to System.getenv("SPRING_DATASOURCE_URL"),
+    "username" to System.getenv("SPRING_DATASOURCE_USERNAME"),
+    "password" to System.getenv("SPRING_DATASOURCE_PASSWORD"),
     "driver" to "org.postgresql.Driver",
 )
 
