@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - 'production-experiment'
-#      - 'develop'
-#    paths:
-#      - 'backend/**'
+  #      - 'develop'
+  #    paths:
+  #      - 'backend/**'
   workflow_dispatch:
 
 permissions:
@@ -17,39 +17,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-#  build-push-docker-image:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-#          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-#
-#      - name: Build and push Docker image
-#        run: |
-#          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest backend
-#          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest
+  #  build-push-docker-image:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Login to Docker Hub
+  #        uses: docker/login-action@v3
+  #        with:
+  #          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+  #          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+  #
+  #      - name: Build and push Docker image
+  #        run: |
+  #          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest backend
+  #          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest
   migrate-db:
     name: Run Liquibase Migration
     runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: debug2
-        run: ls ${{ github.workspace }}/backend/src/main/resources/db/changelog
-
-      - name: Run Liquibase Migrations
+      - name: Validate Changelog Files
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/backend/src/main/resources/db/changelog:/liquibase/changelog \
-            liquibase/liquibase:latest \
+          liquibase \
             --url='${{ secrets.DB_URL }}' \
             --username='${{ secrets.DB_USERNAME }}' \
             --password='${{ secrets.DB_SECRET }}' \
-            --changeLogFile=/liquibase/changelog/db.changelog-master.yaml \
+            --changeLogFile=./backend/src/main/resources/db/changelog/db.changelog-master.yaml \
+            validate
+
+      - name: Run Liquibase Migration
+        run: |
+          liquibase \
+            --url='${{ secrets.DB_URL }}' \
+            --username='${{ secrets.DB_USERNAME }}' \
+            --password='${{ secrets.DB_SECRET }}' \
+            --changeLogFile=./backend/src/main/resources/db/changelog/db.changelog-master.yaml \
             update
