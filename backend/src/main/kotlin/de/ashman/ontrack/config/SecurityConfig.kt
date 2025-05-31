@@ -20,7 +20,9 @@ class SecurityConfig(
         http
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { auth ->
-                auth.anyRequest().authenticated()
+                auth
+                    .requestMatchers("/test").permitAll()
+                    .anyRequest().authenticated()
             }
             .exceptionHandling { exceptions ->
                 exceptions.authenticationEntryPoint { _, response, _ ->
