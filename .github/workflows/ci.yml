@@ -32,17 +32,20 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest backend
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/on-track:latest
-#
-#  migrate-db:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Run DB migrations (add new schema elements)
-#        env:
-#          DB_URL: ${{ secrets.DB_URL }}
-#          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-#          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#        run: |
-#          liquibase --url=${DB_URL} --username=${DB_USERNAME} --password=${DB_PASSWORD} update
+  migrate-db:
+    name: Run Liquibase Migration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Liquibase Migrations
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/backend/src/main/resources/db.changelog:/liquibase/changelog \
+            liquibase/liquibase:latest \
+            --url='${{ secrets.DB_URL }}' \
+            --username='${{ secrets.DB_USERNAME }}' \
+            --password='${{ secrets.DB_PASSWORD }}' \
+            --changeLogFile=/liquibase/changelog/db.changelog-master.yaml \
+            update
