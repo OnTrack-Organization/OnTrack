@@ -1,10 +1,10 @@
 name: OnTrack Deployment Workflow
 on:
-  push:
-    branches:
-      - 'develop'
-    paths:
-      - 'backend/**'
+#  push:
+#    branches:
+#      - 'develop'
+#    paths:
+#      - 'backend/**'
   workflow_dispatch:
 
 permissions:
@@ -38,6 +38,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: debug
+        run: echo ${{ github.workspace }}
 
       - name: Run Liquibase Migrations
         run: |
