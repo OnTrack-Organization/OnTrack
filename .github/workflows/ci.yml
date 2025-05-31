@@ -40,6 +40,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: debug2
+        run: ls ${{ github.workspace }}/backend/src/main/resources/db/changelog
+
       - name: Run Liquibase Migrations
         run: |
           docker run --rm \
