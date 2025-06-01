@@ -4,11 +4,11 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import de.ashman.ontrack.domain.media.MediaData
-import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 
 @Entity(tableName = "tracking")
-data class NewTrackingEntity(
+data class TrackingEntity(
     @PrimaryKey
     val id: String,
     val userId: String,
@@ -18,7 +18,7 @@ data class NewTrackingEntity(
     val timestamp: Long,
 )
 
-fun NewTrackingEntity.toDomain() = NewTracking(
+fun TrackingEntity.toDomain() = Tracking(
     id = id,
     userId = userId,
     media = media,

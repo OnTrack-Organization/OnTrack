@@ -15,7 +15,8 @@ class UserService(
 
     fun findByEmail(email: String): User? = userRepository.findOneByEmail(email)
 
-    fun searchByUsername(username: String): List<User> = userRepository.findUsersByUsernameLikeIgnoreCase(username)
+    fun searchByUsername(username: String, excludedId: String): List<User> =
+        userRepository.findTop10ByUsernameContainingIgnoreCaseAndIdNotOrderByUsernameAsc(username, excludedId)
 
     fun save(user: User) {
         userRepository.save(user)

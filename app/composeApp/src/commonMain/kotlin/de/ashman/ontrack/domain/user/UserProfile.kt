@@ -1,8 +1,8 @@
 package de.ashman.ontrack.domain.user
 
-import de.ashman.ontrack.domain.tracking.NewTracking
+import de.ashman.ontrack.domain.tracking.Tracking
 
 data class UserProfile(
     val user: OtherUser,
-    val trackings: List<NewTracking>,
+    val trackings: List<Tracking>,
 )

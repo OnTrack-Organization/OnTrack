@@ -1,35 +1,12 @@
 package de.ashman.ontrack.preview
 
 import androidx.compose.runtime.Composable
-import de.ashman.ontrack.features.notifications.NotificationCard
-import de.ashman.ontrack.features.notifications.NotificationData
-import de.ashman.ontrack.features.notifications.NotificationType
-import de.ashman.ontrack.features.notifications.NotificationsScreen
-import de.ashman.ontrack.features.notifications.NotificationsViewModel
 import de.ashman.ontrack.theme.OnTrackTheme
 
 @OnTrackPreview
 @Composable
 fun LikeNotificationCardPreview() {
     OnTrackTheme {
-        NotificationCard(
-            notification = NotificationData(
-                type = NotificationType.LIKE,
-                senderUserId = previewUser.id,
-                senderUserName = previewUser.name,
-                senderUserImageUrl = previewUser.profilePictureUrl,
-                repliedToUserName = null,
-                trackingId = "1",
-                mediaId = previewMedia.id,
-                mediaType = previewMedia.type,
-                mediaTitle = previewMedia.title,
-                mediaImageUrl = previewMedia.coverUrl,
-                timestamp = previewTimestampNow,
-            ),
-            onNotificationClick = {},
-            onUserClick = {},
-            onMediaClick = {},
-        )
     }
 }
 
@@ -37,24 +14,6 @@ fun LikeNotificationCardPreview() {
 @Composable
 fun CommentNotificationCardPreview() {
     OnTrackTheme {
-        NotificationCard(
-            notification = NotificationData(
-                type = NotificationType.COMMENT,
-                senderUserId = previewUser.id,
-                senderUserName = previewUser.name,
-                senderUserImageUrl = previewUser.profilePictureUrl,
-                repliedToUserName = null,
-                trackingId = "1",
-                mediaId = previewMedia.id,
-                mediaType = previewMedia.type,
-                mediaTitle = previewMedia.title,
-                mediaImageUrl = previewMedia.coverUrl,
-                timestamp = previewTimestampHourAgo,
-            ),
-            onNotificationClick = {},
-            onUserClick = {},
-            onMediaClick = {},
-        )
     }
 }
 
@@ -62,24 +21,6 @@ fun CommentNotificationCardPreview() {
 @Composable
 fun ReplyNotificationCardPreview() {
     OnTrackTheme {
-        NotificationCard(
-            notification = NotificationData(
-                type = NotificationType.REPLY,
-                senderUserId = previewUser.id,
-                senderUserName = previewUser.name,
-                senderUserImageUrl = previewUser.profilePictureUrl,
-                repliedToUserName = "Joseph Joestar",
-                trackingId = "1",
-                mediaId = previewMedia.id,
-                mediaType = previewMedia.type,
-                mediaTitle = previewMedia.title,
-                mediaImageUrl = previewMedia.coverUrl,
-                timestamp = previewTimestampWeekAgo,
-            ),
-            onNotificationClick = {},
-            onUserClick = {},
-            onMediaClick = {},
-        )
     }
 }
 
@@ -87,24 +28,6 @@ fun ReplyNotificationCardPreview() {
 @Composable
 fun RecommendNotificationCardPreview() {
     OnTrackTheme {
-        NotificationCard(
-            notification = NotificationData(
-                type = NotificationType.RECOMMENDATION,
-                senderUserId = previewUser.id,
-                senderUserName = previewUser.name,
-                senderUserImageUrl = previewUser.profilePictureUrl,
-                repliedToUserName = null,
-                trackingId = "1",
-                mediaId = previewMedia.id,
-                mediaType = previewMedia.type,
-                mediaTitle = previewMedia.title,
-                mediaImageUrl = previewMedia.coverUrl,
-                timestamp = previewTimestampWeekAgo,
-            ),
-            onNotificationClick = {},
-            onUserClick = {},
-            onMediaClick = {},
-        )
     }
 }
 
@@ -112,12 +35,6 @@ fun RecommendNotificationCardPreview() {
 @Composable
 fun NotificationsScreenPreview() {
     OnTrackTheme {
-        NotificationsScreen(
-            viewModel = NotificationsViewModel(),
-            onBack = {},
-            onNotificationClick = {},
-            onClickUser = {},
-            onClickMedia = {},
-        )
+
     }
 }

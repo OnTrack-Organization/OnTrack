@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrackingDao {
     @Query("SELECT * FROM tracking")
-    fun getAll(): Flow<List<NewTrackingEntity>>
+    fun getAll(): Flow<List<TrackingEntity>>
 
     @Query("SELECT * FROM tracking WHERE media_id = :mediaId AND media_type = :mediaType LIMIT 1")
-    fun get(mediaId: String, mediaType: MediaType): Flow<NewTrackingEntity?>
+    fun get(mediaId: String, mediaType: MediaType): Flow<TrackingEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun add(tracking: NewTrackingEntity)
+    suspend fun add(tracking: TrackingEntity)
 
     @Insert
-    suspend fun add(trackings: List<NewTrackingEntity>)
+    suspend fun add(trackings: List<TrackingEntity>)
 
     @Query("DELETE FROM tracking WHERE id = :id")
     suspend fun delete(id: String)

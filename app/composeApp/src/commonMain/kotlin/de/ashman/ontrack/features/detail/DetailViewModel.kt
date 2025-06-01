@@ -18,8 +18,8 @@ import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.review.Review
-import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.getLabel
@@ -202,7 +202,7 @@ class DetailViewModel(
         )
     }
 
-    private suspend fun saveOrUpdateTracking(): NewTracking? {
+    private suspend fun saveOrUpdateTracking(): Tracking? {
         val result = if (_uiState.value.tracking == null) {
             val dto = CreateTrackingDto(
                 media = _uiState.value.media!!.toDto(),
@@ -372,7 +372,7 @@ class DetailViewModel(
 
 data class DetailUiState(
     val media: Media? = null,
-    val tracking: NewTracking? = null,
+    val tracking: Tracking? = null,
     val status: TrackStatus? = null,
 
     val review: Review? = null,

@@ -1,0 +1,109 @@
+databaseChangeLog:
+- changeSet:
+    id: 1748784598316-1
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: DTYPE
+            type: VARCHAR(31)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: notificationsPK
+            name: id
+            type: UUID
+        - column:
+            name: created_at
+            type: TIMESTAMP(6) WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: read
+            type: BOOLEAN
+        - column:
+            name: receiver_id
+            type: VARCHAR(255)
+        - column:
+            name: sender_id
+            type: VARCHAR(255)
+        - column:
+            name: comment_id
+            type: UUID
+        - column:
+            name: post_id
+            type: UUID
+        - column:
+            name: recommendation_id
+            type: UUID
+        tableName: notifications
+- changeSet:
+    id: 1748784598316-2
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sender_id
+        baseTableName: notifications
+        constraintName: FK13vcnq3ukas06ho1yrbc5lrb5
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748784598316-3
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: post_id
+        baseTableName: notifications
+        constraintName: FK599539lym3mnkbqks0u806eac
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: posts
+        validate: true
+- changeSet:
+    id: 1748784598316-4
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: receiver_id
+        baseTableName: notifications
+        constraintName: FK9kxl0whvhifo6gw4tjq36v53k
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748784598316-5
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: recommendation_id
+        baseTableName: notifications
+        constraintName: FKchs9bcf0gyg3q3isl30hinbnm
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: recommendations
+        validate: true
+- changeSet:
+    id: 1748784598316-6
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: comment_id
+        baseTableName: notifications
+        constraintName: FKl7p8sj183bxuwg2sq2ltx3cpv
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: comments
+        validate: true
+

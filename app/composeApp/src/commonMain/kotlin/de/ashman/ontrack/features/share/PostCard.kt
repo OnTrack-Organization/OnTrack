@@ -43,7 +43,7 @@ import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.getColor
 import de.ashman.ontrack.features.common.getIcon
 import de.ashman.ontrack.features.common.getLabel
-import de.ashman.ontrack.features.notifications.formatTimeAgoString
+import de.ashman.ontrack.features.notification.formatTimeAgoString
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res

@@ -2,7 +2,7 @@ package de.ashman.ontrack.domain.media
 
 import de.ashman.ontrack.navigation.CommonParcelable
 import de.ashman.ontrack.navigation.CommonParcelize
-import de.ashman.ontrack.network.services.tracking.dto.MediaDataDto
+import de.ashman.ontrack.network.services.tracking.dto.MediaDto
 import kotlinx.serialization.Serializable
 
 @CommonParcelize
@@ -21,7 +21,7 @@ sealed class Media() : CommonParcelable {
     abstract suspend fun getMainInfoItems(): List<String>
 }
 
-fun Media.toDto() = MediaDataDto(
+fun Media.toDto() = MediaDto(
     id = id,
     type = mediaType,
     title = title,

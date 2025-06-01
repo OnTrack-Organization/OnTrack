@@ -2,6 +2,7 @@ package de.ashman.ontrack.feature.recommendation.controller
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.service.FriendService
+import de.ashman.ontrack.feature.notification.service.NotificationService
 import de.ashman.ontrack.feature.recommendation.controller.dto.*
 import de.ashman.ontrack.feature.recommendation.domain.Recommendation
 import de.ashman.ontrack.feature.recommendation.repository.RecommendationService
@@ -23,6 +24,7 @@ class RecommendationController(
     private val reviewService: ReviewService,
     private val userService: UserService,
     private val friendService: FriendService,
+    private val notificationService: NotificationService,
 ) {
     @PostMapping("/recommend")
     fun createRecommendation(
@@ -40,6 +42,8 @@ class RecommendationController(
         )
 
         recommendationService.save(recommendation)
+
+        notificationService.createRecommendationReceived(sender, receiver, recommendation)
 
         return ResponseEntity.ok().build()
     }

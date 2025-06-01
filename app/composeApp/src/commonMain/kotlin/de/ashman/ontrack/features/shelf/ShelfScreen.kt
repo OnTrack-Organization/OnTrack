@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.NewTracking
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
@@ -247,7 +247,7 @@ fun UserHeader(
 
 @Composable
 fun MediaCounts(
-    trackings: List<NewTracking>,
+    trackings: List<Tracking>,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -300,7 +300,7 @@ fun MediaCount(
 @Composable
 fun ShelfItem(
     mediaType: MediaType,
-    items: List<NewTracking>?,
+    items: List<Tracking>?,
     onClickMore: (MediaType) -> Unit,
     onClickItem: (MediaNavigationParam) -> Unit,
 ) {
@@ -326,7 +326,7 @@ fun ShelfItem(
                     ) {
                         Icon(
                             modifier = Modifier.fillMaxSize().padding(4.dp),
-                            imageVector = mediaType.getMediaTypeUi().outlinedIcon,
+                            imageVector = mediaType.getMediaTypeUi().icon,
                             contentDescription = "Media Icon",
                         )
                     }

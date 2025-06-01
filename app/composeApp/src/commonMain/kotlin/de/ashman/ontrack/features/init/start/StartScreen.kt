@@ -172,7 +172,7 @@ fun AutoScrollPoster(
                     ) {
                         Icon(
                             modifier = Modifier.fillMaxSize().padding(4.dp),
-                            imageVector = itemTypes[realIndex].outlinedIcon,
+                            imageVector = itemTypes[realIndex].icon,
                             contentDescription = "Media Icon",
                         )
                     }

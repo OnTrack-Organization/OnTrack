@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateTrackingDto(
-    val media: MediaDataDto,
+    val media: MediaDto,
     val status: TrackStatus,
 )

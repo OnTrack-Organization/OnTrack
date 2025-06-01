@@ -7,5 +7,10 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : JpaRepository<User, String> {
     fun findOneByEmail(email: String): User?
-    fun findUsersByUsernameLikeIgnoreCase(username: String): List<User>
+
+    // Find 10 users where name matches and ignore current user
+    fun findTop10ByUsernameContainingIgnoreCaseAndIdNotOrderByUsernameAsc(
+        username: String,
+        excludedId: String
+    ): List<User>
 }

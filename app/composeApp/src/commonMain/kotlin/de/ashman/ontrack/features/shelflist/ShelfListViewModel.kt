@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -51,9 +51,9 @@ class ShelfListViewModel(
 data class ShelfListUiState(
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val selectedStatus: TrackStatus? = null,
-    val trackings: List<NewTracking> = emptyList(),
+    val trackings: List<Tracking> = emptyList(),
 ) {
-    val filteredTrackings: List<NewTracking>
+    val filteredTrackings: List<Tracking>
         get() = trackings.filter {
             it.media.type == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
         }

@@ -14,9 +14,6 @@ import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
-import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.navigation.MediaNavigationParam
-import de.ashman.ontrack.navigation.Route
 import de.ashman.ontrack.navigation.graph.NavigationGraph
 import de.ashman.ontrack.notification.notificationInit
 import de.ashman.ontrack.theme.OnTrackTheme
@@ -62,7 +59,7 @@ private fun startNotificationManager(
             super.onNotificationClicked(data)
             Logger.d("Notification clicked, Notification payloadData: $data", tag = TAG)
 
-            val mediaNav = MediaNavigationParam(
+            /*val mediaNav = MediaNavigationParam(
                 id = data["mediaId"].toString(),
                 title = "",
                 coverUrl = "",
@@ -75,7 +72,7 @@ private fun startNotificationManager(
                 navController.navigate(route)
             } catch (e: Exception) {
                 Logger.e("Failed to navigate: ${e.message}", tag = TAG)
-            }
+            }*/
         }
     })
 }

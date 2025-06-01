@@ -13,7 +13,7 @@ import de.ashman.ontrack.features.friend.FriendsViewModel
 import de.ashman.ontrack.features.init.setup.SetupViewModel
 import de.ashman.ontrack.features.init.signin.LoginViewModel
 import de.ashman.ontrack.features.init.start.StartViewModel
-import de.ashman.ontrack.features.notifications.NotificationsViewModel
+import de.ashman.ontrack.features.notification.NotificationViewModel
 import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.share.PostViewModel
@@ -39,7 +39,7 @@ fun NavigationGraph(
     shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
-    notificationsViewModel: NotificationsViewModel = koinInject(),
+    notificationViewModel: NotificationViewModel = koinInject(),
     commonUiManager: CommonUiManager = koinInject(),
     userDataStore: UserDataStore = koinInject(),
 ) {
@@ -71,7 +71,7 @@ fun NavigationGraph(
                 navController = navController,
                 postViewModel = postViewModel,
                 friendsViewModel = friendsViewModel,
-                notificationsViewModel = notificationsViewModel,
+                notificationViewModel = notificationViewModel,
                 commonUiManager = commonUiManager,
             )
 

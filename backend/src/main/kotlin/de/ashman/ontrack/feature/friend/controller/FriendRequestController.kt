@@ -4,6 +4,7 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.domain.FriendRequest
 import de.ashman.ontrack.feature.friend.service.FriendRequestService
 import de.ashman.ontrack.feature.friend.service.FriendService
+import de.ashman.ontrack.feature.notification.service.NotificationService
 import de.ashman.ontrack.feature.user.repository.UserService
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class FriendRequestController(
     private val userService: UserService,
     private val friendRequestService: FriendRequestService,
-    private val friendService: FriendService
+    private val friendService: FriendService,
+    private val notificationService: NotificationService,
 ) {
     @PostMapping("/send/{userId}")
     @Transactional
@@ -37,6 +39,8 @@ class FriendRequestController(
         val friendRequest = FriendRequest(sender = sender, receiver = receiver)
 
         friendRequestService.save(friendRequest)
+
+        notificationService.createFriendRequestReceived(sender, receiver)
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
@@ -56,6 +60,8 @@ class FriendRequestController(
         request.accept()
 
         friendService.beginFriendship(sender, receiver)
+
+        notificationService.createFriendRequestAccepted(acceptor = sender, originalSender = receiver)
 
         return ResponseEntity.ok().build()
     }

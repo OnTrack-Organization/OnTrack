@@ -72,7 +72,7 @@ fun ShelfListScreen(
         topBar = {
             OnTrackTopBar(
                 title = pluralStringResource(mediaType.getMediaTypeUi().title, 2),
-                titleIcon = mediaType.getMediaTypeUi().outlinedIcon,
+                titleIcon = mediaType.getMediaTypeUi().icon,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 actionIcon = Icons.Default.Tune,
                 onClickAction = { },

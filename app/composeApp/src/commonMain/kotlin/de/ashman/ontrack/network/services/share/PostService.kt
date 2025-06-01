@@ -1,12 +1,12 @@
 package de.ashman.ontrack.network.services.share
 
 import de.ashman.ontrack.api.utils.safeApiCall
-import de.ashman.ontrack.domain.share.Comment
-import de.ashman.ontrack.domain.share.Like
+import de.ashman.ontrack.domain.share.Comments
+import de.ashman.ontrack.domain.share.Likes
 import de.ashman.ontrack.domain.share.Post
-import de.ashman.ontrack.network.services.share.dto.CommentDto
+import de.ashman.ontrack.network.services.share.dto.CommentsDto
 import de.ashman.ontrack.network.services.share.dto.CreateCommentDto
-import de.ashman.ontrack.network.services.share.dto.LikeDto
+import de.ashman.ontrack.network.services.share.dto.LikesDto
 import de.ashman.ontrack.network.services.share.dto.Page
 import de.ashman.ontrack.network.services.share.dto.PostDto
 import de.ashman.ontrack.network.services.share.dto.toDomain
@@ -24,8 +24,8 @@ interface PostService {
     suspend fun toggleLike(postId: String): Result<Post>
     suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Post>
     suspend fun deleteComment(postId: String, commentId: String): Result<Post>
-    suspend fun getComments(postId: String, page: Int, size: Int): Result<List<Comment>>
-    suspend fun getLikes(postId: String, page: Int, size: Int): Result<List<Like>>
+    suspend fun getComments(postId: String, page: Int, size: Int): Result<Comments>
+    suspend fun getLikes(postId: String, page: Int, size: Int): Result<Likes>
 }
 
 class PostServiceImpl(
@@ -59,17 +59,17 @@ class PostServiceImpl(
         httpClient.delete("/posts/$postId/comment/$commentId").body<PostDto>().toDomain()
     }
 
-    override suspend fun getComments(postId: String, page: Int, size: Int): Result<List<Comment>> = safeApiCall {
+    override suspend fun getComments(postId: String, page: Int, size: Int): Result<Comments> = safeApiCall {
         httpClient.get("/posts/$postId/comments") {
             parameter("page", page)
             parameter("size", size)
-        }.body<Page<CommentDto>>().content.map { it.toDomain() }
+        }.body<CommentsDto>().toDomain()
     }
 
-    override suspend fun getLikes(postId: String, page: Int, size: Int): Result<List<Like>> = safeApiCall {
+    override suspend fun getLikes(postId: String, page: Int, size: Int): Result<Likes> = safeApiCall {
         httpClient.get("/posts/$postId/likes") {
             parameter("page", page)
             parameter("size", size)
-        }.body<Page<LikeDto>>().content.map { it.toDomain() }
+        }.body<LikesDto>().toDomain()
     }
 }

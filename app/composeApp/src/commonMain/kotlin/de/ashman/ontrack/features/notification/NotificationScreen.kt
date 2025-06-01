@@ -1,0 +1,348 @@
+package de.ashman.ontrack.features.notification
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import de.ashman.ontrack.domain.media.MediaData
+import de.ashman.ontrack.domain.notification.FriendRequestAccepted
+import de.ashman.ontrack.domain.notification.FriendRequestReceived
+import de.ashman.ontrack.domain.notification.Mentioned
+import de.ashman.ontrack.domain.notification.Notification
+import de.ashman.ontrack.domain.notification.PostCommented
+import de.ashman.ontrack.domain.notification.PostLiked
+import de.ashman.ontrack.domain.notification.RecommendationReceived
+import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.MINI_POSTER_HEIGHT
+import de.ashman.ontrack.features.common.MediaPoster
+import de.ashman.ontrack.features.common.OnTrackTopBar
+import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.navigation.MediaNavigationParam
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.notifications_empty
+import ontrack.composeapp.generated.resources.notifications_error
+import ontrack.composeapp.generated.resources.notifications_title
+import org.jetbrains.compose.resources.stringResource
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationScreen(
+    viewModel: NotificationViewModel,
+    onBack: () -> Unit,
+    onClickPost: (String) -> Unit,
+    onClickUser: (String) -> Unit,
+    onClickMedia: (MediaNavigationParam) -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotifications()
+    }
+
+    Scaffold(
+        topBar = {
+            OnTrackTopBar(
+                title = stringResource(Res.string.notifications_title),
+                titleIcon = Icons.Default.Notifications,
+                navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
+                onClickNavigation = onBack,
+            )
+        },
+    ) { contentPadding ->
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            isRefreshing = uiState.resultState == NotificationResultState.Loading,
+            onRefresh = { viewModel.loadNotifications() },
+        ) {
+            AnimatedContent(
+                targetState = uiState.resultState,
+                label = "ResultStateAnimation"
+            ) { state ->
+                when (state) {
+                    NotificationResultState.Success -> {
+                        NotificationsSuccess(
+                            notifications = uiState.notifications,
+                            onClickPost = onClickPost,
+                            onClickUser = onClickUser,
+                            onClickMedia = onClickMedia,
+                        )
+                    }
+
+                    NotificationResultState.Loading -> Unit
+                    NotificationResultState.Error -> NotificationsError()
+                    NotificationResultState.Empty -> NotificationsEmpty()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationsSuccess(
+    notifications: List<Notification>,
+    onClickPost: (String) -> Unit,
+    onClickUser: (String) -> Unit,
+    onClickMedia: (MediaNavigationParam) -> Unit,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        items(notifications) {
+            NotificationCard(
+                notification = it,
+                onClickUser = onClickUser,
+                onClickPost = onClickPost,
+                // TODO
+                onAcceptRequest = {},
+                onDeclineRequest = {},
+                onClickMedia = {
+                    onClickMedia(
+                        MediaNavigationParam(
+                            id = it.id,
+                            title = it.title,
+                            coverUrl = it.coverUrl,
+                            type = it.type,
+                        )
+                    )
+                },
+            )
+        }
+    }
+}
+
+@Composable
+fun NotificationCard(
+    notification: Notification,
+    onClickPost: (String) -> Unit,
+    onClickUser: (String) -> Unit,
+    onClickMedia: (MediaData) -> Unit,
+    onAcceptRequest: (String) -> Unit,
+    onDeclineRequest: (String) -> Unit,
+) {
+    val ui = notification.getUiType()
+
+    Box(
+        modifier = Modifier
+            .clickable {
+                when (notification) {
+                    // TODO maybe open friendssheet instead
+                    is FriendRequestReceived, is FriendRequestAccepted -> onClickUser(notification.sender.id)
+                    is PostCommented -> onClickPost(notification.post.id)
+                    is PostLiked -> onClickPost(notification.post.id)
+                    is Mentioned -> onClickPost(notification.post.id)
+                    is RecommendationReceived -> onClickMedia(notification.recommendation.media)
+                }
+            },
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            NotificationUserImage(
+                user = notification.sender,
+                icon = ui.icon,
+                onClick = onClickUser,
+            )
+
+            NotificationTexts(
+                modifier = Modifier.weight(1f),
+                notificationMessage = ui.message(notification),
+                timestamp = notification.createdAt,
+            )
+
+            when (notification) {
+                is FriendRequestReceived -> {
+                    Row {
+                        IconButton(onClick = { onAcceptRequest(notification.sender.id) }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = "Accept Friend Request"
+                            )
+                        }
+                        IconButton(onClick = { onDeclineRequest(notification.sender.id) }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = "Decline Friend Request"
+                            )
+                        }
+                    }
+                }
+
+                is PostLiked -> {
+                    MediaPoster(
+                        modifier = Modifier.height(MINI_POSTER_HEIGHT),
+                        coverUrl = notification.post.tracking.media.coverUrl,
+                        onClick = { onClickMedia(notification.post.tracking.media) }
+                    )
+                }
+
+                is PostCommented -> {
+                    MediaPoster(
+                        modifier = Modifier.height(MINI_POSTER_HEIGHT),
+                        coverUrl = notification.post.tracking.media.coverUrl,
+                        onClick = { onClickMedia(notification.post.tracking.media) }
+                    )
+                }
+
+                is RecommendationReceived -> {
+                    MediaPoster(
+                        modifier = Modifier.height(MINI_POSTER_HEIGHT),
+                        coverUrl = notification.recommendation.media.coverUrl,
+                        onClick = { onClickMedia(notification.recommendation.media) }
+                    )
+                }
+
+                else -> Unit
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationsEmpty(
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Default.NotificationsOff,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                Text(
+                    text = stringResource(Res.string.notifications_empty),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationsError(
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize().padding(horizontal = 48.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Default.WifiOff,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                Text(
+                    text = stringResource(Res.string.notifications_error),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationUserImage(
+    user: User,
+    icon: ImageVector,
+    onClick: (String) -> Unit,
+) {
+    Box {
+        PersonImage(
+            modifier = Modifier.align(Alignment.TopStart),
+            profilePictureUrl = user.profilePictureUrl,
+            onClick = { onClick(user.id) }
+        )
+
+        Surface(
+            modifier = Modifier
+                .size(24.dp)
+                .align(Alignment.BottomEnd)
+                .offset(x = (8).dp, y = (8).dp),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primary,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun NotificationTexts(
+    modifier: Modifier = Modifier,
+    notificationMessage: AnnotatedString,
+    timestamp: Long,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = notificationMessage,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = timestamp.formatTimeAgoString(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}

@@ -14,6 +14,7 @@ data class Recommendation(
 
     @ManyToOne(fetch = FetchType.LAZY)
     val sender: User,
+
     @ManyToOne(fetch = FetchType.LAZY)
     val receiver: User,
 

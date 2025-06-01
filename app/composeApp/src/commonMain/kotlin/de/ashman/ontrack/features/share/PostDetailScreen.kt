@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -71,7 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareDetailScreen(
+fun PostDetailScreen(
     viewModel: PostViewModel,
     postId: String,
     onClickMedia: (MediaNavigationParam) -> Unit,
@@ -89,6 +90,7 @@ fun ShareDetailScreen(
         topBar = {
             OnTrackTopBar(
                 title = stringResource(Res.string.share_detail_title),
+                titleIcon = Icons.Default.RateReview,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 actionIcon = Icons.Default.MoreVert,
                 onClickNavigation = onBack,

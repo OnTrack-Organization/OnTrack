@@ -1,7 +1,7 @@
 package de.ashman.ontrack.network.services.tracking
 
 import de.ashman.ontrack.api.utils.safeBackendApiCall
-import de.ashman.ontrack.domain.tracking.NewTracking
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.TrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
@@ -15,16 +15,16 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
 interface TrackingService {
-    suspend fun createTracking(dto: CreateTrackingDto): Result<NewTracking>
-    suspend fun updateTracking(dto: UpdateTrackingDto): Result<NewTracking>
+    suspend fun createTracking(dto: CreateTrackingDto): Result<Tracking>
+    suspend fun updateTracking(dto: UpdateTrackingDto): Result<Tracking>
     suspend fun deleteTracking(trackingId: String): Result<Unit>
-    suspend fun getTrackings(): Result<List<NewTracking>>
+    suspend fun getTrackings(): Result<List<Tracking>>
 }
 
 class TrackingServiceImpl(
     private val httpClient: HttpClient,
 ) : TrackingService {
-    override suspend fun createTracking(dto: CreateTrackingDto): Result<NewTracking> = safeBackendApiCall<TrackingDto> {
+    override suspend fun createTracking(dto: CreateTrackingDto): Result<Tracking> = safeBackendApiCall<TrackingDto> {
         httpClient.post("/tracking") {
             setBody(dto)
         }
@@ -35,7 +35,7 @@ class TrackingServiceImpl(
         }
     }
 
-    override suspend fun updateTracking(dto: UpdateTrackingDto): Result<NewTracking> = safeBackendApiCall<TrackingDto> {
+    override suspend fun updateTracking(dto: UpdateTrackingDto): Result<Tracking> = safeBackendApiCall<TrackingDto> {
         httpClient.put("/tracking") {
             setBody(dto)
         }
@@ -55,7 +55,7 @@ class TrackingServiceImpl(
         }
     }
 
-    override suspend fun getTrackings(): Result<List<NewTracking>> = safeBackendApiCall<List<TrackingDto>> {
+    override suspend fun getTrackings(): Result<List<Tracking>> = safeBackendApiCall<List<TrackingDto>> {
         httpClient.get("/trackings")
     }.mapCatching { response ->
         when (response.status) {

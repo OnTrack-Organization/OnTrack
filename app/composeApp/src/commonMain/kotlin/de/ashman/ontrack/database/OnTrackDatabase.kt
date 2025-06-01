@@ -6,13 +6,13 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import de.ashman.ontrack.database.review.ReviewDao
 import de.ashman.ontrack.database.review.ReviewEntity
-import de.ashman.ontrack.database.tracking.NewTrackingEntity
 import de.ashman.ontrack.database.tracking.TrackingDao
+import de.ashman.ontrack.database.tracking.TrackingEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
 @Database(
-    entities = [NewTrackingEntity::class, ReviewEntity::class],
+    entities = [TrackingEntity::class, ReviewEntity::class],
     version = 1
 )
 @ConstructedBy(OnTrackDatabaseConstructor::class)

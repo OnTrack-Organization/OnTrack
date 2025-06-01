@@ -47,7 +47,7 @@ import ontrack.composeapp.generated.resources.recommendation_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun RecommendSheet(
+fun RecommendationSheet(
     resultState: DetailResultState,
     friends: List<User>,
     sentRecommendations: List<Recommendation>,

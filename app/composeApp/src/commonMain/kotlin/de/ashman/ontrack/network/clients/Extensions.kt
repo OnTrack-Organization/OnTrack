@@ -14,6 +14,7 @@ fun HttpClientConfig<*>.setupBackendContentNegotiation() {
             Json {
                 ignoreUnknownKeys = true
                 isLenient = true
+                classDiscriminator = "type"
             }
         )
     }

@@ -6,8 +6,8 @@ import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.share.Post
-import de.ashman.ontrack.domain.tracking.NewTracking
 import de.ashman.ontrack.domain.tracking.TrackStatus
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
@@ -54,7 +54,7 @@ val previewComment = Comment(
     timestamp = previewTimestampNow,
 )
 
-val previewTracking = NewTracking(
+val previewTracking = Tracking(
     id = "1",
     userId = previewUser.id,
     media = previewMedia,

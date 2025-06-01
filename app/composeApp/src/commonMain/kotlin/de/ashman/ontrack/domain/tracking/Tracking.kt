@@ -1,9 +1,9 @@
 package de.ashman.ontrack.domain.tracking
 
-import de.ashman.ontrack.database.tracking.NewTrackingEntity
+import de.ashman.ontrack.database.tracking.TrackingEntity
 import de.ashman.ontrack.domain.media.MediaData
 
-data class NewTracking(
+data class Tracking(
     val id: String,
     val userId: String,
     val media: MediaData,
@@ -11,7 +11,7 @@ data class NewTracking(
     val timestamp: Long,
 )
 
-fun NewTracking.toEntity() = NewTrackingEntity(
+fun Tracking.toEntity() = TrackingEntity(
     id = id,
     userId = userId,
     media = media,

@@ -5,14 +5,14 @@ import de.ashman.ontrack.domain.media.MediaType
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MediaDataDto(
+data class MediaDto(
     val id: String,
     val type: MediaType,
     val title: String,
     val coverUrl: String?,
 )
 
-fun MediaDataDto.toDomain() = MediaData(
+fun MediaDto.toDomain() = MediaData(
     id = id,
     type = type,
     title = title,

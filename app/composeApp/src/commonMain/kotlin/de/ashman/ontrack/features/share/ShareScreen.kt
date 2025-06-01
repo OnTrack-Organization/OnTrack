@@ -148,7 +148,10 @@ fun ShareScreen(
 
             if (commonUiState.showSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { commonUiManager.hideSheet() },
+                    onDismissRequest = {
+                        commonUiManager.hideSheet()
+                        friendsViewModel.clearQuery()
+                    },
                     sheetState = bottomSheetState,
                     tonalElevation = 0.dp,
                 ) {

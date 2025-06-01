@@ -77,21 +77,21 @@ class PostViewModel(
     fun fetchComments(postId: String, initial: Boolean = false) = viewModelScope.launch {
         if (initial) commentsPage = 0
 
-        postService.getComments(postId, commentsPage, pageSize).fold(
+        postService.getComments(postId, likesPage, pageSize).fold(
             onSuccess = { newComments ->
-                _uiState.update { state ->
-                    val currentPost = state.selectedPost ?: state.posts.find { it.id == postId }
-                    val updatedComments = if (initial) newComments else currentPost?.comments.orEmpty() + newComments
+                val currentPost = _uiState.value.selectedPost ?: _uiState.value.posts.find { it.id == postId }
+                val updatedComments = if (initial) newComments.comments else currentPost?.comments.orEmpty() + newComments.comments
 
-                    val updatedPost = currentPost?.copy(comments = updatedComments)
+                val updatedPost = currentPost?.copy(
+                    comments = updatedComments,
+                    commentCount = newComments.commentCount,
+                )
 
-                    state.copy(
-                        resultState = PostResultState.Success,
-                        selectedPost = updatedPost,
-                    )
+                if (updatedPost != null) {
+                    replacePost(updatedPost)
                 }
 
-                Logger.d { "Fetched comments (size: ${newComments.size}, page: $commentsPage, initial: $initial): $newComments" }
+                Logger.d { "Fetched comments (size: ${newComments.comments.size}, page: $commentsPage, initial: $initial): $newComments" }
                 //commentsPage++
             },
             onFailure = {
@@ -105,16 +105,19 @@ class PostViewModel(
 
         postService.getLikes(postId, likesPage, pageSize).fold(
             onSuccess = { newLikes ->
-                _uiState.update { state ->
-                    val currentPost = state.selectedPost ?: state.posts.find { it.id == postId }
-                    val updatedLikes = if (initial) newLikes else currentPost?.likes.orEmpty() + newLikes
+                val currentPost = _uiState.value.selectedPost ?: _uiState.value.posts.find { it.id == postId }
+                val updatedLikes = if (initial) newLikes.likes else currentPost?.likes.orEmpty() + newLikes.likes
 
-                    val updatedPost = currentPost?.copy(likes = updatedLikes)
+                val updatedPost = currentPost?.copy(
+                    likes = updatedLikes,
+                    likeCount = newLikes.likeCount,
+                )
 
-                    state.copy(selectedPost = updatedPost)
+                if (updatedPost != null) {
+                    replacePost(updatedPost)
                 }
 
-                Logger.d { "Fetched likes (size: ${newLikes.size}, page: $likesPage, initial: $initial): $newLikes" }
+                Logger.d { "Fetched likes (size: ${newLikes.likes.size}, page: $likesPage, initial: $initial): $newLikes" }
                 //likesPage++
             },
             onFailure = {

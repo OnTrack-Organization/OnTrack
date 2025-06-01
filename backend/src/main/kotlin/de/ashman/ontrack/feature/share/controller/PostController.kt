@@ -1,10 +1,7 @@
 package de.ashman.ontrack.feature.share.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.share.controller.dto.CommentDto
-import de.ashman.ontrack.feature.share.controller.dto.CreateCommentDto
-import de.ashman.ontrack.feature.share.controller.dto.LikeDto
-import de.ashman.ontrack.feature.share.controller.dto.PostDto
+import de.ashman.ontrack.feature.share.controller.dto.*
 import de.ashman.ontrack.feature.share.service.PostService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -27,7 +24,7 @@ class PostController(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Page<PostDto>> {
         val pageable = PageRequest.of(page, size)
-        val posts = postService.getPosts(pageable = pageable, currentUserId = identity.id)
+        val posts = postService.getPosts(pageable, identity.id)
 
         return ResponseEntity.ok(posts)
     }
@@ -37,7 +34,7 @@ class PostController(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<PostDto> {
-        val post = postService.getPost(postId = postId, currentUserId = identity.id)
+        val post = postService.getPost(postId, identity.id)
 
         return ResponseEntity.ok(post)
     }
@@ -47,7 +44,7 @@ class PostController(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<PostDto> {
-        postService.toggleLike(postId = postId, userId = identity.id)
+        postService.toggleLike(postId, identity.id)
         val updatedPost = postService.getPost(postId, identity.id)
 
         return ResponseEntity.ok(updatedPost)
@@ -59,7 +56,7 @@ class PostController(
         @RequestBody @Valid dto: CreateCommentDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<PostDto> {
-        postService.addComment(postId = postId, userId = identity.id, dto = dto)
+        postService.addComment(postId, identity.id, dto)
         val updatedPost = postService.getPost(postId, identity.id)
 
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedPost)
@@ -71,7 +68,7 @@ class PostController(
         @PathVariable commentId: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<PostDto> {
-        postService.removeComment(postId = postId, commentId = commentId, userId = identity.id)
+        postService.removeComment(postId, commentId, identity.id)
         val updatedPost = postService.getPost(postId, identity.id)
 
         return ResponseEntity.ok(updatedPost)
@@ -83,9 +80,9 @@ class PostController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal identity: Identity,
-    ): ResponseEntity<Page<CommentDto>> {
+    ): ResponseEntity<CommentsDto> {
         val pageable = PageRequest.of(page, size)
-        val comments = postService.getComments(postId = postId, currentUserId = identity.id, pageable = pageable)
+        val comments = postService.getComments(postId, identity.id, pageable)
 
         return ResponseEntity.ok(comments)
     }
@@ -96,9 +93,9 @@ class PostController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal identity: Identity,
-    ): ResponseEntity<Page<LikeDto>> {
+    ): ResponseEntity<LikesDto> {
         val pageable = PageRequest.of(page, size)
-        val likes = postService.getLikes(postId = postId, pageable = pageable)
+        val likes = postService.getLikes(postId, pageable)
 
         return ResponseEntity.ok(likes)
     }

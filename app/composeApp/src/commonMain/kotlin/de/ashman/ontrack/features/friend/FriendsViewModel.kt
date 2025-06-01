@@ -77,7 +77,7 @@ class FriendsViewModel(
             onSuccess = { users ->
                 _uiState.update {
                     it.copy(
-                        resultState = if (users.isEmpty()) FriendsResultState.QueryEmpty else FriendsResultState.Success,
+                        resultState = if (users.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
                         users = users,
                     )
                 }
@@ -96,7 +96,7 @@ class FriendsViewModel(
                 _uiState.update {
                     it.copy(
                         users = users,
-                        resultState = FriendsResultState.QuerySuccess,
+                        resultState = if (users.isEmpty()) FriendsResultState.QueryEmpty else FriendsResultState.QuerySuccess,
                     )
                 }
             },
@@ -196,7 +196,11 @@ class FriendsViewModel(
     }
 
     fun onQueryChanged(query: String) {
-        _uiState.update { it.copy(query = query) }
+        _uiState.update {
+            it.copy(
+                query = query,
+            )
+        }
     }
 
     fun clearQuery() {

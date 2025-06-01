@@ -55,7 +55,7 @@ sealed class Route {
     data object Notifications : Route()
 
     @Serializable
-    data class ShareDetail(
-        val trackingId: String,
+    data class PostDetail(
+        val postId: String,
     ) : Route()
 }

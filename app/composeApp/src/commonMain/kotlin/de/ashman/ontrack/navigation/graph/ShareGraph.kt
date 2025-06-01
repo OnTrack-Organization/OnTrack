@@ -6,10 +6,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.friend.FriendsViewModel
-import de.ashman.ontrack.features.notifications.NotificationsScreen
-import de.ashman.ontrack.features.notifications.NotificationsViewModel
+import de.ashman.ontrack.features.notification.NotificationScreen
+import de.ashman.ontrack.features.notification.NotificationViewModel
+import de.ashman.ontrack.features.share.PostDetailScreen
 import de.ashman.ontrack.features.share.PostViewModel
-import de.ashman.ontrack.features.share.ShareDetailScreen
 import de.ashman.ontrack.features.share.ShareScreen
 import de.ashman.ontrack.navigation.Route
 
@@ -17,7 +17,7 @@ fun NavGraphBuilder.shareGraph(
     navController: NavController,
     postViewModel: PostViewModel,
     friendsViewModel: FriendsViewModel,
-    notificationsViewModel: NotificationsViewModel,
+    notificationViewModel: NotificationViewModel,
     commonUiManager: CommonUiManager,
 ) {
     composable<Route.Share> {
@@ -25,7 +25,7 @@ fun NavGraphBuilder.shareGraph(
             postViewModel = postViewModel,
             friendsViewModel = friendsViewModel,
             commonUiManager = commonUiManager,
-            onClickPost = { navController.navigate(Route.ShareDetail(it)) },
+            onClickPost = { navController.navigate(Route.PostDetail(it)) },
             onClickCover = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onClickUser = { userId ->
                 commonUiManager.hideSheet()
@@ -35,12 +35,12 @@ fun NavGraphBuilder.shareGraph(
         )
     }
 
-    composable<Route.ShareDetail> { backStackEntry ->
-        val shareDetail: Route.ShareDetail = backStackEntry.toRoute()
+    composable<Route.PostDetail> { backStackEntry ->
+        val postDetail: Route.PostDetail = backStackEntry.toRoute()
 
-        ShareDetailScreen(
+        PostDetailScreen(
             viewModel = postViewModel,
-            postId = shareDetail.trackingId,
+            postId = postDetail.postId,
             onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) },
             onBack = { navController.popBackStack() },
@@ -48,10 +48,10 @@ fun NavGraphBuilder.shareGraph(
     }
 
     composable<Route.Notifications> {
-        NotificationsScreen(
-            viewModel = notificationsViewModel,
+        NotificationScreen(
+            viewModel = notificationViewModel,
             onBack = { navController.popBackStack() },
-            onNotificationClick = { navController.navigate(Route.ShareDetail(it)) },
+            onClickPost = { navController.navigate(Route.PostDetail(it)) },
             onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) }
         )

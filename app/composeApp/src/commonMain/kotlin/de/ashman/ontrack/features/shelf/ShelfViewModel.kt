@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
-import de.ashman.ontrack.domain.tracking.NewTracking
+import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
@@ -142,5 +142,5 @@ class ShelfViewModel(
 data class ShelfUiState(
     val user: User? = null,
     val friendStatus: FriendStatus? = null,
-    val trackings: List<NewTracking> = emptyList(),
+    val trackings: List<Tracking> = emptyList(),
 )

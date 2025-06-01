@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.login_backend_error
 import ontrack.composeapp.generated.resources.login_offline_error
 
 class LoginViewModel(
@@ -76,7 +75,7 @@ class LoginViewModel(
                     },
                     onFailure = { error ->
                         Logger.e("Backend sign in failed: ${error.message}")
-                        commonUiManager.showSnackbar(Res.string.login_backend_error)
+                        commonUiManager.showSnackbar(Res.string.login_offline_error)
                     }
                 )
             },

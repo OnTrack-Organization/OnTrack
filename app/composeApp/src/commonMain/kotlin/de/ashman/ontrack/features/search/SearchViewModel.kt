@@ -12,7 +12,7 @@ import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
-import de.ashman.ontrack.domain.tracking.NewTracking
+import de.ashman.ontrack.domain.tracking.Tracking
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -174,7 +174,7 @@ class SearchViewModel(
 data class SearchUiState(
     val searchResults: List<Media> = emptyList(),
     val cachedTrending: List<Media> = emptyList(),
-    val trackings: List<NewTracking> = emptyList(),
+    val trackings: List<Tracking> = emptyList(),
     val query: String = "",
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Loading },

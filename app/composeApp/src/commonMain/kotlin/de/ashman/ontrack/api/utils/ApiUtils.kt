@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
     return try {
         val result = apiCall()
-        Logger.d { "API call successful: $result" }
+        //Logger.d { "API call successful: $result" }
         Result.success(result)
     } catch (e: CancellationException) {
         throw e

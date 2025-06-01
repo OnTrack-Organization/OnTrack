@@ -63,7 +63,7 @@ import de.ashman.ontrack.features.detail.media.ShowDetailContent
 import de.ashman.ontrack.features.detail.media.VideogameDetailContent
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivityRow
 import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
-import de.ashman.ontrack.features.detail.recommendation.RecommendSheet
+import de.ashman.ontrack.features.detail.recommendation.RecommendationSheet
 import de.ashman.ontrack.features.detail.review.ReviewSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
 import de.ashman.ontrack.navigation.MediaNavigationParam
@@ -116,7 +116,7 @@ fun DetailScreen(
         topBar = {
             OnTrackTopBar(
                 title = pluralStringResource(mediaNav.type.getMediaTypeUi().title, 1),
-                titleIcon = mediaNav.type.getMediaTypeUi().outlinedIcon,
+                titleIcon = mediaNav.type.getMediaTypeUi().icon,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 onClickNavigation = onBack,
                 dropdownMenu = {
@@ -242,7 +242,7 @@ fun DetailScreen(
                             onCatalogRecommendation = viewModel::catalogRecommendation,
                         )
 
-                        CurrentSheet.RECOMMEND -> RecommendSheet(
+                        CurrentSheet.RECOMMEND -> RecommendationSheet(
                             resultState = detailUiState.resultState,
                             friends = detailUiState.friends,
                             sentRecommendations = detailUiState.sentRecommendations,

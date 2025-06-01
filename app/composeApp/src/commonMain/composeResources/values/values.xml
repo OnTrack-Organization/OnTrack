@@ -38,7 +38,7 @@
     <string name="setup_username">Enter some personal info to get started!</string>
 
     <!-- SHARE -->
-    <string name="share_empty">Add some friends or track some media to share it in your feed!</string>
+    <string name="share_empty">Add some friends or track some media to share it!</string>
     <string name="share_error">Couldn't load posts, sorry! Try again later.</string>
 
     <string name="share_comments_placeholder">Write a comment…</string>
@@ -57,8 +57,7 @@
         <item quantity="other">%1$s Comments</item>
     </plurals>
 
-    <!-- SHARE DETAIL -->
-    <string name="share_detail_title">Tracking</string>
+    <string name="share_detail_title">Post</string>
 
     <string name="share_comments_empty">No comments yet</string>
     <string name="share_likes_empty">No likes yet</string>
@@ -67,8 +66,11 @@
     <string name="feed_friends">Friends</string>
     <string name="feed_received_requests">Received Friend Requests</string>
     <string name="feed_sent_requests">Sent Friend Requests</string>
+    <string name="feed_potential_friends">Potential Friends</string>
+
     <string name="feed_no_friends_and_requests">No friends yet, why not search for some?</string>
-    <string name="feed_no_potential_friends">No potential friends found, sad</string>
+    <string name="feed_no_potential_friends">No potential friends found</string>
+
     <string name="feed_request_sent">Friend request sent</string>
     <string name="feed_request_accepted">Friend request accepted</string>
     <string name="feed_request_declined">Friend request declined</string>
@@ -96,7 +98,7 @@
 
     <string name="remove_tracking_button">Remove Tracking</string>
     <string name="detail_remove_confirm_title">Remove tracking?</string>
-    <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking and review is going to be removed.</string>
+    <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking, review and post is going to be removed.</string>
 
     <string name="tracking_saved">%1$s added to %2$s</string>
     <string name="tracking_removed">%1$s removed from %2$s</string>
@@ -308,14 +310,17 @@
     <string name="album_status_dropped_label">Dropped</string>
     <string name="album_status_dropped_sublabel">Stopped Listening</string>
 
-    <!-- NOTIFICATIONS SCREEN -->
+    <!-- NOTIFICATION -->
     <string name="notifications_title">Notifications</string>
     <string name="notifications_empty">No notifications yet, a refresh might save you…</string>
+    <string name="notifications_error">Couldn't load notifications, sorry! Try again later.</string>
 
-    <string name="notifications_like">%1$s liked your Tracking of %2$s</string>
-    <string name="notifications_comment">%1$s commented on your Tracking of %2$s</string>
-    <string name="notifications_reply">%1$s replied to you on a Tracking from %2$s of %3$s</string>
-    <string name="notifications_recommendation">%1$s sent you a Recommendation for %2$s</string>
+    <string name="notifications_friend_request_received">%1$s sent you a friend request</string>
+    <string name="notifications_friend_request_accepted">%1$s accepted your friend request</string>
+    <string name="notifications_like">%1$s liked your post of %2$s</string>
+    <string name="notifications_comment">%1$s commented on your post of %2$s</string>
+    <string name="notifications_recommendation">%1$s sent you a recommendation for %2$s</string>
+    <string name="notifications_reply">%1$s replied to you on a post from %2$s of %3$s</string>
 
     <string name="time_just_now">Just now</string>
 
@@ -349,27 +354,10 @@
         <item quantity="other">%1$d years ago</item>
     </plurals>
 
-    <!-- NOTIFICATIONS -->
-    <string name="notifications_new_recommendation_title">New Recommendation</string>
-    <string name="notifications_new_recommendation_body">%1$s sent you a recommendation for "%2$s"</string>
-
-    <string name="notifications_new_request_title">New Friend Request</string>
-    <string name="notifications_new_request_body">%1$s sent you a friend request</string>
-
-    <string name="notifications_request_accepted_title">Friend Request Accepted</string>
-    <string name="notifications_request_accepted_body">%1$s accepted your friend request</string>
-
-    <string name="notifications_like_title">New Like</string>
-    <string name="notifications_like_body">%1$s liked your tracking</string>
-
-    <string name="notifications_comment_title">New Comment</string>
-    <string name="notifications_comment_body">%1$s commented on your tracking</string>
-
     <!-- ERROR -->
     <string name="unknown_error">An unknown error occurred, sorry!</string>
-    <string name="login_offline_error">Couldn't log in, are you offline?</string>
-    <string name="logout_offline_error">Couldn't log out, are you offline?</string>
-    <string name="login_backend_error">Failed to log in :(</string>
+    <string name="login_offline_error">Failed to log in, are you offline?</string>
+    <string name="logout_offline_error">Failed to log out, are you offline?</string>
     <string name="tracking_create_error">Failed to create tracking</string>
     <string name="tracking_update_error">Failed to update tracking</string>
     <string name="tracking_delete_error">Failed to delete tracking</string>

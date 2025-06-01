@@ -7,7 +7,6 @@ import de.ashman.ontrack.api.book.dto.BookEditionsEntry
 import de.ashman.ontrack.api.book.dto.BookEditionsResponse
 import de.ashman.ontrack.api.book.dto.BookRatingsResponse
 import de.ashman.ontrack.api.book.dto.BookSearchResponse
-import de.ashman.ontrack.api.book.dto.BookTrendingResponse
 import de.ashman.ontrack.api.book.dto.BookWorksResponse
 import de.ashman.ontrack.api.book.dto.RatingSummary
 import de.ashman.ontrack.api.utils.safeApiCall
@@ -27,9 +26,11 @@ class BookRepository(
 ) : MediaRepository {
 
     override suspend fun fetchTrending(): Result<List<Book>> = safeApiCall {
-        httpClient.get("trending/weekly.json") {
+        // TODO add in later again
+        emptyList()
+        /*httpClient.get("trending/weekly.json") {
             parameter("limit", DEFAULT_FETCH_LIMIT)
-        }.body<BookTrendingResponse>().books.map { it.toDomain() }
+        }.body<BookTrendingResponse>().books.map { it.toDomain() }*/
     }
 
     override suspend fun fetchByQuery(query: String): Result<List<Book>> = safeApiCall {

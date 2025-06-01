@@ -35,7 +35,7 @@ class UserController(
         val sentRequests = friendRequestService.findReceiversOfSentRequests(currentUser)
         val receivedRequests = friendRequestService.findSendersOfReceivedRequests(currentUser)
 
-        val users = userService.searchByUsername(username)
+        val users = userService.searchByUsername(username = username, excludedId = currentUser.id)
 
         val searchResult = users.map { user ->
             val status = when (user) {
