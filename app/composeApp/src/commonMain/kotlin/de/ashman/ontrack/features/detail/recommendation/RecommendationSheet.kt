@@ -89,12 +89,12 @@ fun RecommendationSheet(
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
-                    items(friends) { friend ->
+                    items(friends) { user ->
                         FriendRecommendSelectorIcon(
-                            userId = friend.id,
-                            profilePictureUrl = friend.profilePictureUrl,
-                            name = friend.name,
-                            isSelected = selectedUserId == friend.id,
+                            userId = user.id,
+                            profilePictureUrl = user.profilePictureUrl,
+                            username = user.username,
+                            isSelected = selectedUserId == user.id,
                             isAnyUserSelected = isAnyUserSelected,
                             onSelectUser = { id ->
                                 selectedUserId = id
@@ -129,7 +129,7 @@ fun RecommendationSheet(
                             items(sentRecommendations) { recommendation ->
                                 RecommendationCard(
                                     profilePictureUrl = recommendation.user.profilePictureUrl,
-                                    username = recommendation.user.name,
+                                    username = recommendation.user.username,
                                     timestamp = recommendation.timestamp,
                                     message = recommendation.message,
                                     onClickUser = { onClickUser(recommendation.user.id) },
@@ -173,7 +173,7 @@ fun RecommendationSheet(
 fun FriendRecommendSelectorIcon(
     userId: String,
     profilePictureUrl: String?,
-    name: String,
+    username: String,
     isSelected: Boolean,
     isAnyUserSelected: Boolean,
     onSelectUser: (String?) -> Unit,
@@ -218,7 +218,7 @@ fun FriendRecommendSelectorIcon(
         }
 
         Text(
-            text = name,
+            text = username,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,

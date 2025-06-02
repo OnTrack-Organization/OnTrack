@@ -10,9 +10,7 @@ import de.ashman.ontrack.theme.OnTrackTheme
 fun ShelfHeaderPreview() {
     OnTrackTheme {
         ShelfHeader(
-            name = previewUser.name,
-            username = previewUser.username,
-            profilePictureUrl = previewUser.profilePictureUrl,
+            user = previewUser,
             friendStatus = null,
         )
     }
@@ -23,9 +21,7 @@ fun ShelfHeaderPreview() {
 fun ShelfHeaderFriendPreview() {
     OnTrackTheme {
         ShelfHeader(
-            name = previewUser.name,
-            username = previewUser.username,
-            profilePictureUrl = previewUser.profilePictureUrl,
+            user = previewUser,
             friendStatus = FriendStatus.FRIEND,
         )
     }
@@ -36,9 +32,7 @@ fun ShelfHeaderFriendPreview() {
 fun ShelfHeaderStrangerPreview() {
     OnTrackTheme {
         ShelfHeader(
-            name = previewUser.name,
-            username = previewUser.username,
-            profilePictureUrl = previewUser.profilePictureUrl,
+            user = previewUser,
             friendStatus = FriendStatus.STRANGER,
         )
     }
@@ -49,9 +43,7 @@ fun ShelfHeaderStrangerPreview() {
 fun ShelfHeaderRequestSentPreview() {
     OnTrackTheme {
         ShelfHeader(
-            name = previewUser.name,
-            username = previewUser.username,
-            profilePictureUrl = previewUser.profilePictureUrl,
+            user = previewUser,
             friendStatus = FriendStatus.REQUEST_SENT,
         )
     }
@@ -62,9 +54,7 @@ fun ShelfHeaderRequestSentPreview() {
 fun ShelfHeaderRequestReceivedPreview() {
     OnTrackTheme {
         ShelfHeader(
-            name = previewUser.name,
-            username = previewUser.username,
-            profilePictureUrl = previewUser.profilePictureUrl,
+            user = previewUser,
             friendStatus = FriendStatus.REQUEST_RECEIVED,
         )
     }

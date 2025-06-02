@@ -315,7 +315,7 @@ fun ShareDetailLikeContent(
                     items(likes) {
                         UserLikeComponent(
                             profilePictureUrl = it.user.profilePictureUrl,
-                            name = it.user.username,
+                            username = it.user.username,
                             onClickUser = { onClickUser(it.user.id) },
                         )
                     }
@@ -397,7 +397,7 @@ fun ShareDetailCommentContent(
 @Composable
 fun UserLikeComponent(
     profilePictureUrl: String?,
-    name: String,
+    username: String,
     onClickUser: () -> Unit,
 ) {
     Column(
@@ -410,7 +410,7 @@ fun UserLikeComponent(
         )
 
         Text(
-            text = name,
+            text = username,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,

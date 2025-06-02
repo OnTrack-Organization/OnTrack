@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SendMessageTextField
-import de.ashman.ontrack.features.common.formatDateTime
+import de.ashman.ontrack.features.notification.formatTimeAgoString
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_count
@@ -267,13 +267,13 @@ fun CommentCard(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = comment.user.name,
+                        text = comment.user.username,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                     )
 
                     Text(
-                        text = comment.timestamp.formatDateTime(),
+                        text = comment.timestamp.formatTimeAgoString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

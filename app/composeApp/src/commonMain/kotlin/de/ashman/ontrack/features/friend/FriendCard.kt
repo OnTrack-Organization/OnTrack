@@ -22,14 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.user.FriendStatus
+import de.ashman.ontrack.domain.user.OtherUser
 import de.ashman.ontrack.features.common.PersonImage
 
 @Composable
 fun FriendCard(
-    profilePictureUrl: String,
-    name: String,
-    username: String,
-    friendStatus: FriendStatus,
+    friend: OtherUser,
     onClickUser: () -> Unit = {},
     onSendRequest: () -> Unit = {},
     onCancelRequest: () -> Unit = {},
@@ -48,7 +46,7 @@ fun FriendCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PersonImage(
-                profilePictureUrl = profilePictureUrl,
+                profilePictureUrl = friend.user.profilePictureUrl,
                 onClick = onClickUser,
             )
 
@@ -56,19 +54,19 @@ fun FriendCard(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = name,
+                    text = friend.user.username,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = username,
+                    text = friend.user.name,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             Row {
-                when (friendStatus) {
+                when (friend.friendStatus) {
                     FriendStatus.REQUEST_SENT -> {
                         IconButton(onClick = onCancelRequest) {
                             Icon(

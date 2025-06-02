@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
@@ -108,18 +109,18 @@ fun ShelfScreen(
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
-            ShelfHeader(
-                name = uiState.user?.name.orEmpty(),
-                username = uiState.user?.username.orEmpty(),
-                profilePictureUrl = uiState.user?.profilePictureUrl,
-                friendStatus = uiState.friendStatus,
-                sendRequest = viewModel::sendRequest,
-                cancelRequest = viewModel::cancelRequest,
-                acceptRequest = viewModel::acceptRequest,
-                declineRequest = viewModel::declineRequest,
-                removeFriend = viewModel::removeFriend,
-                showLargeImage = { showImageDialog = true },
-            )
+            uiState.user?.let {
+                ShelfHeader(
+                    user = it,
+                    friendStatus = uiState.friendStatus,
+                    sendRequest = viewModel::sendRequest,
+                    cancelRequest = viewModel::cancelRequest,
+                    acceptRequest = viewModel::acceptRequest,
+                    declineRequest = viewModel::declineRequest,
+                    removeFriend = viewModel::removeFriend,
+                    showLargeImage = { showImageDialog = true },
+                )
+            }
 
             if (uiState.trackings.isEmpty()) {
                 EmptyShelf(text = emptyText)
@@ -164,9 +165,7 @@ fun ShelfScreen(
 
 @Composable
 fun ShelfHeader(
-    name: String,
-    username: String,
-    profilePictureUrl: String?,
+    user: User,
     friendStatus: FriendStatus?,
     sendRequest: () -> Unit = {},
     cancelRequest: () -> Unit = {},
@@ -187,9 +186,9 @@ fun ShelfHeader(
         ) {
             UserHeader(
                 modifier = Modifier.weight(1f),
-                name = name,
-                username = username,
-                imageUrl = profilePictureUrl,
+                name = user.name,
+                username = user.username,
+                imageUrl = user.profilePictureUrl,
                 showLargeImage = showLargeImage,
             )
 
@@ -232,12 +231,12 @@ fun UserHeader(
             modifier = Modifier.fillMaxWidth().weight(1f),
         ) {
             Text(
-                text = name,
+                text = username,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = username,
+                text = name,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
