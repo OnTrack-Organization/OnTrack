@@ -75,7 +75,7 @@ fun FriendsActivityRow(
 
             FriendsActivityIcon(
                 profilePictureUrl = user.profilePictureUrl,
-                name = user.name,
+                username = user.username,
                 status = userTracking?.status,
                 hasRecommendation = userRecommendation != null,
                 onClickUser = { onClickUser(user.id) },
@@ -87,7 +87,7 @@ fun FriendsActivityRow(
 @Composable
 fun FriendsActivityIcon(
     profilePictureUrl: String?,
-    name: String,
+    username: String,
     status: TrackStatus?,
     hasRecommendation: Boolean,
     onClickUser: () -> Unit,
@@ -142,7 +142,7 @@ fun FriendsActivityIcon(
         }
 
         Text(
-            text = name,
+            text = username,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,

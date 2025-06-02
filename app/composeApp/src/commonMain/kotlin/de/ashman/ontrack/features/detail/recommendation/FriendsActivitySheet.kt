@@ -25,8 +25,8 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.MiniStarRatingBar
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.PersonImage
-import de.ashman.ontrack.features.common.formatDateTime
 import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.notification.formatTimeAgoString
 import de.ashman.ontrack.features.share.ShareCardHeader
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.add_to_catalog_button
@@ -77,7 +77,7 @@ fun FriendsActivitySheet(
                     items(friendsActivity.recommendations) {
                         RecommendationCard(
                             profilePictureUrl = it.user.profilePictureUrl,
-                            username = it.user.name,
+                            username = it.user.username,
                             timestamp = it.timestamp,
                             message = it.message,
                             onClickUser = { onUserClick(it.user.id) },
@@ -98,7 +98,7 @@ fun FriendsActivitySheet(
                     items(friendsActivity.trackings) {
                         SimpleTrackingCard(
                             profilePictureUrl = it.user.profilePictureUrl,
-                            username = it.user.name,
+                            username = it.user.username,
                             timestamp = it.timestamp,
                             mediaType = mediaType,
                             trackStatus = it.status,
@@ -150,7 +150,7 @@ fun RecommendationCard(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = timestamp.formatDateTime(),
+                    text = timestamp.formatTimeAgoString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -181,10 +181,7 @@ fun QueriedUsers(
 
         items(users) { user ->
             FriendCard(
-                profilePictureUrl = user.user.profilePictureUrl,
-                username = user.user.username,
-                name = user.user.name,
-                friendStatus = user.friendStatus,
+                friend = user,
                 onClickUser = { onClickUser(user.user.id) },
                 onSendRequest = { onSend(user.user.id) },
                 onCancelRequest = { onCancel(user.user.id) },
@@ -214,15 +211,12 @@ fun FriendsAndRequests(
                 )
             }
 
-            items(receivedRequests) { otherUser ->
+            items(receivedRequests) { receivedRequest ->
                 FriendCard(
-                    profilePictureUrl = otherUser.user.profilePictureUrl,
-                    username = otherUser.user.username,
-                    name = otherUser.user.name,
-                    friendStatus = otherUser.friendStatus,
-                    onClickUser = { onClickUser(otherUser.user.id) },
-                    onAcceptRequest = { onAccept(otherUser.user.id) },
-                    onDenyRequest = { onDecline(otherUser.user.id) },
+                    friend = receivedRequest,
+                    onClickUser = { onClickUser(receivedRequest.user.id) },
+                    onAcceptRequest = { onAccept(receivedRequest.user.id) },
+                    onDenyRequest = { onDecline(receivedRequest.user.id) },
                 )
             }
         }
@@ -238,10 +232,7 @@ fun FriendsAndRequests(
 
             items(friends) { friend ->
                 FriendCard(
-                    profilePictureUrl = friend.user.profilePictureUrl,
-                    username = friend.user.username,
-                    name = friend.user.name,
-                    friendStatus = friend.friendStatus,
+                    friend = friend,
                     onClickUser = { onClickUser(friend.user.id) },
                     onRemoveFriend = { onRemove(friend) },
                 )
@@ -257,14 +248,11 @@ fun FriendsAndRequests(
                 )
             }
 
-            items(sentRequests) { request ->
+            items(sentRequests) { sentRequest ->
                 FriendCard(
-                    profilePictureUrl = request.user.profilePictureUrl,
-                    username = request.user.username,
-                    name = request.user.name,
-                    friendStatus = request.friendStatus,
-                    onClickUser = { onClickUser(request.user.id) },
-                    onCancelRequest = { onCancel(request.user.id) },
+                    friend = sentRequest,
+                    onClickUser = { onClickUser(sentRequest.user.id) },
+                    onCancelRequest = { onCancel(sentRequest.user.id) },
                 )
             }
         }

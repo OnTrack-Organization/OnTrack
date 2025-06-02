@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.features.common.PersonImage
+import de.ashman.ontrack.features.notification.formatTimeAgoString
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.share_likes
 import ontrack.composeapp.generated.resources.share_likes_count
@@ -78,7 +79,8 @@ fun LikesSheet(
                     items(items = likes, key = { it.id }) {
                         LikeCard(
                             profilePictureUrl = it.user.profilePictureUrl,
-                            name = it.user.name,
+                            username = it.user.username,
+                            timestamp = it.timestamp,
                             onClick = { onClickUser(it.user.id) },
                         )
                     }
@@ -104,7 +106,8 @@ fun LikesSheet(
 @Composable
 fun LikeCard(
     profilePictureUrl: String,
-    name: String,
+    username: String,
+    timestamp: Long,
     onClick: () -> Unit,
 ) {
     Row(
@@ -119,10 +122,20 @@ fun LikeCard(
             profilePictureUrl = profilePictureUrl,
             onClick = onClick,
         )
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = username,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Text(
+                text = timestamp.formatTimeAgoString(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }

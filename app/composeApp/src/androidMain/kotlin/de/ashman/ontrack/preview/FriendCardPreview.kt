@@ -8,10 +8,7 @@ import de.ashman.ontrack.features.friend.FriendCard
 @Composable
 fun FriendCardPreview() {
     FriendCard(
-        profilePictureUrl = previewUser.profilePictureUrl,
-        name = previewUser.name,
-        username = previewUser.username,
-        friendStatus = FriendStatus.FRIEND,
+        friend = previewFriend,
     )
 }
 
@@ -19,10 +16,7 @@ fun FriendCardPreview() {
 @Composable
 fun StrangerCardPreview() {
     FriendCard(
-        profilePictureUrl = previewUser.profilePictureUrl,
-        name = previewUser.name,
-        username = previewUser.username,
-        friendStatus = FriendStatus.STRANGER,
+        friend = previewFriend.copy(friendStatus = FriendStatus.STRANGER),
     )
 }
 
@@ -30,10 +24,7 @@ fun StrangerCardPreview() {
 @Composable
 fun RequestSentCardPreview() {
     FriendCard(
-        profilePictureUrl = previewUser.profilePictureUrl,
-        name = previewUser.name,
-        username = previewUser.username,
-        friendStatus = FriendStatus.REQUEST_SENT,
+        friend = previewFriend.copy(friendStatus = FriendStatus.REQUEST_SENT),
     )
 }
 
@@ -41,9 +32,6 @@ fun RequestSentCardPreview() {
 @Composable
 fun RequestReceivedCardPreview() {
     FriendCard(
-        profilePictureUrl = previewUser.profilePictureUrl,
-        name = previewUser.name,
-        username = previewUser.username,
-        friendStatus = FriendStatus.REQUEST_RECEIVED,
+        friend = previewFriend.copy(friendStatus = FriendStatus.REQUEST_RECEIVED),
     )
 }
