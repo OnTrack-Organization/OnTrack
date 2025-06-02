@@ -44,7 +44,7 @@ class PushNotificationService {
 
             is Mentioned -> PushNotificationData(
                 fcmToken = fcmToken,
-                title = "You were mentioned",
+                title = "New Mention",
                 body = "${notification.sender.name} mentioned you in a comment"
             )
 

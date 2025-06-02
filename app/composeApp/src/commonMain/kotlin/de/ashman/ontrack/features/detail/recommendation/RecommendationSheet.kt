@@ -1,5 +1,6 @@
 package de.ashman.ontrack.features.detail.recommendation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +17,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,119 +54,142 @@ fun RecommendationSheet(
     resultState: DetailResultState,
     friends: List<User>,
     sentRecommendations: List<Recommendation>,
+    fetchFriends: () -> Unit,
     fetchSentRecommendations: (String) -> Unit,
     onSendRecommendation: (String, String?) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var selectedUserId by remember { mutableStateOf<String?>(null) }
+    var lastFetchedUserId by remember { mutableStateOf<String?>(null) }
+
     val isAnyUserSelected = selectedUserId != null
+
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(Res.string.recommendation_title),
-            style = MaterialTheme.typography.titleMedium,
-        )
+    LaunchedEffect(Unit) {
+        fetchFriends()
+    }
 
-        when (resultState) {
-            DetailResultState.Loading -> {
-            }
+    AnimatedContent(
+        targetState = resultState,
+        label = "ResultStateAnimation"
+    ) { state ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = stringResource(Res.string.recommendation_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
 
-            DetailResultState.Success -> {
-                if (friends.isEmpty()) {
+            when (state) {
+                DetailResultState.Loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                DetailResultState.Success -> {
+                    if (friends.isEmpty()) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            text = stringResource(Res.string.recommendation_friends_empty),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        return@AnimatedContent
+                    }
+
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                    ) {
+                        items(friends) { user ->
+                            FriendRecommendSelectorIcon(
+                                userId = user.id,
+                                profilePictureUrl = user.profilePictureUrl,
+                                username = user.username,
+                                isSelected = selectedUserId == user.id,
+                                isAnyUserSelected = selectedUserId != null,
+
+                                onSelectUser = { id ->
+                                    selectedUserId = id
+
+                                    // Only fetch if it's a new user that we haven't fetched for yet
+                                    if (id != null && id != lastFetchedUserId) {
+                                        fetchSentRecommendations(id)
+                                        lastFetchedUserId = id
+                                    }
+                                }
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        modifier = Modifier
+                            .weight(1f, false)
+                            .heightIn(max = 400.dp)
+                            .padding(horizontal = 16.dp),
+                        visible = sentRecommendations.isNotEmpty() && isAnyUserSelected,
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.recommendation_sent),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                items(sentRecommendations) { recommendation ->
+                                    RecommendationCard(
+                                        profilePictureUrl = recommendation.user.profilePictureUrl,
+                                        username = recommendation.user.username,
+                                        timestamp = recommendation.timestamp,
+                                        message = recommendation.message,
+                                        onClickUser = { onClickUser(recommendation.user.id) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    SendMessageTextField(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        placeholder = stringResource(Res.string.recommendation_textfield_placeholder),
+                        value = message,
+                        onValueChange = { message = it },
+                        isSendVisible = isAnyUserSelected,
+                        isSending = resultState == DetailResultState.Loading,
+                        onSend = {
+                            selectedUserId?.let {
+                                onSendRecommendation(it, message.text)
+                            }
+                        },
+                    )
+                }
+
+                DetailResultState.Error -> {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        text = stringResource(Res.string.recommendation_friends_empty),
+                        text = stringResource(Res.string.recommendation_friends_error),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    return@Column
                 }
-
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                ) {
-                    items(friends) { user ->
-                        FriendRecommendSelectorIcon(
-                            userId = user.id,
-                            profilePictureUrl = user.profilePictureUrl,
-                            username = user.username,
-                            isSelected = selectedUserId == user.id,
-                            isAnyUserSelected = isAnyUserSelected,
-                            onSelectUser = { id ->
-                                selectedUserId = id
-
-                                id?.let {
-                                    fetchSentRecommendations(it)
-                                }
-                            }
-                        )
-                    }
-                }
-
-                AnimatedVisibility(
-                    modifier = Modifier
-                        .weight(1f, false)
-                        .heightIn(max = 200.dp)
-                        .padding(horizontal = 16.dp),
-                    visible = sentRecommendations.isNotEmpty() && isAnyUserSelected,
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.recommendation_sent),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            items(sentRecommendations) { recommendation ->
-                                RecommendationCard(
-                                    profilePictureUrl = recommendation.user.profilePictureUrl,
-                                    username = recommendation.user.username,
-                                    timestamp = recommendation.timestamp,
-                                    message = recommendation.message,
-                                    onClickUser = { onClickUser(recommendation.user.id) },
-                                )
-                            }
-                        }
-                    }
-                }
-
-                SendMessageTextField(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    placeholder = stringResource(Res.string.recommendation_textfield_placeholder),
-                    value = message,
-                    onValueChange = { message = it },
-                    isSendVisible = isAnyUserSelected,
-                    isSending = resultState == DetailResultState.Loading,
-                    onSend = {
-                        selectedUserId?.let {
-                            onSendRecommendation(it, message.text)
-                        }
-                    },
-                )
-            }
-
-            DetailResultState.Error -> {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    text = stringResource(Res.string.recommendation_friends_error),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -180,23 +206,15 @@ fun FriendRecommendSelectorIcon(
 ) {
     val shouldDim = isAnyUserSelected && !isSelected
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier.size(64.dp),
-        ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.size(64.dp)) {
             PersonImage(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .graphicsLayer { alpha = if (shouldDim) 0.5f else 1f },
                 profilePictureUrl = profilePictureUrl,
                 onClick = {
-                    if (isSelected) {
-                        onSelectUser(null)
-                    } else {
-                        onSelectUser(userId)
-                    }
+                    onSelectUser(if (isSelected) null else userId)
                 }
             )
 
@@ -230,3 +248,4 @@ fun FriendRecommendSelectorIcon(
         )
     }
 }
+

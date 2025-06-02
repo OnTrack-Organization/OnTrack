@@ -129,7 +129,7 @@
     <string name="friends_activity_empty">No friend's activity yet</string>
     <string name="add_to_catalog_button">Add to Catalog</string>
 
-    <string name="recommendation_title">Send Recommendation</string>
+    <string name="recommendation_title">Recommendation</string>
     <string name="recommendation_textfield_placeholder">Send a message…</string>
     <string name="recommendation_sent">Sent Recommendations</string>
     <string name="recommendation_friends_empty">No friends to recommend to</string>

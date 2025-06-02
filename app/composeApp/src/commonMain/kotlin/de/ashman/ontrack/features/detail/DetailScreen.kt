@@ -100,7 +100,6 @@ fun DetailScreen(
 
         viewModel.observeTrackingAndReview(mediaNav.id, mediaNav.type)
 
-        viewModel.fetchFriends()
         viewModel.fetchFriendsActivity(mediaNav.type, mediaNav.id)
     }
 
@@ -246,6 +245,7 @@ fun DetailScreen(
                             resultState = detailUiState.resultState,
                             friends = detailUiState.friends,
                             sentRecommendations = detailUiState.sentRecommendations,
+                            fetchFriends = viewModel::fetchFriends,
                             fetchSentRecommendations = { userId ->
                                 viewModel.fetchSentRecommendations(mediaNav.type, mediaNav.id, userId)
                             },
