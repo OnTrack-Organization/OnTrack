@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.notification_load_error
 import ontrack.composeapp.generated.resources.notification_mark_all_as_read_error
 import ontrack.composeapp.generated.resources.notification_mark_all_as_read_success
 
@@ -50,8 +49,12 @@ class NotificationViewModel(
             },
             onFailure = {
                 Logger.e(it) { "Error loading notifications: ${it.message}" }
-                commonUiManager.showSnackbar(Res.string.notification_load_error)
-                _uiState.update { it.copy(resultState = NotificationResultState.Error) }
+                _uiState.update {
+                    it.copy(
+                        resultState = NotificationResultState.Error,
+                        hasUnreadNotifications = false,
+                    )
+                }
             }
         )
     }

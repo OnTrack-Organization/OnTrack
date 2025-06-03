@@ -4,15 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import de.ashman.ontrack.domain.share.Post
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.share.PostService
 import de.ashman.ontrack.network.services.share.dto.CreateCommentDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.post_add_comment_error
+import ontrack.composeapp.generated.resources.post_remove_comment_error
+import ontrack.composeapp.generated.resources.post_toggle_like_error
 
 class PostViewModel(
-    private val postService: PostService
+    private val postService: PostService,
+    private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PostUiState())
@@ -35,8 +41,6 @@ class PostViewModel(
             if (!_uiState.value.canLoadMore) return@launch
             _uiState.update { it.copy(loadingMore = true) }
         }
-
-        //delay(3000)
 
         postService.getPosts(postsPage, pageSize).fold(
             onSuccess = { posts ->
@@ -134,6 +138,7 @@ class PostViewModel(
                 Logger.d { "Toggled like, updated post: $updatedPost" }
             },
             onFailure = {
+                commonUiManager.showSnackbar(Res.string.post_toggle_like_error)
                 Logger.e { "Failed to toggle like: ${it.message}" }
             }
         )
@@ -149,6 +154,7 @@ class PostViewModel(
                 Logger.d { "Added comment, updated post: $updatedPost" }
             },
             onFailure = {
+                commonUiManager.showSnackbar(Res.string.post_add_comment_error)
                 Logger.e { "Failed to add comment: ${it.message}" }
             }
         )
@@ -163,6 +169,7 @@ class PostViewModel(
                 Logger.d { "Removed comment, updated post: $updatedPost" }
             },
             onFailure = {
+                commonUiManager.showSnackbar(Res.string.post_remove_comment_error)
                 Logger.e { "Failed to remove comment: ${it.message}" }
             }
         )

@@ -27,11 +27,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +49,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.share.Post
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
@@ -74,16 +77,26 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PostDetailScreen(
     viewModel: PostViewModel,
+    commonUiManager: CommonUiManager,
     postId: String,
     onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
     onBack: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val postUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
+
     val localFocusManager = LocalFocusManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(postId) {
         viewModel.fetchPost(postId)
+    }
+
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+            snackbarHostState.showSnackbar(message)
+        }
     }
 
     Scaffold(
@@ -97,8 +110,9 @@ fun PostDetailScreen(
                 onClickAction = { /*TODO*/ }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
-        uiState.selectedPost?.let {
+        postUiState.selectedPost?.let {
             PostDetailContent(
                 modifier = Modifier
                     .fillMaxSize()

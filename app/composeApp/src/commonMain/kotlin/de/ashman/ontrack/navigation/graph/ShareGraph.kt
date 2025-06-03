@@ -41,6 +41,7 @@ fun NavGraphBuilder.shareGraph(
 
         PostDetailScreen(
             viewModel = postViewModel,
+            commonUiManager = commonUiManager,
             postId = postDetail.postId,
             onClickUser = { userId -> navController.navigateToShelf(userId) },
             onClickMedia = { navController.navigate(Route.Detail(it)) },

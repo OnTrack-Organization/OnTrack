@@ -129,7 +129,7 @@ val appModule = module {
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
-    viewModelDefinition { PostViewModel(get()) }
+    viewModelDefinition { PostViewModel(get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { NotificationViewModel(get(), get()) }
 

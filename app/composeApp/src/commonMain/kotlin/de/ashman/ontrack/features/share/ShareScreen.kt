@@ -87,7 +87,7 @@ fun ShareScreen(
         //modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(
-                modifier = Modifier.padding(bottom = 600.dp),
+                modifier = Modifier.padding(bottom = 700.dp),
                 hostState = snackbarHostState
             )
         },
