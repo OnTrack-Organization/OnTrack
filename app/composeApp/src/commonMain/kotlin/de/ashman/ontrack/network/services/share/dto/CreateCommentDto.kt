@@ -4,6 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateCommentDto(
-    val mentionedUsers: List<String>,
     val message: String
 )
