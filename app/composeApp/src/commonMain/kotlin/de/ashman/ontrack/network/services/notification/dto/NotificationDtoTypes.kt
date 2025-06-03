@@ -1,6 +1,6 @@
 package de.ashman.ontrack.network.services.notification.dto
 
-import de.ashman.ontrack.network.services.signin.dto.UserDto
+import de.ashman.ontrack.network.services.account.dto.UserDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -12,19 +12,17 @@ import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.repository.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/user")
 class UserController(
     private val userService: UserService,
     private val friendService: FriendService,
     private val friendRequestService: FriendRequestService,
     private val trackingService: TrackingService,
 ) {
-    @GetMapping("user/search")
+    @GetMapping("/search")
     fun search(
         @RequestParam username: String,
         @AuthenticationPrincipal identity: Identity
@@ -51,7 +49,7 @@ class UserController(
         return ResponseEntity.ok(searchResult)
     }
 
-    @GetMapping("user/{id}")
+    @GetMapping("/{id}")
     fun getProfile(
         @PathVariable id: String,
         @AuthenticationPrincipal identity: Identity

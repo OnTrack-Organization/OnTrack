@@ -204,10 +204,11 @@
     <string name="settings_name_hint">Name</string>
     <string name="settings_email_hint">E-Mail</string>
     <string name="settings_logout">Logout</string>
-    <string name="settings_remove">Remove account</string>
+    <string name="settings_remove_account">Remove account</string>
 
     <string name="settings_remove_confirm_title">Remove account?</string>
     <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
+    <string name="settings_remove_account_error">Failed to remove account</string>
 
     <string name="settings_username_taken">Username is already taken</string>
     <string name="settings_username_empty">Username cannot be empty</string>

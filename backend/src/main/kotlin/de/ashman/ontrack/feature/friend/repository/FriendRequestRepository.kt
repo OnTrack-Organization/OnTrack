@@ -18,4 +18,6 @@ interface FriendRequestRepository : JpaRepository<FriendRequest, UUID> {
 
     @Query("SELECT fr.receiver FROM FriendRequest fr WHERE fr.sender = :sender AND fr.status = 'PENDING'")
     fun findReceiversOfPendingRequests(sender: User): List<User>
+
+    fun deleteAllBySenderIdOrReceiverId(senderId: String, receiverId: String)
 }

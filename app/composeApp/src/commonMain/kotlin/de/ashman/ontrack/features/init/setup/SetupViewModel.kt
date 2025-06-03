@@ -63,6 +63,8 @@ class SetupViewModel(
                             it.copy(usernameError = result.error)
                         }
                     }
+
+                    else -> {}
                 }
             },
             onFailure = {

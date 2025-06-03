@@ -9,4 +9,5 @@ import java.util.*
 interface ReviewRepository : JpaRepository<Review, UUID> {
     fun getReviewsByUserId(userId: String): List<Review>
     fun getByTrackingId(trackingId: UUID): Review?
+    fun deleteAllByUserId(userId: String)
 }

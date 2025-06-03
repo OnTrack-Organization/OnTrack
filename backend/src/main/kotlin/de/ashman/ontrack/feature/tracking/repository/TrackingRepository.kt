@@ -15,4 +15,6 @@ interface TrackingRepository : JpaRepository<Tracking, UUID> {
         mediaId: String,
         mediaType: MediaType
     ): List<Tracking>
+
+    fun deleteAllByUserId(userId: String)
 }
