@@ -16,7 +16,7 @@ abstract class Notification(
     @ManyToOne(fetch = FetchType.LAZY)
     val receiver: User,
 
-    val read: Boolean = false,
+    var read: Boolean = false,
 
     @Column(name = "created_at")
     val createdAt: Instant = Instant.now(),

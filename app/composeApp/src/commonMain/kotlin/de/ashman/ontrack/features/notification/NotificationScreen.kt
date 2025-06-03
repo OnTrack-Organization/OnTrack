@@ -1,6 +1,7 @@
 package de.ashman.ontrack.features.notification
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.WifiOff
@@ -27,6 +29,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -34,12 +38,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaData
 import de.ashman.ontrack.domain.notification.FriendRequestAccepted
 import de.ashman.ontrack.domain.notification.FriendRequestReceived
@@ -49,6 +55,7 @@ import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
 import de.ashman.ontrack.domain.notification.RecommendationReceived
 import de.ashman.ontrack.domain.user.User
+import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.MINI_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
@@ -64,15 +71,21 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun NotificationScreen(
     viewModel: NotificationViewModel,
+    commonUiManager: CommonUiManager,
     onBack: () -> Unit,
     onClickPost: (String) -> Unit,
     onClickUser: (String) -> Unit,
     onClickMedia: (MediaNavigationParam) -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
+    val notificationUiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadNotifications()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(commonUiState.snackbarMessage) {
+        commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
+            snackbarHostState.showSnackbar(message)
+        }
     }
 
     Scaffold(
@@ -81,23 +94,27 @@ fun NotificationScreen(
                 title = stringResource(Res.string.notifications_title),
                 titleIcon = Icons.Default.Notifications,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
+                actionIcon = Icons.Default.Drafts,
+                onClickAction = viewModel::markAllAsRead,
                 onClickNavigation = onBack,
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize().padding(contentPadding),
-            isRefreshing = uiState.resultState == NotificationResultState.Loading,
+            isRefreshing = notificationUiState.resultState == NotificationResultState.Loading,
             onRefresh = { viewModel.loadNotifications() },
         ) {
             AnimatedContent(
-                targetState = uiState.resultState,
+                targetState = notificationUiState.resultState,
                 label = "ResultStateAnimation"
             ) { state ->
                 when (state) {
                     NotificationResultState.Success -> {
-                        NotificationsSuccess(
-                            notifications = uiState.notifications,
+                        NotificationSuccess(
+                            notifications = notificationUiState.notifications,
+                            onMarkAsRead = viewModel::markAsRead,
                             onClickPost = onClickPost,
                             onClickUser = onClickUser,
                             onClickMedia = onClickMedia,
@@ -105,8 +122,8 @@ fun NotificationScreen(
                     }
 
                     NotificationResultState.Loading -> Unit
-                    NotificationResultState.Error -> NotificationsError()
-                    NotificationResultState.Empty -> NotificationsEmpty()
+                    NotificationResultState.Error -> NotificationError()
+                    NotificationResultState.Empty -> NotificationEmpty()
                 }
             }
         }
@@ -114,8 +131,9 @@ fun NotificationScreen(
 }
 
 @Composable
-fun NotificationsSuccess(
+fun NotificationSuccess(
     notifications: List<Notification>,
+    onMarkAsRead: (String) -> Unit,
     onClickPost: (String) -> Unit,
     onClickUser: (String) -> Unit,
     onClickMedia: (MediaNavigationParam) -> Unit,
@@ -126,6 +144,7 @@ fun NotificationsSuccess(
         items(notifications) {
             NotificationCard(
                 notification = it,
+                onMarkAsRead = onMarkAsRead,
                 onClickUser = onClickUser,
                 onClickPost = onClickPost,
                 // TODO
@@ -149,6 +168,7 @@ fun NotificationsSuccess(
 @Composable
 fun NotificationCard(
     notification: Notification,
+    onMarkAsRead: (String) -> Unit,
     onClickPost: (String) -> Unit,
     onClickUser: (String) -> Unit,
     onClickMedia: (MediaData) -> Unit,
@@ -160,6 +180,8 @@ fun NotificationCard(
     Box(
         modifier = Modifier
             .clickable {
+                onMarkAsRead(notification.id)
+
                 when (notification) {
                     // TODO maybe open friendssheet instead
                     is FriendRequestReceived, is FriendRequestAccepted -> onClickUser(notification.sender.id)
@@ -168,7 +190,8 @@ fun NotificationCard(
                     is Mentioned -> onClickPost(notification.post.id)
                     is RecommendationReceived -> onClickMedia(notification.recommendation.media)
                 }
-            },
+            }
+            .background(if (notification.read) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -236,7 +259,7 @@ fun NotificationCard(
 }
 
 @Composable
-fun NotificationsEmpty(
+fun NotificationEmpty(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -266,7 +289,7 @@ fun NotificationsEmpty(
 }
 
 @Composable
-fun NotificationsError(
+fun NotificationError(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(

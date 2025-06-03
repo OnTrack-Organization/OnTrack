@@ -131,7 +131,7 @@ val appModule = module {
 
     viewModelDefinition { PostViewModel(get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
-    viewModelDefinition { NotificationViewModel(get()) }
+    viewModelDefinition { NotificationViewModel(get(), get()) }
 
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }

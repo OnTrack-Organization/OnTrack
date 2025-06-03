@@ -8,6 +8,7 @@ import de.ashman.ontrack.feature.share.domain.Comment
 import de.ashman.ontrack.feature.share.domain.Post
 import de.ashman.ontrack.feature.user.domain.User
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -19,8 +20,21 @@ class NotificationService(
         return notificationRepository.findTop50ByReceiverIdOrderByCreatedAtDesc(userId)
     }
 
-    fun markNotificationAsRead(userId: String, notificationId: UUID) {
-        notificationRepository.markAsRead(receiverId = userId, id = notificationId)
+    @Transactional
+    fun markAsRead(id: UUID, receiverId: String): Notification {
+        val notification = notificationRepository.findByIdAndReceiverId(id, receiverId)
+
+        if (!notification.read) {
+            notification.read = true
+            return notificationRepository.save(notification)
+        }
+
+        return notification
+    }
+
+    fun markAllAsRead(receiverId: String): List<Notification> {
+        notificationRepository.markAllAsReadByReceiverId(receiverId)
+        return notificationRepository.findTop50ByReceiverIdOrderByCreatedAtDesc(receiverId)
     }
 
     fun createFriendRequestReceived(sender: User, receiver: User) {

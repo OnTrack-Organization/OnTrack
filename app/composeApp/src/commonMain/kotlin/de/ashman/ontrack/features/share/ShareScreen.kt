@@ -47,6 +47,7 @@ import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.friend.FriendsSheet
 import de.ashman.ontrack.features.friend.FriendsViewModel
+import de.ashman.ontrack.features.notification.NotificationViewModel
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
@@ -60,6 +61,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ShareScreen(
     postViewModel: PostViewModel,
     friendsViewModel: FriendsViewModel,
+    notificationViewModel: NotificationViewModel,
     commonUiManager: CommonUiManager,
     onClickPost: (String) -> Unit,
     onClickCover: (MediaNavigationParam) -> Unit,
@@ -69,6 +71,7 @@ fun ShareScreen(
     val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
     val postUiState by postViewModel.uiState.collectAsStateWithLifecycle()
     val friendsUiState by friendsViewModel.uiState.collectAsStateWithLifecycle()
+    val notificationUiState by notificationViewModel.uiState.collectAsStateWithLifecycle()
 
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -93,13 +96,9 @@ fun ShareScreen(
                 title = stringResource(Res.string.share_nav_title),
                 navigationIcon = Icons.Default.Group,
                 actionIcon = Icons.Default.Notifications,
-                // TODO add later
-                showActionBadge = false,
+                showActionBadge = notificationUiState.hasUnreadNotifications,
                 onClickNavigation = { commonUiManager.showSheet(CurrentSheet.FRIENDS) },
-                onClickAction = {
-                    //shareViewModel.updateHasNewNotifications(false)
-                    onClickNotifications()
-                },
+                onClickAction = onClickNotifications,
                 scrollBehavior = appBarScrollBehavior,
             )
         },

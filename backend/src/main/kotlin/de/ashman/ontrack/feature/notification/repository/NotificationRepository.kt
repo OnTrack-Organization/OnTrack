@@ -13,8 +13,10 @@ interface NotificationRepository : JpaRepository<Notification, String> {
 
     fun findTop50ByReceiverIdOrderByCreatedAtDesc(receiverId: String): List<Notification>
 
+    fun findByIdAndReceiverId(id: UUID, receiverId: String): Notification
+
     @Modifying
     @Transactional
-    @Query("update Notification n set n.read = true where n.id = :id and n.receiver.id = :receiverId")
-    fun markAsRead(receiverId: String, id: UUID)
+    @Query("update Notification n set n.read = true where n.receiver.id = :receiverId and n.read = false")
+    fun markAllAsReadByReceiverId(receiverId: String): Int
 }
