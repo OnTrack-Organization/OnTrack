@@ -7,8 +7,8 @@ import de.ashman.ontrack.domain.notification.Notification
 import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
 import de.ashman.ontrack.domain.notification.RecommendationReceived
-import de.ashman.ontrack.network.services.signin.dto.UserDto
-import de.ashman.ontrack.network.services.signin.dto.toDomain
+import de.ashman.ontrack.network.services.account.dto.UserDto
+import de.ashman.ontrack.network.services.account.dto.toDomain
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator

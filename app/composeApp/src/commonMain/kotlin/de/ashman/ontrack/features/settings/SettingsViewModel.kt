@@ -10,7 +10,6 @@ import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.account.AccountResult
 import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.UsernameError
-import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,13 +20,13 @@ import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.logout_offline_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
+import ontrack.composeapp.generated.resources.settings_remove_account_error
 import ontrack.composeapp.generated.resources.unknown_error
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
     private val storageRepository: StorageRepository,
     private val commonUiManager: CommonUiManager,
-    private val signInService: SignInService,
     private val accountService: AccountService,
     private val userDataStore: UserDataStore,
     private val trackingRepository: TrackingRepository,
@@ -79,6 +78,8 @@ class SettingsViewModel(
                             it.copy(usernameError = result.error)
                         }
                     }
+
+                    else -> {}
                 }
             },
             onFailure = {
@@ -90,8 +91,9 @@ class SettingsViewModel(
     }
 
     fun signOut(clearAndNavigateToStart: () -> Unit) = viewModelScope.launch {
-        signInService.signOut().fold(
+        accountService.signOut().fold(
             onSuccess = {
+                commonUiManager.resetUiState()
                 userDataStore.clearUser()
                 trackingRepository.deleteAllTrackings()
                 reviewRepository.deleteAllReviews()
@@ -104,9 +106,20 @@ class SettingsViewModel(
         )
     }
 
-    // TODO add later again
-    fun removeUser() = viewModelScope.launch {
-        commonUiManager.hideSheet()
+    fun deleteAccount(clearAndNavigateToStart: () -> Unit) = viewModelScope.launch {
+        accountService.deleteAccount().fold(
+            onSuccess = {
+                commonUiManager.resetUiState()
+                userDataStore.clearUser()
+                trackingRepository.deleteAllTrackings()
+                reviewRepository.deleteAllReviews()
+
+                clearAndNavigateToStart()
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.settings_remove_account_error)
+            }
+        )
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {

@@ -2,8 +2,8 @@ package de.ashman.ontrack.network.services.friend.dto
 
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.OtherUser
-import de.ashman.ontrack.network.services.signin.dto.UserDto
-import de.ashman.ontrack.network.services.signin.dto.toDomain
+import de.ashman.ontrack.network.services.account.dto.UserDto
+import de.ashman.ontrack.network.services.account.dto.toDomain
 import kotlinx.serialization.Serializable
 
 @Serializable

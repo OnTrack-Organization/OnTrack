@@ -23,6 +23,8 @@ interface FriendRepository : JpaRepository<Friendship, UUID> {
     fun deleteByUser1IdAndUser2Id(userId1: String, userId2: String)
 
     fun existsByUser1IdAndUser2Id(userId1: String, userId2: String): Boolean
+
+    fun deleteAllByUser1IdOrUser2Id(userId1: String, userId2: String)
 }
 
 

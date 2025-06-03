@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface RecommendationRepository: JpaRepository<Recommendation, UUID> {
+interface RecommendationRepository : JpaRepository<Recommendation, UUID> {
     fun findByReceiverIdAndMediaIdAndMediaType(
         receiverId: String,
         mediaId: String,
@@ -20,4 +20,6 @@ interface RecommendationRepository: JpaRepository<Recommendation, UUID> {
         mediaId: String,
         mediaType: MediaType
     ): List<Recommendation>
+
+    fun deleteAllBySenderIdOrReceiverId(senderId: String, receiverId: String)
 }

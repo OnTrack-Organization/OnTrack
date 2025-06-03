@@ -51,8 +51,6 @@ import de.ashman.ontrack.network.services.review.ReviewService
 import de.ashman.ontrack.network.services.review.ReviewServiceImpl
 import de.ashman.ontrack.network.services.share.PostService
 import de.ashman.ontrack.network.services.share.PostServiceImpl
-import de.ashman.ontrack.network.services.signin.SignInService
-import de.ashman.ontrack.network.services.signin.SignInServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.TrackingServiceImpl
 import de.ashman.ontrack.repository.SelectedMediaRepository
@@ -89,8 +87,7 @@ val appModule = module {
     single { AlbumRepository(get(named(SPOTIFY_CLIENT_NAME)), get(named(SPOTIFY_TOKEN_CLIENT_NAME))) }
 
     // SERVICES
-    single<SignInService> { SignInServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
-    single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<AccountService> { AccountServiceImpl(get(named(BACKEND_CLIENT_NAME)), get()) }
     single<TrackingService> { TrackingServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<FriendService> { FriendServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<RecommendationService> { RecommendationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
@@ -139,7 +136,7 @@ val appModule = module {
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
     viewModelDefinition { ShelfListViewModel(get()) }
 
-    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

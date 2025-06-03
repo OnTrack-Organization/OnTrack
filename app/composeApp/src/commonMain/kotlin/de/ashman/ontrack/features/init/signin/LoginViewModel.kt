@@ -9,9 +9,9 @@ import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.services.account.AccountResult
+import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.review.ReviewService
-import de.ashman.ontrack.network.services.signin.SignInResult
-import de.ashman.ontrack.network.services.signin.SignInService
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,7 @@ class LoginViewModel(
     private val reviewRepository: ReviewRepository,
     private val trackingService: TrackingService,
     private val reviewService: ReviewService,
-    private val signInService: SignInService,
+    private val accountService: AccountService,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -49,10 +49,10 @@ class LoginViewModel(
             onSuccess = { user ->
                 val fcmToken = NotifierManager.getPushNotifier().getToken().orEmpty()
 
-                signInService.signIn(fcmToken).fold(
+                accountService.signIn(fcmToken).fold(
                     onSuccess = { signInResult ->
                         when (signInResult) {
-                            is SignInResult.ExistingUser -> {
+                            is AccountResult.ExistingUser -> {
                                 if (signInResult.user.username.isBlank()) {
                                     onNavigateToSetup(signInResult.user)
                                 } else {
@@ -70,7 +70,9 @@ class LoginViewModel(
                                 }
                             }
 
-                            is SignInResult.NewUserCreated -> onNavigateToSetup(signInResult.user)
+                            is AccountResult.NewUserCreated -> onNavigateToSetup(signInResult.user)
+
+                            else -> {}
                         }
                     },
                     onFailure = { error ->

@@ -1,4 +1,4 @@
-package de.ashman.ontrack.network.services.signin.dto
+package de.ashman.ontrack.network.services.account.dto
 
 import kotlinx.serialization.Serializable
 

@@ -8,8 +8,8 @@ import de.ashman.ontrack.domain.user.UserProfile
 import de.ashman.ontrack.network.services.friend.dto.OtherUserDto
 import de.ashman.ontrack.network.services.friend.dto.UserProfileDto
 import de.ashman.ontrack.network.services.friend.dto.toDomain
-import de.ashman.ontrack.network.services.signin.dto.UserDto
-import de.ashman.ontrack.network.services.signin.dto.toDomain
+import de.ashman.ontrack.network.services.account.dto.UserDto
+import de.ashman.ontrack.network.services.account.dto.toDomain
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete

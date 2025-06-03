@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,11 +44,11 @@ import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.app_version
-import ontrack.composeapp.generated.resources.remove_button
 import ontrack.composeapp.generated.resources.save_button
 import ontrack.composeapp.generated.resources.settings_email_hint
 import ontrack.composeapp.generated.resources.settings_logout
 import ontrack.composeapp.generated.resources.settings_name_hint
+import ontrack.composeapp.generated.resources.settings_remove_account
 import ontrack.composeapp.generated.resources.settings_remove_confirm_text
 import ontrack.composeapp.generated.resources.settings_remove_confirm_title
 import ontrack.composeapp.generated.resources.settings_title
@@ -153,24 +152,21 @@ fun SettingsScreen(
                         enabled = true
                     )
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OnTrackOutlinedButton(
-                            modifier = Modifier.weight(1f),
-                            text = Res.string.settings_logout,
-                            icon = Icons.AutoMirrored.Default.Logout,
-                            onClick = {
-                                viewModel.signOut(clearAndNavigateToStart = clearAndNavigateToStart)
-                            },
-                        )
-                        OnTrackOutlinedButton(
-                            modifier = Modifier.weight(1f),
-                            text = Res.string.remove_button,
-                            icon = Icons.Default.Delete,
-                            onClick = { commonUiManager.showSheet() },
-                        )
-                    }
+                    OnTrackOutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = Res.string.settings_logout,
+                        icon = Icons.AutoMirrored.Default.Logout,
+                        onClick = {
+                            viewModel.signOut(clearAndNavigateToStart = clearAndNavigateToStart)
+                        },
+                    )
+                    OnTrackOutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = Res.string.settings_remove_account,
+                        icon = Icons.Default.Delete,
+                        onClick = { commonUiManager.showSheet() },
+                    )
+
                     ApiContributions()
                     AppVersion()
                 }
@@ -193,8 +189,7 @@ fun SettingsScreen(
                         text = Res.string.settings_remove_confirm_text,
                         isDeleting = uiState.isLoading,
                         onConfirm = {
-                            viewModel.removeUser()
-                            clearAndNavigateToStart()
+                            viewModel.deleteAccount(clearAndNavigateToStart = clearAndNavigateToStart)
                         },
                         onCancel = { commonUiManager.hideSheet() },
                     )

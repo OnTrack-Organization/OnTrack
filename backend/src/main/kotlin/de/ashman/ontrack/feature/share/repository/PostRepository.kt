@@ -11,4 +11,5 @@ interface PostRepository : JpaRepository<Post, UUID> {
     @Query("SELECT post FROM Post post WHERE post.user.id IN :userIds ORDER BY post.updatedAt DESC")
     fun findByUserIds(userIds: List<String>, pageable: Pageable): Page<Post>
     fun findByTrackingId(trackingId: UUID): Post?
+    fun deleteAllByUserId(userId: String)
 }
