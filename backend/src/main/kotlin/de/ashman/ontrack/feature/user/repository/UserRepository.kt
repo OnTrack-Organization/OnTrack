@@ -13,4 +13,6 @@ interface UserRepository : JpaRepository<User, String> {
         username: String,
         excludedId: String
     ): List<User>
+
+    fun findByUsernameIn(usernames: Set<String>): Set<User>
 }

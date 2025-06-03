@@ -25,7 +25,7 @@ class FriendRequestAccepted(
 ) : Notification(sender = sender, receiver = receiver)
 
 @Entity
-@DiscriminatorValue("RECOMMENDATION")
+@DiscriminatorValue("RECOMMENDATION_RECEIVED")
 class RecommendationReceived(
     sender: User,
     receiver: User,
@@ -59,7 +59,7 @@ class PostCommented(
 
 @Entity
 @DiscriminatorValue("POST_MENTIONED")
-class Mentioned(
+class PostMentioned(
     sender: User,
     receiver: User,
 

@@ -20,32 +20,32 @@ class PushNotificationService {
 
             is FriendRequestAccepted -> PushNotificationData(
                 fcmToken = fcmToken,
-                title = "Friend Request Accepted",
+                title = "New Friend",
                 body = "${notification.sender.name} accepted your friend request"
             )
 
             is RecommendationReceived -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Recommendation",
-                body = "${notification.sender.name} recommended something for you"
+                body = "${notification.sender.name} recommended you ${notification.recommendation.media.title}"
             )
 
             is PostLiked -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Like",
-                body = "${notification.sender.name} liked your post"
+                body = "${notification.sender.name} liked your post of ${notification.post.tracking.media.title}"
             )
 
             is PostCommented -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Comment",
-                body = "${notification.sender.name} commented on your post"
+                body = "${notification.sender.name} commented on your post of ${notification.post.tracking.media.title}"
             )
 
-            is Mentioned -> PushNotificationData(
+            is PostMentioned -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Mention",
-                body = "${notification.sender.name} mentioned you in a comment"
+                body = "${notification.sender.name} mentioned you in a comment of ${notification.post.tracking.media.title}"
             )
 
             else -> return

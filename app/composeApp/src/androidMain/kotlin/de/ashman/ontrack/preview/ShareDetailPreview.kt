@@ -1,14 +1,14 @@
 package de.ashman.ontrack.preview
 
 import androidx.compose.runtime.Composable
-import de.ashman.ontrack.features.share.ShareDetailContent
+import de.ashman.ontrack.features.share.PostDetailContent
 import de.ashman.ontrack.theme.OnTrackTheme
 
 @OnTrackPreview
 @Composable
 fun ShareDetailContentSingleInteractionPreview() {
     OnTrackTheme {
-        ShareDetailContent(
+        PostDetailContent(
             post = previewPost,
         )
     }
@@ -18,7 +18,7 @@ fun ShareDetailContentSingleInteractionPreview() {
 @Composable
 fun ShareDetailContentMultipleInteractionsPreview() {
     OnTrackTheme {
-        ShareDetailContent(
+        PostDetailContent(
             post = previewPost,
         )
     }
@@ -28,7 +28,7 @@ fun ShareDetailContentMultipleInteractionsPreview() {
 @Composable
 fun ShareDetailContentEmptyPreview() {
     OnTrackTheme {
-        ShareDetailContent(
+        PostDetailContent(
             post = previewPost,
         )
     }

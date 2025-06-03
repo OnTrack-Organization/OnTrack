@@ -2,7 +2,7 @@ package de.ashman.ontrack.network.services.notification.dto
 
 import de.ashman.ontrack.domain.notification.FriendRequestAccepted
 import de.ashman.ontrack.domain.notification.FriendRequestReceived
-import de.ashman.ontrack.domain.notification.Mentioned
+import de.ashman.ontrack.domain.notification.PostMentioned
 import de.ashman.ontrack.domain.notification.Notification
 import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
@@ -63,7 +63,7 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         comment = comment.toDomain()
     )
 
-    is MentionedDto -> Mentioned(
+    is MentionedDto -> PostMentioned(
         id = id,
         sender = sender.toDomain(),
         read = read,

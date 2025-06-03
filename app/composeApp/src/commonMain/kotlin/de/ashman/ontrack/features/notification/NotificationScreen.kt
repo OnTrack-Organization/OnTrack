@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaData
 import de.ashman.ontrack.domain.notification.FriendRequestAccepted
 import de.ashman.ontrack.domain.notification.FriendRequestReceived
-import de.ashman.ontrack.domain.notification.Mentioned
+import de.ashman.ontrack.domain.notification.PostMentioned
 import de.ashman.ontrack.domain.notification.Notification
 import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
@@ -144,9 +144,6 @@ fun NotificationSuccess(
                 onMarkAsRead = onMarkAsRead,
                 onClickUser = onClickUser,
                 onClickPost = onClickPost,
-                // TODO
-                onAcceptRequest = {},
-                onDeclineRequest = {},
                 onClickMedia = {
                     onClickMedia(
                         MediaNavigationParam(
@@ -169,8 +166,6 @@ fun NotificationCard(
     onClickPost: (String) -> Unit,
     onClickUser: (String) -> Unit,
     onClickMedia: (MediaData) -> Unit,
-    onAcceptRequest: (String) -> Unit,
-    onDeclineRequest: (String) -> Unit,
 ) {
     val ui = notification.getUiType()
 
@@ -182,10 +177,10 @@ fun NotificationCard(
                 when (notification) {
                     // TODO maybe open friendssheet instead
                     is FriendRequestReceived, is FriendRequestAccepted -> onClickUser(notification.sender.id)
-                    is PostCommented -> onClickPost(notification.post.id)
-                    is PostLiked -> onClickPost(notification.post.id)
-                    is Mentioned -> onClickPost(notification.post.id)
                     is RecommendationReceived -> onClickMedia(notification.recommendation.media)
+                    is PostLiked -> onClickPost(notification.post.id)
+                    is PostCommented -> onClickPost(notification.post.id)
+                    is PostMentioned -> onClickPost(notification.post.id)
                 }
             }
             .background(if (notification.read) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
@@ -208,23 +203,6 @@ fun NotificationCard(
             )
 
             when (notification) {
-                /*is FriendRequestReceived -> {
-                    Row {
-                        IconButton(onClick = { onAcceptRequest(notification.sender.id) }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Check,
-                                contentDescription = "Accept Friend Request"
-                            )
-                        }
-                        IconButton(onClick = { onDeclineRequest(notification.sender.id) }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Close,
-                                contentDescription = "Decline Friend Request"
-                            )
-                        }
-                    }
-                }*/
-
                 is PostLiked -> {
                     MediaPoster(
                         modifier = Modifier.height(MINI_POSTER_HEIGHT),

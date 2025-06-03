@@ -1,0 +1,69 @@
+databaseChangeLog:
+- changeSet:
+    id: 1748969652632-4
+    author: Ashkan Haghighi Fashi
+    changes:
+    - dropForeignKeyConstraint:
+        baseTableName: comment_mentioned_users
+        constraintName: FKg5thxjy9oquf9nw9r19frewdg
+- changeSet:
+    id: 1748969652632-5
+    author: Ashkan Haghighi Fashi
+    changes:
+    - dropForeignKeyConstraint:
+        baseTableName: comment_mentioned_users
+        constraintName: FKiemx7nct4w8pcq1q0fsmwbdqr
+- changeSet:
+    id: 1748969652632-1
+    author: Ashkan Haghighi Fashi
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: comment_mentionsPK
+            name: comment_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: comment_mentionsPK
+            name: user_id
+            type: VARCHAR(255)
+        tableName: comment_mentions
+- changeSet:
+    id: 1748969652632-2
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: comment_id
+        baseTableName: comment_mentions
+        constraintName: FK8gk4oq6ekw42dprikm64qc2u2
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: comments
+        validate: true
+- changeSet:
+    id: 1748969652632-3
+    author: Ashkan Haghighi Fashi
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: comment_mentions
+        constraintName: FKjaxg8hubwrypwhdcla0gi0q8f
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1748969652632-6
+    author: Ashkan Haghighi Fashi
+    changes:
+    - dropTable:
+        tableName: comment_mentioned_users
+

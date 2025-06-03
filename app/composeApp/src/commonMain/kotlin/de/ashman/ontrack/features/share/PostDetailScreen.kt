@@ -99,7 +99,7 @@ fun PostDetailScreen(
         },
     ) { contentPadding ->
         uiState.selectedPost?.let {
-            ShareDetailContent(
+            PostDetailContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)
@@ -123,23 +123,21 @@ fun PostDetailScreen(
 }
 
 @Composable
-fun ShareDetailContent(
+fun PostDetailContent(
     modifier: Modifier = Modifier,
     post: Post,
     isSending: Boolean = false,
     onClickCover: (MediaNavigationParam) -> Unit = {},
     onClickUser: (String) -> Unit = {},
     onClickLike: () -> Unit = {},
-    onPostComment: (String, List<String>) -> Unit = { _, _ -> },
+    onPostComment: (String) -> Unit = {},
     onRemoveComment: (String) -> Unit = {},
 ) {
     var commentText by remember { mutableStateOf(TextFieldValue("")) }
-    var replyingTo by remember { mutableStateOf<String?>(null) }
+    var shouldScrollAfterComment by remember { mutableStateOf(false) }
 
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
-
-    var shouldScrollAfterComment by remember { mutableStateOf(false) }
 
     LaunchedEffect(post.comments.size) {
         if (shouldScrollAfterComment) {
@@ -155,7 +153,7 @@ fun ShareDetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                ShareDetailMainContent(
+                PostDetailMainContent(
                     post = post,
                     onClickCover = onClickCover,
                     onClickUser = onClickUser,
@@ -165,7 +163,7 @@ fun ShareDetailContent(
             item { HorizontalDivider() }
 
             item {
-                ShareDetailLikeContent(
+                PostDetailLikeContent(
                     isLiked = post.likedByCurrentUser,
                     likes = post.likes,
                     likeCount = post.likeCount,
@@ -177,7 +175,7 @@ fun ShareDetailContent(
             item { HorizontalDivider() }
 
             item {
-                ShareDetailCommentContent(
+                PostDetailCommentContent(
                     modifier = Modifier.weight(1f),
                     comments = post.comments,
                     commentCount = post.commentCount,
@@ -205,14 +203,7 @@ fun ShareDetailContent(
             isSendVisible = commentText.text.isNotBlank(),
             isSending = isSending,
             onSend = {
-                val mentionedUsernames = "@\\w+".toRegex()
-                    .findAll(commentText.text)
-                    .map { it.value.removePrefix("@") }
-                    .distinct()
-                    .toList()
-
-                onPostComment(commentText.text, mentionedUsernames)
-                replyingTo = null
+                onPostComment(commentText.text)
                 commentText = TextFieldValue("")
 
                 shouldScrollAfterComment = true
@@ -222,7 +213,7 @@ fun ShareDetailContent(
 }
 
 @Composable
-fun ShareDetailMainContent(
+fun PostDetailMainContent(
     post: Post,
     onClickCover: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
@@ -277,7 +268,7 @@ fun ShareDetailMainContent(
 }
 
 @Composable
-fun ShareDetailLikeContent(
+fun PostDetailLikeContent(
     isLiked: Boolean,
     likes: List<Like>,
     likeCount: Int,
@@ -335,7 +326,7 @@ fun ShareDetailLikeContent(
 }
 
 @Composable
-fun ShareDetailCommentContent(
+fun PostDetailCommentContent(
     modifier: Modifier = Modifier,
     comments: List<Comment>,
     commentCount: Int,

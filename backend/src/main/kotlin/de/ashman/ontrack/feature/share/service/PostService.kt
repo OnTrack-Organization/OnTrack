@@ -141,18 +141,39 @@ class PostService(
         val receiver = userRepository.getReferenceById(post.user.id)
         val sender = userRepository.getReferenceById(commenterUserId)
 
-        val mentionedUsers = userRepository.findAllById(dto.mentionedUsers)
+        val mentionedUsernames = parseMentionedUsernames(dto.message)
+        val mentionedUsers = userRepository.findByUsernameIn(mentionedUsernames)
 
         val comment = Comment(
             post = post,
             user = sender,
             message = dto.message,
-            mentionedUsers = mentionedUsers,
+            mentionedUsers = mentionedUsers
         )
 
         commentRepository.save(comment)
 
-        notificationService.createPostCommented(commenter = sender, postOwner = receiver, post = post, comment = comment)
+        // Mentioned users get individual notifications
+        if (mentionedUsers.isNotEmpty()) {
+            mentionedUsers.forEach { mentionedUser ->
+                notificationService.createPostMentioned(
+                    commenter = sender,
+                    postOwner = mentionedUser,
+                    post = post,
+                    comment = comment
+                )
+            }
+        }
+
+        // Post owner gets notified about a comment only if not already mentioned
+        if (receiver !in mentionedUsers) {
+            notificationService.createPostCommented(
+                commenter = sender,
+                postOwner = receiver,
+                post = post,
+                comment = comment
+            )
+        }
 
         return comment.toDto(sender.id, post.user.id)
     }
@@ -199,4 +220,11 @@ class PostService(
     }
 
     fun getPostIdByTrackingId(trackingId: UUID): UUID? = postRepository.findByTrackingId(trackingId)?.id
+
+    private fun parseMentionedUsernames(message: String): Set<String> {
+        val regex = Regex("@([A-Za-z0-9_]+)")
+        return regex.findAll(message)
+            .map { it.groupValues[1] }
+            .toSet()
+    }
 }

@@ -8,7 +8,6 @@ data class Comment(
     val user: User,
     val mentionedUsers: List<User>,
     val message: String,
-    val likeCount: Int,
     val postedByCurrentUser: Boolean,
     val deletable: Boolean,
     val timestamp: Long,

@@ -50,7 +50,6 @@ val previewComment = Comment(
     user = previewUser,
     message = "This is a comment",
     mentionedUsers = listOf(previewUser),
-    likeCount = 0,
     postedByCurrentUser = false,
     deletable = false,
     timestamp = previewTimestampNow,

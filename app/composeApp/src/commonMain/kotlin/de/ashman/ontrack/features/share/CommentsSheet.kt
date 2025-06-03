@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,18 +58,24 @@ fun CommentsSheet(
     commentCount: Int,
     postResultState: PostResultState,
     onFetchNextPage: () -> Unit,
-    onAddComment: (String, List<String>) -> Unit,
+    onPostComment: (String) -> Unit,
     onRemoveComment: (String) -> Unit,
     onClickUser: (String) -> Unit,
 ) {
     var commentText by remember { mutableStateOf(TextFieldValue("")) }
-    var mentionedUsers by remember { mutableStateOf<String?>(null) }
-
     var commentIdToRemove by remember { mutableStateOf<String?>(null) }
+    var shouldScrollAfterComment by remember { mutableStateOf(false) }
 
     val localFocusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
+
+    LaunchedEffect(comments.size) {
+        if (shouldScrollAfterComment) {
+            listState.animateScrollToItem(comments.lastIndex)
+            shouldScrollAfterComment = false
+        }
+    }
 
     /*LaunchedEffect(listState, comments.size) {
         snapshotFlow {
@@ -84,12 +91,6 @@ fun CommentsSheet(
                     onFetchNextPage()
                 }
             }
-    }*/
-
-    /*LaunchedEffect(comments.size) {
-        if (comments.isNotEmpty()) {
-            listState.animateScrollToItem(comments.lastIndex)
-        }
     }*/
 
     Column(
@@ -193,15 +194,9 @@ fun CommentsSheet(
                 // TODO
                 isSending = false,
                 onSend = {
-                    val mentionedUsernames = "@\\w+".toRegex()
-                        .findAll(commentText.text)
-                        .map { it.value.removePrefix("@") }
-                        .distinct()
-                        .toList()
-
-                    onAddComment(commentText.text, mentionedUsernames)
-                    mentionedUsers = null
+                    onPostComment(commentText.text)
                     commentText = TextFieldValue("")
+                    shouldScrollAfterComment = true
                 },
             )
         }
@@ -213,11 +208,11 @@ fun CommentsSheet(
 fun CommentCard(
     modifier: Modifier = Modifier,
     comment: Comment,
-    onShowRemoveCommentConfirmDialog: () -> Unit,
-    onReply: () -> Unit,
-    onClickUser: () -> Unit,
     byCurrentUser: Boolean,
     isDeletable: Boolean,
+    onReply: () -> Unit,
+    onClickUser: () -> Unit,
+    onShowRemoveCommentConfirmDialog: () -> Unit,
 ) {
     val annotatedString = buildAnnotatedString {
         append(comment.message)
@@ -291,6 +286,7 @@ fun CommentCard(
                 }
             }
 
+            // TODO clicking the username should open the user profile
             Text(
                 modifier = Modifier.padding(start = 56.dp),
                 text = annotatedString,

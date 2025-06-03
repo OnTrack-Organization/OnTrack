@@ -71,11 +71,10 @@ class NotificationService(
         pushNotificationService.sendPush(saved)
     }
 
-    // TODO later
-    fun createMentioned(sender: User, receiver: User, post: Post, comment: Comment) {
-        if (sender == receiver) return
+    fun createPostMentioned(commenter: User, postOwner: User, post: Post, comment: Comment) {
+        if (commenter == postOwner) return
 
-        val notification = Mentioned(sender, receiver, post, comment)
+        val notification = PostMentioned(commenter, postOwner, post, comment)
         val saved = notificationRepository.save(notification)
         pushNotificationService.sendPush(saved)
     }

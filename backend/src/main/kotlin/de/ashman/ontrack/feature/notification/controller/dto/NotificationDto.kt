@@ -68,7 +68,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         createdAt = createdAt.toEpochMilli(),
     )
 
-    is Mentioned -> MentionedDto(
+    is PostMentioned -> MentionedDto(
         id = id,
         sender = sender.toDto(),
         read = read,

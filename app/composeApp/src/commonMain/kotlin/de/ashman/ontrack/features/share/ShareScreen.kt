@@ -160,7 +160,7 @@ fun ShareScreen(
                             commentCount = postUiState.selectedPost?.commentCount ?: 0,
                             postResultState = postUiState.resultState,
                             onFetchNextPage = { postViewModel.fetchComments(postUiState.selectedPost?.id.orEmpty(), true) },
-                            onAddComment = postViewModel::addComment,
+                            onPostComment = postViewModel::addComment,
                             onRemoveComment = postViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
                         )

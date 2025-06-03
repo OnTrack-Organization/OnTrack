@@ -48,7 +48,7 @@ data class PostCommented(
     val comment: SimpleComment
 ) : Notification()
 
-data class Mentioned(
+data class PostMentioned(
     override val id: String,
     override val sender: User,
     override val read: Boolean,

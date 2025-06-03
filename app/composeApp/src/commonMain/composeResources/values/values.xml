@@ -325,7 +325,7 @@
     <string name="notifications_like">%1$s liked your post of %2$s</string>
     <string name="notifications_comment">%1$s commented on your post of %2$s</string>
     <string name="notifications_recommendation">%1$s sent you a recommendation for %2$s</string>
-    <string name="notifications_reply">%1$s replied to you on a post from %2$s of %3$s</string>
+    <string name="notifications_mention">%1$s mentioned you on a post of %2$s</string>
 
     <string name="time_just_now">Just now</string>
 

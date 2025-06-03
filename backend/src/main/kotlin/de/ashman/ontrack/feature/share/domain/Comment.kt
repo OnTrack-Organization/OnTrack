@@ -17,15 +17,15 @@ data class Comment(
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    val message: String,
+
+    @ManyToMany
     @JoinTable(
-        name = "comment_mentioned_users",
+        name = "comment_mentions",
         joinColumns = [JoinColumn(name = "comment_id")],
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
-    val mentionedUsers: List<User> = emptyList(),
-
-    val message: String,
+    val mentionedUsers: Set<User> = setOf(),
 
     @Column(name = "created_at")
     val createdAt: Instant = Instant.now()

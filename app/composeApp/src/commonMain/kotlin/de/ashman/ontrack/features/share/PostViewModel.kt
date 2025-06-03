@@ -139,9 +139,9 @@ class PostViewModel(
         )
     }
 
-    fun addComment(commentText: String, mentionedUsers: List<String>) = viewModelScope.launch {
+    fun addComment(commentText: String) = viewModelScope.launch {
         val postId = _uiState.value.selectedPost?.id ?: return@launch
-        val dto = CreateCommentDto(mentionedUsers = mentionedUsers, message = commentText)
+        val dto = CreateCommentDto(message = commentText)
 
         postService.addComment(postId, dto).fold(
             onSuccess = { updatedPost ->

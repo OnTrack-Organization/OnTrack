@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.notification
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.GroupAdd
@@ -14,10 +15,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import de.ashman.ontrack.domain.notification.FriendRequestAccepted
 import de.ashman.ontrack.domain.notification.FriendRequestReceived
-import de.ashman.ontrack.domain.notification.Mentioned
 import de.ashman.ontrack.domain.notification.Notification
 import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
+import de.ashman.ontrack.domain.notification.PostMentioned
 import de.ashman.ontrack.domain.notification.RecommendationReceived
 import kotlinx.datetime.Clock.System
 import ontrack.composeapp.generated.resources.Res
@@ -25,6 +26,7 @@ import ontrack.composeapp.generated.resources.notifications_comment
 import ontrack.composeapp.generated.resources.notifications_friend_request_accepted
 import ontrack.composeapp.generated.resources.notifications_friend_request_received
 import ontrack.composeapp.generated.resources.notifications_like
+import ontrack.composeapp.generated.resources.notifications_mention
 import ontrack.composeapp.generated.resources.notifications_recommendation
 import ontrack.composeapp.generated.resources.time_days_ago
 import ontrack.composeapp.generated.resources.time_hours_ago
@@ -114,22 +116,20 @@ sealed class NotificationUi(
         }
     )
 
-    // TODO later
-    /*data object Mention : NotificationTypeUi(
+    data object Mention : NotificationUi(
         icon = Icons.Default.AlternateEmail,
         message = { notification ->
-            val n = notification as Mentioned
+            val n = notification as PostMentioned
             buildAnnotatedString {
                 val text = stringResource(
-                    Res.string.notifications_reply,
+                    Res.string.notifications_mention,
                     n.sender.username,
-                    n.comment.mentionedUserName.orEmpty(),
                     n.post.tracking.media.title
                 )
-                formatAnnotatedString(text, n.sender.username, n.comment.mentionedUserName, n.post.tracking.media.title)
+                formatAnnotatedString(text, n.sender.username, n.post.tracking.media.title)
             }
         }
-    )*/
+    )
 }
 
 fun Notification.getUiType(): NotificationUi {
@@ -139,7 +139,7 @@ fun Notification.getUiType(): NotificationUi {
         is PostLiked -> NotificationUi.Like
         is PostCommented -> NotificationUi.Comment
         is RecommendationReceived -> NotificationUi.Recommendation
-        is Mentioned -> TODO()
+        is PostMentioned -> NotificationUi.Mention
     }
 }
 
