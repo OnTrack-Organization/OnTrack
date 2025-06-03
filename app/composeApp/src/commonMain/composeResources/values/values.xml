@@ -315,6 +315,11 @@
     <string name="notifications_empty">No notifications yet, a refresh might save you…</string>
     <string name="notifications_error">Couldn't load notifications, sorry! Try again later.</string>
 
+    <string name="notification_load_error">Failed to load notifications</string>
+
+    <string name="notification_mark_all_as_read_success">All notifications marked as read</string>
+    <string name="notification_mark_all_as_read_error">Failed to mark all notifications as read</string>
+
     <string name="notifications_friend_request_received">%1$s sent you a friend request</string>
     <string name="notifications_friend_request_accepted">%1$s accepted your friend request</string>
     <string name="notifications_like">%1$s liked your post of %2$s</string>

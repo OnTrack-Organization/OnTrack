@@ -24,6 +24,7 @@ fun NavGraphBuilder.shareGraph(
         ShareScreen(
             postViewModel = postViewModel,
             friendsViewModel = friendsViewModel,
+            notificationViewModel = notificationViewModel,
             commonUiManager = commonUiManager,
             onClickPost = { navController.navigate(Route.PostDetail(it)) },
             onClickCover = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
@@ -50,6 +51,7 @@ fun NavGraphBuilder.shareGraph(
     composable<Route.Notifications> {
         NotificationScreen(
             viewModel = notificationViewModel,
+            commonUiManager = commonUiManager,
             onBack = { navController.popBackStack() },
             onClickPost = { navController.navigate(Route.PostDetail(it)) },
             onClickUser = { userId -> navController.navigateToShelf(userId) },
