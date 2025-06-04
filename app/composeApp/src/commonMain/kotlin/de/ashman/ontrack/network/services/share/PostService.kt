@@ -33,41 +33,41 @@ class PostServiceImpl(
 ) : PostService {
 
     override suspend fun getPosts(page: Int, size: Int): Result<List<Post>> = safeApiCall {
-        httpClient.get("/posts") {
+        httpClient.get("/post/all") {
             parameter("page", page)
             parameter("size", size)
         }.body<Page<PostDto>>().content.map { it.toDomain() }
     }
 
     override suspend fun getPost(postId: String): Result<Post> = safeApiCall {
-        httpClient.get("/posts/$postId").body<PostDto>().toDomain()
+        httpClient.get("/post/$postId").body<PostDto>().toDomain()
     }
 
     override suspend fun toggleLike(postId: String): Result<Post> = safeApiCall {
-        httpClient.post("/posts/$postId/like")
+        httpClient.post("/post/$postId/like")
             .body<PostDto>()
             .toDomain()
     }
 
     override suspend fun addComment(postId: String, dto: CreateCommentDto): Result<Post> = safeApiCall {
-        httpClient.post("/posts/$postId/comment") {
+        httpClient.post("/post/$postId/comment") {
             setBody(dto)
         }.body<PostDto>().toDomain()
     }
 
     override suspend fun deleteComment(postId: String, commentId: String): Result<Post> = safeApiCall {
-        httpClient.delete("/posts/$postId/comment/$commentId").body<PostDto>().toDomain()
+        httpClient.delete("/post/$postId/comment/$commentId").body<PostDto>().toDomain()
     }
 
     override suspend fun getComments(postId: String, page: Int, size: Int): Result<Comments> = safeApiCall {
-        httpClient.get("/posts/$postId/comments") {
+        httpClient.get("/post/$postId/comments") {
             parameter("page", page)
             parameter("size", size)
         }.body<CommentsDto>().toDomain()
     }
 
     override suspend fun getLikes(postId: String, page: Int, size: Int): Result<Likes> = safeApiCall {
-        httpClient.get("/posts/$postId/likes") {
+        httpClient.get("/post/$postId/likes") {
             parameter("page", page)
             parameter("size", size)
         }.body<LikesDto>().toDomain()

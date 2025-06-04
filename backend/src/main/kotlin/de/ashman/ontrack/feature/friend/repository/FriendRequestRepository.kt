@@ -5,12 +5,12 @@ import de.ashman.ontrack.feature.friend.domain.FriendRequestStatus
 import de.ashman.ontrack.feature.user.domain.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 interface FriendRequestRepository : JpaRepository<FriendRequest, UUID> {
+
     fun findFriendRequestBySenderAndReceiverAndStatus(sender: User, receiver: User, status: FriendRequestStatus): FriendRequest?
 
     @Query("SELECT fr.sender FROM FriendRequest fr WHERE fr.receiver = :receiver AND fr.status = 'PENDING'")
@@ -18,6 +18,4 @@ interface FriendRequestRepository : JpaRepository<FriendRequest, UUID> {
 
     @Query("SELECT fr.receiver FROM FriendRequest fr WHERE fr.sender = :sender AND fr.status = 'PENDING'")
     fun findReceiversOfPendingRequests(sender: User): List<User>
-
-    fun deleteAllBySenderIdOrReceiverId(senderId: String, receiverId: String)
 }

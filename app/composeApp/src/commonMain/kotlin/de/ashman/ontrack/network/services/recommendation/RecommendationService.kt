@@ -24,16 +24,16 @@ class RecommendationServiceImpl(
     private val httpClient: HttpClient,
 ) : RecommendationService {
     override suspend fun sendRecommendation(dto: CreateRecommendationDto): Result<Unit> = safeApiCall {
-        httpClient.post("/recommend") {
+        httpClient.post("/recommendation/recommend") {
             setBody(dto)
         }
     }
 
     override suspend fun getFriendsActivity(mediaType: MediaType, mediaId: String): Result<FriendsActivity?> = safeApiCall {
-        httpClient.get("/friends-activity/$mediaType/$mediaId").body<FriendsActivityDto>().toDomain()
+        httpClient.get("/recommendation/friends-activity/$mediaType/$mediaId").body<FriendsActivityDto>().toDomain()
     }
 
     override suspend fun getSentRecommendations(mediaType: MediaType, mediaId: String, userId: String): Result<List<Recommendation>> = safeApiCall {
-        httpClient.get("/sent-recommendations/$mediaType/$mediaId/$userId").body<List<RecommendationDto>>().map { it.toDomain() }
+        httpClient.get("/recommendation/sent/$mediaType/$mediaId/$userId").body<List<RecommendationDto>>().map { it.toDomain() }
     }
 }

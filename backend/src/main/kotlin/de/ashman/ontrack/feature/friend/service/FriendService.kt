@@ -1,7 +1,12 @@
 package de.ashman.ontrack.feature.friend.service
 
+import de.ashman.ontrack.feature.friend.domain.FriendStatus
 import de.ashman.ontrack.feature.friend.domain.Friendship
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
+import de.ashman.ontrack.feature.friend.repository.FriendRequestRepository
+import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
+import de.ashman.ontrack.feature.user.controller.dto.UserDto
+import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.domain.User
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Service
 class FriendService(
     private val friendRepository: FriendRepository,
     private val userRepository: UserRepository,
+    private val friendRequestRepository: FriendRequestRepository,
 ) {
     fun beginFriendship(user1: User, user2: User) {
         val newFriendship = Friendship.begin(user1, user2)
@@ -28,9 +34,28 @@ class FriendService(
         return userRepository.findAllById(friendIds)
     }
 
-    fun areFriends(userId1: String, userId2: String): Boolean {
-        val (first, second) = if (userId1 < userId2) userId1 to userId2 else userId2 to userId1
+    fun getFriendDtos(userId: String): List<UserDto> {
+        val user = userRepository.getReferenceById(userId)
+        return getFriends(user).map { it.toDto() }
+    }
 
-        return friendRepository.existsByUser1IdAndUser2Id(first, second)
+    fun getFriendsAndFriendRequests(userId: String): List<OtherUserDto> {
+        val user = userRepository.getReferenceById(userId)
+
+        val friends = getFriends(user)
+        val sentRequests = friendRequestRepository.findReceiversOfPendingRequests(user)
+        val receivedRequests = friendRequestRepository.findSendersOfPendingRequests(user)
+
+        val friendDtos = friends.map { OtherUserDto(it.toDto(), FriendStatus.FRIEND) }
+        val sentRequestDtos = sentRequests.map { OtherUserDto(it.toDto(), FriendStatus.REQUEST_SENT) }
+        val receivedRequestDtos = receivedRequests.map { OtherUserDto(it.toDto(), FriendStatus.REQUEST_RECEIVED) }
+
+        return friendDtos + sentRequestDtos + receivedRequestDtos
+    }
+
+    fun removeFriend(userId: String, friendId: String) {
+        val user = userRepository.getReferenceById(userId)
+        val friend = userRepository.getReferenceById(friendId)
+        endFriendship(user, friend)
     }
 }

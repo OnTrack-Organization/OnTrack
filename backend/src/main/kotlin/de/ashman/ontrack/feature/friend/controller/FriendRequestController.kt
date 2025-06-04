@@ -1,11 +1,7 @@
 package de.ashman.ontrack.feature.friend.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.friend.domain.FriendRequest
 import de.ashman.ontrack.feature.friend.service.FriendRequestService
-import de.ashman.ontrack.feature.friend.service.FriendService
-import de.ashman.ontrack.feature.notification.service.NotificationService
-import de.ashman.ontrack.feature.user.repository.UserService
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,10 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/friend-request")
 class FriendRequestController(
-    private val userService: UserService,
-    private val friendRequestService: FriendRequestService,
-    private val friendService: FriendService,
-    private val notificationService: NotificationService,
+    private val friendRequestService: FriendRequestService
 ) {
     @PostMapping("/send/{userId}")
     @Transactional
@@ -29,19 +22,7 @@ class FriendRequestController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        if (!userService.exists(userId)) {
-            return ResponseEntity.notFound().build()
-        }
-
-        val sender = userService.getById(identity.id)
-        val receiver = userService.getById(userId)
-
-        val friendRequest = FriendRequest(sender = sender, receiver = receiver)
-
-        friendRequestService.save(friendRequest)
-
-        notificationService.createFriendRequestReceived(sender, receiver)
-
+        friendRequestService.sendRequest(identity.id, userId)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
@@ -51,18 +32,7 @@ class FriendRequestController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val sender = userService.getById(userId)
-        val receiver = userService.getById(identity.id)
-
-        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
-            ?: return ResponseEntity.notFound().build()
-
-        request.accept()
-
-        friendService.beginFriendship(sender, receiver)
-
-        notificationService.createFriendRequestAccepted(acceptor = sender, originalSender = receiver)
-
+        friendRequestService.acceptRequest(identity.id, userId)
         return ResponseEntity.ok().build()
     }
 
@@ -72,14 +42,7 @@ class FriendRequestController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val sender = userService.getById(userId)
-        val receiver = userService.getById(identity.id)
-
-        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
-            ?: return ResponseEntity.notFound().build()
-
-        request.decline()
-
+        friendRequestService.declineRequest(identity.id, userId)
         return ResponseEntity.ok().build()
     }
 
@@ -89,14 +52,7 @@ class FriendRequestController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable userId: String
     ): ResponseEntity<Unit> {
-        val sender = userService.getById(identity.id)
-        val receiver = userService.getById(userId)
-
-        val request = friendRequestService.findBySenderAndReceiver(sender, receiver)
-            ?: return ResponseEntity.notFound().build()
-
-        request.cancel()
-
+        friendRequestService.cancelRequest(identity.id, userId)
         return ResponseEntity.ok().build()
     }
 }

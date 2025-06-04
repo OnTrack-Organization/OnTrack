@@ -20,14 +20,14 @@ class NotificationServiceImpl(
 ) : NotificationService {
 
     override suspend fun getLatest(): Result<List<Notification>> = safeApiCall {
-        httpClient.get("/notifications").body<List<NotificationDto>>().map { it.toDomain() }
+        httpClient.get("/notification").body<List<NotificationDto>>().map { it.toDomain() }
     }
 
     override suspend fun markAsRead(id: String): Result<Notification> = safeApiCall {
-        httpClient.put("/notifications/$id/read").body<NotificationDto>().toDomain()
+        httpClient.put("/notification/$id/read").body<NotificationDto>().toDomain()
     }
 
     override suspend fun markAllAsRead(): Result<List<Notification>> = safeApiCall {
-        httpClient.put("/notifications/read-all").body<List<NotificationDto>>().map { it.toDomain() }
+        httpClient.put("/notification/read-all").body<List<NotificationDto>>().map { it.toDomain() }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/notification")
 class NotificationController(
     private val notificationService: NotificationService
 ) {

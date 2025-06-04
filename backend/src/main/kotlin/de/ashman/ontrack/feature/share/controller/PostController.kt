@@ -1,7 +1,10 @@
 package de.ashman.ontrack.feature.share.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.share.controller.dto.*
+import de.ashman.ontrack.feature.share.controller.dto.CommentsDto
+import de.ashman.ontrack.feature.share.controller.dto.CreateCommentDto
+import de.ashman.ontrack.feature.share.controller.dto.LikesDto
+import de.ashman.ontrack.feature.share.controller.dto.PostDto
 import de.ashman.ontrack.feature.share.service.PostService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -13,11 +16,11 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("posts")
+@RequestMapping("/post")
 class PostController(
     private val postService: PostService,
 ) {
-    @GetMapping
+    @GetMapping("/all")
     fun getFeed(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,

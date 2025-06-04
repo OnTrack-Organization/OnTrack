@@ -1,16 +1,10 @@
 package de.ashman.ontrack.feature.tracking.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.review.repository.ReviewService
-import de.ashman.ontrack.feature.share.service.PostService
 import de.ashman.ontrack.feature.tracking.controller.dto.CreateTrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.TrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.UpdateTrackingDto
-import de.ashman.ontrack.feature.tracking.controller.dto.toDto
-import de.ashman.ontrack.feature.tracking.domain.Tracking
-import de.ashman.ontrack.feature.tracking.domain.toEntity
-import de.ashman.ontrack.feature.tracking.repository.TrackingService
-import de.ashman.ontrack.feature.user.repository.UserService
+import de.ashman.ontrack.feature.tracking.service.TrackingService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -20,85 +14,45 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
+@RequestMapping("/tracking")
 class TrackingController(
-    val trackingService: TrackingService,
-    val reviewService: ReviewService,
-    val userService: UserService,
-    val postService: PostService,
+    private val trackingService: TrackingService,
 ) {
-    @GetMapping("trackings")
+    @GetMapping("/all")
     fun getTrackingsOfCurrentUser(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<TrackingDto>> {
-        val user = userService.getById(identity.id)
-        val trackings = trackingService.getTrackingsByUserId(user.id)
-        val trackingDtos = trackings.map { it.toDto() }
-
+        val trackingDtos = trackingService.getTrackingsByUserId(identity.id)
         return ResponseEntity.ok(trackingDtos)
     }
 
-    @PostMapping("/tracking")
+    @PostMapping
     @Transactional
     fun create(
         @RequestBody @Valid dto: CreateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
-        val user = userService.getById(identity.id)
-
-        val newTracking = Tracking(
-            user = user,
-            status = dto.status,
-            media = dto.media.toEntity(),
-        )
-
-        trackingService.save(newTracking)
-
-        postService.createPostForTracking(newTracking)
-
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(newTracking.toDto())
+        val created = trackingService.createTracking(identity.id, dto)
+        return ResponseEntity.status(HttpStatus.CREATED).body(created)
     }
 
+    @PutMapping
     @Transactional
-    @PutMapping("tracking")
     fun update(
         @RequestBody @Valid dto: UpdateTrackingDto,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<TrackingDto> {
-        val user = userService.getById(identity.id)
-        val tracking = trackingService.getById(dto.id)
-
-        if (tracking.user.id != user.id) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-        }
-
-        tracking.status = dto.status
-
-        return ResponseEntity.ok(tracking.toDto())
+        val updated = trackingService.updateTracking(identity.id, dto)
+        return ResponseEntity.ok(updated)
     }
 
-    @DeleteMapping("tracking/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     fun delete(
         @PathVariable id: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        val user = userService.getById(identity.id)
-        val tracking = trackingService.getById(id)
-        val review = reviewService.getByTrackingId(id)
-
-        val postId = postService.getPostIdByTrackingId(tracking.id)
-
-        if (tracking.user.id != user.id) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-        }
-
-        postId?.let { postService.deletePost(it) }
-        trackingService.delete(tracking)
-        review?.let { reviewService.delete(it) }
-
+        trackingService.deleteTracking(identity.id, id)
         return ResponseEntity.ok().build()
     }
 }
-

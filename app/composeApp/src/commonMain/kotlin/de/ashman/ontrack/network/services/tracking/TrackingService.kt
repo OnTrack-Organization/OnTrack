@@ -15,15 +15,24 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
 interface TrackingService {
+    suspend fun getTrackings(): Result<List<Tracking>>
     suspend fun createTracking(dto: CreateTrackingDto): Result<Tracking>
     suspend fun updateTracking(dto: UpdateTrackingDto): Result<Tracking>
     suspend fun deleteTracking(trackingId: String): Result<Unit>
-    suspend fun getTrackings(): Result<List<Tracking>>
 }
 
 class TrackingServiceImpl(
     private val httpClient: HttpClient,
 ) : TrackingService {
+    override suspend fun getTrackings(): Result<List<Tracking>> = safeBackendApiCall<List<TrackingDto>> {
+        httpClient.get("/tracking/all")
+    }.mapCatching { response ->
+        when (response.status) {
+            HttpStatusCode.OK -> response.data.map { it.toDomain() }
+            else -> error("Unexpected status: ${response.status}")
+        }
+    }
+
     override suspend fun createTracking(dto: CreateTrackingDto): Result<Tracking> = safeBackendApiCall<TrackingDto> {
         httpClient.post("/tracking") {
             setBody(dto)
@@ -51,15 +60,6 @@ class TrackingServiceImpl(
     }.mapCatching { response ->
         when (response.status) {
             HttpStatusCode.OK -> Unit
-            else -> error("Unexpected status: ${response.status}")
-        }
-    }
-
-    override suspend fun getTrackings(): Result<List<Tracking>> = safeBackendApiCall<List<TrackingDto>> {
-        httpClient.get("/trackings")
-    }.mapCatching { response ->
-        when (response.status) {
-            HttpStatusCode.OK -> response.data.map { it.toDomain() }
             else -> error("Unexpected status: ${response.status}")
         }
     }

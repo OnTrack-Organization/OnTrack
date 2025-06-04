@@ -13,14 +13,18 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 
 interface ReviewService {
+    suspend fun getReviews(): Result<List<Review>>
     suspend fun createReview(dto: CreateReviewDto): Result<Review>
     suspend fun updateReview(dto: CreateReviewDto): Result<Review>
-    suspend fun getReviews(): Result<List<Review>>
 }
 
 class ReviewServiceImpl(
     private val httpClient: HttpClient,
 ) : ReviewService {
+    override suspend fun getReviews(): Result<List<Review>> = safeApiCall {
+        httpClient.get("/review/all").body<List<ReviewDto>>().map { it.toDomain() }
+    }
+
     override suspend fun createReview(dto: CreateReviewDto): Result<Review> = safeApiCall {
         httpClient.post("/review") {
             setBody(dto)
@@ -31,9 +35,5 @@ class ReviewServiceImpl(
         httpClient.put("/review") {
             setBody(dto)
         }.body<ReviewDto>().toDomain()
-    }
-
-    override suspend fun getReviews(): Result<List<Review>> = safeApiCall {
-        httpClient.get("/reviews").body<List<ReviewDto>>().map { it.toDomain() }
     }
 }

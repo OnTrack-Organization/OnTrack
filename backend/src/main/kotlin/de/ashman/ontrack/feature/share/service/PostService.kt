@@ -210,8 +210,6 @@ class PostService(
         postRepository.deleteById(postId)
     }
 
-    fun getPostIdByTrackingId(trackingId: UUID): UUID? = postRepository.findByTrackingId(trackingId)?.id
-
     private fun parseMentionedUsernames(message: String): Set<String> {
         val regex = Regex("@([A-Za-z0-9_]+)")
         return regex.findAll(message)
