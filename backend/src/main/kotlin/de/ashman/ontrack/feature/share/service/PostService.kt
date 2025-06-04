@@ -2,7 +2,6 @@ package de.ashman.ontrack.feature.share.service
 
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
 import de.ashman.ontrack.feature.notification.service.NotificationService
-import de.ashman.ontrack.feature.review.controller.dto.toDto
 import de.ashman.ontrack.feature.review.domain.Review
 import de.ashman.ontrack.feature.share.controller.dto.*
 import de.ashman.ontrack.feature.share.domain.Comment
@@ -11,9 +10,7 @@ import de.ashman.ontrack.feature.share.domain.Post
 import de.ashman.ontrack.feature.share.repository.CommentRepository
 import de.ashman.ontrack.feature.share.repository.LikeRepository
 import de.ashman.ontrack.feature.share.repository.PostRepository
-import de.ashman.ontrack.feature.tracking.controller.dto.toDto
 import de.ashman.ontrack.feature.tracking.domain.Tracking
-import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -49,11 +46,7 @@ class PostService(
                 .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
                 .toList()
 
-            PostDto(
-                id = post.id,
-                user = post.user.toDto(),
-                tracking = post.tracking.toDto(),
-                review = post.review?.toDto(),
+            post.toDto(
                 likes = likes,
                 comments = comments,
                 likedByCurrentUser = likedByCurrentUser,
@@ -79,11 +72,7 @@ class PostService(
 
         val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(postId, currentUserId)
 
-        return PostDto(
-            id = post.id,
-            user = post.user.toDto(),
-            tracking = post.tracking.toDto(),
-            review = post.review?.toDto(),
+        return post.toDto(
             likes = likes,
             comments = comments,
             likedByCurrentUser = likedByCurrentUser,
@@ -104,7 +93,9 @@ class PostService(
     fun updatePostWithReview(review: Review) {
         val post = postRepository.findByTrackingId(review.tracking.id) ?: throw IllegalStateException("No post found for tracking ${review.tracking.id}")
 
-        val updatedPost = post.copy(review = review)
+        val updatedPost = post.copy(
+            review = review,
+        )
 
         postRepository.save(updatedPost)
     }

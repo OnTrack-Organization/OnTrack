@@ -10,7 +10,7 @@ data class FriendRequestReceivedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long
+    override val timestamp: Long
 ) : NotificationDto()
 
 @Serializable
@@ -19,7 +19,7 @@ data class FriendRequestAcceptedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long
+    override val timestamp: Long
 ) : NotificationDto()
 
 @Serializable
@@ -28,7 +28,7 @@ data class RecommendationReceivedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long,
+    override val timestamp: Long,
     val recommendation: SimpleRecommendationDto,
 ) : NotificationDto()
 
@@ -38,7 +38,7 @@ data class PostLikedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long,
+    override val timestamp: Long,
     val post: SimplePostDto,
 ) : NotificationDto()
 
@@ -48,7 +48,7 @@ data class PostCommentedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long,
+    override val timestamp: Long,
     val post: SimplePostDto,
     val comment: SimpleCommentDto,
 ) : NotificationDto()
@@ -59,7 +59,7 @@ data class MentionedDto(
     override val id: String,
     override val sender: UserDto,
     override val read: Boolean,
-    override val createdAt: Long,
+    override val timestamp: Long,
     val post: SimplePostDto,
     val comment: SimpleCommentDto,
 ) : NotificationDto()

@@ -4,6 +4,8 @@ import de.ashman.ontrack.feature.review.domain.Review
 import de.ashman.ontrack.feature.tracking.domain.Tracking
 import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 import java.util.*
 
@@ -13,15 +15,20 @@ data class Post(
     @Id
     val id: UUID = UUID.randomUUID(),
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    val user: User,
-
     @OneToOne(fetch = FetchType.LAZY)
     val tracking: Tracking,
 
     @OneToOne(fetch = FetchType.LAZY)
     val review: Review? = null,
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: User,
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    var createdAt: Instant = Instant.now(),
+
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    val updatedAt: Instant = Instant.now()
+    var updatedAt: Instant = Instant.now(),
 )

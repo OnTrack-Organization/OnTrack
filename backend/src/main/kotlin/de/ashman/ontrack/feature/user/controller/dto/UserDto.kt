@@ -10,8 +10,8 @@ data class UserDto(
 )
 
 fun User.toDto() = UserDto(
-    id,
-    username!!,
-    name,
-    profilePictureUrl
+    id = id,
+    username = username!!,
+    name = name,
+    profilePictureUrl = profilePictureUrl
 )

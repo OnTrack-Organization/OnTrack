@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import de.ashman.ontrack.feature.notification.domain.*
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import de.ashman.ontrack.feature.user.controller.dto.toDto
-import java.util.UUID
+import java.util.*
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -25,7 +25,7 @@ sealed class NotificationDto {
     abstract val id: UUID
     abstract val sender: UserDto
     abstract val read: Boolean
-    abstract val createdAt: Long
+    abstract val timestamp: Long
 }
 
 fun Notification.toDto(): NotificationDto = when (this) {
@@ -33,14 +33,14 @@ fun Notification.toDto(): NotificationDto = when (this) {
         id = id,
         sender = sender.toDto(),
         read = read,
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     is FriendRequestAccepted -> FriendRequestAcceptedDto(
         id = id,
         sender = sender.toDto(),
         read = read,
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     is RecommendationReceived -> RecommendationReceivedDto(
@@ -48,7 +48,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         sender = sender.toDto(),
         read = read,
         recommendation = recommendation.toSimpleDto(),
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     is PostLiked -> PostLikedDto(
@@ -56,7 +56,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         sender = sender.toDto(),
         read = read,
         post = post.toSimpleDto(),
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     is PostCommented -> PostCommentedDto(
@@ -65,7 +65,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         read = read,
         post = post.toSimpleDto(),
         comment = comment.toSimpleDto(),
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     is PostMentioned -> MentionedDto(
@@ -74,7 +74,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         read = read,
         post = post.toSimpleDto(),
         comment = comment.toSimpleDto(),
-        createdAt = createdAt.toEpochMilli(),
+        timestamp = updatedAt.toEpochMilli(),
     )
 
     else -> throw IllegalArgumentException("Unknown notification type: $this")

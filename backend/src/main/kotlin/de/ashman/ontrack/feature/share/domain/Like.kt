@@ -2,6 +2,7 @@ package de.ashman.ontrack.feature.share.domain
 
 import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 import java.util.*
 
@@ -17,6 +18,7 @@ data class Like(
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,
 
-    @Column(name = "created_at")
-    val createdAt: Instant = Instant.now()
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    var createdAt: Instant = Instant.now(),
 )

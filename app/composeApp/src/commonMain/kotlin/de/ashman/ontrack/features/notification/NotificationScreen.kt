@@ -199,7 +199,7 @@ fun NotificationCard(
             NotificationTexts(
                 modifier = Modifier.weight(1f),
                 notificationMessage = ui.message(notification),
-                timestamp = notification.createdAt,
+                timestamp = notification.timestamp,
             )
 
             when (notification) {

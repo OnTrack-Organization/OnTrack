@@ -6,12 +6,12 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 @Repository
 interface NotificationRepository : JpaRepository<Notification, String> {
 
-    fun findTop50ByReceiverIdOrderByCreatedAtDesc(receiverId: String): List<Notification>
+    fun findTop50ByReceiverIdOrderByUpdatedAtDesc(receiverId: String): List<Notification>
 
     fun findByIdAndReceiverId(id: UUID, receiverId: String): Notification
 

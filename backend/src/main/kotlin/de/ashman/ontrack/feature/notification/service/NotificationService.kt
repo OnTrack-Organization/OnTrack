@@ -9,7 +9,7 @@ import de.ashman.ontrack.feature.share.domain.Post
 import de.ashman.ontrack.feature.user.domain.User
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 @Service
 class NotificationService(
@@ -17,7 +17,7 @@ class NotificationService(
     private val pushNotificationService: PushNotificationService,
 ) {
     fun getLatestNotificationsForUser(userId: String): List<Notification> {
-        return notificationRepository.findTop50ByReceiverIdOrderByCreatedAtDesc(userId)
+        return notificationRepository.findTop50ByReceiverIdOrderByUpdatedAtDesc(userId)
     }
 
     @Transactional
@@ -34,7 +34,7 @@ class NotificationService(
 
     fun markAllAsRead(receiverId: String): List<Notification> {
         notificationRepository.markAllAsReadByReceiverId(receiverId)
-        return notificationRepository.findTop50ByReceiverIdOrderByCreatedAtDesc(receiverId)
+        return notificationRepository.findTop50ByReceiverIdOrderByUpdatedAtDesc(receiverId)
     }
 
     fun createFriendRequestReceived(sender: User, receiver: User) {

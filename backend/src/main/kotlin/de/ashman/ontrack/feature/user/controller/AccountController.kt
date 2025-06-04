@@ -25,34 +25,27 @@ class AccountController(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody signInDto: SignInDto
     ): ResponseEntity<AccountDto> {
-        var user = userService.findByEmail(identity.email)
-
-        if (user != null) {
-            user.updateFcmToken(signInDto.fcmToken)
-            return ResponseEntity.ok(user.toAccountDto())
-        }
-
-        user = User(
-            id = identity.id,
-            email = identity.email,
-            name = identity.name.orEmpty(),
-            profilePictureUrl = identity.picture.orEmpty(),
+        val user = userService.findByEmail(identity.email)?.apply {
+            fcmToken = signInDto.fcmToken
+        } ?: userService.save(
+            User(
+                id = identity.id,
+                email = identity.email,
+                name = identity.name.orEmpty(),
+                profilePictureUrl = identity.picture.orEmpty(),
+                fcmToken = signInDto.fcmToken
+            )
         )
 
-        user.updateFcmToken(signInDto.fcmToken)
-        userService.save(user)
-
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(user.toAccountDto())
+        val status = if (user.createdAt == user.updatedAt) HttpStatus.CREATED else HttpStatus.OK
+        return ResponseEntity.status(status).body(user.toAccountDto())
     }
 
     @PostMapping("/sign-out")
     @Transactional
     fun signOut(@AuthenticationPrincipal identity: Identity): ResponseEntity<Unit> {
         val user = userService.getById(identity.id)
-
-        user.clearFcmToken()
+        user.fcmToken = null
 
         return ResponseEntity.ok().build()
     }
@@ -80,10 +73,8 @@ class AccountController(
 
         val user = userService.getById(identity.id)
 
-        user.updateAccountSettings(
-            name = accountSettings.name,
-            username = accountSettings.username
-        )
+        user.name = accountSettings.name
+        user.username = accountSettings.username
 
         return ResponseEntity.ok().build()
     }
@@ -96,7 +87,7 @@ class AccountController(
     ): ResponseEntity<Unit> {
         val user = userService.getById(identity.id)
 
-        user.changeProfilePicture(profilePictureUrl)
+        user.profilePictureUrl = profilePictureUrl
 
         return ResponseEntity.ok().build()
     }

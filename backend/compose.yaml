@@ -30,6 +30,7 @@ services:
       - 'SPRING_DATASOURCE_USERNAME=default'
       - 'SPRING_DATASOURCE_PASSWORD=demo'
       - 'GOOGLE_APPLICATION_CREDENTIALS=firebaseServiceAccount.json'
+      - GRADLE_USER_HOME=/app/.gradle-cache
     ports:
       # 5005 is used for debug listener
       - "5005:5005"

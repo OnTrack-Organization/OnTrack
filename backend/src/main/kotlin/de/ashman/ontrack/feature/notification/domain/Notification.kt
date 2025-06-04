@@ -1,5 +1,7 @@
 import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 import java.util.*
 
@@ -10,14 +12,19 @@ abstract class Notification(
     @Id
     val id: UUID = UUID.randomUUID(),
 
+    var read: Boolean = false,
+
     @ManyToOne(fetch = FetchType.LAZY)
     val sender: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
     val receiver: User,
 
-    var read: Boolean = false,
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    var createdAt: Instant = Instant.now(),
 
-    @Column(name = "created_at")
-    val createdAt: Instant = Instant.now(),
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    var updatedAt: Instant = Instant.now(),
 )

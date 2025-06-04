@@ -20,7 +20,7 @@ sealed class NotificationDto {
     abstract val id: String
     abstract val sender: UserDto
     abstract val read: Boolean
-    abstract val createdAt: Long
+    abstract val timestamp: Long
 }
 
 fun NotificationDto.toDomain(): Notification = when (this) {
@@ -28,21 +28,21 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt
+        timestamp = timestamp
     )
 
     is FriendRequestAcceptedDto -> FriendRequestAccepted(
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt
+        timestamp = timestamp
     )
 
     is RecommendationReceivedDto -> RecommendationReceived(
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt,
+        timestamp = timestamp,
         recommendation = recommendation.toDomain()
     )
 
@@ -50,7 +50,7 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt,
+        timestamp = timestamp,
         post = post.toDomain()
     )
 
@@ -58,7 +58,7 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt,
+        timestamp = timestamp,
         post = post.toDomain(),
         comment = comment.toDomain()
     )
@@ -67,7 +67,7 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         id = id,
         sender = sender.toDomain(),
         read = read,
-        createdAt = createdAt,
+        timestamp = timestamp,
         post = post.toDomain(),
         comment = comment.toDomain()
     )

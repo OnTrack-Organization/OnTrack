@@ -73,7 +73,7 @@ class TrackingController(
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
 
-        tracking.changeStatus(dto.status)
+        tracking.status = dto.status
 
         return ResponseEntity.ok(tracking.toDto())
     }

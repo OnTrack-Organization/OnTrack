@@ -2,6 +2,7 @@ package de.ashman.ontrack.feature.share.domain
 
 import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 import java.util.*
 
@@ -11,13 +12,10 @@ data class Comment(
     @Id
     val id: UUID = UUID.randomUUID(),
 
+    val message: String,
+
     @ManyToOne(fetch = FetchType.LAZY)
     val post: Post,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    val user: User,
-
-    val message: String,
 
     @ManyToMany
     @JoinTable(
@@ -27,6 +25,10 @@ data class Comment(
     )
     val mentionedUsers: Set<User> = setOf(),
 
-    @Column(name = "created_at")
-    val createdAt: Instant = Instant.now()
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: User,
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    var createdAt: Instant = Instant.now(),
 )

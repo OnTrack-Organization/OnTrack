@@ -4,6 +4,8 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 
 @Entity
@@ -13,8 +15,10 @@ data class User(
     val id: String,
 
     var name: String,
+
     @Column(unique = true, nullable = true)
     var username: String? = null,
+
     @Column(unique = true)
     var email: String,
 
@@ -24,32 +28,11 @@ data class User(
     @Column(name = "fcm_token")
     var fcmToken: String? = null,
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    var createdAt: Instant = Instant.now(),
+
+    @UpdateTimestamp
     @Column(name = "updated_at")
     var updatedAt: Instant = Instant.now(),
-) {
-    fun updateFcmToken(token: String) {
-        fcmToken = token
-        updateLastModified()
-    }
-
-    fun clearFcmToken() {
-        fcmToken = null
-        updateLastModified()
-    }
-
-    fun updateAccountSettings(name: String, username: String) {
-        this.name = name
-        this.username = username
-        updateLastModified()
-    }
-
-    fun changeProfilePicture(url: String) {
-        profilePictureUrl = url
-        updateLastModified()
-    }
-
-    private fun updateLastModified() {
-        updatedAt = Instant.now()
-    }
-}
-
+)
