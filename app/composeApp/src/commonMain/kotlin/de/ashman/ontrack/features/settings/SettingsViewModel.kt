@@ -123,15 +123,26 @@ class SettingsViewModel(
     }
 
     fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        if (bytes == null) {
+            _uiState.update { it.copy(imageUploadState = ImageUploadState.Idle) }
+            return@launch
+        }
+
         _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
 
-        bytes ?: return@launch
-
-        val profilePictureUrl = storageRepository.uploadUserImage(bytes = bytes, fileName = _uiState.value.user!!.id)
+        val profilePictureUrl = storageRepository.uploadUserImage(
+            bytes = bytes,
+            fileName = _uiState.value.user!!.id
+        )
 
         accountService.updateProfilePicture(profilePictureUrl)
 
-        _uiState.update { it.copy(imageUrl = profilePictureUrl, imageUploadState = ImageUploadState.Success) }
+        _uiState.update {
+            it.copy(
+                imageUrl = profilePictureUrl,
+                imageUploadState = ImageUploadState.Success
+            )
+        }
     }
 
     fun onNameChange(name: String) {
