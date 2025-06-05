@@ -56,7 +56,8 @@ class FriendsViewModel(
                     query.isBlank() -> {
                         _uiState.update {
                             it.copy(
-                                resultState = FriendsResultState.Success,
+                                users = it.cachedFriends,
+                                resultState = if (it.cachedFriends.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
                             )
                         }
                     }
@@ -77,8 +78,9 @@ class FriendsViewModel(
             onSuccess = { users ->
                 _uiState.update {
                     it.copy(
-                        resultState = if (users.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
                         users = users,
+                        cachedFriends = users,
+                        resultState = if (users.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
                     )
                 }
             },
@@ -216,6 +218,7 @@ class FriendsViewModel(
 data class FriendsUiState(
     val query: String = "",
     val users: List<OtherUser> = emptyList(),
+    val cachedFriends: List<OtherUser> = emptyList(),
     val resultState: FriendsResultState = FriendsResultState.Loading,
 )
 
