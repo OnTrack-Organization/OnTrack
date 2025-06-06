@@ -99,6 +99,8 @@ fun NavigationGraph(
                         shelfViewModel.clearViewModel()
                         settingsViewModel.clearViewModel()
                         loginViewModel.clearViewModel()
+                        setupViewModel.clearViewModel()
+                        notificationViewModel.clearViewModel()
                     }
                 )
             }

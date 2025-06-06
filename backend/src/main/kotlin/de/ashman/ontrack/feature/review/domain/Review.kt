@@ -17,14 +17,14 @@ data class Review(
     @Id
     val id: UUID = UUID.randomUUID(),
 
-    @OneToOne(fetch = FetchType.LAZY)
-    val tracking: Tracking,
-
     var rating: Double,
 
     var title: String?,
 
     var description: String?,
+
+    @OneToOne(fetch = FetchType.LAZY)
+    val tracking: Tracking,
 
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,

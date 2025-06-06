@@ -52,7 +52,7 @@ class TrackingController(
         @PathVariable id: UUID,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        trackingService.deleteTracking(identity.id, id)
+        trackingService.deleteTracking(id)
         return ResponseEntity.ok().build()
     }
 }

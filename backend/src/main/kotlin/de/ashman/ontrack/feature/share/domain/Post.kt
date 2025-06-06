@@ -24,6 +24,12 @@ data class Post(
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,
 
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val likes: MutableList<Like> = mutableListOf(),
+
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val comments: MutableList<Comment> = mutableListOf(),
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     var createdAt: Instant = Instant.now(),

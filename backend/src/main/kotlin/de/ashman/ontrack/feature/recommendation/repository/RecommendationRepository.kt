@@ -20,6 +20,4 @@ interface RecommendationRepository : JpaRepository<Recommendation, UUID> {
         mediaId: String,
         mediaType: MediaType
     ): List<Recommendation>
-
-    fun deleteAllBySenderIdOrReceiverId(senderId: String, receiverId: String)
 }

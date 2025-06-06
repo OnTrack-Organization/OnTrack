@@ -11,6 +11,4 @@ interface LikeRepository : JpaRepository<Like, UUID> {
     fun countByPostId(postId: UUID): Int
     fun existsByPostIdAndUserId(postId: UUID, userId: String): Boolean
     fun findByPostIdAndUserId(postId: UUID, userId: String): Like?
-    fun deleteAllByPostId(postId: UUID)
-    fun deleteAllByUserId(userId: String)
 }

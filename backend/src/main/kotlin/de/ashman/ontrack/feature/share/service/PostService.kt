@@ -204,12 +204,6 @@ class PostService(
         return likesDto
     }
 
-    fun deletePost(postId: UUID) {
-        commentRepository.deleteAllByPostId(postId)
-        likeRepository.deleteAllByPostId(postId)
-        postRepository.deleteById(postId)
-    }
-
     private fun parseMentionedUsernames(message: String): Set<String> {
         val regex = Regex("@([A-Za-z0-9_]+)")
         return regex.findAll(message)

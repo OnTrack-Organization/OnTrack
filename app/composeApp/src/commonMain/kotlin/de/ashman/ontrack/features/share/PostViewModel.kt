@@ -188,7 +188,9 @@ class PostViewModel(
         _uiState.update { it.copy(selectedPost = post) }
     }
 
-    fun clearViewModel() {}
+    fun clearViewModel() {
+        _uiState.update { PostUiState() }
+    }
 }
 
 data class PostUiState(

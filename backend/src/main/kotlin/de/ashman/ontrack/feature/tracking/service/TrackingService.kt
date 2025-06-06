@@ -1,7 +1,5 @@
 package de.ashman.ontrack.feature.tracking.service
 
-import de.ashman.ontrack.feature.review.repository.ReviewRepository
-import de.ashman.ontrack.feature.share.repository.PostRepository
 import de.ashman.ontrack.feature.share.service.PostService
 import de.ashman.ontrack.feature.tracking.controller.dto.CreateTrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.TrackingDto
@@ -19,8 +17,6 @@ import java.util.*
 class TrackingService(
     private val trackingRepository: TrackingRepository,
     private val userRepository: UserRepository,
-    private val reviewRepository: ReviewRepository,
-    private val postRepository: PostRepository,
     private val postService: PostService,
 ) {
     fun getTrackingsByUserId(userId: String): List<TrackingDto> {
@@ -57,16 +53,9 @@ class TrackingService(
         return tracking.toDto()
     }
 
-    fun deleteTracking(userId: String, trackingId: UUID) {
-        val user = userRepository.getReferenceById(userId)
+    fun deleteTracking(trackingId: UUID) {
         val tracking = trackingRepository.getReferenceById(trackingId)
 
-        if (tracking.user.id != user.id) {
-            throw AccessDeniedException("You are not allowed to delete this tracking.")
-        }
-
-        postRepository.findByTrackingId(tracking.id)?.let { postRepository.delete(it) }
-        reviewRepository.getByTrackingId(tracking.id)?.let { reviewRepository.delete(it) }
         trackingRepository.delete(tracking)
     }
 }

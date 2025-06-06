@@ -1,5 +1,7 @@
 package de.ashman.ontrack.feature.tracking.domain
 
+import de.ashman.ontrack.feature.review.domain.Review
+import de.ashman.ontrack.feature.share.domain.Post
 import de.ashman.ontrack.feature.user.domain.User
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -29,6 +31,12 @@ data class Tracking(
 
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,
+
+    @OneToOne(mappedBy = "tracking", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    val review: Review? = null,
+
+    @OneToOne(mappedBy = "tracking", cascade = [CascadeType.REMOVE], orphanRemoval = true, fetch = FetchType.LAZY)
+    var post: Post? = null,
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

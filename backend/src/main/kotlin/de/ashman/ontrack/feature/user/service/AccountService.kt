@@ -5,6 +5,7 @@ import de.ashman.ontrack.feature.user.controller.dto.AccountDto
 import de.ashman.ontrack.feature.user.controller.dto.toAccountDto
 import de.ashman.ontrack.feature.user.domain.User
 import de.ashman.ontrack.feature.user.repository.UserRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -67,6 +68,10 @@ class AccountService(
     }
 
     fun deleteAccount(userId: String) {
-        // TODO
+        if (!userRepository.existsById(userId)) {
+            throw EntityNotFoundException("User with ID $userId not found")
+        }
+
+        userRepository.deleteById(userId)
     }
 }

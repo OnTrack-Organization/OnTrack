@@ -19,6 +19,4 @@ interface NotificationRepository : JpaRepository<Notification, String> {
     @Transactional
     @Query("update Notification n set n.read = true where n.receiver.id = :receiverId and n.read = false")
     fun markAllAsReadByReceiverId(receiverId: String): Int
-
-    fun deleteAllBySenderIdOrReceiverId(senderId: String, receiverId: String)
 }

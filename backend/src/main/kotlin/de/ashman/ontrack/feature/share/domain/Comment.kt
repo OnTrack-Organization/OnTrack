@@ -14,9 +14,6 @@ data class Comment(
 
     val message: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    val post: Post,
-
     @ManyToMany
     @JoinTable(
         name = "comment_mentions",
@@ -24,6 +21,9 @@ data class Comment(
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
     val mentionedUsers: Set<User> = setOf(),
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val post: Post,
 
     @ManyToOne(fetch = FetchType.LAZY)
     val user: User,

@@ -100,6 +100,10 @@ class NotificationViewModel(
             }
         )
     }
+
+    fun clearViewModel() {
+        _uiState.update { NotificationUiState() }
+    }
 }
 
 data class NotificationUiState(

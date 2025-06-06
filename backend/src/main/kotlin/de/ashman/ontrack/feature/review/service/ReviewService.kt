@@ -18,12 +18,6 @@ class ReviewService(
 ) {
     fun getReviewsByUserId(userId: String): List<Review> = reviewRepository.getReviewsByUserId(userId)
 
-    fun getByTrackingId(trackingId: UUID): Review? = reviewRepository.getByTrackingId(trackingId)
-
-    fun save(review: Review) = reviewRepository.save(review)
-
-    fun delete(review: Review) = reviewRepository.delete(review)
-
     fun createReview(userId: String, dto: CreateReviewDto): Review {
         val user = userRepository.getReferenceById(userId)
         val tracking = trackingRepository.getReferenceById(dto.trackingId)

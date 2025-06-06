@@ -54,12 +54,7 @@ class FriendsViewModel(
             .onEach { query ->
                 when {
                     query.isBlank() -> {
-                        _uiState.update {
-                            it.copy(
-                                users = it.cachedFriends,
-                                resultState = if (it.cachedFriends.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
-                            )
-                        }
+                        fetchFriendsAndRequests()
                     }
 
                     query.length >= 2 -> {
@@ -79,7 +74,6 @@ class FriendsViewModel(
                 _uiState.update {
                     it.copy(
                         users = users,
-                        cachedFriends = users,
                         resultState = if (users.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success,
                     )
                 }
@@ -183,11 +177,11 @@ class FriendsViewModel(
     fun removeFriend(userId: String) = viewModelScope.launch {
         friendService.deleteFriend(userId).fold(
             onSuccess = {
+                val updatedUsers = _uiState.value.users.filterNot { it.user.id == userId }
                 _uiState.update {
                     it.copy(
-                        users = it.users.map { user ->
-                            if (user.user.id == userId) user.copy(friendStatus = FriendStatus.STRANGER) else user
-                        }
+                        users = updatedUsers,
+                        resultState = if (updatedUsers.isEmpty()) FriendsResultState.Empty else FriendsResultState.Success
                     )
                 }
             },
@@ -218,7 +212,6 @@ class FriendsViewModel(
 data class FriendsUiState(
     val query: String = "",
     val users: List<OtherUser> = emptyList(),
-    val cachedFriends: List<OtherUser> = emptyList(),
     val resultState: FriendsResultState = FriendsResultState.Loading,
 )
 
