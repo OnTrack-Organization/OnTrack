@@ -27,8 +27,6 @@ class UserDataStore(
         return user
     }
 
-    suspend fun getCurrentUserId(): String = getCurrentUser().id
-
     suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
             preferences[currentUserKey] = Json.encodeToString(user)

@@ -8,6 +8,9 @@ import kotlinx.serialization.Serializable
 sealed class Route {
     // INIT
     @Serializable
+    data object Splash : Route()
+
+    @Serializable
     data object Start : Route()
 
     @Serializable
@@ -34,7 +37,6 @@ sealed class Route {
     // OTHER
     @Serializable
     data class ShelfList(
-        val userId: String,
         val mediaType: MediaType,
     ) : Route()
 

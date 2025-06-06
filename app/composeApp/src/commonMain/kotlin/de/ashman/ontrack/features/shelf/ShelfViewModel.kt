@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
+import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.User
@@ -43,9 +45,11 @@ class ShelfViewModel(
 
     var listState: LazyListState by mutableStateOf(LazyListState(0, 0))
 
-    fun loadUserProfile(userId: String) = viewModelScope.launch {
+    fun loadUserProfile(userId: String?) = viewModelScope.launch {
         val currentUser = userDataStore.getCurrentUser()
-        val isCurrentUser = userId == currentUser.id
+        // If userId is null, treat it as current user
+        val actualUserId = userId ?: currentUser.id
+        val isCurrentUser = actualUserId == currentUser.id
 
         if (isCurrentUser) {
             _uiState.update {
@@ -54,9 +58,9 @@ class ShelfViewModel(
                     friendStatus = null,
                 )
             }
-            observeTrackings()
+            observeCurrentUserTrackings()
         } else {
-            friendService.getUserProfile(userId).fold(
+            friendService.getUserProfile(actualUserId).fold(
                 onSuccess = { profile ->
                     _uiState.update {
                         it.copy(
@@ -73,7 +77,7 @@ class ShelfViewModel(
         }
     }
 
-    fun observeTrackings() = viewModelScope.launch {
+    fun observeCurrentUserTrackings() = viewModelScope.launch {
         trackingRepository.getTrackings().collect { trackings ->
             _uiState.update { it.copy(trackings = trackings) }
         }
@@ -134,6 +138,18 @@ class ShelfViewModel(
         )
     }
 
+    fun updateSelectedStatus(trackStatus: TrackStatus?) {
+        _uiState.update {
+            it.copy(selectedStatus = trackStatus)
+        }
+    }
+
+    fun updateSelectedMediaType(mediaType: MediaType) {
+        _uiState.update {
+            it.copy(selectedMediaType = mediaType)
+        }
+    }
+
     fun clearViewModel() {
         _uiState.update { ShelfUiState() }
     }
@@ -142,5 +158,12 @@ class ShelfViewModel(
 data class ShelfUiState(
     val user: User? = null,
     val friendStatus: FriendStatus? = null,
+    val selectedMediaType: MediaType = MediaType.MOVIE,
+    val selectedStatus: TrackStatus? = null,
     val trackings: List<Tracking> = emptyList(),
-)
+) {
+    val filteredTrackings: List<Tracking>
+        get() = trackings.filter {
+            it.media.type == selectedMediaType && (selectedStatus == null || it.status == selectedStatus)
+        }
+}

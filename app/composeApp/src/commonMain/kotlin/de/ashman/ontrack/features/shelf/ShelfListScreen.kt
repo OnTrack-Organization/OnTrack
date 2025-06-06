@@ -1,4 +1,4 @@
-package de.ashman.ontrack.features.shelflist
+package de.ashman.ontrack.features.shelf
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -55,8 +55,7 @@ import org.jetbrains.compose.resources.vectorResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShelfListScreen(
-    viewModel: ShelfListViewModel,
-    userId: String,
+    viewModel: ShelfViewModel,
     mediaType: MediaType,
     onClickItem: (MediaNavigationParam) -> Unit,
     onBack: () -> Unit,
@@ -65,7 +64,6 @@ fun ShelfListScreen(
 
     LaunchedEffect(mediaType) {
         viewModel.updateSelectedMediaType(mediaType)
-        viewModel.observeTrackings()
     }
 
     Scaffold(

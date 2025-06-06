@@ -67,7 +67,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ShelfScreen(
     viewModel: ShelfViewModel,
     commonUiManager: CommonUiManager,
-    userId: String,
+    userId: String? = null,
     emptyText: StringResource = Res.string.shelf_own_empty,
     onClickMoreMedia: (MediaType) -> Unit,
     onClickItem: (MediaNavigationParam) -> Unit,

@@ -9,19 +9,16 @@ import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.SettingsScreen
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.shelf.OtherShelfScreen
+import de.ashman.ontrack.features.shelf.ShelfListScreen
 import de.ashman.ontrack.features.shelf.ShelfScreen
 import de.ashman.ontrack.features.shelf.ShelfViewModel
-import de.ashman.ontrack.features.shelflist.ShelfListScreen
-import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.CustomNavType
 import de.ashman.ontrack.navigation.Route
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.shelfGraph(
-    currentUserId: String,
     navController: NavController,
     shelfViewModel: ShelfViewModel,
-    shelfListViewModel: ShelfListViewModel,
     settingsViewModel: SettingsViewModel,
     commonUiManager: CommonUiManager,
     clearViewModels: () -> Unit,
@@ -30,8 +27,7 @@ fun NavGraphBuilder.shelfGraph(
         ShelfScreen(
             viewModel = shelfViewModel,
             commonUiManager = commonUiManager,
-            userId = currentUserId,
-            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(currentUserId, mediaType)) },
+            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onSettings = { navController.navigate(Route.Settings) },
         )
@@ -45,8 +41,7 @@ fun NavGraphBuilder.shelfGraph(
         val shelfList: Route.ShelfList = backStackEntry.toRoute()
 
         ShelfListScreen(
-            viewModel = shelfListViewModel,
-            userId = shelfList.userId,
+            viewModel = shelfViewModel,
             mediaType = shelfList.mediaType,
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onBack = { navController.popBackStack() },
@@ -60,7 +55,7 @@ fun NavGraphBuilder.shelfGraph(
             viewModel = shelfViewModel,
             commonUiManager = commonUiManager,
             userId = otherShelf.userId,
-            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(otherShelf.userId, mediaType)) },
+            onClickMoreMedia = { mediaType -> navController.navigate(Route.ShelfList(mediaType)) },
             onClickItem = { mediaNav -> navController.navigate(Route.Detail(mediaNav)) },
             onBack = { navController.popBackStack() },
         )

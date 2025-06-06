@@ -2,7 +2,6 @@ package de.ashman.ontrack.navigation.graph
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,7 +17,6 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.share.PostViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
-import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.navigation.MainScaffold
 import de.ashman.ontrack.navigation.Route
 import dev.gitlive.firebase.Firebase
@@ -36,16 +34,12 @@ fun NavigationGraph(
     searchViewModel: SearchViewModel = koinInject(),
     detailViewModel: DetailViewModel = koinInject(),
     shelfViewModel: ShelfViewModel = koinInject(),
-    shelfListViewModel: ShelfListViewModel = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject(),
     setupViewModel: SetupViewModel = koinInject(),
     notificationViewModel: NotificationViewModel = koinInject(),
     commonUiManager: CommonUiManager = koinInject(),
     userDataStore: UserDataStore = koinInject(),
 ) {
-    val currentUser = userDataStore.currentUser.collectAsState(initial = null).value
-    val startDestination = if (currentUser != null && currentUser.username.isNotBlank()) Route.Search else Route.Start
-
     MainScaffold(
         navController = navController,
         onBottomNavigation = { route ->
@@ -57,8 +51,13 @@ fun NavigationGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Route.Splash,
         ) {
+            splashGraph(
+                navController = navController,
+                userDataStore = userDataStore,
+            )
+
             authGraph(
                 navController = navController,
                 startViewModel = startViewModel,
@@ -82,28 +81,23 @@ fun NavigationGraph(
                 commonUiManager = commonUiManager,
             )
 
-            currentUser?.let {
-                shelfGraph(
-                    currentUserId = it.id,
-                    navController = navController,
-                    shelfViewModel = shelfViewModel,
-                    shelfListViewModel = shelfListViewModel,
-                    settingsViewModel = settingsViewModel,
-                    commonUiManager = commonUiManager,
-                    clearViewModels = {
-                        // TODO different way
-                        friendsViewModel.clearViewModel()
-                        postViewModel.clearViewModel()
-                        detailViewModel.clearViewModel()
-                        shelfListViewModel.clearViewModel()
-                        shelfViewModel.clearViewModel()
-                        settingsViewModel.clearViewModel()
-                        loginViewModel.clearViewModel()
-                        setupViewModel.clearViewModel()
-                        notificationViewModel.clearViewModel()
-                    }
-                )
-            }
+            shelfGraph(
+                navController = navController,
+                shelfViewModel = shelfViewModel,
+                settingsViewModel = settingsViewModel,
+                commonUiManager = commonUiManager,
+                clearViewModels = {
+                    // TODO different way
+                    friendsViewModel.clearViewModel()
+                    postViewModel.clearViewModel()
+                    detailViewModel.clearViewModel()
+                    shelfViewModel.clearViewModel()
+                    settingsViewModel.clearViewModel()
+                    loginViewModel.clearViewModel()
+                    setupViewModel.clearViewModel()
+                    notificationViewModel.clearViewModel()
+                }
+            )
         }
     }
 }

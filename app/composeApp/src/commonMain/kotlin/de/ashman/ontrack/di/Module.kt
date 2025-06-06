@@ -29,7 +29,6 @@ import de.ashman.ontrack.features.search.SearchViewModel
 import de.ashman.ontrack.features.settings.SettingsViewModel
 import de.ashman.ontrack.features.share.PostViewModel
 import de.ashman.ontrack.features.shelf.ShelfViewModel
-import de.ashman.ontrack.features.shelflist.ShelfListViewModel
 import de.ashman.ontrack.network.clients.createBGGClient
 import de.ashman.ontrack.network.clients.createBackendClient
 import de.ashman.ontrack.network.clients.createGeekDoClient
@@ -134,7 +133,6 @@ val appModule = module {
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
-    viewModelDefinition { ShelfListViewModel(get()) }
 
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }

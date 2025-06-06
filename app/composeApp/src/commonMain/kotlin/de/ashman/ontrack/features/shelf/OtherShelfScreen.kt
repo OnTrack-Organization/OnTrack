@@ -1,7 +1,6 @@
 package de.ashman.ontrack.features.shelf
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.navigation.MediaNavigationParam
@@ -17,10 +16,6 @@ fun OtherShelfScreen(
     onClickItem: (MediaNavigationParam) -> Unit,
     onBack: (() -> Unit)? = null,
 ) {
-    LaunchedEffect(userId) {
-        viewModel.loadUserProfile(userId)
-    }
-
     ShelfScreen(
         viewModel = viewModel,
         commonUiManager = commonUiManager,
