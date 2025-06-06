@@ -46,10 +46,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaData
 import de.ashman.ontrack.domain.notification.FriendRequestAccepted
 import de.ashman.ontrack.domain.notification.FriendRequestReceived
-import de.ashman.ontrack.domain.notification.PostMentioned
 import de.ashman.ontrack.domain.notification.Notification
 import de.ashman.ontrack.domain.notification.PostCommented
 import de.ashman.ontrack.domain.notification.PostLiked
+import de.ashman.ontrack.domain.notification.PostMentioned
 import de.ashman.ontrack.domain.notification.RecommendationReceived
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
@@ -78,6 +78,10 @@ fun NotificationScreen(
     val notificationUiState by viewModel.uiState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotifications()
+    }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
         commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->

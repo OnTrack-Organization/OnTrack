@@ -29,10 +29,6 @@ class PostViewModel(
     private var likesPage = 0
     private val pageSize = 10
 
-    init {
-        fetchPosts(initial = true)
-    }
-
     fun fetchPosts(initial: Boolean = false) = viewModelScope.launch {
         if (initial) {
             postsPage = 0

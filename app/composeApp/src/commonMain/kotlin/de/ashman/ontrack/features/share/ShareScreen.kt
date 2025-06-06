@@ -77,6 +77,10 @@ fun ShareScreen(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(Unit) {
+        postViewModel.fetchPosts(initial = true)
+    }
+
     LaunchedEffect(commonUiState.snackbarMessage) {
         commonUiState.snackbarMessage?.getContentIfNotHandled()?.let { message ->
             snackbarHostState.showSnackbar(message)

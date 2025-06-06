@@ -28,10 +28,6 @@ class NotificationViewModel(
             _uiState.value,
         )
 
-    init {
-        loadNotifications()
-    }
-
     fun loadNotifications() = viewModelScope.launch {
         _uiState.update { it.copy(resultState = NotificationResultState.Loading) }
 
