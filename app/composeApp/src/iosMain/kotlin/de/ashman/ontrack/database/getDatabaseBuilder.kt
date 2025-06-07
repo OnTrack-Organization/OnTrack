@@ -2,6 +2,7 @@ package de.ashman.ontrack.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.NativeSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -12,7 +13,7 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<OnTrackDatabase> {
 
     return Room.databaseBuilder<OnTrackDatabase>(
         name = dbFilePath,
-    )
+    ).setDriver(NativeSQLiteDriver())
 }
 
 @OptIn(ExperimentalForeignApi::class)
