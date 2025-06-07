@@ -79,6 +79,8 @@ class DetailViewModel(
             initialValue = _uiState.value,
         )
 
+    private var trackingJob: Job? = null
+
     init {
         viewModelScope.launch {
             selectedMediaRepository.selectedMedia.collect { media ->
@@ -108,9 +110,6 @@ class DetailViewModel(
         )
     }
 
-    // TODO this is ugly, but seems to work for now
-    private var trackingJob: Job? = null
-
     fun observeTrackingAndReview(mediaId: String, mediaType: MediaType) {
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
@@ -133,10 +132,10 @@ class DetailViewModel(
         }
     }
 
-    fun saveChanges() = viewModelScope.launch {
+    fun saveChanges(status: TrackStatus? = null) = viewModelScope.launch {
         _uiState.update { it.copy(resultState = DetailResultState.Loading) }
 
-        saveOrUpdateTracking()?.let { tracking ->
+        saveOrUpdateTracking(status)?.let { tracking ->
             commonUiManager.hideSheetAndShowSnackbar(
                 getString(
                     resource = Res.string.tracking_saved,
@@ -202,11 +201,11 @@ class DetailViewModel(
         )
     }
 
-    private suspend fun saveOrUpdateTracking(): Tracking? {
+    private suspend fun saveOrUpdateTracking(status: TrackStatus? = null): Tracking? {
         val result = if (_uiState.value.tracking == null) {
             val dto = CreateTrackingDto(
                 media = _uiState.value.media!!.toDto(),
-                status = _uiState.value.status!!
+                status = status ?: _uiState.value.status!!
             )
             trackingService.createTracking(dto)
         } else {
@@ -340,16 +339,6 @@ class DetailViewModel(
                 Logger.e { "Failed to fetch friends activity: ${exception.message}" }
             }
         )
-    }
-
-    fun catalogRecommendation() {
-        val dto = CreateTrackingDto(
-            media = _uiState.value.media!!.toDto(),
-            status = TrackStatus.CATALOG,
-        )
-
-        // TODO add in again
-        //createTracking(dto)
     }
 
     fun selectStatus(status: TrackStatus?) {

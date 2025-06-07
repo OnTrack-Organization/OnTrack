@@ -238,7 +238,7 @@ fun DetailScreen(
                             mediaType = mediaNav.type,
                             isAddingToCatalog = detailUiState.resultState == DetailResultState.Loading,
                             onUserClick = onClickUser,
-                            onCatalogRecommendation = viewModel::catalogRecommendation,
+                            onCatalogRecommendation = { viewModel.saveChanges(TrackStatus.CATALOG) },
                         )
 
                         CurrentSheet.RECOMMEND -> RecommendationSheet(
