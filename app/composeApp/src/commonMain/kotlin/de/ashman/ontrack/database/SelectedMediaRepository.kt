@@ -1,4 +1,4 @@
-package de.ashman.ontrack.repository
+package de.ashman.ontrack.database
 
 import de.ashman.ontrack.domain.media.Media
 import kotlinx.coroutines.flow.MutableStateFlow

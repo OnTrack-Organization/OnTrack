@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.api.getApiType
-import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Album
 import de.ashman.ontrack.domain.media.Boardgame
 import de.ashman.ontrack.domain.media.Book
@@ -43,6 +42,7 @@ import de.ashman.ontrack.domain.media.Show
 import de.ashman.ontrack.domain.media.Videogame
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.review.Review
+import de.ashman.ontrack.domain.review.ReviewStats
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.CurrentSheet
@@ -97,10 +97,9 @@ fun DetailScreen(
 
     LaunchedEffect(mediaNav.id) {
         viewModel.fetchDetails(mediaNav)
-
-        viewModel.observeTrackingAndReview(mediaNav.id, mediaNav.type)
-
+        viewModel.observeTrackingAndReview(mediaNav.type, mediaNav.id)
         viewModel.fetchFriendsActivity(mediaNav.type, mediaNav.id)
+        viewModel.fetchReviewStats(mediaNav.type, mediaNav.id)
     }
 
     LaunchedEffect(commonUiState.snackbarMessage) {
@@ -160,7 +159,7 @@ fun DetailScreen(
                         media = detailUiState.media,
                         trackStatus = detailUiState.status,
                         review = detailUiState.review,
-                        ratingStats = detailUiState.ratingStats,
+                        reviewStats = detailUiState.reviewStats,
                         friendsActivity = detailUiState.friendsActivity,
                         onClickMedia = onClickItem,
                         onClickUser = onClickUser,
@@ -273,7 +272,7 @@ fun DetailContent(
     media: Media?,
     trackStatus: TrackStatus?,
     review: Review?,
-    ratingStats: RatingStats,
+    reviewStats: ReviewStats,
     friendsActivity: FriendsActivity?,
     onClickMedia: (MediaNavigationParam) -> Unit,
     onClickUser: (String) -> Unit,
@@ -317,8 +316,8 @@ fun DetailContent(
                     apiType = media.mediaType.getApiType(),
                     rating = media.apiRating,
                     ratingCount = media.apiRatingCount,
-                    appRating = ratingStats.averageRating,
-                    appRatingCount = ratingStats.ratingCount
+                    appRating = reviewStats.average,
+                    appRatingCount = reviewStats.count
                 )
             }
 

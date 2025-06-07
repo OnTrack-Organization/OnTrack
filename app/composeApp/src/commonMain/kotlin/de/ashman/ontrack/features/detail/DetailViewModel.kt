@@ -9,15 +9,16 @@ import de.ashman.ontrack.api.book.BookRepository
 import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
+import de.ashman.ontrack.database.SelectedMediaRepository
 import de.ashman.ontrack.database.review.ReviewRepository
 import de.ashman.ontrack.database.tracking.TrackingRepository
-import de.ashman.ontrack.domain.globalrating.RatingStats
 import de.ashman.ontrack.domain.media.Media
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.media.toDto
 import de.ashman.ontrack.domain.recommendation.FriendsActivity
 import de.ashman.ontrack.domain.recommendation.Recommendation
 import de.ashman.ontrack.domain.review.Review
+import de.ashman.ontrack.domain.review.ReviewStats
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.User
@@ -32,7 +33,6 @@ import de.ashman.ontrack.network.services.review.dto.CreateReviewDto
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
-import de.ashman.ontrack.repository.SelectedMediaRepository
 import de.ashman.ontrack.util.getSingularTitle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +93,7 @@ class DetailViewModel(
         _uiState.update {
             it.copy(
                 apiResultState = ApiResultState.ApiLoading,
-                ratingStats = RatingStats(),
+                reviewStats = ReviewStats(),
             )
         }
 
@@ -110,10 +110,10 @@ class DetailViewModel(
         )
     }
 
-    fun observeTrackingAndReview(mediaId: String, mediaType: MediaType) {
+    fun observeTrackingAndReview(mediaType: MediaType, mediaId: String) {
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
-            trackingRepository.getTracking(mediaId, mediaType)
+            trackingRepository.getTracking(mediaType, mediaId)
                 .onEach { tracking ->
                     _uiState.update {
                         it.copy(
@@ -187,7 +187,7 @@ class DetailViewModel(
 
                 _uiState.update {
                     it.copy(
-                        resultState = DetailResultState.Success
+                        resultState = DetailResultState.Success,
                     )
                 }
 
@@ -341,6 +341,18 @@ class DetailViewModel(
         )
     }
 
+    fun fetchReviewStats(mediaType: MediaType, mediaId: String) = viewModelScope.launch {
+        reviewService.getReviewStats(mediaType, mediaId).fold(
+            onSuccess = { reviewStats ->
+                _uiState.update { it.copy(reviewStats = reviewStats) }
+                Logger.d { "Fetched review stats: $reviewStats" }
+            },
+            onFailure = { exception ->
+                Logger.e { "Failed to fetch review stats: ${exception.message}" }
+            }
+        )
+    }
+
     fun selectStatus(status: TrackStatus?) {
         _uiState.update { it.copy(status = status) }
     }
@@ -365,8 +377,7 @@ data class DetailUiState(
     val status: TrackStatus? = null,
 
     val review: Review? = null,
-
-    val ratingStats: RatingStats = RatingStats(),
+    val reviewStats: ReviewStats = ReviewStats(),
 
     val friends: List<User> = emptyList(),
     val friendsActivity: FriendsActivity? = null,

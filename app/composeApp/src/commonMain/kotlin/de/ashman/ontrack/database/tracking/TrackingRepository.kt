@@ -11,7 +11,7 @@ class TrackingRepository(
 ) {
     fun getTrackings(): Flow<List<Tracking>> = trackingDao.getAll().map { list -> list.map { it.toDomain() } }
 
-    fun getTracking(mediaId: String, mediaType: MediaType): Flow<Tracking?> = trackingDao.get(mediaId, mediaType).map { it?.toDomain() }
+    fun getTracking(mediaType: MediaType, mediaId: String): Flow<Tracking?> = trackingDao.get(mediaId, mediaType).map { it?.toDomain() }
 
     suspend fun addTrackings(trackings: List<Tracking>) = trackingDao.add(trackings.map { it.toEntity() })
 

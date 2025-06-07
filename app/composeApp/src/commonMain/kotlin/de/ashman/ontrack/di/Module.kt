@@ -11,6 +11,8 @@ import de.ashman.ontrack.api.movie.MovieRepository
 import de.ashman.ontrack.api.show.ShowRepository
 import de.ashman.ontrack.api.videogame.VideogameRepository
 import de.ashman.ontrack.database.OnTrackDatabase
+import de.ashman.ontrack.database.SelectedMediaRepository
+import de.ashman.ontrack.database.SelectedMediaRepositoryImpl
 import de.ashman.ontrack.database.review.ReviewDao
 import de.ashman.ontrack.database.review.ReviewRepository
 import de.ashman.ontrack.database.tracking.TrackingDao
@@ -52,8 +54,6 @@ import de.ashman.ontrack.network.services.share.PostService
 import de.ashman.ontrack.network.services.share.PostServiceImpl
 import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.TrackingServiceImpl
-import de.ashman.ontrack.repository.SelectedMediaRepository
-import de.ashman.ontrack.repository.SelectedMediaRepositoryImpl
 import de.ashman.ontrack.storage.StorageRepository
 import de.ashman.ontrack.storage.StorageRepositoryImpl
 import dev.gitlive.firebase.Firebase

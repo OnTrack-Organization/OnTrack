@@ -1,9 +1,11 @@
 package de.ashman.ontrack.feature.review.service
 
 import de.ashman.ontrack.feature.review.controller.dto.CreateReviewDto
+import de.ashman.ontrack.feature.review.controller.dto.ReviewStatsDto
 import de.ashman.ontrack.feature.review.domain.Review
 import de.ashman.ontrack.feature.review.repository.ReviewRepository
 import de.ashman.ontrack.feature.share.service.PostService
+import de.ashman.ontrack.feature.tracking.domain.MediaType
 import de.ashman.ontrack.feature.tracking.repository.TrackingRepository
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -42,5 +44,21 @@ class ReviewService(
         review.update(dto.rating, dto.title, dto.description)
 
         return review
+    }
+
+    fun getReviewStats(mediaType: MediaType, mediaId: String): ReviewStatsDto {
+        val reviews = reviewRepository.findByMedia(mediaType, mediaId)
+        val ratings = reviews.map { it.rating }
+
+        val average = if (ratings.isEmpty()) {
+            0.0
+        } else {
+            ratings.sum() / ratings.size
+        }
+
+        return ReviewStatsDto(
+            count = ratings.size,
+            average = average
+        )
     }
 }

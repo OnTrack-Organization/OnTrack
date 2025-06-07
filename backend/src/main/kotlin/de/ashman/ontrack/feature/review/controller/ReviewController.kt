@@ -3,8 +3,10 @@ package de.ashman.ontrack.feature.review.controller
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.review.controller.dto.CreateReviewDto
 import de.ashman.ontrack.feature.review.controller.dto.ReviewDto
+import de.ashman.ontrack.feature.review.controller.dto.ReviewStatsDto
 import de.ashman.ontrack.feature.review.controller.dto.toDto
 import de.ashman.ontrack.feature.review.service.ReviewService
+import de.ashman.ontrack.feature.tracking.domain.MediaType
 import jakarta.transaction.Transactional
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -40,5 +42,13 @@ class ReviewController(
     ): ReviewDto {
         val reviewDto = reviewService.updateReview(identity.id, dto).toDto()
         return reviewDto
+    }
+
+    @GetMapping("/stats")
+    fun getReviewStats(
+        @RequestParam mediaType: MediaType,
+        @RequestParam mediaId: String
+    ): ReviewStatsDto {
+        return reviewService.getReviewStats(mediaType, mediaId)
     }
 }
