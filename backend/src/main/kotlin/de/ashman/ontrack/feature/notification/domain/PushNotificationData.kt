@@ -4,4 +4,5 @@ data class PushNotificationData(
     val fcmToken: String,
     val title: String,
     val body: String,
+    val profilePictureUrl: String,
 )

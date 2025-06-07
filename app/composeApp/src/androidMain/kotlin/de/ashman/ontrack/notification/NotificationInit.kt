@@ -8,7 +8,7 @@ actual fun notificationInit() {
     NotifierManager.initialize(
         configuration = NotificationPlatformConfiguration.Android(
             showPushNotification = true,
-            notificationIconResId = R.mipmap.ic_launcher,
+            notificationIconResId = R.drawable.ic_notification,
         )
     )
 }
