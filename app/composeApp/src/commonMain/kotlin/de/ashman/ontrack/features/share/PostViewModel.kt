@@ -141,6 +141,8 @@ class PostViewModel(
     }
 
     fun addComment(commentText: String) = viewModelScope.launch {
+        _uiState.update { it.copy(sendingComment = true) }
+
         val postId = _uiState.value.selectedPost?.id ?: return@launch
         val dto = CreateCommentDto(message = commentText)
 
@@ -154,6 +156,8 @@ class PostViewModel(
                 Logger.e { "Failed to add comment: ${it.message}" }
             }
         )
+
+        _uiState.update { it.copy(sendingComment = false) }
     }
 
     fun removeComment(commentId: String) = viewModelScope.launch {
@@ -196,6 +200,7 @@ data class PostUiState(
     val loading: Boolean = false,
     val loadingMore: Boolean = false,
     val canLoadMore: Boolean = false,
+    val sendingComment: Boolean = false,
 )
 
 enum class PostResultState {

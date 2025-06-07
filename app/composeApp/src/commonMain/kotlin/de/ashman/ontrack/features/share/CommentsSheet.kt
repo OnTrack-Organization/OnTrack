@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material3.Icon
@@ -56,8 +57,7 @@ import org.jetbrains.compose.resources.stringResource
 fun CommentsSheet(
     comments: List<Comment>,
     commentCount: Int,
-    postResultState: PostResultState,
-    onFetchNextPage: () -> Unit,
+    sendingComment: Boolean,
     onPostComment: (String) -> Unit,
     onRemoveComment: (String) -> Unit,
     onClickUser: (String) -> Unit,
@@ -146,6 +146,7 @@ fun CommentsSheet(
                             onClickUser = { onClickUser(it.user.id) },
                             byCurrentUser = it.postedByCurrentUser,
                             isDeletable = it.deletable,
+                            onClickMentionedUser = { userId -> onClickUser(userId) },
                         )
                     }
 
@@ -191,8 +192,7 @@ fun CommentsSheet(
                 onValueChange = {
                     commentText = it
                 },
-                // TODO
-                isSending = false,
+                isSending = sendingComment,
                 onSend = {
                     onPostComment(commentText.text)
                     commentText = TextFieldValue("")
@@ -212,26 +212,33 @@ fun CommentCard(
     isDeletable: Boolean,
     onReply: () -> Unit,
     onClickUser: () -> Unit,
+    onClickMentionedUser: (String) -> Unit,
     onShowRemoveCommentConfirmDialog: () -> Unit,
 ) {
+    // Map "@username" to userId
+    val mentionMap = comment.mentionedUsers.associateBy { "@${it.username}" }
+
     val annotatedString = buildAnnotatedString {
         append(comment.message)
         val regex = "@\\S+".toRegex()
         regex.findAll(comment.message).forEach { matchResult ->
-            addStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                ),
-                start = matchResult.range.first,
-                end = matchResult.range.last + 1
-            )
-            addStringAnnotation(
-                tag = "USERNAME",
-                annotation = matchResult.value,
-                start = matchResult.range.first,
-                end = matchResult.range.last + 1
-            )
+            val usernameTag = matchResult.value
+            mentionMap[usernameTag]?.let { user ->
+                addStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    start = matchResult.range.first,
+                    end = matchResult.range.last + 1
+                )
+                addStringAnnotation(
+                    tag = "USERNAME",
+                    annotation = user.id,
+                    start = matchResult.range.first,
+                    end = matchResult.range.last + 1
+                )
+            }
         }
     }
 
@@ -239,10 +246,10 @@ fun CommentCard(
         modifier = modifier
             .fillMaxWidth()
             .then(
-                modifier.combinedClickable(
+                Modifier.combinedClickable(
                     onClick = {},
                     onLongClick = { if (isDeletable) onShowRemoveCommentConfirmDialog() },
-                ),
+                )
             )
     ) {
         Column(
@@ -258,9 +265,7 @@ fun CommentCard(
                     onClick = onClickUser
                 )
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         text = comment.user.username,
                         style = MaterialTheme.typography.bodyMedium,
@@ -286,11 +291,18 @@ fun CommentCard(
                 }
             }
 
-            // TODO clicking the username should open the user profile
-            Text(
+            ClickableText(
                 modifier = Modifier.padding(start = 56.dp),
                 text = annotatedString,
                 style = MaterialTheme.typography.bodyMedium,
+                onClick = { offset ->
+                    annotatedString
+                        .getStringAnnotations("USERNAME", offset, offset)
+                        .firstOrNull()
+                        ?.let { annotation ->
+                            onClickMentionedUser(annotation.item)
+                        }
+                }
             )
         }
     }

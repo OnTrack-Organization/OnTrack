@@ -124,8 +124,7 @@ fun PostDetailScreen(
                         })
                     },
                 post = it,
-                // TODO
-                isSending = false,
+                isSending = postUiState.sendingComment,
                 onClickCover = onClickMedia,
                 onClickUser = onClickUser,
                 onClickLike = { viewModel.toggleLike(postId) },
@@ -375,6 +374,7 @@ fun PostDetailCommentContent(
                 CommentCard(
                     comment = comment,
                     onClickUser = { onClickUser(comment.user.id) },
+                    onClickMentionedUser = { userId -> onClickUser(userId) },
                     onReply = { onReply(comment.user.username) },
                     onShowRemoveCommentConfirmDialog = { commentIdToRemove = comment.id },
                     byCurrentUser = comment.postedByCurrentUser,

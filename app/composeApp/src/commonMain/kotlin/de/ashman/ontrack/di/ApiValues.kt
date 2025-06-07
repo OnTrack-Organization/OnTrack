@@ -5,7 +5,6 @@ const val DEFAULT_FETCH_LIMIT = 20
 const val SMALL_FETCH_LIMIT = 10
 
 // TMDB: MOVIES AND TV SHOWS
-// TMDB supported keine custom fields
 const val TMDB_CLIENT_NAME = "TMDBClient"
 const val TMDB_URL = "api.themoviedb.org"
 const val TMDB_PATH_URL = "3/"
@@ -44,5 +43,7 @@ const val SPOTIFY_TOKEN_PATH = "api/token"
 // BACKEND
 const val BACKEND_CLIENT_NAME = "BackendClient"
 const val BACKEND_PORT = 8000
-const val BACKEND_HOST = "emulator.api.ontrack.local.riceisnice.dev" // this subdomain maps to 10.0.2.2
+
+// this subdomain maps to 10.0.2.2
+const val BACKEND_HOST = "emulator.api.ontrack.local.riceisnice.dev"
 

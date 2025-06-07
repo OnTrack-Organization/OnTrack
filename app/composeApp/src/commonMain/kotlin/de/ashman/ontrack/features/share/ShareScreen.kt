@@ -162,8 +162,7 @@ fun ShareScreen(
                         CurrentSheet.COMMENTS -> CommentsSheet(
                             comments = postUiState.selectedPost?.comments.orEmpty(),
                             commentCount = postUiState.selectedPost?.commentCount ?: 0,
-                            postResultState = postUiState.resultState,
-                            onFetchNextPage = { postViewModel.fetchComments(postUiState.selectedPost?.id.orEmpty(), true) },
+                            sendingComment = postUiState.sendingComment,
                             onPostComment = postViewModel::addComment,
                             onRemoveComment = postViewModel::removeComment,
                             onClickUser = { onClickUser(it) },
