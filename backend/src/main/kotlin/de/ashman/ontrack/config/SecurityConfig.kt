@@ -23,10 +23,14 @@ class SecurityConfig(
                 auth.anyRequest().authenticated()
             }
             .exceptionHandling { exceptions ->
+                // Handle unauthenticated requests (401)
                 exceptions.authenticationEntryPoint { _, response, _ ->
-                    // Return 401 and WWW-Authenticate instead of 403
                     response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer")
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                }
+                // Handle authorization failures (403)
+                exceptions.accessDeniedHandler { _, response, _ ->
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied")
                 }
             }
             .addFilterBefore(firebaseAuthFilter, AuthorizationFilter::class.java)
@@ -36,10 +40,8 @@ class SecurityConfig(
 
     @Bean
     fun firebaseAuthFilterRegistration(filter: FirebaseAuthFilter): FilterRegistrationBean<FirebaseAuthFilter> {
-        val registration: FilterRegistrationBean<FirebaseAuthFilter> = FilterRegistrationBean<FirebaseAuthFilter>(filter)
-
+        val registration = FilterRegistrationBean(filter)
         registration.isEnabled = false
-
         return registration
     }
 }
