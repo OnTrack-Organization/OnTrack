@@ -17,59 +17,88 @@ class PushNotificationService {
                 fcmToken = fcmToken,
                 title = "New Friend Request",
                 body = "${notification.sender.name} sent you a friend request",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "friend_request",
+                    "userId" to notification.sender.id
+                )
             )
 
             is FriendRequestAccepted -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Friend",
                 body = "${notification.sender.name} accepted your friend request",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "friend_accept",
+                    "userId" to notification.sender.id
+                )
             )
 
             is RecommendationReceived -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Recommendation",
                 body = "${notification.sender.name} recommended you ${notification.recommendation.media.title}",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "recommendation",
+                    "mediaId" to notification.recommendation.media.id,
+                    "mediaTitle" to notification.recommendation.media.title,
+                    "mediaCoverUrl" to notification.recommendation.media.coverUrl.orEmpty(),
+                    "mediaType" to notification.recommendation.media.type.name
+                )
             )
 
             is PostLiked -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Like",
                 body = "${notification.sender.name} liked your post of ${notification.post.tracking.media.title}",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "post_liked",
+                    "postId" to notification.post.id.toString(),
+                )
             )
 
             is PostCommented -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Comment",
                 body = "${notification.sender.name} commented on your post of ${notification.post.tracking.media.title}",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "post_commented",
+                    "postId" to notification.post.id.toString(),
+                )
             )
 
             is PostMentioned -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Mention",
                 body = "${notification.sender.name} mentioned you in a comment of ${notification.post.tracking.media.title}",
-                profilePictureUrl = notification.sender.profilePictureUrl,
+                extraData = mapOf(
+                    "type" to "post_mentioned",
+                    "postId" to notification.post.id.toString(),
+                )
             )
 
             else -> return
         }
 
-        sendNotification(content)
+
+        sendNotification(data = content)
     }
 
     private fun sendNotification(data: PushNotificationData) {
-        val message = Message.builder()
+        val messageBuilder = Message.builder()
             .setToken(data.fcmToken)
+            .putData("title", data.title)
+            .putData("body", data.body)
+
+        // Add type and related payload
+        data.extraData.forEach { (key, value) ->
+            messageBuilder.putData(key, value)
+        }
+
+        val message = messageBuilder
             .setNotification(
                 FCMNotification.builder()
                     .setTitle(data.title)
                     .setBody(data.body)
-                    // Sets a large image below the body
-                    //.setImage(data.profilePictureUrl)
                     .build()
             )
             .setAndroidConfig(
@@ -78,8 +107,6 @@ class PushNotificationService {
                         AndroidNotification.builder()
                             .setTitle(data.title)
                             .setBody(data.body)
-                            //.setIcon(data.profilePictureUrl)
-                            //.setImage(data.profilePictureUrl)
                             .build()
                     )
                     .build()
@@ -91,7 +118,6 @@ class PushNotificationService {
                             .setMutableContent(true)
                             .build()
                     )
-                    //.putCustomData()
                     .putHeader("apns-push-type", "alert")
                     .putHeader("apns-priority", "10")
                     .putHeader("apns-topic", "your.bundle.id")

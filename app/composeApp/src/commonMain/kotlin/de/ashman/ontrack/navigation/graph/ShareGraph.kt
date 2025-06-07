@@ -3,6 +3,7 @@ package de.ashman.ontrack.navigation.graph
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.friend.FriendsViewModel
@@ -36,7 +37,11 @@ fun NavGraphBuilder.shareGraph(
         )
     }
 
-    composable<Route.PostDetail> { backStackEntry ->
+    composable<Route.PostDetail>(
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "ontrack://post/{postId}" }
+        )
+    ) { backStackEntry ->
         val postDetail: Route.PostDetail = backStackEntry.toRoute()
 
         PostDetailScreen(

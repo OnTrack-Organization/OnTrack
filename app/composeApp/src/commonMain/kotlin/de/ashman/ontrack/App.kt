@@ -1,7 +1,6 @@
 package de.ashman.ontrack
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
@@ -14,6 +13,9 @@ import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
+import de.ashman.ontrack.domain.media.MediaType
+import de.ashman.ontrack.navigation.MediaNavigationParam
+import de.ashman.ontrack.navigation.Route
 import de.ashman.ontrack.navigation.graph.NavigationGraph
 import de.ashman.ontrack.notification.notificationInit
 import de.ashman.ontrack.theme.OnTrackTheme
@@ -23,12 +25,15 @@ import de.ashman.ontrack.theme.OnTrackTheme
 fun App() {
     OnTrackTheme {
         val navController = rememberNavController()
+
         GoogleAuthProvider.create(GoogleAuthCredentials(BuildKonfig.GOOGLE_AUTH_CLIENT_ID))
         setSingletonImageLoaderFactory { context -> getAsyncImageLoader(context) }
 
         NavigationGraph(navController)
 
-        startNotificationManager(navController)
+        startNotificationManager(
+            navigate = { navController.navigate(it) }
+        )
     }
 }
 
@@ -40,39 +45,46 @@ fun getAsyncImageLoader(context: PlatformContext) =
         .build()
 
 private fun startNotificationManager(
-    navController: NavController
+    navigate: (Route) -> Unit,
 ) {
-    val TAG = "NotificationManager"
     notificationInit()
 
     NotifierManager.addListener(object : NotifierManager.Listener {
         override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
-            Logger.d(
-                "Push Notification is received: " +
-                        "Title: $title and " +
-                        "Body: $body and " +
-                        "Notification payloadData: $data"
-            )
+            Logger.d("Push received: title=$title, body=$body, data=$data")
         }
 
         override fun onNotificationClicked(data: PayloadData) {
             super.onNotificationClicked(data)
-            Logger.d("Notification clicked, Notification payloadData: $data", tag = TAG)
+            Logger.d("Notification clicked: payloadData: $data")
 
-            /*val mediaNav = MediaNavigationParam(
-                id = data["mediaId"].toString(),
-                title = "",
-                coverUrl = "",
-                type = MediaType.MOVIE,
-            )
+            val notificationType = data["type"].toString()
 
-            try {
-                val route = Route.Detail(mediaNav)
-                Logger.d("Route: $route", tag = TAG)
-                navController.navigate(route)
-            } catch (e: Exception) {
-                Logger.e("Failed to navigate: ${e.message}", tag = TAG)
-            }*/
+            when (notificationType) {
+                "post_liked", "post_commented", "post_commented" -> {
+                    val postId = data["postId"].toString()
+                    navigate(Route.PostDetail(postId))
+                }
+
+                "recommendation" -> {
+                    val mediaNav = MediaNavigationParam(
+                        id = data["mediaId"].toString(),
+                        title = data["mediaTitle"].toString(),
+                        coverUrl = data["mediaCoverUrl"].toString(),
+                        type = MediaType.fromStringOrThrow(data["mediaType"].toString()),
+                    )
+                    navigate(Route.Detail(mediaNav))
+                }
+
+                "friend_request", "friend_accept" -> {
+                    val userId = data["userId"].toString()
+                    navigate(Route.OtherShelf(userId))
+                }
+
+                else -> {
+                    Logger.w("Unhandled notification type: $notificationType")
+                }
+            }
         }
     })
 }
