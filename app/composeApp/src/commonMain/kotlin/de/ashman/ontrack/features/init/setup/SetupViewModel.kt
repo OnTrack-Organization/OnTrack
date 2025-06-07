@@ -110,7 +110,6 @@ class SetupViewModel(
 }
 
 data class SetupUiState(
-    // TODO maybe remove and do differently
     val user: User? = null,
     val name: String = "",
     val username: String = "",

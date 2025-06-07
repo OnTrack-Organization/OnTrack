@@ -41,7 +41,6 @@ class AccountServiceImpl(
             HttpStatusCode.OK -> AccountResult.ExistingUser(apiResponse.data.toDomain())
             HttpStatusCode.Created -> AccountResult.NewUserCreated(apiResponse.data.toDomain())
             else -> {
-                // TODO maybe backend should handle this
                 firebaseAuth.currentUser?.delete()
                 error("Unexpected status: ${apiResponse.status}")
             }

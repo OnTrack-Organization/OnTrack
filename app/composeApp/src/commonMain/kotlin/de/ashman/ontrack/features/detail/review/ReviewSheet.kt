@@ -1,17 +1,20 @@
 package de.ashman.ontrack.features.detail.review
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.tracking.MAX_RATING
@@ -97,6 +106,9 @@ fun SelectableStarRatingBar(
     onRatingChange: (Double) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val starSize = 64.dp
+    val contentColor = contentColorFor(trackStatus.getColor())
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,29 +119,67 @@ fun SelectableStarRatingBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (i in 1..MAX_RATING) {
-                // TODO add a nice animation here
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = null,
-                    tint = if (rating != null && i <= rating) contentColorFor(trackStatus.getColor()) else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clickable(
-                            // TODO make this be able to have half stars
-                            onClick = { onRatingChange(i.toDouble()) },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        )
+                val isFull = rating != null && i <= rating
+                val isHalf = rating != null && (i - 1 < rating && rating < i)
+
+                val scale by animateFloatAsState(
+                    targetValue = if (isFull || isHalf) 1.2f else 1f,
+                    label = "StarScale"
                 )
+
+                Box(
+                    modifier = Modifier
+                        .size(starSize)
+                        .graphicsLayer(scaleX = scale, scaleY = scale)
+                        .pointerInput(Unit) {
+                            detectTapGestures { offset ->
+                                val half = size.width / 2
+                                val selected = if (offset.x < half) i - 0.5 else i.toDouble()
+                                onRatingChange(selected)
+                            }
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.StarBorder,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    if (isFull) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = contentColor,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else if (isHalf) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = contentColor,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RectangleShape)
+                                .drawWithContent {
+                                    clipRect(right = size.width / 2) {
+                                        this@drawWithContent.drawContent()
+                                    }
+                                }
+                        )
+                    }
+                }
             }
         }
+
         AnimatedContent(
             targetState = rating,
+            label = "RatingLabel"
         ) { targetState ->
             Text(
-                text = getRatingLabel(targetState?.toInt(), MAX_RATING),
+                text = getRatingLabel(targetState, MAX_RATING),
                 style = MaterialTheme.typography.labelLarge,
-                color = contentColorFor(trackStatus.getColor()),
+                color = contentColor,
                 fontWeight = FontWeight.Bold,
             )
         }

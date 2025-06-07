@@ -16,7 +16,6 @@ fun UserDto.toDomain() = User(
     id = id,
     name = name,
     username = username,
-    // TODO probably different way
     email = email.orEmpty(),
     profilePictureUrl = profilePictureUrl,
 )

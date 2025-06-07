@@ -6,7 +6,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -67,9 +66,6 @@ fun MainNavigationBar(
     currentRoute: NavDestination?,
     onBottomNavigation: (Route) -> Unit,
 ) {
-    // TODO do sometime
-    val bottomBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
-
     BottomAppBar {
         BottomNavItem.items.forEach { route ->
             val isSelected = currentRoute?.hierarchy?.any { it.route == route.route::class.qualifiedName } == true

@@ -240,21 +240,36 @@ fun TrackStatus?.getColor(): Color {
 }
 
 @Composable
-fun getRatingLabel(rating: Int?, maxRating: Int): String {
+fun getRatingLabel(rating: Double?, maxRating: Int): String {
     val ratingLabel = when (rating) {
         null -> stringResource(Res.string.no_rating)
-        1 -> stringResource(Res.string.rating_one)
-        2 -> stringResource(Res.string.rating_two)
-        3 -> stringResource(Res.string.rating_three)
-        4 -> stringResource(Res.string.rating_four)
-        5 -> stringResource(Res.string.rating_five)
+        in 0.5..1.0 -> stringResource(Res.string.rating_one)
+        in 1.5..2.0 -> stringResource(Res.string.rating_two)
+        in 2.5..3.0 -> stringResource(Res.string.rating_three)
+        in 3.5..4.0 -> stringResource(Res.string.rating_four)
+        in 4.5..5.0 -> stringResource(Res.string.rating_five)
         else -> ""
     }
 
     return if (rating == null) {
         ratingLabel
     } else {
-        stringResource(Res.string.rating_subtitle, rating, maxRating, ratingLabel)
+        stringResource(
+            Res.string.rating_subtitle,
+            formatOneDecimal(rating),
+            maxRating,
+            ratingLabel
+        )
+    }
+}
+
+fun formatOneDecimal(rating: Double): String {
+    val whole = rating.toInt()
+    val decimal = ((rating - whole) * 10).toInt()
+    return if (decimal == 0) {
+        whole.toString()
+    } else {
+        "$whole.$decimal"
     }
 }
 

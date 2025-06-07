@@ -73,7 +73,6 @@ class PostViewModel(
         )
     }
 
-    // TODO maybe change these type of methods to return the complete new postdto instead
     fun fetchComments(postId: String, initial: Boolean = false) = viewModelScope.launch {
         if (initial) commentsPage = 0
 
@@ -126,7 +125,6 @@ class PostViewModel(
         )
     }
 
-    // TODO ugly, change it!
     fun toggleLike(postId: String) = viewModelScope.launch {
         postService.toggleLike(postId).fold(
             onSuccess = { updatedPost ->

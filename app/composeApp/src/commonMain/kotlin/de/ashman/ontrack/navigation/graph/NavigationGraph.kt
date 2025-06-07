@@ -87,7 +87,6 @@ fun NavigationGraph(
                 settingsViewModel = settingsViewModel,
                 commonUiManager = commonUiManager,
                 clearViewModels = {
-                    // TODO different way
                     friendsViewModel.clearViewModel()
                     postViewModel.clearViewModel()
                     detailViewModel.clearViewModel()
@@ -103,7 +102,6 @@ fun NavigationGraph(
 }
 
 fun NavController.navigateToShelf(userId: String) {
-    // TODO change
     val route = if (userId == Firebase.auth.currentUser?.uid) {
         Route.Shelf
     } else {

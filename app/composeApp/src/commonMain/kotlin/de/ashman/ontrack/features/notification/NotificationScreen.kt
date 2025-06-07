@@ -179,7 +179,6 @@ fun NotificationCard(
                 onMarkAsRead(notification.id)
 
                 when (notification) {
-                    // TODO maybe open friendssheet instead
                     is FriendRequestReceived, is FriendRequestAccepted -> onClickUser(notification.sender.id)
                     is RecommendationReceived -> onClickMedia(notification.recommendation.media)
                     is PostLiked -> onClickPost(notification.post.id)
