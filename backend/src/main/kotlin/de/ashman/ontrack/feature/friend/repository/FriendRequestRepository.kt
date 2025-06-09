@@ -11,7 +11,11 @@ import java.util.*
 @Repository
 interface FriendRequestRepository : JpaRepository<FriendRequest, UUID> {
 
-    fun findFriendRequestBySenderAndReceiverAndStatus(sender: User, receiver: User, status: FriendRequestStatus): FriendRequest?
+    fun findFriendRequestBySenderIdAndReceiverIdAndStatus(
+        senderId: String,
+        receiverId: String,
+        status: FriendRequestStatus
+    ): FriendRequest?
 
     @Query("SELECT fr.sender FROM FriendRequest fr WHERE fr.receiver = :receiver AND fr.status = 'PENDING'")
     fun findSendersOfPendingRequests(receiver: User): List<User>

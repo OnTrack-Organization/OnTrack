@@ -34,7 +34,7 @@ class FriendController(
         @PathVariable("id") friendId: String,
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<Unit> {
-        friendService.removeFriend(identity.id, friendId)
+        friendService.endFriendship(identity.id, friendId)
         return ResponseEntity.ok().build()
     }
 }

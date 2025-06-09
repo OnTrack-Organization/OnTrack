@@ -14,6 +14,7 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.services.block.BlockService
 import de.ashman.ontrack.network.services.friend.FriendService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,17 +23,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.block_error
+import ontrack.composeapp.generated.resources.block_success
 import ontrack.composeapp.generated.resources.friend_accept_request_error
 import ontrack.composeapp.generated.resources.friend_cancel_request_error
 import ontrack.composeapp.generated.resources.friend_decline_request_error
 import ontrack.composeapp.generated.resources.friend_delete_error
 import ontrack.composeapp.generated.resources.friend_send_request_error
 import ontrack.composeapp.generated.resources.shelf_get_profile_error
+import ontrack.composeapp.generated.resources.unblock_error
+import ontrack.composeapp.generated.resources.unblock_success
 
 class ShelfViewModel(
     private val userDataStore: UserDataStore,
     private val trackingRepository: TrackingRepository,
     private val friendService: FriendService,
+    private val blockService: BlockService,
     private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
@@ -66,7 +72,8 @@ class ShelfViewModel(
                         it.copy(
                             user = profile.user.user,
                             friendStatus = profile.user.friendStatus,
-                            trackings = profile.trackings
+                            isBlocked = profile.blocked,
+                            trackings = profile.trackings,
                         )
                     }
                 },
@@ -138,6 +145,66 @@ class ShelfViewModel(
         )
     }
 
+    // TODO
+    fun blockUser() = viewModelScope.launch {
+        val userId = _uiState.value.user?.id
+
+        if (userId == null) {
+            commonUiManager.hideSheet()
+            commonUiManager.showSnackbar(Res.string.block_error)
+            return@launch
+        }
+
+        _uiState.update { it.copy(isLoading = true) }
+
+        blockService.blockUser(userId).fold(
+            onSuccess = {
+                _uiState.update {
+                    it.copy(
+                        isBlocked = true,
+                        friendStatus = FriendStatus.STRANGER,
+                    )
+                }
+                commonUiManager.showSnackbar(Res.string.block_success)
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.block_error)
+            }
+        )
+
+        _uiState.update { it.copy(isLoading = false) }
+        commonUiManager.hideSheet()
+    }
+
+    fun unblockUser() = viewModelScope.launch {
+        val userId = _uiState.value.user?.id
+
+        if (userId == null) {
+            commonUiManager.hideSheet()
+            commonUiManager.showSnackbar(Res.string.unblock_error)
+            return@launch
+        }
+
+        _uiState.update { it.copy(isLoading = true) }
+
+        blockService.unblockUser(userId).fold(
+            onSuccess = {
+                _uiState.update {
+                    it.copy(
+                        isBlocked = false,
+                    )
+                }
+                commonUiManager.showSnackbar(Res.string.unblock_success)
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.unblock_error)
+            }
+        )
+
+        _uiState.update { it.copy(isLoading = false) }
+        commonUiManager.hideSheet()
+    }
+
     fun updateSelectedStatus(trackStatus: TrackStatus?) {
         _uiState.update {
             it.copy(selectedStatus = trackStatus)
@@ -158,9 +225,11 @@ class ShelfViewModel(
 data class ShelfUiState(
     val user: User? = null,
     val friendStatus: FriendStatus? = null,
+    val isBlocked: Boolean = false,
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val selectedStatus: TrackStatus? = null,
     val trackings: List<Tracking> = emptyList(),
+    val isLoading: Boolean = false,
 ) {
     val filteredTrackings: List<Tracking>
         get() = trackings.filter {

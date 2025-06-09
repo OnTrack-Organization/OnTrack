@@ -1,5 +1,6 @@
 package de.ashman.ontrack.feature.share.service
 
+import de.ashman.ontrack.feature.block.service.BlockingService
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
 import de.ashman.ontrack.feature.notification.service.NotificationService
 import de.ashman.ontrack.feature.review.domain.Review
@@ -26,6 +27,7 @@ class PostService(
     private val likeRepository: LikeRepository,
     private val userRepository: UserRepository,
     private val friendRepository: FriendRepository,
+    private val blockingService: BlockingService,
     private val notificationService: NotificationService,
 ) {
     fun getPosts(pageable: Pageable, currentUserId: String): Page<PostDto> {
@@ -38,11 +40,13 @@ class PostService(
             val commentCount = commentRepository.countByPostId(post.id)
             val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(post.id, currentUserId)
 
-            val likes = likeRepository.findByPostId(post.id, pageRequest)
+            val likes = likeRepository
+                .findVisibleByPostId(post.id, currentUserId, pageRequest)
                 .map { it.toDto() }
                 .toList()
 
-            val comments = commentRepository.findByPostId(post.id, pageRequest)
+            val comments = commentRepository
+                .findVisibleByPostId(post.id, currentUserId, pageRequest)
                 .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
                 .toList()
 
@@ -59,18 +63,24 @@ class PostService(
     fun getPost(postId: UUID, currentUserId: String): PostDto {
         val pageRequest = Pageable.unpaged()
         val post = postRepository.getReferenceById(postId)
+
+        if (blockingService.isBlocked(post.user.id, currentUserId)) {
+            throw AccessDeniedException("Cannot view post, because user is blocked")
+        }
+
         val likeCount = likeRepository.countByPostId(post.id)
         val commentCount = commentRepository.countByPostId(post.id)
+        val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(postId, currentUserId)
 
-        val likes = likeRepository.findByPostId(postId, pageRequest)
+        val likes = likeRepository
+            .findVisibleByPostId(postId, currentUserId, pageRequest)
             .map { it.toDto() }
             .toList()
 
-        val comments = commentRepository.findByPostId(postId, pageRequest)
+        val comments = commentRepository
+            .findVisibleByPostId(postId, currentUserId, pageRequest)
             .map { it.toDto(currentUserId = currentUserId, postOwnerId = post.user.id) }
             .toList()
-
-        val likedByCurrentUser = likeRepository.existsByPostIdAndUserId(postId, currentUserId)
 
         return post.toDto(
             likes = likes,
@@ -102,6 +112,11 @@ class PostService(
 
     fun toggleLike(postId: UUID, likerUserId: String): LikeDto {
         val post = postRepository.getReferenceById(postId)
+
+        if (blockingService.isBlocked(post.user.id, likerUserId)) {
+            throw AccessDeniedException("Cannot toggle like, because user is blocked")
+        }
+
         val existingLike = likeRepository.findByPostIdAndUserId(postId, likerUserId)
 
         val receiver = userRepository.getReferenceById(post.user.id)
@@ -129,24 +144,34 @@ class PostService(
     fun addComment(postId: UUID, commenterUserId: String, dto: CreateCommentDto): CommentDto {
         val post = postRepository.getReferenceById(postId)
 
+        if (blockingService.isBlocked(post.user.id, commenterUserId)) {
+            throw AccessDeniedException("Cannot comment on post, because user is blocked")
+        }
+
         val receiver = userRepository.getReferenceById(post.user.id)
         val sender = userRepository.getReferenceById(commenterUserId)
 
         val mentionedUsernames = parseMentionedUsernames(dto.message)
         val mentionedUsers = userRepository.findByUsernameIn(mentionedUsernames)
 
+        // Filter out blocked users for mentions
+        val visibleMentionedUsers = mentionedUsers.filterNot { mentionedUser ->
+            blockingService.isBlocked(mentionedUser.id, commenterUserId) ||
+                    blockingService.isBlocked(commenterUserId, mentionedUser.id)
+        }.toSet()
+
         val comment = Comment(
             post = post,
             user = sender,
             message = dto.message,
-            mentionedUsers = mentionedUsers
+            mentionedUsers = visibleMentionedUsers
         )
 
         commentRepository.save(comment)
 
         // Mentioned users get individual notifications
-        if (mentionedUsers.isNotEmpty()) {
-            mentionedUsers.forEach { mentionedUser ->
+        if (visibleMentionedUsers.isNotEmpty()) {
+            visibleMentionedUsers.forEach { mentionedUser ->
                 notificationService.createPostMentioned(
                     commenter = sender,
                     postOwner = mentionedUser,
@@ -157,7 +182,7 @@ class PostService(
         }
 
         // Post owner gets notified about a comment only if not already mentioned
-        if (receiver !in mentionedUsers) {
+        if (receiver !in visibleMentionedUsers) {
             notificationService.createPostCommented(
                 commenter = sender,
                 postOwner = receiver,
@@ -182,22 +207,25 @@ class PostService(
     fun getComments(postId: UUID, currentUserId: String, pageable: Pageable): CommentsDto {
         val post = postRepository.getReferenceById(postId)
         val commentCount = commentRepository.countByPostId(post.id)
-        val comments = commentRepository.findByPostId(post.id, pageable)
+
+        val comments = commentRepository.findVisibleByPostId(post.id, currentUserId, pageable)
+        val commentDtos = comments.map { it.toDto(currentUserId, post.user.id) }
 
         val commentsDto = CommentsDto(
-            comments = comments.map { it.toDto(currentUserId, post.user.id) },
+            comments = commentDtos,
             commentCount = commentCount,
         )
 
         return commentsDto
     }
 
-    fun getLikes(postId: UUID, pageable: Pageable): LikesDto {
+    fun getLikes(postId: UUID, currentUserId: String, pageable: Pageable): LikesDto {
         val likeCount = likeRepository.countByPostId(postId)
-        val likes = likeRepository.findByPostId(postId, pageable)
+        val likes = likeRepository.findVisibleByPostId(postId, currentUserId, pageable)
+        val likeDtos = likes.map { it.toDto() }
 
         val likesDto = LikesDto(
-            likes = likes.map { it.toDto() },
+            likes = likeDtos,
             likeCount = likeCount,
         )
 

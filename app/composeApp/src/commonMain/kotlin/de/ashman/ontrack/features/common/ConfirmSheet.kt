@@ -3,6 +3,7 @@ package de.ashman.ontrack.features.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.MaterialTheme
@@ -12,15 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.cancel_button
-import ontrack.composeapp.generated.resources.remove_button
+import ontrack.composeapp.generated.resources.confirm_button
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun RemoveSheet(
+fun ConfirmSheet(
     title: StringResource,
     text: StringResource,
-    isDeleting: Boolean,
+    isLoading: Boolean,
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -45,9 +46,9 @@ fun RemoveSheet(
         )
         OnTrackButton(
             modifier = Modifier.weight(1f),
-            text = Res.string.remove_button,
-            icon = Icons.Default.Delete,
-            isLoading = isDeleting,
+            text = Res.string.confirm_button,
+            icon = Icons.Default.Check,
+            isLoading = isLoading,
             onClick = onConfirm,
         )
     }

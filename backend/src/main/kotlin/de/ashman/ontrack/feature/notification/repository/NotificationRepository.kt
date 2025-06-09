@@ -11,7 +11,19 @@ import java.util.*
 @Repository
 interface NotificationRepository : JpaRepository<Notification, String> {
 
-    fun findTop50ByReceiverIdOrderByUpdatedAtDesc(receiverId: String): List<Notification>
+    @Query(
+        """
+    SELECT n FROM Notification n
+    WHERE n.receiver.id = :receiverId
+      AND NOT EXISTS (
+        SELECT 1 FROM Blocking b
+        WHERE (b.blocker.id = :receiverId AND b.blocked.id = n.sender.id)
+           OR (b.blocker.id = n.sender.id AND b.blocked.id = :receiverId)
+      )
+    ORDER BY n.updatedAt DESC
+    """
+    )
+    fun findTop50VisibleByReceiverId(receiverId: String): List<Notification>
 
     fun findByIdAndReceiverId(id: UUID, receiverId: String): Notification
 

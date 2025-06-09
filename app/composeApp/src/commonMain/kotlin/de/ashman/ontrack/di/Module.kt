@@ -42,6 +42,8 @@ import de.ashman.ontrack.network.clients.createTMDBClient
 import de.ashman.ontrack.network.clients.createTwitchTokenClient
 import de.ashman.ontrack.network.services.account.AccountService
 import de.ashman.ontrack.network.services.account.AccountServiceImpl
+import de.ashman.ontrack.network.services.block.BlockService
+import de.ashman.ontrack.network.services.block.BlockServiceImpl
 import de.ashman.ontrack.network.services.friend.FriendService
 import de.ashman.ontrack.network.services.friend.FriendServiceImpl
 import de.ashman.ontrack.network.services.notification.NotificationService
@@ -93,6 +95,7 @@ val appModule = module {
     single<ReviewService> { ReviewServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<PostService> { PostServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<NotificationService> { NotificationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<BlockService> { BlockServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -132,7 +135,7 @@ val appModule = module {
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
-    viewModelDefinition { ShelfViewModel(get(), get(), get(), get()) }
+    viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get()) }
 
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }

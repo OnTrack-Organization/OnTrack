@@ -22,10 +22,7 @@ class FriendService(
         friendRepository.save(newFriendship)
     }
 
-    fun endFriendship(user1: User, user2: User) {
-        val (firstId, secondId) = if (user1.id < user2.id) user1.id to user2.id else user2.id to user1.id
-        friendRepository.deleteByUser1IdAndUser2Id(firstId, secondId)
-    }
+    fun endFriendship(userId: String, friendId: String) = friendRepository.deleteFriendshipBetween(userId, friendId)
 
     fun getFriendIds(userId: String): List<String> = friendRepository.findFriendIdsOf(userId)
 
@@ -51,11 +48,5 @@ class FriendService(
         val receivedRequestDtos = receivedRequests.map { OtherUserDto(it.toDto(), FriendStatus.REQUEST_RECEIVED) }
 
         return friendDtos + sentRequestDtos + receivedRequestDtos
-    }
-
-    fun removeFriend(userId: String, friendId: String) {
-        val user = userRepository.getReferenceById(userId)
-        val friend = userRepository.getReferenceById(friendId)
-        endFriendship(user, friend)
     }
 }
