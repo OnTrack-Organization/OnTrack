@@ -218,10 +218,13 @@ fun CommentCard(
     // Map "@username" to userId
     val mentionMap = comment.mentionedUsers.associateBy { "@${it.username}" }
 
+    // Remove trailing spaces from the message
+    val trimmedMessage = comment.message.trimEnd()
+
     val annotatedString = buildAnnotatedString {
-        append(comment.message)
+        append(trimmedMessage)
         val regex = "@\\S+".toRegex()
-        regex.findAll(comment.message).forEach { matchResult ->
+        regex.findAll(trimmedMessage).forEach { matchResult ->
             val usernameTag = matchResult.value
             mentionMap[usernameTag]?.let { user ->
                 addStyle(
@@ -294,7 +297,9 @@ fun CommentCard(
             ClickableText(
                 modifier = Modifier.padding(start = 56.dp),
                 text = annotatedString,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 onClick = { offset ->
                     annotatedString
                         .getStringAnnotations("USERNAME", offset, offset)

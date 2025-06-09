@@ -9,9 +9,11 @@ import kotlinx.serialization.Serializable
 data class UserProfileDto(
     val user: OtherUserDto,
     val trackings: List<TrackingDto>,
+    val blocked: Boolean,
 )
 
 fun UserProfileDto.toDomain() = UserProfile(
     user = user.toDomain(),
     trackings = trackings.map { it.toDomain() },
+    blocked = blocked,
 )

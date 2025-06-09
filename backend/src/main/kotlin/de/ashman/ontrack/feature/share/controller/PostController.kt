@@ -21,7 +21,7 @@ class PostController(
     private val postService: PostService,
 ) {
     @GetMapping("/all")
-    fun getFeed(
+    fun getPosts(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
         @AuthenticationPrincipal identity: Identity
@@ -98,7 +98,7 @@ class PostController(
         @AuthenticationPrincipal identity: Identity,
     ): ResponseEntity<LikesDto> {
         val pageable = PageRequest.of(page, size)
-        val likes = postService.getLikes(postId, pageable)
+        val likes = postService.getLikes(postId, identity.id, pageable)
 
         return ResponseEntity.ok(likes)
     }

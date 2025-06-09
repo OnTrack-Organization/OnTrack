@@ -17,16 +17,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,6 +52,8 @@ import de.ashman.ontrack.domain.tracking.Tracking
 import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.features.common.ConfirmSheet
+import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.LargerImageDialog
 import de.ashman.ontrack.features.common.MediaPoster
@@ -56,8 +64,14 @@ import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.block_button
+import ontrack.composeapp.generated.resources.block_confirm_text
+import ontrack.composeapp.generated.resources.block_confirm_title
 import ontrack.composeapp.generated.resources.shelf_nav_title
 import ontrack.composeapp.generated.resources.shelf_own_empty
+import ontrack.composeapp.generated.resources.unblock_button
+import ontrack.composeapp.generated.resources.unblock_confirm_text
+import ontrack.composeapp.generated.resources.unblock_confirm_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -79,6 +93,7 @@ fun ShelfScreen(
 
     var showImageDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LaunchedEffect(userId) {
         viewModel.loadUserProfile(userId)
@@ -92,15 +107,29 @@ fun ShelfScreen(
 
     Scaffold(
         topBar = {
-            Column {
-                OnTrackTopBar(
-                    title = stringResource(Res.string.shelf_nav_title),
-                    navigationIcon = onBack?.let { Icons.AutoMirrored.Default.ArrowBack },
-                    onClickNavigation = { onBack?.invoke() },
-                    actionIcon = onSettings?.let { Icons.Default.Settings },
-                    onClickAction = { onSettings?.invoke() },
-                )
-            }
+            OnTrackTopBar(
+                title = stringResource(Res.string.shelf_nav_title),
+                navigationIcon = onBack?.let { Icons.AutoMirrored.Default.ArrowBack },
+                onClickNavigation = { onBack?.invoke() },
+                customActions = {
+                    if (userId == null) {
+                        onSettings?.let {
+                            IconButton(onClick = it) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    } else {
+                        ShelfDropDownMenu(
+                            isBlocked = uiState.isBlocked,
+                            onClickBlock = { commonUiManager.showSheet(CurrentSheet.BLOCK) },
+                            onClickUnblock = { commonUiManager.showSheet(CurrentSheet.UNBLOCK) },
+                        )
+                    }
+                }
+            )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
@@ -113,6 +142,7 @@ fun ShelfScreen(
                 ShelfHeader(
                     user = it,
                     friendStatus = uiState.friendStatus,
+                    isBlocked = uiState.isBlocked,
                     sendRequest = viewModel::sendRequest,
                     cancelRequest = viewModel::cancelRequest,
                     acceptRequest = viewModel::acceptRequest,
@@ -160,6 +190,44 @@ fun ShelfScreen(
             imageUrl = uiState.user?.profilePictureUrl,
             onDismiss = { showImageDialog = false },
         )
+
+        if (commonUiState.showSheet) {
+            ModalBottomSheet(
+                onDismissRequest = commonUiManager::hideSheet,
+                sheetState = sheetState,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    when (commonUiState.currentSheet) {
+                        CurrentSheet.BLOCK -> {
+                            ConfirmSheet(
+                                title = Res.string.block_confirm_title,
+                                text = Res.string.block_confirm_text,
+                                isLoading = uiState.isLoading,
+                                onConfirm = viewModel::blockUser,
+                                onCancel = commonUiManager::hideSheet,
+                            )
+                        }
+
+                        CurrentSheet.UNBLOCK -> {
+                            ConfirmSheet(
+                                title = Res.string.unblock_confirm_title,
+                                text = Res.string.unblock_confirm_text,
+                                isLoading = uiState.isLoading,
+                                onConfirm = viewModel::unblockUser,
+                                onCancel = commonUiManager::hideSheet,
+                            )
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -167,6 +235,7 @@ fun ShelfScreen(
 fun ShelfHeader(
     user: User,
     friendStatus: FriendStatus?,
+    isBlocked: Boolean = false,
     sendRequest: () -> Unit = {},
     cancelRequest: () -> Unit = {},
     acceptRequest: () -> Unit = {},
@@ -195,6 +264,7 @@ fun ShelfHeader(
             friendStatus?.let {
                 FriendRequestButton(
                     friendStatus = friendStatus,
+                    isBlocked = isBlocked,
                     onSendRequest = sendRequest,
                     onCancelRequest = cancelRequest,
                     onAcceptRequest = acceptRequest,
@@ -379,8 +449,7 @@ fun EmptyShelf(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 48.dp)
-            .padding(bottom = 145.dp),
+            .padding(horizontal = 48.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -397,5 +466,36 @@ fun EmptyShelf(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+fun ShelfDropDownMenu(
+    onClickBlock: () -> Unit,
+    onClickUnblock: () -> Unit,
+    isBlocked: Boolean,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(if (isBlocked) Res.string.unblock_button else Res.string.block_button)) },
+                leadingIcon = {
+                    Icon(Icons.Default.Block, contentDescription = null)
+                },
+                onClick = {
+                    expanded = false
+                    if (isBlocked) onClickUnblock() else onClickBlock()
+                }
+            )
+        }
     }
 }

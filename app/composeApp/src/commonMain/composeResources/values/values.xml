@@ -195,6 +195,17 @@
     <string name="decline_request_button">Decline</string>
     <string name="remove_friend_button">Remove</string>
 
+    <string name="blocked_button">Blocked</string>
+
+    <string name="block_confirm_title">Block User?</string>
+    <string name="block_confirm_text">Are you sure you want to block this user?</string>
+
+    <string name="unblock_confirm_title">Unblock User?</string>
+    <string name="unblock_confirm_text">Are you sure you want to unblock this user?</string>
+
+    <string name="block_success">User blocked successfully</string>
+    <string name="unblock_success">User unblocked successfully</string>
+
     <!-- SHELF LIST -->
     <string name="shelf_list_all">All</string>
 
@@ -382,10 +393,18 @@
     <string name="post_remove_comment_error">Failed to remove comment</string>
     <string name="post_toggle_like_error">Failed to toggle like</string>
 
+    <string name="block_error">Failed to block user</string>
+    <string name="unblock_error">Failed to unblock user</string>
+
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
+    <string name="confirm_button">Confirm</string>
     <string name="remove_button">Remove</string>
     <string name="save_button">Save</string>
     <string name="send_button">Send</string>
+
+    <string name="block_button">Block</string>
+    <string name="unblock_button">Unblock</string>
+
     <string name="start_button">Let's start</string>
 </resources>

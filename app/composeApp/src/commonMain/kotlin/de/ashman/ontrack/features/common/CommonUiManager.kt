@@ -68,6 +68,8 @@ enum class CurrentSheet {
     LIKES,
     FRIENDS,
     TIMELINE,
+    BLOCK,
+    UNBLOCK,
 }
 
 class SnackbarEvent<out T>(private val content: T) {

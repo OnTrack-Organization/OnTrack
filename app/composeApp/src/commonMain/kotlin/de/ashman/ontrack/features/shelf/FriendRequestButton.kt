@@ -14,6 +14,7 @@ import de.ashman.ontrack.domain.user.FriendStatus
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.accept_request_button
+import ontrack.composeapp.generated.resources.blocked_button
 import ontrack.composeapp.generated.resources.cancel_request_button
 import ontrack.composeapp.generated.resources.decline_request_button
 import ontrack.composeapp.generated.resources.remove_friend_button
@@ -59,41 +60,50 @@ fun friendRequestButtonUiState(
 @Composable
 fun FriendRequestButton(
     friendStatus: FriendStatus,
+    isBlocked: Boolean,
     onSendRequest: () -> Unit,
     onCancelRequest: () -> Unit,
     onRemoveFriend: () -> Unit,
     onAcceptRequest: () -> Unit,
     onDeclineRequest: () -> Unit,
 ) {
-    val buttonState = friendRequestButtonUiState(
-        friendStatus = friendStatus,
-        onSendRequest = onSendRequest,
-        onCancelRequest = onCancelRequest,
-        onRemoveFriend = onRemoveFriend,
-    )
-
-    if (friendStatus == FriendStatus.REQUEST_RECEIVED) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OnTrackOutlinedButton(
-                text = Res.string.accept_request_button,
-                icon = Icons.Rounded.Check,
-                onClick = onAcceptRequest
-            )
-            OnTrackOutlinedButton(
-                text = Res.string.decline_request_button,
-                icon = Icons.Rounded.Close,
-                onClick = onDeclineRequest
-            )
-        }
+    if (isBlocked) {
+        OnTrackOutlinedButton(
+            text = Res.string.blocked_button,
+            enabled = false,
+            onClick = {},
+        )
     } else {
-        buttonState?.let {
-            OnTrackOutlinedButton(
-                text = it.text,
-                icon = it.icon,
-                onClick = it.onClick
-            )
+        val buttonState = friendRequestButtonUiState(
+            friendStatus = friendStatus,
+            onSendRequest = onSendRequest,
+            onCancelRequest = onCancelRequest,
+            onRemoveFriend = onRemoveFriend,
+        )
+
+        if (friendStatus == FriendStatus.REQUEST_RECEIVED) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OnTrackOutlinedButton(
+                    text = Res.string.accept_request_button,
+                    icon = Icons.Rounded.Check,
+                    onClick = onAcceptRequest
+                )
+                OnTrackOutlinedButton(
+                    text = Res.string.decline_request_button,
+                    icon = Icons.Rounded.Close,
+                    onClick = onDeclineRequest
+                )
+            }
+        } else {
+            buttonState?.let {
+                OnTrackOutlinedButton(
+                    text = it.text,
+                    icon = it.icon,
+                    onClick = it.onClick
+                )
+            }
         }
     }
 }

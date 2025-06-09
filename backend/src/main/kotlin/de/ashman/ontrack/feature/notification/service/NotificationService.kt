@@ -17,7 +17,7 @@ class NotificationService(
     private val pushNotificationService: PushNotificationService,
 ) {
     fun getLatestNotificationsForUser(userId: String): List<Notification> {
-        return notificationRepository.findTop50ByReceiverIdOrderByUpdatedAtDesc(userId)
+        return notificationRepository.findTop50VisibleByReceiverId(userId)
     }
 
     @Transactional
@@ -34,7 +34,7 @@ class NotificationService(
 
     fun markAllAsRead(receiverId: String): List<Notification> {
         notificationRepository.markAllAsReadByReceiverId(receiverId)
-        return notificationRepository.findTop50ByReceiverIdOrderByUpdatedAtDesc(receiverId)
+        return notificationRepository.findTop50VisibleByReceiverId(receiverId)
     }
 
     fun createFriendRequestReceived(sender: User, receiver: User) {

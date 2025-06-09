@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -95,8 +96,14 @@ fun NotificationScreen(
                 title = stringResource(Res.string.notifications_title),
                 titleIcon = Icons.Default.Notifications,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
-                actionIcon = Icons.Default.Drafts,
-                onClickAction = viewModel::markAllAsRead,
+                customActions = {
+                    IconButton(viewModel::markAllAsRead) {
+                        Icon(
+                            imageVector = Icons.Default.Drafts,
+                            contentDescription = null,
+                        )
+                    }
+                },
                 onClickNavigation = onBack,
             )
         },

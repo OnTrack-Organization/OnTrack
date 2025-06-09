@@ -39,7 +39,7 @@ import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
-import de.ashman.ontrack.features.common.RemoveSheet
+import de.ashman.ontrack.features.common.ConfirmSheet
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
@@ -184,10 +184,10 @@ fun SettingsScreen(
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    RemoveSheet(
+                    ConfirmSheet(
                         title = Res.string.settings_remove_confirm_title,
                         text = Res.string.settings_remove_confirm_text,
-                        isDeleting = uiState.isLoading,
+                        isLoading = uiState.isLoading,
                         onConfirm = {
                             viewModel.deleteAccount(clearAndNavigateToStart = clearAndNavigateToStart)
                         },

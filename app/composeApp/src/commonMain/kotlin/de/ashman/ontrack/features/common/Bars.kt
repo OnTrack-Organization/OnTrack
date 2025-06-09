@@ -23,13 +23,10 @@ fun OnTrackTopBar(
     title: String,
     titleIcon: ImageVector? = null,
     navigationIcon: ImageVector? = null,
-    actionIcon: ImageVector? = null,
-    dropdownMenu: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    showActionBadge: Boolean = false,
     showNavigationBadge: Boolean = false,
-    onClickAction: () -> Unit = {},
     onClickNavigation: () -> Unit = {},
+    customActions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -43,7 +40,6 @@ fun OnTrackTopBar(
                         contentDescription = null,
                     )
                 }
-
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
@@ -54,31 +50,14 @@ fun OnTrackTopBar(
         navigationIcon = {
             navigationIcon?.let {
                 IconButton(onClickNavigation) {
-                    BadgedBox(
-                        badge = { if (showNavigationBadge) Badge() }
-                    ) {
-                        Icon(
-                            imageVector = navigationIcon,
-                            contentDescription = null,
-                        )
+                    BadgedBox(badge = { if (showNavigationBadge) Badge() }) {
+                        Icon(imageVector = it, contentDescription = null)
                     }
                 }
             }
         },
         actions = {
-            actionIcon?.let {
-                IconButton(onClickAction) {
-                    BadgedBox(
-                        badge = { if (showActionBadge) Badge() }
-                    ) {
-                        Icon(
-                            imageVector = actionIcon,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            }
-            dropdownMenu()
+            customActions()
         },
         scrollBehavior = scrollBehavior,
     )

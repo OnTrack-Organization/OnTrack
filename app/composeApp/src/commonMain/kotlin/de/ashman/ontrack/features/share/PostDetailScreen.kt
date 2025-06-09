@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RateReview
@@ -105,9 +106,15 @@ fun PostDetailScreen(
                 title = stringResource(Res.string.share_detail_title),
                 titleIcon = Icons.Default.RateReview,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
-                actionIcon = Icons.Default.MoreVert,
+                customActions = {
+                    IconButton({}) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = null,
+                        )
+                    }
+                },
                 onClickNavigation = onBack,
-                onClickAction = { /*TODO*/ }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
