@@ -32,21 +32,24 @@ class AccountController(
 
     @PostMapping("/sign-out")
     @Transactional
-    fun signOut(@AuthenticationPrincipal identity: Identity): ResponseEntity<Unit> {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun signOut(
+        @AuthenticationPrincipal identity: Identity
+    ) {
         accountService.signOut(identity.id)
-
-        return ResponseEntity.ok().build()
     }
 
     @GetMapping
-    fun getCurrentAccount(@AuthenticationPrincipal identity: Identity): ResponseEntity<AccountDto> {
-        val user = accountService.getCurrentAccount(identity.id)
-
-        return ResponseEntity.ok(user)
+    @ResponseStatus(HttpStatus.OK)
+    fun getCurrentAccount(
+        @AuthenticationPrincipal identity: Identity
+    ): AccountDto {
+        return accountService.getCurrentAccount(identity.id)
     }
 
     @PostMapping("/settings")
     @Transactional
+    @ResponseStatus(HttpStatus.OK)
     fun updateAccountSettings(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody @Valid accountSettings: AccountSettingsDto
@@ -66,20 +69,20 @@ class AccountController(
 
     @PostMapping("/profile-picture")
     @Transactional
+    @ResponseStatus(HttpStatus.OK)
     fun updateProfilePicture(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody profilePictureUrl: String,
-    ): ResponseEntity<Unit> {
+    ) {
         accountService.updateProfilePicture(identity.id, profilePictureUrl)
-
-        return ResponseEntity.ok().build()
     }
 
     @DeleteMapping
     @Transactional
-    fun deleteAccount(@AuthenticationPrincipal identity: Identity): ResponseEntity<Unit> {
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteAccount(
+        @AuthenticationPrincipal identity: Identity
+    ) {
         accountService.deleteAccount(identity.id)
-
-        return ResponseEntity.ok().build()
     }
 }

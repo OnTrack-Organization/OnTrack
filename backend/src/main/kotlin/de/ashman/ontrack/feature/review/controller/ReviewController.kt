@@ -8,6 +8,7 @@ import de.ashman.ontrack.feature.review.controller.dto.toDto
 import de.ashman.ontrack.feature.review.service.ReviewService
 import de.ashman.ontrack.feature.tracking.domain.MediaType
 import jakarta.transaction.Transactional
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -17,34 +18,35 @@ class ReviewController(
     private val reviewService: ReviewService,
 ) {
     @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
     fun getReviewsOfCurrentUser(
         @AuthenticationPrincipal identity: Identity
     ): List<ReviewDto> {
-        val reviewDtos = reviewService.getReviewsByUserId(identity.id).map { it.toDto() }
-        return reviewDtos
+        return reviewService.getReviewsByUserId(identity.id).map { it.toDto() }
     }
 
-    @Transactional
     @PostMapping
+    @Transactional
+    @ResponseStatus(HttpStatus.CREATED)
     fun createReview(
         @RequestBody dto: CreateReviewDto,
         @AuthenticationPrincipal identity: Identity
     ): ReviewDto {
-        val reviewDto = reviewService.createReview(identity.id, dto).toDto()
-        return reviewDto
+        return reviewService.createReview(identity.id, dto).toDto()
     }
 
-    @Transactional
     @PutMapping
+    @Transactional
+    @ResponseStatus(HttpStatus.OK)
     fun updateReview(
         @RequestBody dto: CreateReviewDto,
         @AuthenticationPrincipal identity: Identity
     ): ReviewDto {
-        val reviewDto = reviewService.updateReview(identity.id, dto).toDto()
-        return reviewDto
+        return reviewService.updateReview(identity.id, dto).toDto()
     }
 
     @GetMapping("/stats")
+    @ResponseStatus(HttpStatus.OK)
     fun getReviewStats(
         @RequestParam mediaType: MediaType,
         @RequestParam mediaId: String

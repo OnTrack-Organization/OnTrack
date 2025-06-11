@@ -10,7 +10,6 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -21,85 +20,81 @@ class PostController(
     private val postService: PostService,
 ) {
     @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
     fun getPosts(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<Page<PostDto>> {
+    ): Page<PostDto> {
         val pageable = PageRequest.of(page, size)
         val posts = postService.getPosts(pageable, identity.id)
 
-        return ResponseEntity.ok(posts)
+        return posts
     }
 
     @GetMapping("/{postId}")
+    @ResponseStatus(HttpStatus.OK)
     fun getPost(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<PostDto> {
-        val post = postService.getPost(postId, identity.id)
-
-        return ResponseEntity.ok(post)
+    ): PostDto {
+        return postService.getPost(postId, identity.id)
     }
 
     @PostMapping("/{postId}/like")
+    @ResponseStatus(HttpStatus.CREATED)
     fun toggleLike(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<PostDto> {
-        postService.toggleLike(postId, identity.id)
-        val updatedPost = postService.getPost(postId, identity.id)
-
-        return ResponseEntity.ok(updatedPost)
+    ): PostDto {
+        return postService.toggleLike(postId, identity.id)
     }
 
     @PostMapping("/{postId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
     fun addComment(
         @PathVariable postId: UUID,
         @RequestBody @Valid dto: CreateCommentDto,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<PostDto> {
-        postService.addComment(postId, identity.id, dto)
-        val updatedPost = postService.getPost(postId, identity.id)
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedPost)
+    ): PostDto {
+        return postService.addComment(postId, identity.id, dto)
     }
 
     @DeleteMapping("/{postId}/comment/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteComment(
         @PathVariable postId: UUID,
         @PathVariable commentId: UUID,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<PostDto> {
-        postService.removeComment(postId, commentId, identity.id)
-        val updatedPost = postService.getPost(postId, identity.id)
-
-        return ResponseEntity.ok(updatedPost)
+    ): PostDto {
+        return postService.removeComment(postId, commentId, identity.id)
     }
 
     @GetMapping("/{postId}/comments")
+    @ResponseStatus(HttpStatus.OK)
     fun getComments(
         @PathVariable postId: UUID,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal identity: Identity,
-    ): ResponseEntity<CommentsDto> {
+    ): CommentsDto {
         val pageable = PageRequest.of(page, size)
         val comments = postService.getComments(postId, identity.id, pageable)
 
-        return ResponseEntity.ok(comments)
+        return comments
     }
 
     @GetMapping("/{postId}/likes")
+    @ResponseStatus(HttpStatus.OK)
     fun getLikes(
         @PathVariable postId: UUID,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal identity: Identity,
-    ): ResponseEntity<LikesDto> {
+    ): LikesDto {
         val pageable = PageRequest.of(page, size)
         val likes = postService.getLikes(postId, identity.id, pageable)
 
-        return ResponseEntity.ok(likes)
+        return likes
     }
 }

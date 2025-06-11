@@ -97,7 +97,10 @@ fun NotificationScreen(
                 titleIcon = Icons.Default.Notifications,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 customActions = {
-                    IconButton(viewModel::markAllAsRead) {
+                    IconButton(
+                        onClick = viewModel::markAllAsRead,
+                        enabled = notificationUiState.notifications.isNotEmpty(),
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Drafts,
                             contentDescription = null,

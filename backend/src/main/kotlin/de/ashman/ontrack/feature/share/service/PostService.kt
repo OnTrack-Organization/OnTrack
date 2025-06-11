@@ -110,38 +110,31 @@ class PostService(
         postRepository.save(updatedPost)
     }
 
-    fun toggleLike(postId: UUID, likerUserId: String): LikeDto {
+    fun toggleLike(postId: UUID, likerUserId: String): PostDto {
         val post = postRepository.getReferenceById(postId)
+        val postOwnerId = post.user.id
 
-        if (blockService.isBlocked(post.user.id, likerUserId)) {
+        if (blockService.isBlocked(postOwnerId, likerUserId)) {
             throw AccessDeniedException("Cannot toggle like, because user is blocked")
         }
 
         val existingLike = likeRepository.findByPostIdAndUserId(postId, likerUserId)
 
-        val receiver = userRepository.getReferenceById(post.user.id)
-        val sender = userRepository.getReferenceById(likerUserId)
-
         return if (existingLike != null) {
             likeRepository.delete(existingLike)
-
-            existingLike.toDto()
+            getPost(postId, likerUserId)
         } else {
-            val user = userRepository.getReferenceById(likerUserId)
-            val like = Like(
-                post = post,
-                user = user
-            )
+            val liker = userRepository.getReferenceById(likerUserId)
+            likeRepository.save(Like(post = post, user = liker))
 
-            likeRepository.save(like)
+            val postOwner = userRepository.getReferenceById(postOwnerId)
+            notificationService.createPostLiked(liker = liker, postOwner = postOwner, post = post)
 
-            notificationService.createPostLiked(liker = sender, postOwner = receiver, post = post)
-
-            like.toDto()
+            getPost(postId, likerUserId)
         }
     }
 
-    fun addComment(postId: UUID, commenterUserId: String, dto: CreateCommentDto): CommentDto {
+    fun addComment(postId: UUID, commenterUserId: String, dto: CreateCommentDto): PostDto {
         val post = postRepository.getReferenceById(postId)
 
         if (blockService.isBlocked(post.user.id, commenterUserId)) {
@@ -154,7 +147,6 @@ class PostService(
         val mentionedUsernames = parseMentionedUsernames(dto.message)
         val mentionedUsers = userRepository.findByUsernameIn(mentionedUsernames)
 
-        // Filter out blocked users for mentions
         val visibleMentionedUsers = mentionedUsers.filterNot { mentionedUser ->
             blockService.isBlocked(mentionedUser.id, commenterUserId) ||
                     blockService.isBlocked(commenterUserId, mentionedUser.id)
@@ -169,19 +161,15 @@ class PostService(
 
         commentRepository.save(comment)
 
-        // Mentioned users get individual notifications
-        if (visibleMentionedUsers.isNotEmpty()) {
-            visibleMentionedUsers.forEach { mentionedUser ->
-                notificationService.createPostMentioned(
-                    commenter = sender,
-                    postOwner = mentionedUser,
-                    post = post,
-                    comment = comment
-                )
-            }
+        visibleMentionedUsers.forEach { mentionedUser ->
+            notificationService.createPostMentioned(
+                commenter = sender,
+                postOwner = mentionedUser,
+                post = post,
+                comment = comment
+            )
         }
 
-        // Post owner gets notified about a comment only if not already mentioned
         if (receiver !in visibleMentionedUsers) {
             notificationService.createPostCommented(
                 commenter = sender,
@@ -191,10 +179,10 @@ class PostService(
             )
         }
 
-        return comment.toDto(sender.id, post.user.id)
+        return getPost(postId, commenterUserId)
     }
 
-    fun removeComment(postId: UUID, commentId: UUID, userId: String) {
+    fun removeComment(postId: UUID, commentId: UUID, userId: String): PostDto {
         val comment = commentRepository.getReferenceById(commentId)
 
         if (comment.user.id != userId && comment.post.user.id != userId) {
@@ -202,6 +190,8 @@ class PostService(
         }
 
         commentRepository.delete(comment)
+
+        return getPost(postId, userId)
     }
 
     fun getComments(postId: UUID, currentUserId: String, pageable: Pageable): CommentsDto {
