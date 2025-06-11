@@ -1,6 +1,6 @@
 package de.ashman.ontrack.feature.share.service
 
-import de.ashman.ontrack.feature.block.service.BlockingService
+import de.ashman.ontrack.feature.block.service.BlockService
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
 import de.ashman.ontrack.feature.notification.service.NotificationService
 import de.ashman.ontrack.feature.review.domain.Review
@@ -27,7 +27,7 @@ class PostService(
     private val likeRepository: LikeRepository,
     private val userRepository: UserRepository,
     private val friendRepository: FriendRepository,
-    private val blockingService: BlockingService,
+    private val blockService: BlockService,
     private val notificationService: NotificationService,
 ) {
     fun getPosts(pageable: Pageable, currentUserId: String): Page<PostDto> {
@@ -64,7 +64,7 @@ class PostService(
         val pageRequest = Pageable.unpaged()
         val post = postRepository.getReferenceById(postId)
 
-        if (blockingService.isBlocked(post.user.id, currentUserId)) {
+        if (blockService.isBlocked(post.user.id, currentUserId)) {
             throw AccessDeniedException("Cannot view post, because user is blocked")
         }
 
@@ -113,7 +113,7 @@ class PostService(
     fun toggleLike(postId: UUID, likerUserId: String): LikeDto {
         val post = postRepository.getReferenceById(postId)
 
-        if (blockingService.isBlocked(post.user.id, likerUserId)) {
+        if (blockService.isBlocked(post.user.id, likerUserId)) {
             throw AccessDeniedException("Cannot toggle like, because user is blocked")
         }
 
@@ -144,7 +144,7 @@ class PostService(
     fun addComment(postId: UUID, commenterUserId: String, dto: CreateCommentDto): CommentDto {
         val post = postRepository.getReferenceById(postId)
 
-        if (blockingService.isBlocked(post.user.id, commenterUserId)) {
+        if (blockService.isBlocked(post.user.id, commenterUserId)) {
             throw AccessDeniedException("Cannot comment on post, because user is blocked")
         }
 
@@ -156,8 +156,8 @@ class PostService(
 
         // Filter out blocked users for mentions
         val visibleMentionedUsers = mentionedUsers.filterNot { mentionedUser ->
-            blockingService.isBlocked(mentionedUser.id, commenterUserId) ||
-                    blockingService.isBlocked(commenterUserId, mentionedUser.id)
+            blockService.isBlocked(mentionedUser.id, commenterUserId) ||
+                    blockService.isBlocked(commenterUserId, mentionedUser.id)
         }.toSet()
 
         val comment = Comment(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -60,6 +62,7 @@ import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.getIcon
+import de.ashman.ontrack.features.report.ReportSheet
 import de.ashman.ontrack.navigation.BottomNavItem
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
@@ -67,6 +70,7 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.block_button
 import ontrack.composeapp.generated.resources.block_confirm_text
 import ontrack.composeapp.generated.resources.block_confirm_title
+import ontrack.composeapp.generated.resources.report_button
 import ontrack.composeapp.generated.resources.shelf_nav_title
 import ontrack.composeapp.generated.resources.shelf_own_empty
 import ontrack.composeapp.generated.resources.unblock_button
@@ -89,7 +93,7 @@ fun ShelfScreen(
     onBack: (() -> Unit)? = null,
 ) {
     val commonUiState by commonUiManager.uiState.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsState()
+    val shelfUiState by viewModel.uiState.collectAsState()
 
     var showImageDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -123,9 +127,10 @@ fun ShelfScreen(
                         }
                     } else {
                         ShelfDropDownMenu(
-                            isBlocked = uiState.isBlocked,
+                            isBlocked = shelfUiState.isBlocked,
                             onClickBlock = { commonUiManager.showSheet(CurrentSheet.BLOCK) },
                             onClickUnblock = { commonUiManager.showSheet(CurrentSheet.UNBLOCK) },
+                            onClickReport = { commonUiManager.showSheet(CurrentSheet.REPORT) },
                         )
                     }
                 }
@@ -138,11 +143,11 @@ fun ShelfScreen(
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
-            uiState.user?.let {
+            shelfUiState.user?.let {
                 ShelfHeader(
                     user = it,
-                    friendStatus = uiState.friendStatus,
-                    isBlocked = uiState.isBlocked,
+                    friendStatus = shelfUiState.friendStatus,
+                    isBlocked = shelfUiState.isBlocked,
                     sendRequest = viewModel::sendRequest,
                     cancelRequest = viewModel::cancelRequest,
                     acceptRequest = viewModel::acceptRequest,
@@ -152,7 +157,7 @@ fun ShelfScreen(
                 )
             }
 
-            if (uiState.trackings.isEmpty()) {
+            if (shelfUiState.trackings.isEmpty()) {
                 EmptyShelf(text = emptyText)
             } else {
                 LazyColumn(
@@ -164,11 +169,11 @@ fun ShelfScreen(
                     state = viewModel.listState,
                 ) {
                     item {
-                        MediaCounts(trackings = uiState.trackings)
+                        MediaCounts(trackings = shelfUiState.trackings)
                     }
 
                     MediaType.entries.forEach { mediaType ->
-                        val filteredTrackings = uiState.trackings.filter { it.media.type == mediaType }
+                        val filteredTrackings = shelfUiState.trackings.filter { it.media.type == mediaType }
 
                         if (filteredTrackings.isNotEmpty()) {
                             item(key = mediaType.name) {
@@ -187,44 +192,45 @@ fun ShelfScreen(
 
         LargerImageDialog(
             showDialog = showImageDialog,
-            imageUrl = uiState.user?.profilePictureUrl,
+            imageUrl = shelfUiState.user?.profilePictureUrl,
             onDismiss = { showImageDialog = false },
         )
 
         if (commonUiState.showSheet) {
             ModalBottomSheet(
+                modifier = Modifier.imePadding(),
                 onDismissRequest = commonUiManager::hideSheet,
                 sheetState = sheetState,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    when (commonUiState.currentSheet) {
-                        CurrentSheet.BLOCK -> {
-                            ConfirmSheet(
-                                title = Res.string.block_confirm_title,
-                                text = Res.string.block_confirm_text,
-                                isLoading = uiState.isLoading,
-                                onConfirm = viewModel::blockUser,
-                                onCancel = commonUiManager::hideSheet,
-                            )
-                        }
-
-                        CurrentSheet.UNBLOCK -> {
-                            ConfirmSheet(
-                                title = Res.string.unblock_confirm_title,
-                                text = Res.string.unblock_confirm_text,
-                                isLoading = uiState.isLoading,
-                                onConfirm = viewModel::unblockUser,
-                                onCancel = commonUiManager::hideSheet,
-                            )
-                        }
-
-                        else -> {}
+                when (commonUiState.currentSheet) {
+                    CurrentSheet.BLOCK -> {
+                        ConfirmSheet(
+                            title = Res.string.block_confirm_title,
+                            text = Res.string.block_confirm_text,
+                            isLoading = shelfUiState.isLoading,
+                            onConfirm = viewModel::blockUser,
+                            onCancel = commonUiManager::hideSheet,
+                        )
                     }
+
+                    CurrentSheet.UNBLOCK -> {
+                        ConfirmSheet(
+                            title = Res.string.unblock_confirm_title,
+                            text = Res.string.unblock_confirm_text,
+                            isLoading = shelfUiState.isLoading,
+                            onConfirm = viewModel::unblockUser,
+                            onCancel = commonUiManager::hideSheet,
+                        )
+                    }
+
+                    CurrentSheet.REPORT -> {
+                        ReportSheet(
+                            isLoading = shelfUiState.isLoading,
+                            onReport = viewModel::reportUser,
+                        )
+                    }
+
+                    else -> {}
                 }
             }
         }
@@ -473,6 +479,7 @@ fun EmptyShelf(
 fun ShelfDropDownMenu(
     onClickBlock: () -> Unit,
     onClickUnblock: () -> Unit,
+    onClickReport: () -> Unit,
     isBlocked: Boolean,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -494,6 +501,17 @@ fun ShelfDropDownMenu(
                 onClick = {
                     expanded = false
                     if (isBlocked) onClickUnblock() else onClickBlock()
+                }
+            )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.report_button)) },
+                leadingIcon = {
+                    Icon(Icons.Default.Report, contentDescription = null)
+                },
+                onClick = {
+                    expanded = false
+                    onClickReport()
                 }
             )
         }

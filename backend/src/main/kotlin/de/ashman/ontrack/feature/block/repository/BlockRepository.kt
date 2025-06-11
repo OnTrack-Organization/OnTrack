@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface BlockingRepository : JpaRepository<Blocking, UUID> {
+interface BlockRepository : JpaRepository<Blocking, UUID> {
     fun existsByBlockerAndBlocked(blocker: User, blocked: User): Boolean
 
     fun deleteByBlockerIdAndBlockedId(blockerId: String, blockedId: String)

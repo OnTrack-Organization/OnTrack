@@ -34,12 +34,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.BuildKonfig
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.features.common.ConfirmSheet
 import de.ashman.ontrack.features.common.ImagePicker
 import de.ashman.ontrack.features.common.OnTrackButton
 import de.ashman.ontrack.features.common.OnTrackOutlinedButton
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.OnTrackUsernameTextField
-import de.ashman.ontrack.features.common.ConfirmSheet
 import de.ashman.ontrack.features.common.getLabel
 import de.ashman.ontrack.features.init.start.ApiContributions
 import ontrack.composeapp.generated.resources.Res
@@ -178,22 +178,15 @@ fun SettingsScreen(
                 onDismissRequest = { commonUiManager.hideSheet() },
                 sheetState = sheetState,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    ConfirmSheet(
-                        title = Res.string.settings_remove_confirm_title,
-                        text = Res.string.settings_remove_confirm_text,
-                        isLoading = uiState.isLoading,
-                        onConfirm = {
-                            viewModel.deleteAccount(clearAndNavigateToStart = clearAndNavigateToStart)
-                        },
-                        onCancel = { commonUiManager.hideSheet() },
-                    )
-                }
+                ConfirmSheet(
+                    title = Res.string.settings_remove_confirm_title,
+                    text = Res.string.settings_remove_confirm_text,
+                    isLoading = uiState.isLoading,
+                    onConfirm = {
+                        viewModel.deleteAccount(clearAndNavigateToStart = clearAndNavigateToStart)
+                    },
+                    onCancel = { commonUiManager.hideSheet() },
+                )
             }
         }
     }

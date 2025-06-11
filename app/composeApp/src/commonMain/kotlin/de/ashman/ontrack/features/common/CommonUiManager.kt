@@ -70,6 +70,7 @@ enum class CurrentSheet {
     TIMELINE,
     BLOCK,
     UNBLOCK,
+    REPORT
 }
 
 class SnackbarEvent<out T>(private val content: T) {

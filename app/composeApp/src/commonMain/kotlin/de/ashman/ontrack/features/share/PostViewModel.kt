@@ -3,8 +3,14 @@ package de.ashman.ontrack.features.share
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.share.Post
+import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.network.services.report.ReportService
+import de.ashman.ontrack.network.services.report.dto.ReportReason
+import de.ashman.ontrack.network.services.report.dto.ReportRequestDto
+import de.ashman.ontrack.network.services.report.dto.ReportType
 import de.ashman.ontrack.network.services.share.PostService
 import de.ashman.ontrack.network.services.share.dto.CreateCommentDto
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +21,13 @@ import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.post_add_comment_error
 import ontrack.composeapp.generated.resources.post_remove_comment_error
 import ontrack.composeapp.generated.resources.post_toggle_like_error
+import ontrack.composeapp.generated.resources.report_error
+import ontrack.composeapp.generated.resources.report_success
 
 class PostViewModel(
     private val postService: PostService,
+    private val reportService: ReportService,
+    private val userDataStore: UserDataStore,
     private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
 
@@ -28,6 +38,19 @@ class PostViewModel(
     private var commentsPage = 0
     private var likesPage = 0
     private val pageSize = 10
+
+    init {
+        viewModelScope.launch {
+            userDataStore.currentUser.collect { user ->
+                _uiState.update { state ->
+                    state.copy(
+                        currentUser = user,
+                        isCurrentUserPost = (state.selectedPost?.user?.id == user?.id)
+                    )
+                }
+            }
+        }
+    }
 
     fun fetchPosts(initial: Boolean = false) = viewModelScope.launch {
         if (initial) {
@@ -63,7 +86,7 @@ class PostViewModel(
     fun fetchPost(postId: String) = viewModelScope.launch {
         postService.getPost(postId).fold(
             onSuccess = { post ->
-                _uiState.update { it.copy(selectedPost = post) }
+                setSelectedPost(post)
                 Logger.d { "Fetched post: $post" }
             },
             onFailure = {
@@ -173,6 +196,30 @@ class PostViewModel(
         )
     }
 
+    fun reportPost(reason: ReportReason, message: String?) = viewModelScope.launch {
+        _uiState.update { it.copy(sendingReport = true) }
+        val reportedId = _uiState.value.selectedPost?.user?.id ?: return@launch
+
+        val dto = ReportRequestDto(
+            reportedId = reportedId,
+            type = ReportType.POST,
+            reason = reason,
+            message = message,
+        )
+
+        reportService.report(dto).fold(
+            onSuccess = {
+                commonUiManager.showSnackbar(Res.string.report_success)
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.report_error)
+            }
+        )
+
+        _uiState.update { it.copy(sendingReport = false) }
+        commonUiManager.hideSheet()
+    }
+
     private fun replacePost(updatedPost: Post) {
         _uiState.update { state ->
             state.copy(
@@ -183,7 +230,13 @@ class PostViewModel(
     }
 
     fun setSelectedPost(post: Post) {
-        _uiState.update { it.copy(selectedPost = post) }
+        val currentUserId = _uiState.value.currentUser?.id
+        _uiState.update {
+            it.copy(
+                selectedPost = post,
+                isCurrentUserPost = (post.user.id == currentUserId)
+            )
+        }
     }
 
     fun clearViewModel() {
@@ -194,11 +247,14 @@ class PostViewModel(
 data class PostUiState(
     val posts: List<Post> = emptyList(),
     val selectedPost: Post? = null,
+    val isCurrentUserPost: Boolean = false,
+    val currentUser: User? = null,
     val resultState: PostResultState = PostResultState.Empty,
     val loading: Boolean = false,
     val loadingMore: Boolean = false,
     val canLoadMore: Boolean = false,
     val sendingComment: Boolean = false,
+    val sendingReport: Boolean = false,
 )
 
 enum class PostResultState {

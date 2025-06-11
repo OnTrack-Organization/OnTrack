@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.share
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,21 +18,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,14 +60,17 @@ import de.ashman.ontrack.domain.share.Comment
 import de.ashman.ontrack.domain.share.Like
 import de.ashman.ontrack.domain.share.Post
 import de.ashman.ontrack.features.common.CommonUiManager
+import de.ashman.ontrack.features.common.CurrentSheet
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.PersonImage
 import de.ashman.ontrack.features.common.SMALL_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.SendMessageTextField
 import de.ashman.ontrack.features.common.getColor
+import de.ashman.ontrack.features.report.ReportSheet
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.report_button
 import ontrack.composeapp.generated.resources.share_comments
 import ontrack.composeapp.generated.resources.share_comments_count
 import ontrack.composeapp.generated.resources.share_comments_empty
@@ -89,6 +97,7 @@ fun PostDetailScreen(
 
     val localFocusManager = LocalFocusManager.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LaunchedEffect(postId) {
         viewModel.fetchPost(postId)
@@ -107,10 +116,9 @@ fun PostDetailScreen(
                 titleIcon = Icons.Default.RateReview,
                 navigationIcon = Icons.AutoMirrored.Default.ArrowBack,
                 customActions = {
-                    IconButton({}) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null,
+                    if (!postUiState.isCurrentUserPost) {
+                        PostDetailDropDownMenu(
+                            onClickReport = { commonUiManager.showSheet(CurrentSheet.REPORT) },
                         )
                     }
                 },
@@ -138,6 +146,25 @@ fun PostDetailScreen(
                 onPostComment = viewModel::addComment,
                 onRemoveComment = viewModel::removeComment,
             )
+
+            if (commonUiState.showSheet) {
+                ModalBottomSheet(
+                    modifier = Modifier.imePadding(),
+                    onDismissRequest = commonUiManager::hideSheet,
+                    sheetState = sheetState,
+                ) {
+                    when (commonUiState.currentSheet) {
+                        CurrentSheet.REPORT -> {
+                            ReportSheet(
+                                isLoading = postUiState.sendingReport,
+                                onReport = viewModel::reportPost,
+                            )
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
         }
     }
 }
@@ -429,5 +456,34 @@ fun UserLikeComponent(
                 .width(64.dp),
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+fun PostDetailDropDownMenu(
+    onClickReport: () -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.report_button)) },
+                leadingIcon = {
+                    Icon(Icons.Default.Report, contentDescription = null)
+                },
+                onClick = {
+                    expanded = false
+                    onClickReport()
+                }
+            )
+        }
     }
 }

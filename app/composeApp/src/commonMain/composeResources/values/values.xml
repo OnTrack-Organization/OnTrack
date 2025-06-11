@@ -206,6 +206,20 @@
     <string name="block_success">User blocked successfully</string>
     <string name="unblock_success">User unblocked successfully</string>
 
+    <string name="report_title">Report</string>
+    <string name="report_additional_info">Add details… (optional)</string>
+
+    <string name="report_reason_inappropriate_content">Inappropriate content</string>
+    <string name="report_reason_spam">Spam or repetitive posting</string>
+    <string name="report_reason_harassment">Harassment or bullying</string>
+    <string name="report_reason_false_information">False information</string>
+    <string name="report_reason_hate_speech">Hate speech</string>
+    <string name="report_reason_spoiler">Contains spoilers</string>
+    <string name="report_reason_other">Other</string>
+
+    <string name="report_success">Report sent successfully</string>
+    <string name="report_error">Failed to send report</string>
+
     <!-- SHELF LIST -->
     <string name="shelf_list_all">All</string>
 
@@ -405,6 +419,8 @@
 
     <string name="block_button">Block</string>
     <string name="unblock_button">Unblock</string>
+
+    <string name="report_button">Report</string>
 
     <string name="start_button">Let's start</string>
 </resources>

@@ -50,6 +50,8 @@ import de.ashman.ontrack.network.services.notification.NotificationService
 import de.ashman.ontrack.network.services.notification.NotificationServiceImpl
 import de.ashman.ontrack.network.services.recommendation.RecommendationService
 import de.ashman.ontrack.network.services.recommendation.RecommendationServiceImpl
+import de.ashman.ontrack.network.services.report.ReportService
+import de.ashman.ontrack.network.services.report.ReportServiceImpl
 import de.ashman.ontrack.network.services.review.ReviewService
 import de.ashman.ontrack.network.services.review.ReviewServiceImpl
 import de.ashman.ontrack.network.services.share.PostService
@@ -96,6 +98,7 @@ val appModule = module {
     single<PostService> { PostServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<NotificationService> { NotificationServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
     single<BlockService> { BlockServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
+    single<ReportService> { ReportServiceImpl(get(named(BACKEND_CLIENT_NAME))) }
 
     // ANALYTICS
     single { Firebase.analytics }
@@ -128,14 +131,14 @@ val appModule = module {
     viewModelDefinition { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { SetupViewModel(get(), get(), get(), get()) }
 
-    viewModelDefinition { PostViewModel(get(), get()) }
+    viewModelDefinition { PostViewModel(get(), get(), get(), get()) }
     viewModelDefinition { FriendsViewModel(get(), get()) }
     viewModelDefinition { NotificationViewModel(get(), get()) }
 
     viewModelDefinition { SearchViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelDefinition { DetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
-    viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get()) }
+    viewModelDefinition { ShelfViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModelDefinition { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }

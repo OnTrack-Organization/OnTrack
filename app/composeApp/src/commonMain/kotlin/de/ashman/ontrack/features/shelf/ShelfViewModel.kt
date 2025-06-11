@@ -16,6 +16,10 @@ import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.network.services.block.BlockService
 import de.ashman.ontrack.network.services.friend.FriendService
+import de.ashman.ontrack.network.services.report.ReportService
+import de.ashman.ontrack.network.services.report.dto.ReportReason
+import de.ashman.ontrack.network.services.report.dto.ReportRequestDto
+import de.ashman.ontrack.network.services.report.dto.ReportType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +34,8 @@ import ontrack.composeapp.generated.resources.friend_cancel_request_error
 import ontrack.composeapp.generated.resources.friend_decline_request_error
 import ontrack.composeapp.generated.resources.friend_delete_error
 import ontrack.composeapp.generated.resources.friend_send_request_error
+import ontrack.composeapp.generated.resources.report_error
+import ontrack.composeapp.generated.resources.report_success
 import ontrack.composeapp.generated.resources.shelf_get_profile_error
 import ontrack.composeapp.generated.resources.unblock_error
 import ontrack.composeapp.generated.resources.unblock_success
@@ -39,6 +45,7 @@ class ShelfViewModel(
     private val trackingRepository: TrackingRepository,
     private val friendService: FriendService,
     private val blockService: BlockService,
+    private val reportService: ReportService,
     private val commonUiManager: CommonUiManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShelfUiState())
@@ -145,7 +152,6 @@ class ShelfViewModel(
         )
     }
 
-    // TODO
     fun blockUser() = viewModelScope.launch {
         val userId = _uiState.value.user?.id
 
@@ -198,6 +204,31 @@ class ShelfViewModel(
             },
             onFailure = {
                 commonUiManager.showSnackbar(Res.string.unblock_error)
+            }
+        )
+
+        _uiState.update { it.copy(isLoading = false) }
+        commonUiManager.hideSheet()
+    }
+
+    fun reportUser(reason: ReportReason, message: String?) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+
+        val reportedId = _uiState.value.user?.id ?: return@launch
+
+        val dto = ReportRequestDto(
+            reportedId = reportedId,
+            type = ReportType.USER,
+            reason = reason,
+            message = message,
+        )
+
+        reportService.report(dto).fold(
+            onSuccess = {
+                commonUiManager.showSnackbar(Res.string.report_success)
+            },
+            onFailure = {
+                commonUiManager.showSnackbar(Res.string.report_error)
             }
         )
 

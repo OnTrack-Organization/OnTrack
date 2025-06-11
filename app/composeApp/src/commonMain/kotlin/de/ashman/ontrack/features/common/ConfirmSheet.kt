@@ -1,11 +1,12 @@
 package de.ashman.ontrack.features.common
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,31 +26,36 @@ fun ConfirmSheet(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    Text(
-        text = stringResource(title),
-        style = MaterialTheme.typography.titleMedium,
-    )
-
-    Text(
-        text = stringResource(text),
-        style = MaterialTheme.typography.bodyMedium,
-    )
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OnTrackOutlinedButton(
-            modifier = Modifier.weight(1f),
-            text = Res.string.cancel_button,
-            icon = Icons.Default.Close,
-            onClick = onCancel,
+        Text(
+            text = stringResource(title),
+            style = MaterialTheme.typography.titleMedium,
         )
-        OnTrackButton(
-            modifier = Modifier.weight(1f),
-            text = Res.string.confirm_button,
-            icon = Icons.Default.Check,
-            isLoading = isLoading,
-            onClick = onConfirm,
+
+        Text(
+            text = stringResource(text),
+            style = MaterialTheme.typography.bodyMedium,
         )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OnTrackOutlinedButton(
+                modifier = Modifier.weight(1f),
+                text = Res.string.cancel_button,
+                icon = Icons.Default.Close,
+                onClick = onCancel,
+            )
+            OnTrackButton(
+                modifier = Modifier.weight(1f),
+                text = Res.string.confirm_button,
+                icon = Icons.Default.Check,
+                isLoading = isLoading,
+                onClick = onConfirm,
+            )
+        }
     }
 }

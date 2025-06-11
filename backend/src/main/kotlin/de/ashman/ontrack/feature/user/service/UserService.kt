@@ -1,6 +1,6 @@
 package de.ashman.ontrack.feature.user.service
 
-import de.ashman.ontrack.feature.block.repository.BlockingRepository
+import de.ashman.ontrack.feature.block.repository.BlockRepository
 import de.ashman.ontrack.feature.friend.domain.FriendRequestStatus
 import de.ashman.ontrack.feature.friend.domain.FriendStatus
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
@@ -23,7 +23,7 @@ class UserService(
     private val friendRepository: FriendRepository,
     private val friendService: FriendService,
     private val friendRequestRepository: FriendRequestRepository,
-    private val blockingRepository: BlockingRepository,
+    private val blockRepository: BlockRepository,
 ) {
     fun getById(id: String): User = userRepository.getReferenceById(id)
 
@@ -38,7 +38,7 @@ class UserService(
             .findTop10ByUsernameContainingIgnoreCaseAndIdNotOrderByUsernameAsc(searchUsername, currentUser.id)
             .filterNot { it in friends }
             // Filter out blocker user, if they blocked current user
-            .filterNot { blockingRepository.existsByBlockerAndBlocked(it, currentUser) }
+            .filterNot { blockRepository.existsByBlockerAndBlocked(it, currentUser) }
             .map { user ->
                 val status = when (user) {
                     in friends -> FriendStatus.FRIEND
@@ -54,14 +54,14 @@ class UserService(
         val currentUser = getById(currentUserId)
         val otherUser = getById(otherUserId)
 
-        val isBlockedByOtherUser = blockingRepository.existsByBlockerAndBlocked(blocker = otherUser, blocked = currentUser)
+        val isBlockedByOtherUser = blockRepository.existsByBlockerAndBlocked(blocker = otherUser, blocked = currentUser)
         if (isBlockedByOtherUser) {
             throw AccessDeniedException("You are blocked by this user and cannot view their profile.")
         }
 
         val trackings = trackingRepository.getTrackingsByUserId(otherUser.id)
 
-        val isBlocked = blockingRepository.existsByBlockerAndBlocked(currentUser, otherUser)
+        val isBlocked = blockRepository.existsByBlockerAndBlocked(currentUser, otherUser)
 
         val friendStatus = when {
             friendRepository.areFriends(currentUser.id, otherUser.id) -> FriendStatus.FRIEND

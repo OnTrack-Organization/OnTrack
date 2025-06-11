@@ -157,6 +157,8 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
         contentType(ContentType.Application.Json)
     }
 
+    expectSuccess = true
+
     install(Logging) {
         logger = object : Logger {
             override fun log(message: String) {

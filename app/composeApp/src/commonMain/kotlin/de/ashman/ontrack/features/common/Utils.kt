@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.network.services.account.UsernameError
+import de.ashman.ontrack.network.services.report.dto.ReportReason
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -69,6 +70,13 @@ import ontrack.composeapp.generated.resources.rating_one
 import ontrack.composeapp.generated.resources.rating_subtitle
 import ontrack.composeapp.generated.resources.rating_three
 import ontrack.composeapp.generated.resources.rating_two
+import ontrack.composeapp.generated.resources.report_reason_false_information
+import ontrack.composeapp.generated.resources.report_reason_harassment
+import ontrack.composeapp.generated.resources.report_reason_hate_speech
+import ontrack.composeapp.generated.resources.report_reason_inappropriate_content
+import ontrack.composeapp.generated.resources.report_reason_other
+import ontrack.composeapp.generated.resources.report_reason_spam
+import ontrack.composeapp.generated.resources.report_reason_spoiler
 import ontrack.composeapp.generated.resources.settings_username_empty
 import ontrack.composeapp.generated.resources.settings_username_invalid_characters
 import ontrack.composeapp.generated.resources.settings_username_taken
@@ -292,3 +300,16 @@ fun Long.formatDayMonth(): String {
 
     return "$day.$month"
 }
+
+fun ReportReason.getLabel(): StringResource {
+    return when (this) {
+        ReportReason.INAPPROPRIATE_CONTENT -> Res.string.report_reason_inappropriate_content
+        ReportReason.SPAM -> Res.string.report_reason_spam
+        ReportReason.HARASSMENT -> Res.string.report_reason_harassment
+        ReportReason.FALSE_INFORMATION -> Res.string.report_reason_false_information
+        ReportReason.HATE_SPEECH -> Res.string.report_reason_hate_speech
+        ReportReason.SPOILER -> Res.string.report_reason_spoiler
+        ReportReason.OTHER -> Res.string.report_reason_other
+    }
+}
+

@@ -1,7 +1,7 @@
 package de.ashman.ontrack.feature.block.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.block.service.BlockingService
+import de.ashman.ontrack.feature.block.service.BlockService
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import de.ashman.ontrack.feature.user.controller.dto.toDto
 import org.springframework.http.ResponseEntity
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/block")
-class BlockingController(
-    private val blockingService: BlockingService
+class BlockController(
+    private val blockService: BlockService
 ) {
 
     @PostMapping("/{blockedId}")
@@ -19,7 +19,7 @@ class BlockingController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable blockedId: String
     ): ResponseEntity<Unit> {
-        blockingService.blockUser(identity.id, blockedId)
+        blockService.blockUser(identity.id, blockedId)
         return ResponseEntity.ok().build()
     }
 
@@ -28,7 +28,7 @@ class BlockingController(
         @AuthenticationPrincipal identity: Identity,
         @PathVariable blockedId: String
     ): ResponseEntity<Unit> {
-        blockingService.unblockUser(identity.id, blockedId)
+        blockService.unblockUser(identity.id, blockedId)
         return ResponseEntity.noContent().build()
     }
 
@@ -36,7 +36,7 @@ class BlockingController(
     fun getBlockedUsers(
         @AuthenticationPrincipal identity: Identity
     ): ResponseEntity<List<UserDto>> {
-        val users = blockingService.getBlockedUsers(identity.id)
+        val users = blockService.getBlockedUsers(identity.id)
         return ResponseEntity.ok(users.map { it.toDto() })
     }
 }

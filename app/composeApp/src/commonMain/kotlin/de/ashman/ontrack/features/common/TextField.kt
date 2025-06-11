@@ -159,6 +159,22 @@ fun OnTrackTextField(
 }
 
 @Composable
+fun OnTrackOutlinedTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String,
+    value: String?,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value.orEmpty(),
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder) },
+        shape = MaterialTheme.shapes.medium,
+    )
+}
+
+@Composable
 fun OnTrackUsernameTextField(
     modifier: Modifier = Modifier,
     placeholder: String,

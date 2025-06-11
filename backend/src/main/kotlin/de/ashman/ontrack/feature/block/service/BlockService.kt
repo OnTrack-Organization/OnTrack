@@ -1,7 +1,7 @@
 package de.ashman.ontrack.feature.block.service
 
 import de.ashman.ontrack.feature.block.domain.Blocking
-import de.ashman.ontrack.feature.block.repository.BlockingRepository
+import de.ashman.ontrack.feature.block.repository.BlockRepository
 import de.ashman.ontrack.feature.friend.domain.FriendRequestStatus
 import de.ashman.ontrack.feature.friend.repository.FriendRepository
 import de.ashman.ontrack.feature.friend.repository.FriendRequestRepository
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class BlockingService(
-    private val blockingRepository: BlockingRepository,
+class BlockService(
+    private val blockRepository: BlockRepository,
     private val userRepository: UserRepository,
     private val friendRepository: FriendRepository,
     private val friendRequestRepository: FriendRequestRepository,
@@ -23,9 +23,9 @@ class BlockingService(
         val blocker = userRepository.getReferenceById(blockerId)
         val blocked = userRepository.getReferenceById(blockedId)
 
-        if (!blockingRepository.existsByBlockerAndBlocked(blocker, blocked)) {
+        if (!blockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
             val blocking = Blocking(blocker = blocker, blocked = blocked)
-            blockingRepository.save(blocking)
+            blockRepository.save(blocking)
 
             // Decline friend request if it exists
             friendRequestRepository.findFriendRequestBySenderIdAndReceiverIdAndStatus(blockedId, blockerId, FriendRequestStatus.PENDING)?.decline()
@@ -39,14 +39,14 @@ class BlockingService(
 
     @Transactional
     fun unblockUser(blockerId: String, blockedId: String) {
-        blockingRepository.deleteByBlockerIdAndBlockedId(blockerId, blockedId)
+        blockRepository.deleteByBlockerIdAndBlockedId(blockerId, blockedId)
     }
 
-    fun getBlockedUsers(blockerId: String): Set<User> = blockingRepository.findBlockedUsersByBlockerId(blockerId)
+    fun getBlockedUsers(blockerId: String): Set<User> = blockRepository.findBlockedUsersByBlockerId(blockerId)
 
     fun isBlocked(blockerId: String, blockedId: String): Boolean {
         val blocker = userRepository.getReferenceById(blockerId)
         val blocked = userRepository.getReferenceById(blockedId)
-        return blockingRepository.existsByBlockerAndBlocked(blocker, blocked)
+        return blockRepository.existsByBlockerAndBlocked(blocker, blocked)
     }
 }
