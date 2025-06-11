@@ -4,7 +4,7 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
 import de.ashman.ontrack.feature.user.controller.dto.UserProfileDto
 import de.ashman.ontrack.feature.user.service.UserService
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -14,20 +14,20 @@ class UserController(
     private val userService: UserService,
 ) {
     @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
     fun search(
         @RequestParam username: String,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<List<OtherUserDto>> {
-        val result = userService.searchOtherUsers(currentUserId = identity.id, searchUsername = username)
-        return ResponseEntity.ok(result)
+    ): List<OtherUserDto> {
+        return userService.searchOtherUsers(currentUserId = identity.id, searchUsername = username)
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     fun getProfile(
         @PathVariable id: String,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<UserProfileDto> {
-        val profile = userService.getUserProfile(identity.id, id)
-        return ResponseEntity.ok(profile)
+    ): UserProfileDto {
+        return userService.getUserProfile(identity.id, id)
     }
 }

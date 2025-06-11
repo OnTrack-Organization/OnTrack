@@ -5,7 +5,7 @@ import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import jakarta.transaction.Transactional
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -15,26 +15,28 @@ class FriendController(
     private val friendService: FriendService,
 ) {
     @GetMapping("/all")
-    fun findFriends(@AuthenticationPrincipal identity: Identity): ResponseEntity<List<UserDto>> {
-        val friends = friendService.getFriendDtos(identity.id)
-        return ResponseEntity.ok(friends)
+    @ResponseStatus(HttpStatus.OK)
+    fun findFriends(
+        @AuthenticationPrincipal identity: Identity
+    ): List<UserDto> {
+        return friendService.getFriendDtos(identity.id)
     }
 
     @GetMapping("/friends-and-requests")
+    @ResponseStatus(HttpStatus.OK)
     fun findFriendsAndFriendRequests(
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<List<OtherUserDto>> {
-        val result = friendService.getFriendsAndFriendRequests(identity.id)
-        return ResponseEntity.ok(result)
+    ): List<OtherUserDto> {
+        return friendService.getFriendsAndFriendRequests(identity.id)
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
+    @Transactional
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeFriend(
         @PathVariable("id") friendId: String,
         @AuthenticationPrincipal identity: Identity
-    ): ResponseEntity<Unit> {
+    ) {
         friendService.endFriendship(identity.id, friendId)
-        return ResponseEntity.ok().build()
     }
 }
