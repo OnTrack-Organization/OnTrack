@@ -6,8 +6,8 @@ import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.settings.ImageUploadState
-import de.ashman.ontrack.network.services.account.AccountResult
 import de.ashman.ontrack.network.services.account.AccountService
+import de.ashman.ontrack.network.services.account.AccountSettingsResult
 import de.ashman.ontrack.network.services.account.UsernameError
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
-import ontrack.composeapp.generated.resources.unknown_error
+import ontrack.composeapp.generated.resources.settings_account_data_save_error
+import ontrack.composeapp.generated.resources.settings_update_picture_error
+import ontrack.composeapp.generated.resources.settings_update_picture_success
 
 class SetupViewModel(
     private val storageRepository: StorageRepository,
@@ -51,24 +53,19 @@ class SetupViewModel(
         accountService.updateAccountSettings(username = newUsername, name = newName).fold(
             onSuccess = { result ->
                 when (result) {
-                    is AccountResult.Success -> {
-                        _uiState.update { it.copy(user = it.user?.copy(name = newName, username = newUsername)) }
-                        userDataStore.saveUser(user = _uiState.value.user!!)
-
+                    is AccountSettingsResult.Success -> {
+                        _uiState.update { it.copy(usernameError = null) }
+                        userDataStore.saveUser(result.user)
                         navigateToSearch()
                     }
 
-                    is AccountResult.InvalidUsername -> {
-                        _uiState.update {
-                            it.copy(usernameError = result.error)
-                        }
+                    is AccountSettingsResult.InvalidUsername -> {
+                        _uiState.update { it.copy(usernameError = result.error) }
                     }
-
-                    else -> {}
                 }
             },
             onFailure = {
-                commonUiManager.showSnackbar(Res.string.unknown_error)
+                commonUiManager.showSnackbar(Res.string.settings_account_data_save_error)
             }
         )
     }
@@ -86,14 +83,17 @@ class SetupViewModel(
             fileName = _uiState.value.user!!.id
         )
 
-        accountService.updateProfilePicture(profilePictureUrl)
-
-        _uiState.update {
-            it.copy(
-                imageUrl = profilePictureUrl,
-                imageUploadState = ImageUploadState.Success
-            )
-        }
+        accountService.updateProfilePicture(profilePictureUrl).fold(
+            onSuccess = { updatedUser ->
+                _uiState.update { it.copy(imageUploadState = ImageUploadState.Success) }
+                userDataStore.saveUser(updatedUser)
+                commonUiManager.showSnackbar(Res.string.settings_update_picture_success)
+            },
+            onFailure = {
+                _uiState.update { it.copy(imageUploadState = ImageUploadState.Idle) }
+                commonUiManager.showSnackbar(Res.string.settings_update_picture_error)
+            }
+        )
     }
 
     fun onNameChange(name: String) {

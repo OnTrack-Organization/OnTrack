@@ -4,6 +4,7 @@ import de.ashman.ontrack.api.utils.safeApiCall
 import de.ashman.ontrack.api.utils.safeBackendApiCall
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.network.services.account.dto.AccountSettingsDto
+import de.ashman.ontrack.network.services.account.dto.AccountSettingsResponseDto
 import de.ashman.ontrack.network.services.account.dto.SignInDto
 import de.ashman.ontrack.network.services.account.dto.UserDto
 import de.ashman.ontrack.network.services.account.dto.toDomain
@@ -21,8 +22,8 @@ interface AccountService {
     suspend fun signOut(): Result<Unit>
 
     suspend fun getCurrentUser(): Result<User>
-    suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult>
-    suspend fun updateProfilePicture(profilePictureUrl: String): Result<Unit>
+    suspend fun updateAccountSettings(username: String, name: String): Result<AccountSettingsResult>
+    suspend fun updateProfilePicture(profilePictureUrl: String): Result<User>
 
     suspend fun deleteAccount(): Result<Unit>
 }
@@ -57,33 +58,32 @@ class AccountServiceImpl(
         httpClient.get("/account").body<UserDto>().toDomain()
     }
 
-    // TODO return json dto here from backend instead...
-    override suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult> = safeBackendApiCall<String> {
+    override suspend fun updateAccountSettings(username: String, name: String): Result<AccountSettingsResult> = safeBackendApiCall<AccountSettingsResponseDto> {
         httpClient.post("/account/settings") {
             setBody(AccountSettingsDto(username = username, name = name))
         }
     }.mapCatching { apiResponse ->
         when (apiResponse.status) {
-            HttpStatusCode.OK -> AccountResult.Success
+            HttpStatusCode.OK -> {
+                val userDto = apiResponse.data.user ?: error("User data missing")
+                AccountSettingsResult.Success(userDto.toDomain())
+            }
+
             HttpStatusCode.Conflict -> {
-                val error = mapUsernameError(apiResponse.data)
-                AccountResult.InvalidUsername(error)
+                val errorMsg = apiResponse.data.error
+                val error = mapUsernameError(errorMsg)
+                AccountSettingsResult.InvalidUsername(error)
             }
 
             else -> error("Unexpected status: ${apiResponse.status}")
         }
     }
 
-    override suspend fun updateProfilePicture(profilePictureUrl: String): Result<Unit> = safeBackendApiCall<Unit> {
+    override suspend fun updateProfilePicture(profilePictureUrl: String): Result<User> = safeBackendApiCall<UserDto> {
         httpClient.post("/account/profile-picture") {
             setBody(profilePictureUrl)
         }
-    }.mapCatching { apiResponse ->
-        when (apiResponse.status) {
-            HttpStatusCode.OK -> Unit
-            else -> error("Unexpected status: ${apiResponse.status}")
-        }
-    }
+    }.mapCatching { it.data.toDomain() }
 
     override suspend fun deleteAccount(): Result<Unit> = safeApiCall<Unit> {
         httpClient.delete("/account")
@@ -93,7 +93,9 @@ class AccountServiceImpl(
 sealed class AccountResult {
     data class ExistingUser(val user: User) : AccountResult()
     data class NewUserCreated(val user: User) : AccountResult()
-    object Success : AccountResult()
-    data class InvalidUsername(val error: UsernameError?) : AccountResult()
 }
 
+sealed class AccountSettingsResult {
+    data class Success(val user: User) : AccountSettingsResult()
+    data class InvalidUsername(val error: UsernameError?) : AccountSettingsResult()
+}

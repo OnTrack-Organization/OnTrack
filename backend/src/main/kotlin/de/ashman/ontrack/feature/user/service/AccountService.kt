@@ -2,7 +2,9 @@ package de.ashman.ontrack.feature.user.service
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.user.controller.dto.AccountDto
+import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import de.ashman.ontrack.feature.user.controller.dto.toAccountDto
+import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.domain.User
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
@@ -41,22 +43,23 @@ class AccountService(
     }
 
     @Transactional
-    fun updateAccountSettings(userId: String, name: String, username: String): String? {
-        val validationResult = validateUsername(username)
-        if (validationResult != null) return validationResult
+    fun updateAccountSettings(userId: String, name: String, username: String): UserDto {
+        validateUsername(username)?.let { errorMessage ->
+            throw IllegalArgumentException(errorMessage)
+        }
 
         val user = userRepository.getReferenceById(userId)
-
         user.name = name
         user.username = username
 
-        return null
+        return user.toDto()
     }
 
     @Transactional
-    fun updateProfilePicture(userId: String, profilePictureUrl: String) {
+    fun updateProfilePicture(userId: String, profilePictureUrl: String): UserDto {
         val user = userRepository.getReferenceById(userId)
         user.profilePictureUrl = profilePictureUrl
+        return user.toDto()
     }
 
     @Transactional

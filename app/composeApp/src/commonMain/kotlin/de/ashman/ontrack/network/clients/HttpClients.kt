@@ -157,7 +157,7 @@ fun createBackendClient(auth: FirebaseAuth): HttpClient = HttpClient {
         contentType(ContentType.Application.Json)
     }
 
-    expectSuccess = true
+    expectSuccess = false
 
     install(Logging) {
         logger = object : Logger {

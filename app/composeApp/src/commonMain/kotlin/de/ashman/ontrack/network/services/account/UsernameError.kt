@@ -10,7 +10,7 @@ enum class UsernameError {
     INVALID_CHARACTERS
 }
 
-fun mapUsernameError(errorMessage: String): UsernameError? {
+fun mapUsernameError(errorMessage: String?): UsernameError? {
     return when (errorMessage) {
         "USERNAME_EMPTY" -> UsernameError.EMPTY
         "USERNAME_WHITESPACE" -> UsernameError.WHITESPACE

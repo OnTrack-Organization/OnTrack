@@ -1,10 +1,7 @@
 package de.ashman.ontrack.feature.user.controller
 
 import de.ashman.ontrack.config.Identity
-import de.ashman.ontrack.feature.user.controller.dto.AccountDto
-import de.ashman.ontrack.feature.user.controller.dto.AccountSettingsDto
-import de.ashman.ontrack.feature.user.controller.dto.SignInDto
-import de.ashman.ontrack.feature.user.controller.dto.toAccountDto
+import de.ashman.ontrack.feature.user.controller.dto.*
 import de.ashman.ontrack.feature.user.service.AccountService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -44,32 +41,30 @@ class AccountController(
         return accountService.getCurrentAccount(identity.id)
     }
 
-    // TODO fix this to return dto instead of string
     @PostMapping("/settings")
     fun updateAccountSettings(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody @Valid accountSettings: AccountSettingsDto
-    ): ResponseEntity<String> {
-        val result = accountService.updateAccountSettings(
-            userId = identity.id,
-            name = accountSettings.name,
-            username = accountSettings.username
-        )
-
-        return if (result == null) {
-            ResponseEntity.ok().build()
-        } else {
-            ResponseEntity.status(HttpStatus.CONFLICT).body(result)
+    ): ResponseEntity<AccountSettingsResponseDto> {
+        return try {
+            val updatedUser = accountService.updateAccountSettings(
+                userId = identity.id,
+                name = accountSettings.name,
+                username = accountSettings.username
+            )
+            ResponseEntity.ok(AccountSettingsResponseDto(user = updatedUser, error = null))
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(AccountSettingsResponseDto(user = null, error = e.message))
         }
     }
 
     @PostMapping("/profile-picture")
-    @ResponseStatus(HttpStatus.OK)
     fun updateProfilePicture(
         @AuthenticationPrincipal identity: Identity,
-        @RequestBody profilePictureUrl: String,
-    ) {
-        accountService.updateProfilePicture(identity.id, profilePictureUrl)
+        @RequestBody profilePictureUrl: String
+    ): UserDto {
+        return accountService.updateProfilePicture(identity.id, profilePictureUrl)
     }
 
     @DeleteMapping

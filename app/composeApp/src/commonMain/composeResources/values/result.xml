@@ -43,6 +43,11 @@
     <string name="settings_username_uppercase">Username cannot contain uppercase letters</string>
 
     <string name="settings_account_data_saved">Account data saved</string>
+    <string name="settings_account_data_save_error">Failed to save account data</string>
+
+    <string name="settings_update_picture_success">Picture updated successfully</string>
+    <string name="settings_update_picture_error">Failed to update picture</string>
+
     <string name="settings_remove_account_error">Failed to remove account</string>
 
     <string name="notification_mark_all_as_read_success">All notifications marked as read</string>

@@ -8,8 +8,8 @@ import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
 import de.ashman.ontrack.domain.user.User
 import de.ashman.ontrack.features.common.CommonUiManager
-import de.ashman.ontrack.network.services.account.AccountResult
 import de.ashman.ontrack.network.services.account.AccountService
+import de.ashman.ontrack.network.services.account.AccountSettingsResult
 import de.ashman.ontrack.network.services.account.UsernameError
 import de.ashman.ontrack.storage.StorageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +20,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ontrack.composeapp.generated.resources.Res
 import ontrack.composeapp.generated.resources.logout_offline_error
+import ontrack.composeapp.generated.resources.settings_account_data_save_error
 import ontrack.composeapp.generated.resources.settings_account_data_saved
 import ontrack.composeapp.generated.resources.settings_remove_account_error
-import ontrack.composeapp.generated.resources.unknown_error
+import ontrack.composeapp.generated.resources.settings_update_picture_error
+import ontrack.composeapp.generated.resources.settings_update_picture_success
 import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
@@ -67,28 +69,49 @@ class SettingsViewModel(
         accountService.updateAccountSettings(username = newUsername, name = newName).fold(
             onSuccess = { result ->
                 when (result) {
-                    is AccountResult.Success -> {
-                        _uiState.update { it.copy(user = it.user?.copy(name = newName, username = newUsername)) }
-                        userDataStore.saveUser(user = _uiState.value.user!!)
-
+                    is AccountSettingsResult.Success -> {
+                        _uiState.update { it.copy(usernameError = null) }
+                        userDataStore.saveUser(result.user)
                         commonUiManager.hideSheetAndShowSnackbar(getString(Res.string.settings_account_data_saved))
                     }
 
-                    is AccountResult.InvalidUsername -> {
-                        _uiState.update {
-                            it.copy(usernameError = result.error)
-                        }
+                    is AccountSettingsResult.InvalidUsername -> {
+                        _uiState.update { it.copy(usernameError = result.error) }
                     }
-
-                    else -> {}
                 }
             },
             onFailure = {
-                commonUiManager.showSnackbar(Res.string.unknown_error)
+                commonUiManager.showSnackbar(Res.string.settings_account_data_save_error)
             }
         )
 
         _uiState.update { it.copy(isLoading = false) }
+    }
+
+    fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
+        if (bytes == null) {
+            _uiState.update { it.copy(imageUploadState = ImageUploadState.Idle) }
+            return@launch
+        }
+
+        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
+
+        val profilePictureUrl = storageRepository.uploadUserImage(
+            bytes = bytes,
+            fileName = _uiState.value.user!!.id
+        )
+
+        accountService.updateProfilePicture(profilePictureUrl).fold(
+            onSuccess = {
+                _uiState.update { it.copy(imageUploadState = ImageUploadState.Success) }
+                userDataStore.saveUser(user = _uiState.value.user!!)
+                commonUiManager.showSnackbar(Res.string.settings_update_picture_success)
+            },
+            onFailure = {
+                _uiState.update { it.copy(imageUploadState = ImageUploadState.Idle) }
+                commonUiManager.showSnackbar(Res.string.settings_update_picture_error)
+            }
+        )
     }
 
     fun signOut(clearAndNavigateToStart: () -> Unit) = viewModelScope.launch {
@@ -99,8 +122,7 @@ class SettingsViewModel(
                 trackingRepository.deleteAllTrackings()
                 reviewRepository.deleteAllReviews()
 
-                val notifier = NotifierManager.getLocalNotifier()
-                notifier.removeAll()
+                NotifierManager.getLocalNotifier().removeAll()
 
                 clearAndNavigateToStart()
             },
@@ -118,8 +140,7 @@ class SettingsViewModel(
                 trackingRepository.deleteAllTrackings()
                 reviewRepository.deleteAllReviews()
 
-                val notifier = NotifierManager.getLocalNotifier()
-                notifier.removeAll()
+                NotifierManager.getLocalNotifier().removeAll()
 
                 clearAndNavigateToStart()
             },
@@ -127,29 +148,6 @@ class SettingsViewModel(
                 commonUiManager.showSnackbar(Res.string.settings_remove_account_error)
             }
         )
-    }
-
-    fun onImagePicked(bytes: ByteArray?) = viewModelScope.launch {
-        if (bytes == null) {
-            _uiState.update { it.copy(imageUploadState = ImageUploadState.Idle) }
-            return@launch
-        }
-
-        _uiState.update { it.copy(imageUploadState = ImageUploadState.Uploading) }
-
-        val profilePictureUrl = storageRepository.uploadUserImage(
-            bytes = bytes,
-            fileName = _uiState.value.user!!.id
-        )
-
-        accountService.updateProfilePicture(profilePictureUrl)
-
-        _uiState.update {
-            it.copy(
-                imageUrl = profilePictureUrl,
-                imageUploadState = ImageUploadState.Success
-            )
-        }
     }
 
     fun onNameChange(name: String) {
