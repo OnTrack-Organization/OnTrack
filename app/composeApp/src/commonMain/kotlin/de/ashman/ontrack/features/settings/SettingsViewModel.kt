@@ -2,6 +2,7 @@ package de.ashman.ontrack.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mmk.kmpnotifier.notification.NotifierManager
 import de.ashman.ontrack.database.review.ReviewRepository
 import de.ashman.ontrack.database.tracking.TrackingRepository
 import de.ashman.ontrack.datastore.UserDataStore
@@ -98,6 +99,9 @@ class SettingsViewModel(
                 trackingRepository.deleteAllTrackings()
                 reviewRepository.deleteAllReviews()
 
+                val notifier = NotifierManager.getLocalNotifier()
+                notifier.removeAll()
+
                 clearAndNavigateToStart()
             },
             onFailure = {
@@ -113,6 +117,9 @@ class SettingsViewModel(
                 userDataStore.clearUser()
                 trackingRepository.deleteAllTrackings()
                 reviewRepository.deleteAllReviews()
+
+                val notifier = NotifierManager.getLocalNotifier()
+                notifier.removeAll()
 
                 clearAndNavigateToStart()
             },
