@@ -1,5 +1,6 @@
 package de.ashman.ontrack.domain.notification
 
+import de.ashman.ontrack.domain.media.MediaData
 import de.ashman.ontrack.domain.user.User
 
 sealed class Notification {
@@ -28,7 +29,7 @@ data class RecommendationReceived(
     override val sender: User,
     override val read: Boolean,
     override val timestamp: Long,
-    val recommendation: SimpleRecommendation
+    val media: MediaData,
 ) : Notification()
 
 data class PostLiked(
@@ -45,7 +46,6 @@ data class PostCommented(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePost,
-    val comment: SimpleComment
 ) : Notification()
 
 data class PostMentioned(
@@ -54,5 +54,4 @@ data class PostMentioned(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePost,
-    val comment: SimpleComment
 ) : Notification()

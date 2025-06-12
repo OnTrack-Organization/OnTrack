@@ -2,9 +2,9 @@ package de.ashman.ontrack.feature.notification.service
 
 import Notification
 import com.google.firebase.messaging.*
-import com.google.firebase.messaging.Notification as FCMNotification
 import de.ashman.ontrack.feature.notification.domain.*
 import org.springframework.stereotype.Service
+import com.google.firebase.messaging.Notification as FCMNotification
 
 @Service
 class PushNotificationService {
@@ -36,13 +36,13 @@ class PushNotificationService {
             is RecommendationReceived -> PushNotificationData(
                 fcmToken = fcmToken,
                 title = "New Recommendation",
-                body = "${notification.sender.name} recommended you ${notification.recommendation.media.title}",
+                body = "${notification.sender.name} recommended you ${notification.media.title}",
                 extraData = mapOf(
                     "type" to "recommendation",
-                    "mediaId" to notification.recommendation.media.id,
-                    "mediaTitle" to notification.recommendation.media.title,
-                    "mediaCoverUrl" to notification.recommendation.media.coverUrl.orEmpty(),
-                    "mediaType" to notification.recommendation.media.type.name
+                    "mediaId" to notification.media.id.orEmpty(),
+                    "mediaTitle" to notification.media.title.orEmpty(),
+                    "mediaCoverUrl" to notification.media.coverUrl.orEmpty(),
+                    "mediaType" to notification.media.type?.name.orEmpty(),
                 )
             )
 

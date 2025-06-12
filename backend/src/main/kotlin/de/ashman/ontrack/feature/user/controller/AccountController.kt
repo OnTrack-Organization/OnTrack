@@ -47,9 +47,9 @@ class AccountController(
         return accountService.getCurrentAccount(identity.id)
     }
 
+    // TODO fix this to return dto instead of string
     @PostMapping("/settings")
     @Transactional
-    @ResponseStatus(HttpStatus.OK)
     fun updateAccountSettings(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody @Valid accountSettings: AccountSettingsDto

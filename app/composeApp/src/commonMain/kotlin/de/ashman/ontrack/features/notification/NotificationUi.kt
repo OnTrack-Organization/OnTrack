@@ -109,9 +109,9 @@ sealed class NotificationUi(
                 val text = stringResource(
                     Res.string.notifications_recommendation,
                     n.sender.username,
-                    n.recommendation.media.title
+                    n.media.title
                 )
-                formatAnnotatedString(text, n.sender.username, n.recommendation.media.title)
+                formatAnnotatedString(text, n.sender.username, n.media.title)
             }
         }
     )

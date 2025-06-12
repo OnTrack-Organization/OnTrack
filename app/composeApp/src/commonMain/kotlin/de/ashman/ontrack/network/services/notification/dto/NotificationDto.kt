@@ -9,6 +9,7 @@ import de.ashman.ontrack.domain.notification.PostLiked
 import de.ashman.ontrack.domain.notification.RecommendationReceived
 import de.ashman.ontrack.network.services.account.dto.UserDto
 import de.ashman.ontrack.network.services.account.dto.toDomain
+import de.ashman.ontrack.network.services.tracking.dto.toDomain
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
@@ -43,7 +44,7 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         sender = sender.toDomain(),
         read = read,
         timestamp = timestamp,
-        recommendation = recommendation.toDomain()
+        media = media.toDomain()
     )
 
     is PostLikedDto -> PostLiked(
@@ -60,7 +61,6 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         read = read,
         timestamp = timestamp,
         post = post.toDomain(),
-        comment = comment.toDomain()
     )
 
     is MentionedDto -> PostMentioned(
@@ -69,7 +69,6 @@ fun NotificationDto.toDomain(): Notification = when (this) {
         read = read,
         timestamp = timestamp,
         post = post.toDomain(),
-        comment = comment.toDomain()
     )
 }
 

@@ -57,6 +57,7 @@ class AccountServiceImpl(
         httpClient.get("/account").body<UserDto>().toDomain()
     }
 
+    // TODO return json dto here from backend instead...
     override suspend fun updateAccountSettings(username: String, name: String): Result<AccountResult> = safeBackendApiCall<String> {
         httpClient.post("/account/settings") {
             setBody(AccountSettingsDto(username = username, name = name))

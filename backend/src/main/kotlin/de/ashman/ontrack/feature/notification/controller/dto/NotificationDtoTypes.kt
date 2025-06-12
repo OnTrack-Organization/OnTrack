@@ -1,5 +1,6 @@
 package de.ashman.ontrack.feature.notification.controller.dto
 
+import de.ashman.ontrack.feature.tracking.controller.dto.MediaDto
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import java.util.*
 
@@ -22,7 +23,7 @@ data class RecommendationReceivedDto(
     override val sender: UserDto,
     override val read: Boolean,
     override val timestamp: Long,
-    val recommendation: SimpleRecommendationDto,
+    val media: MediaDto,
 ) : NotificationDto()
 
 data class PostLikedDto(
@@ -39,7 +40,6 @@ data class PostCommentedDto(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePostDto,
-    val comment: SimpleCommentDto,
 ) : NotificationDto()
 
 data class MentionedDto(
@@ -48,5 +48,4 @@ data class MentionedDto(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePostDto,
-    val comment: SimpleCommentDto,
 ) : NotificationDto()

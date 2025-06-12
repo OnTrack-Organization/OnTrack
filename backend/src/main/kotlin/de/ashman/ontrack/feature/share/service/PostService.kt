@@ -166,7 +166,6 @@ class PostService(
                 commenter = sender,
                 postOwner = mentionedUser,
                 post = post,
-                comment = comment
             )
         }
 
@@ -175,7 +174,6 @@ class PostService(
                 commenter = sender,
                 postOwner = receiver,
                 post = post,
-                comment = comment
             )
         }
 

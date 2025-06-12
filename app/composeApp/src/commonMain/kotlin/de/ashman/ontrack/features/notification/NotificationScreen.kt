@@ -190,7 +190,7 @@ fun NotificationCard(
 
                 when (notification) {
                     is FriendRequestReceived, is FriendRequestAccepted -> onClickUser(notification.sender.id)
-                    is RecommendationReceived -> onClickMedia(notification.recommendation.media)
+                    is RecommendationReceived -> onClickMedia(notification.media)
                     is PostLiked -> onClickPost(notification.post.id)
                     is PostCommented -> onClickPost(notification.post.id)
                     is PostMentioned -> onClickPost(notification.post.id)
@@ -235,8 +235,8 @@ fun NotificationCard(
                 is RecommendationReceived -> {
                     MediaPoster(
                         modifier = Modifier.height(MINI_POSTER_HEIGHT),
-                        coverUrl = notification.recommendation.media.coverUrl,
-                        onClick = { onClickMedia(notification.recommendation.media) }
+                        coverUrl = notification.media.coverUrl,
+                        onClick = { onClickMedia(notification.media) }
                     )
                 }
 

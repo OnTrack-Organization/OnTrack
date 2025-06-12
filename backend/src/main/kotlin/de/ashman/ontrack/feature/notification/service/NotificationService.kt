@@ -4,7 +4,6 @@ import Notification
 import de.ashman.ontrack.feature.notification.domain.*
 import de.ashman.ontrack.feature.notification.repository.NotificationRepository
 import de.ashman.ontrack.feature.recommendation.domain.Recommendation
-import de.ashman.ontrack.feature.share.domain.Comment
 import de.ashman.ontrack.feature.share.domain.Post
 import de.ashman.ontrack.feature.user.domain.User
 import org.springframework.stereotype.Service
@@ -50,7 +49,7 @@ class NotificationService(
     }
 
     fun createRecommendationReceived(sender: User, receiver: User, recommendation: Recommendation) {
-        val notification = RecommendationReceived(sender, receiver, recommendation)
+        val notification = RecommendationReceived(sender, receiver, recommendation.media)
         val saved = notificationRepository.save(notification)
         pushNotificationService.sendPush(saved)
     }
@@ -63,18 +62,18 @@ class NotificationService(
         pushNotificationService.sendPush(saved)
     }
 
-    fun createPostCommented(commenter: User, postOwner: User, post: Post, comment: Comment) {
+    fun createPostCommented(commenter: User, postOwner: User, post: Post) {
         if (commenter == postOwner) return
 
-        val notification = PostCommented(commenter, postOwner, post, comment)
+        val notification = PostCommented(commenter, postOwner, post)
         val saved = notificationRepository.save(notification)
         pushNotificationService.sendPush(saved)
     }
 
-    fun createPostMentioned(commenter: User, postOwner: User, post: Post, comment: Comment) {
+    fun createPostMentioned(commenter: User, postOwner: User, post: Post) {
         if (commenter == postOwner) return
 
-        val notification = PostMentioned(commenter, postOwner, post, comment)
+        val notification = PostMentioned(commenter, postOwner, post)
         val saved = notificationRepository.save(notification)
         pushNotificationService.sendPush(saved)
     }

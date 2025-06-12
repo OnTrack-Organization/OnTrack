@@ -59,7 +59,7 @@ class TrackingServiceImpl(
         httpClient.delete("/tracking/$trackingId")
     }.mapCatching { response ->
         when (response.status) {
-            HttpStatusCode.OK -> Unit
+            HttpStatusCode.NoContent -> Unit
             else -> error("Unexpected status: ${response.status}")
         }
     }

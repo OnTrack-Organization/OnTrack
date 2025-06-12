@@ -1,6 +1,7 @@
 package de.ashman.ontrack.network.services.notification.dto
 
 import de.ashman.ontrack.network.services.account.dto.UserDto
+import de.ashman.ontrack.network.services.tracking.dto.MediaDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,7 +30,7 @@ data class RecommendationReceivedDto(
     override val sender: UserDto,
     override val read: Boolean,
     override val timestamp: Long,
-    val recommendation: SimpleRecommendationDto,
+    val media: MediaDto,
 ) : NotificationDto()
 
 @Serializable
@@ -50,7 +51,6 @@ data class PostCommentedDto(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePostDto,
-    val comment: SimpleCommentDto,
 ) : NotificationDto()
 
 @Serializable
@@ -61,5 +61,4 @@ data class MentionedDto(
     override val read: Boolean,
     override val timestamp: Long,
     val post: SimplePostDto,
-    val comment: SimpleCommentDto,
 ) : NotificationDto()

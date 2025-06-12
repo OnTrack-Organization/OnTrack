@@ -11,8 +11,8 @@ data class MediaDto(
 )
 
 fun Media.toDto(): MediaDto = MediaDto(
-    id = id,
-    type = type,
-    title = title,
+    id = id!!,
+    type = type!!,
+    title = title!!,
     coverUrl = coverUrl,
 )

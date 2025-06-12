@@ -13,6 +13,7 @@ import de.ashman.ontrack.feature.tracking.repository.TrackingRepository
 import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RecommendationService(
@@ -23,6 +24,7 @@ class RecommendationService(
     private val friendRepository: FriendRepository,
     private val notificationService: NotificationService,
 ) {
+    @Transactional
     fun createRecommendation(senderId: String, dto: CreateRecommendationDto) {
         val sender = userRepository.getReferenceById(senderId)
         val receiver = userRepository.getReferenceById(dto.userId)

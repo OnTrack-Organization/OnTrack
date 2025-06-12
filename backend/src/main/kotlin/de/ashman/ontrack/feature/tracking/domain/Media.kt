@@ -8,18 +8,18 @@ import jakarta.persistence.Enumerated
 
 @Embeddable
 data class Media(
-    @Column(name = "media_id", nullable = false)
-    val id: String,
+    @Column(name = "media_id")
+    val id: String? = null,
 
-    @Column(name = "media_type", nullable = false)
+    @Column(name = "media_type")
     @Enumerated(EnumType.STRING)
-    val type: MediaType,
+    val type: MediaType? = null,
 
-    @Column(name = "media_title", nullable = false)
-    val title: String,
+    @Column(name = "media_title")
+    val title: String? = null,
 
     @Column(name = "media_cover_url")
-    val coverUrl: String?
+    val coverUrl: String? = null,
 )
 
 fun MediaDto.toEntity() = Media(

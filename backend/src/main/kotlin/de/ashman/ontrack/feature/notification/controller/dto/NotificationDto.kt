@@ -4,6 +4,7 @@ import Notification
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import de.ashman.ontrack.feature.notification.domain.*
+import de.ashman.ontrack.feature.tracking.controller.dto.toDto
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
 import de.ashman.ontrack.feature.user.controller.dto.toDto
 import java.util.*
@@ -47,7 +48,7 @@ fun Notification.toDto(): NotificationDto = when (this) {
         id = id,
         sender = sender.toDto(),
         read = read,
-        recommendation = recommendation.toSimpleDto(),
+        media = media.toDto(),
         timestamp = updatedAt.toEpochMilli(),
     )
 
@@ -64,7 +65,6 @@ fun Notification.toDto(): NotificationDto = when (this) {
         sender = sender.toDto(),
         read = read,
         post = post.toSimpleDto(),
-        comment = comment.toSimpleDto(),
         timestamp = updatedAt.toEpochMilli(),
     )
 
@@ -73,7 +73,6 @@ fun Notification.toDto(): NotificationDto = when (this) {
         sender = sender.toDto(),
         read = read,
         post = post.toSimpleDto(),
-        comment = comment.toSimpleDto(),
         timestamp = updatedAt.toEpochMilli(),
     )
 
