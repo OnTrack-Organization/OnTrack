@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
@@ -47,9 +48,7 @@ import de.ashman.ontrack.domain.tracking.TrackStatus
 import de.ashman.ontrack.features.common.CommonUiManager
 import de.ashman.ontrack.features.common.ConfirmSheet
 import de.ashman.ontrack.features.common.CurrentSheet
-import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.LargerImageDialog
-import de.ashman.ontrack.features.common.LoadingContent
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.detail.components.DetailDropDown
 import de.ashman.ontrack.features.detail.components.RatingCardRow
@@ -66,6 +65,8 @@ import de.ashman.ontrack.features.detail.recommendation.FriendsActivitySheet
 import de.ashman.ontrack.features.detail.recommendation.RecommendationSheet
 import de.ashman.ontrack.features.detail.review.ReviewSheet
 import de.ashman.ontrack.features.detail.tracking.TrackSheet
+import de.ashman.ontrack.features.search.ErrorContent
+import de.ashman.ontrack.features.search.LoadingContent
 import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
@@ -73,7 +74,7 @@ import ontrack.composeapp.generated.resources.detail_remove_confirm_text
 import ontrack.composeapp.generated.resources.detail_remove_confirm_title
 import org.jetbrains.compose.resources.pluralStringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DetailScreen(
     mediaNav: MediaNavigationParam,

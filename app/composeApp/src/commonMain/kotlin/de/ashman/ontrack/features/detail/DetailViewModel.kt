@@ -34,6 +34,7 @@ import de.ashman.ontrack.network.services.tracking.TrackingService
 import de.ashman.ontrack.network.services.tracking.dto.CreateTrackingDto
 import de.ashman.ontrack.network.services.tracking.dto.UpdateTrackingDto
 import de.ashman.ontrack.util.getSingularTitle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -110,6 +111,7 @@ class DetailViewModel(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun observeTrackingAndReview(mediaType: MediaType, mediaId: String) {
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {

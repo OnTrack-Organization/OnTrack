@@ -192,6 +192,7 @@ fun CommentsSheet(
                 onValueChange = {
                     commentText = it
                 },
+                isSendVisible = commentText.text.isNotBlank(),
                 isSending = sendingComment,
                 onSend = {
                     onPostComment(commentText.text)

@@ -120,6 +120,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            implementation(libs.compose.backhandler)
             implementation(libs.compose.navigation)
             implementation(libs.filekit)
             implementation(libs.compose.shimmer)

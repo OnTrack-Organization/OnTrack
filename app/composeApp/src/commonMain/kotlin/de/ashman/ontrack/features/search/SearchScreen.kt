@@ -5,14 +5,20 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HideSource
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -24,15 +30,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
-import de.ashman.ontrack.features.common.EmptyContent
-import de.ashman.ontrack.features.common.ErrorContent
 import de.ashman.ontrack.features.common.MediaPoster
 import de.ashman.ontrack.features.common.OnTrackTopBar
 import de.ashman.ontrack.features.common.SearchBar
@@ -41,7 +48,9 @@ import de.ashman.ontrack.navigation.MediaNavigationParam
 import de.ashman.ontrack.util.fakeItems
 import de.ashman.ontrack.util.getMediaTypeUi
 import ontrack.composeapp.generated.resources.Res
+import ontrack.composeapp.generated.resources.search_empty
 import ontrack.composeapp.generated.resources.search_nav_title
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -204,5 +213,69 @@ fun FilterChips(
                 )
             )
         }
+    }
+}
+
+@Composable
+fun LoadingContent(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp).imePadding(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator(modifier = Modifier.scale(1.5f))
+    }
+}
+
+@Composable
+fun ErrorContent(
+    modifier: Modifier = Modifier,
+    text: StringResource,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp).imePadding(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            modifier = Modifier.size(48.dp),
+            imageVector = Icons.Default.WifiOff,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = "Error Icon"
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = stringResource(text),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+fun EmptyContent(
+    mediaType: MediaType,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp).imePadding(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(48.dp),
+            imageVector = Icons.Default.HideSource,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = "No Results Icon"
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = stringResource(Res.string.search_empty, pluralStringResource(mediaType.getMediaTypeUi().title, 2).lowercase()),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
