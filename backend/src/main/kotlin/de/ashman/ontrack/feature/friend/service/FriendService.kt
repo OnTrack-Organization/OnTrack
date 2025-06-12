@@ -10,6 +10,7 @@ import de.ashman.ontrack.feature.user.controller.dto.toDto
 import de.ashman.ontrack.feature.user.domain.User
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FriendService(
@@ -17,11 +18,13 @@ class FriendService(
     private val userRepository: UserRepository,
     private val friendRequestRepository: FriendRequestRepository,
 ) {
+    @Transactional
     fun beginFriendship(user1: User, user2: User) {
         val newFriendship = Friendship.begin(user1, user2)
         friendRepository.save(newFriendship)
     }
 
+    @Transactional
     fun endFriendship(userId: String, friendId: String) = friendRepository.deleteFriendshipBetween(userId, friendId)
 
     fun getFriendIds(userId: String): List<String> = friendRepository.findFriendIdsOf(userId)

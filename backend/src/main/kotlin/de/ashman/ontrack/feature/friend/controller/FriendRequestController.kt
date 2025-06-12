@@ -2,7 +2,6 @@ package de.ashman.ontrack.feature.friend.controller
 
 import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.service.FriendRequestService
-import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -13,7 +12,6 @@ class FriendRequestController(
     private val friendRequestService: FriendRequestService
 ) {
     @PostMapping("/send/{userId}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun sendFriendRequest(
         @AuthenticationPrincipal identity: Identity,
@@ -23,7 +21,6 @@ class FriendRequestController(
     }
 
     @PostMapping("/accept/{userId}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun acceptFriendRequest(
         @AuthenticationPrincipal identity: Identity,
@@ -33,7 +30,6 @@ class FriendRequestController(
     }
 
     @PostMapping("/decline/{userId}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun declineFriendRequest(
         @AuthenticationPrincipal identity: Identity,
@@ -43,7 +39,6 @@ class FriendRequestController(
     }
 
     @PostMapping("/cancel/{userId}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun cancelFriendRequest(
         @AuthenticationPrincipal identity: Identity,

@@ -31,6 +31,7 @@ class NotificationService(
         return notification
     }
 
+    @Transactional
     fun markAllAsRead(receiverId: String): List<Notification> {
         notificationRepository.markAllAsReadByReceiverId(receiverId)
         return notificationRepository.findTop50VisibleByReceiverId(receiverId)

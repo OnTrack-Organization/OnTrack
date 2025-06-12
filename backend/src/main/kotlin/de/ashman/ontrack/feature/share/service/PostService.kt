@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -91,6 +92,7 @@ class PostService(
         )
     }
 
+    @Transactional
     fun createPostForTracking(tracking: Tracking) {
         val post = Post(
             user = tracking.user,
@@ -100,6 +102,7 @@ class PostService(
         postRepository.save(post)
     }
 
+    @Transactional
     fun updatePostWithReview(review: Review) {
         val post = postRepository.findByTrackingId(review.tracking.id) ?: throw IllegalStateException("No post found for tracking ${review.tracking.id}")
 
@@ -110,6 +113,7 @@ class PostService(
         postRepository.save(updatedPost)
     }
 
+    @Transactional
     fun toggleLike(postId: UUID, likerUserId: String): PostDto {
         val post = postRepository.getReferenceById(postId)
         val postOwnerId = post.user.id
@@ -134,6 +138,7 @@ class PostService(
         }
     }
 
+    @Transactional
     fun addComment(postId: UUID, commenterUserId: String, dto: CreateCommentDto): PostDto {
         val post = postRepository.getReferenceById(postId)
 
@@ -180,6 +185,7 @@ class PostService(
         return getPost(postId, commenterUserId)
     }
 
+    @Transactional
     fun removeComment(postId: UUID, commentId: UUID, userId: String): PostDto {
         val comment = commentRepository.getReferenceById(commentId)
 

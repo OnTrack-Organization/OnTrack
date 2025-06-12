@@ -4,7 +4,6 @@ import de.ashman.ontrack.config.Identity
 import de.ashman.ontrack.feature.friend.service.FriendService
 import de.ashman.ontrack.feature.user.controller.dto.OtherUserDto
 import de.ashman.ontrack.feature.user.controller.dto.UserDto
-import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -31,7 +30,6 @@ class FriendController(
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeFriend(
         @PathVariable("id") friendId: String,

@@ -9,7 +9,7 @@ import de.ashman.ontrack.feature.tracking.domain.MediaType
 import de.ashman.ontrack.feature.tracking.repository.TrackingRepository
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.stereotype.Service
-import java.util.*
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ReviewService(
@@ -20,6 +20,7 @@ class ReviewService(
 ) {
     fun getReviewsByUserId(userId: String): List<Review> = reviewRepository.getReviewsByUserId(userId)
 
+    @Transactional
     fun createReview(userId: String, dto: CreateReviewDto): Review {
         val user = userRepository.getReferenceById(userId)
         val tracking = trackingRepository.getReferenceById(dto.trackingId)
@@ -38,6 +39,7 @@ class ReviewService(
         return newReview
     }
 
+    @Transactional
     fun updateReview(userId: String, dto: CreateReviewDto): Review {
         val review = reviewRepository.getByTrackingId(dto.trackingId) ?: throw IllegalArgumentException("Review not found for tracking")
 

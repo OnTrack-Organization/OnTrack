@@ -16,7 +16,6 @@ class ReportService(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
 ) {
-
     @Transactional
     fun report(
         reporterId: String,

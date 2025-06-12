@@ -5,7 +5,6 @@ import de.ashman.ontrack.feature.tracking.controller.dto.CreateTrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.TrackingDto
 import de.ashman.ontrack.feature.tracking.controller.dto.UpdateTrackingDto
 import de.ashman.ontrack.feature.tracking.service.TrackingService
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -26,7 +25,6 @@ class TrackingController(
     }
 
     @PostMapping
-    @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     fun create(
         @RequestBody @Valid dto: CreateTrackingDto,
@@ -36,7 +34,6 @@ class TrackingController(
     }
 
     @PutMapping
-    @Transactional
     @ResponseStatus(HttpStatus.OK)
     fun update(
         @RequestBody @Valid dto: UpdateTrackingDto,
@@ -46,7 +43,6 @@ class TrackingController(
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
         @PathVariable id: UUID,

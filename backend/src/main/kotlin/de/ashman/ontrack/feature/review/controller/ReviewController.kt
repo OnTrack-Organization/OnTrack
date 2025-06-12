@@ -7,7 +7,6 @@ import de.ashman.ontrack.feature.review.controller.dto.ReviewStatsDto
 import de.ashman.ontrack.feature.review.controller.dto.toDto
 import de.ashman.ontrack.feature.review.service.ReviewService
 import de.ashman.ontrack.feature.tracking.domain.MediaType
-import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -26,7 +25,6 @@ class ReviewController(
     }
 
     @PostMapping
-    @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     fun createReview(
         @RequestBody dto: CreateReviewDto,
@@ -36,7 +34,6 @@ class ReviewController(
     }
 
     @PutMapping
-    @Transactional
     @ResponseStatus(HttpStatus.OK)
     fun updateReview(
         @RequestBody dto: CreateReviewDto,

@@ -11,6 +11,7 @@ import de.ashman.ontrack.feature.tracking.repository.TrackingRepository
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -25,6 +26,7 @@ class TrackingService(
         return trackingRepository.getTrackingsByUserId(user.id).map { it.toDto() }
     }
 
+    @Transactional
     fun createTracking(userId: String, dto: CreateTrackingDto): TrackingDto {
         val user = userRepository.getReferenceById(userId)
 
@@ -40,6 +42,7 @@ class TrackingService(
         return newTracking.toDto()
     }
 
+    @Transactional
     fun updateTracking(userId: String, dto: UpdateTrackingDto): TrackingDto {
         val user = userRepository.getReferenceById(userId)
         val tracking = trackingRepository.getReferenceById(dto.id)
@@ -53,6 +56,7 @@ class TrackingService(
         return tracking.toDto()
     }
 
+    @Transactional
     fun deleteTracking(trackingId: UUID) {
         val tracking = trackingRepository.getReferenceById(trackingId)
 

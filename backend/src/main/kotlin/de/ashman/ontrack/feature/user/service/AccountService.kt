@@ -7,6 +7,7 @@ import de.ashman.ontrack.feature.user.domain.User
 import de.ashman.ontrack.feature.user.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AccountService(
@@ -14,6 +15,7 @@ class AccountService(
 ) {
     fun getCurrentAccount(id: String): AccountDto = userRepository.getReferenceById(id).toAccountDto()
 
+    @Transactional
     fun signInOrCreate(identity: Identity, fcmToken: String?): User {
         val existingUser = userRepository.findOneByEmail(identity.email)
         return if (existingUser != null) {
@@ -32,11 +34,13 @@ class AccountService(
         }
     }
 
+    @Transactional
     fun signOut(userId: String) {
         val user = userRepository.getReferenceById(userId)
         user.fcmToken = null
     }
 
+    @Transactional
     fun updateAccountSettings(userId: String, name: String, username: String): String? {
         val validationResult = validateUsername(username)
         if (validationResult != null) return validationResult
@@ -49,9 +53,19 @@ class AccountService(
         return null
     }
 
+    @Transactional
     fun updateProfilePicture(userId: String, profilePictureUrl: String) {
         val user = userRepository.getReferenceById(userId)
         user.profilePictureUrl = profilePictureUrl
+    }
+
+    @Transactional
+    fun deleteAccount(userId: String) {
+        if (!userRepository.existsById(userId)) {
+            throw EntityNotFoundException("User with ID $userId not found")
+        }
+
+        userRepository.deleteById(userId)
     }
 
     private fun validateUsername(username: String?): String? {
@@ -65,13 +79,5 @@ class AccountService(
         if (!allowedPattern.matches(username)) return "USERNAME_INVALID_CHARACTERS"
 
         return null
-    }
-
-    fun deleteAccount(userId: String) {
-        if (!userRepository.existsById(userId)) {
-            throw EntityNotFoundException("User with ID $userId not found")
-        }
-
-        userRepository.deleteById(userId)
     }
 }

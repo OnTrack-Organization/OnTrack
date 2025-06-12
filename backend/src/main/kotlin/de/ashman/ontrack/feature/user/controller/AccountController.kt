@@ -6,7 +6,6 @@ import de.ashman.ontrack.feature.user.controller.dto.AccountSettingsDto
 import de.ashman.ontrack.feature.user.controller.dto.SignInDto
 import de.ashman.ontrack.feature.user.controller.dto.toAccountDto
 import de.ashman.ontrack.feature.user.service.AccountService
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,7 +18,6 @@ class AccountController(
     private val accountService: AccountService
 ) {
     @PostMapping("/sign-in")
-    @Transactional
     fun signIn(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody signInDto: SignInDto
@@ -31,7 +29,6 @@ class AccountController(
     }
 
     @PostMapping("/sign-out")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun signOut(
         @AuthenticationPrincipal identity: Identity
@@ -49,7 +46,6 @@ class AccountController(
 
     // TODO fix this to return dto instead of string
     @PostMapping("/settings")
-    @Transactional
     fun updateAccountSettings(
         @AuthenticationPrincipal identity: Identity,
         @RequestBody @Valid accountSettings: AccountSettingsDto
@@ -68,7 +64,6 @@ class AccountController(
     }
 
     @PostMapping("/profile-picture")
-    @Transactional
     @ResponseStatus(HttpStatus.OK)
     fun updateProfilePicture(
         @AuthenticationPrincipal identity: Identity,
@@ -78,7 +73,6 @@ class AccountController(
     }
 
     @DeleteMapping
-    @Transactional
     @ResponseStatus(HttpStatus.OK)
     fun deleteAccount(
         @AuthenticationPrincipal identity: Identity
