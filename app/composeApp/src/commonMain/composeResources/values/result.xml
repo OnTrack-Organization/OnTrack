@@ -1,0 +1,58 @@
+<resources>
+    <!-- ERROR -->
+    <string name="unknown_error">An unknown error occurred, sorry!</string>
+
+    <string name="login_offline_error">Failed to log in, are you offline?</string>
+    <string name="logout_offline_error">Failed to log out, are you offline?</string>
+
+    <string name="tracking_saved">%1$s added to %2$s</string>
+    <string name="tracking_removed">%1$s removed from %2$s</string>
+    <string name="tracking_create_error">Failed to create tracking</string>
+    <string name="tracking_update_error">Failed to update tracking</string>
+    <string name="tracking_delete_error">Failed to remove tracking</string>
+
+    <string name="feed_request_sent">Friend request sent</string>
+    <string name="feed_request_accepted">Friend request accepted</string>
+    <string name="feed_request_declined">Friend request declined</string>
+    <string name="feed_request_cancelled">Friend request cancelled</string>
+    <string name="feed_friend_removed">Friend removed</string>
+    <string name="friend_send_request_error">Failed to send friend request</string>
+    <string name="friend_accept_request_error">Failed to accept friend request</string>
+    <string name="friend_decline_request_error">Failed to decline friend request</string>
+    <string name="friend_cancel_request_error">Failed to cancel friend request</string>
+    <string name="friend_delete_error">Failed to remove friend</string>
+
+    <string name="shelf_get_profile_error">Failed to fetch user profile</string>
+    <string name="friends_get_error">Failed to fetch friends and requests</string>
+
+    <string name="recommendation_send">Recommendation sent</string>
+    <string name="recommendation_send_error">Failed to send recommendation</string>
+    <string name="recommendation_added_to_catalog_error">Failed to add recommendation to catalog</string>
+    <string name="recommendation_friends_error">Failed to fetch friends</string>
+
+    <string name="post_add_comment_error">Failed to add comment</string>
+    <string name="post_remove_comment_error">Failed to remove comment</string>
+    <string name="post_toggle_like_error">Failed to toggle like</string>
+
+    <string name="settings_username_taken">Username is already taken</string>
+    <string name="settings_username_empty">Username cannot be empty</string>
+    <string name="settings_username_whitespace">Username cannot contain whitespaces</string>
+    <string name="settings_username_too_long">Username should be less than 25 characters</string>
+    <string name="settings_username_too_short">Username should be more than 5 characters</string>
+    <string name="settings_username_invalid_characters">Username has invalid characters</string>
+    <string name="settings_username_uppercase">Username cannot contain uppercase letters</string>
+
+    <string name="settings_account_data_saved">Account data saved</string>
+    <string name="settings_remove_account_error">Failed to remove account</string>
+
+    <string name="notification_mark_all_as_read_success">All notifications marked as read</string>
+    <string name="notification_mark_all_as_read_error">Failed to mark all notifications as read</string>
+
+    <string name="block_success">User blocked successfully</string>
+    <string name="unblock_success">User unblocked successfully</string>
+    <string name="block_error">Failed to block user</string>
+    <string name="unblock_error">Failed to unblock user</string>
+
+    <string name="report_success">Report sent successfully</string>
+    <string name="report_error">Failed to send report</string>
+</resources>

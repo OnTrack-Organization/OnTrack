@@ -10,7 +10,6 @@
     <!-- START -->
     <string name="intro_button">Introduction</string>
     <string name="login_button">Login</string>
-    <string name="api_powered_by">Powered by these sexy APIs</string>
 
     <!-- LOGIN -->
     <string name="login_title">Join OnTrack</string>
@@ -36,6 +35,7 @@
     <!-- SETUP -->
     <string name="setup_title">Setup</string>
     <string name="setup_username">Enter some personal info to get started!</string>
+    <string name="start_button">Let's start</string>
 
     <!-- SHARE -->
     <string name="share_empty">Add some friends or track some media to share it!</string>
@@ -71,12 +71,6 @@
     <string name="feed_no_friends_and_requests">No friends yet, why not search for some?</string>
     <string name="feed_no_potential_friends">No potential friends found</string>
 
-    <string name="feed_request_sent">Friend request sent</string>
-    <string name="feed_request_accepted">Friend request accepted</string>
-    <string name="feed_request_declined">Friend request declined</string>
-    <string name="feed_request_cancelled">Friend request cancelled</string>
-    <string name="feed_friend_removed">Friend removed</string>
-
     <string name="feed_remove_friend_confirm_title">Remove friend?</string>
     <string name="feed_remove_friend_confirm_text">Are you sure you want to remove this friend?</string>
 
@@ -92,7 +86,7 @@
     <string name="boardgame_network_error">Rulebook says: Try again later.</string>
     <string name="album_network_error">Lost connection… now it’s just silence.</string>
 
-    <!-- DETAIL TRACKING -->
+    <!-- TRACKING -->
     <string name="track_button">Track</string>
     <string name="review_button">Review</string>
 
@@ -100,12 +94,9 @@
     <string name="detail_remove_confirm_title">Remove tracking?</string>
     <string name="detail_remove_confirm_text">Are you sure you want to remove the tracking of this media? Your complete tracking history, current tracking, review and post is going to be removed.</string>
 
-    <string name="tracking_saved">%1$s added to %2$s</string>
-    <string name="tracking_removed">%1$s removed from %2$s</string>
-
     <string name="detail_view_on_api">View on %1$s</string>
 
-    <!-- DETAIL REVIEW -->
+    <!-- REVIEW -->
     <string name="review_title">Review</string>
     <string name="track_title">Track Status</string>
 
@@ -133,57 +124,6 @@
     <string name="recommendation_textfield_placeholder">Send a message…</string>
     <string name="recommendation_sent">Sent Recommendations</string>
     <string name="recommendation_friends_empty">No friends to recommend to</string>
-    <string name="recommendation_send">Recommendation sent</string>
-
-    <!-- DETAIL CONTENT -->
-    <string name="ratings_overview">Ratings</string>
-
-    <string name="detail_description">Description</string>
-
-    <string name="detail_images">Images</string>
-
-    <plurals name="detail_seasons">
-        <item quantity="one">%1$d Season</item>
-        <item quantity="other">%1$d Seasons</item>
-    </plurals>
-    <plurals name="detail_episodes">
-        <item quantity="one">%1$d Episode</item>
-        <item quantity="other">%1$d Episodes</item>
-    </plurals>
-
-    <string name="detail_similar">Similar %1$s</string>
-
-    <string name="detail_platforms">Platforms</string>
-    <string name="detail_genres">Genres</string>
-    <string name="detail_franchise">Franchise</string>
-
-    <string name="detail_collection">Collection</string>
-    <string name="detail_director">Director</string>
-    <string name="detail_runtime">%1$d min</string>
-
-    <string name="detail_designer">Designer</string>
-    <string name="detail_playing_time">%1$d min</string>
-    <plurals name="detail_single_player_count">
-        <item quantity="one">%1$d Player</item>
-        <item quantity="other">%1$d Players</item>
-    </plurals>
-    <string name="detail_player_count_range">%1$d-%2$d Players</string>
-    <string name="detail_max_player_count">Up to %1$d Players</string>
-
-    <plurals name="detail_pages">
-        <item quantity="one">%1$d Page</item>
-        <item quantity="other">%1$d Pages</item>
-    </plurals>
-    <string name="detail_author">Author</string>
-    <string name="detail_author_books">Author's Books (%1$d)</string>
-
-    <string name="detail_artist">Artist</string>
-    <string name="detail_artist_popularity">Popularity: %1$d</string>
-    <string name="detail_artist_albums">Artist's Albums</string>
-    <plurals name="detail_tracks">
-        <item quantity="one">%1$d Track</item>
-        <item quantity="other">%1$d Tracks</item>
-    </plurals>
 
     <!-- SHELF -->
     <string name="shelf_own_empty">Track some media to display it on your shelf!</string>
@@ -195,32 +135,6 @@
     <string name="decline_request_button">Decline</string>
     <string name="remove_friend_button">Remove</string>
 
-    <string name="blocked_button">Blocked</string>
-
-    <string name="block_confirm_title">Block User?</string>
-    <string name="block_confirm_text">Are you sure you want to block this user?</string>
-
-    <string name="unblock_confirm_title">Unblock User?</string>
-    <string name="unblock_confirm_text">Are you sure you want to unblock this user?</string>
-
-    <string name="block_success">User blocked successfully</string>
-    <string name="unblock_success">User unblocked successfully</string>
-
-    <string name="report_title">Report</string>
-    <string name="report_additional_info">Add details… (optional)</string>
-
-    <string name="report_reason_inappropriate_content">Inappropriate content</string>
-    <string name="report_reason_spam">Spam or repetitive posting</string>
-    <string name="report_reason_harassment">Harassment or bullying</string>
-    <string name="report_reason_false_information">False information</string>
-    <string name="report_reason_hate_speech">Hate speech</string>
-    <string name="report_reason_spoiler">Contains spoilers</string>
-    <string name="report_reason_other">Other</string>
-
-    <string name="report_success">Report sent successfully</string>
-    <string name="report_error">Failed to send report</string>
-
-    <!-- SHELF LIST -->
     <string name="shelf_list_all">All</string>
 
     <!-- SETTINGS -->
@@ -229,120 +143,15 @@
     <string name="settings_name_hint">Name</string>
     <string name="settings_email_hint">E-Mail</string>
     <string name="settings_logout">Logout</string>
-    <string name="settings_remove_account">Remove account</string>
+    <string name="settings_remove_account">Remove Account</string>
 
     <string name="settings_remove_confirm_title">Remove account?</string>
     <string name="settings_remove_confirm_text">Are you sure you want to remove your account? All of your data will be permanently removed.</string>
-    <string name="settings_remove_account_error">Failed to remove account</string>
-
-    <string name="settings_username_taken">Username is already taken</string>
-    <string name="settings_username_empty">Username cannot be empty</string>
-    <string name="settings_username_whitespace">Username cannot contain whitespaces</string>
-    <string name="settings_username_too_long">Username should be less than 25 characters</string>
-    <string name="settings_username_too_short">Username should be more than 5 characters</string>
-    <string name="settings_username_invalid_characters">Username has invalid characters</string>
-    <string name="settings_username_uppercase">Username cannot contain uppercase letters</string>
-    <string name="settings_account_data_saved">Account data saved</string>
-
-    <!-- MEDIA -->
-    <string name="api_tmdb">TMDB</string>
-    <string name="api_openlib">OpenLibrary</string>
-    <string name="api_igdb">IGDB</string>
-    <string name="api_bgg">BGG</string>
-    <string name="api_spotify">Spotify</string>
-
-    <plurals name="movie">
-        <item quantity="one">Movie</item>
-        <item quantity="other">Movies</item>
-    </plurals>
-    <plurals name="show">
-        <item quantity="one">Show</item>
-        <item quantity="other">Shows</item>
-    </plurals>
-    <plurals name="book">
-        <item quantity="one">Book</item>
-        <item quantity="other">Books</item>
-    </plurals>
-    <plurals name="videogame">
-        <item quantity="one">Videogame</item>
-        <item quantity="other">Videogames</item>
-    </plurals>
-    <plurals name="boardgame">
-        <item quantity="one">Boardgame</item>
-        <item quantity="other">Boardgames</item>
-    </plurals>
-    <plurals name="album">
-        <item quantity="one">Album</item>
-        <item quantity="other">Albums</item>
-    </plurals>
-
-    <!-- MOVIE -->
-    <string name="movie_status_consuming_label">Watching</string>
-    <string name="movie_status_consuming_sublabel">Currently Watching</string>
-    <string name="movie_status_consumed_label">Watched</string>
-    <string name="movie_status_consumed_sublabel">Finished Watching</string>
-    <string name="movie_status_catalog_label">Catalog</string>
-    <string name="movie_status_catalog_sublabel">Plan to Watch</string>
-    <string name="movie_status_dropped_label">Dropped</string>
-    <string name="movie_status_dropped_sublabel">Stopped Watching</string>
-
-    <!-- SHOW -->
-    <string name="show_status_consumed_label">Binged</string>
-    <string name="show_status_consumed_sublabel">Finished Binging</string>
-    <string name="show_status_catalog_label">Catalog</string>
-    <string name="show_status_catalog_sublabel">Plan to Binge</string>
-    <string name="show_status_consuming_label">Binging</string>
-    <string name="show_status_consuming_sublabel">Currently Binging</string>
-    <string name="show_status_dropped_label">Dropped</string>
-    <string name="show_status_dropped_sublabel">Stopped Binging</string>
-
-    <!-- VIDEOGAME -->
-    <string name="videogame_status_consumed_label">Gamed</string>
-    <string name="videogame_status_consumed_sublabel">Finished Gaming</string>
-    <string name="videogame_status_catalog_label">Catalog</string>
-    <string name="videogame_status_catalog_sublabel">Plan to Game</string>
-    <string name="videogame_status_consuming_label">Gaming</string>
-    <string name="videogame_status_consuming_sublabel">Currently Gaming</string>
-    <string name="videogame_status_dropped_label">Dropped</string>
-    <string name="videogame_status_dropped_sublabel">Stopped Gaming</string>
-
-    <!-- BOARDGAME -->
-    <string name="boardgame_status_consumed_label">Played</string>
-    <string name="boardgame_status_consumed_sublabel">Finished Playing</string>
-    <string name="boardgame_status_catalog_label">Catalog</string>
-    <string name="boardgame_status_catalog_sublabel">Plan to Play</string>
-    <string name="boardgame_status_consuming_label">Playing</string>
-    <string name="boardgame_status_consuming_sublabel">Currently Playing</string>
-    <string name="boardgame_status_dropped_label">Dropped</string>
-    <string name="boardgame_status_dropped_sublabel">Stopped Playing</string>
-
-    <!-- BOOK -->
-    <string name="book_status_consumed_label">Read</string>
-    <string name="book_status_consumed_sublabel">Finished Reading</string>
-    <string name="book_status_catalog_label">Catalog</string>
-    <string name="book_status_catalog_sublabel">Plan to Read</string>
-    <string name="book_status_consuming_label">Reading</string>
-    <string name="book_status_consuming_sublabel">Currently Reading</string>
-    <string name="book_status_dropped_label">Dropped</string>
-    <string name="book_status_dropped_sublabel">Stopped Reading</string>
-
-    <!-- ALBUM -->
-    <string name="album_status_consumed_label">Listened</string>
-    <string name="album_status_consumed_sublabel">Finished Listening</string>
-    <string name="album_status_catalog_label">Catalog</string>
-    <string name="album_status_catalog_sublabel">Plan to Listen</string>
-    <string name="album_status_consuming_label">Listening</string>
-    <string name="album_status_consuming_sublabel">Currently Listening</string>
-    <string name="album_status_dropped_label">Dropped</string>
-    <string name="album_status_dropped_sublabel">Stopped Listening</string>
 
     <!-- NOTIFICATION -->
     <string name="notifications_title">Notifications</string>
     <string name="notifications_empty">No notifications yet, a refresh might save you…</string>
     <string name="notifications_error">Couldn't load notifications, sorry! Try again later.</string>
-
-    <string name="notification_mark_all_as_read_success">All notifications marked as read</string>
-    <string name="notification_mark_all_as_read_error">Failed to mark all notifications as read</string>
 
     <string name="notifications_friend_request_received">%1$s sent you a friend request</string>
     <string name="notifications_friend_request_accepted">%1$s accepted your friend request</string>
@@ -383,32 +192,28 @@
         <item quantity="other">%1$d years ago</item>
     </plurals>
 
-    <!-- ERROR -->
-    <string name="unknown_error">An unknown error occurred, sorry!</string>
-    <string name="login_offline_error">Failed to log in, are you offline?</string>
-    <string name="logout_offline_error">Failed to log out, are you offline?</string>
-    <string name="tracking_create_error">Failed to create tracking</string>
-    <string name="tracking_update_error">Failed to update tracking</string>
-    <string name="tracking_delete_error">Failed to delete tracking</string>
+    <!-- REPORT / BLOCK -->
+    <string name="blocked_button">Blocked</string>
 
-    <string name="friend_send_request_error">Failed to send friend request</string>
-    <string name="friend_accept_request_error">Failed to accept friend request</string>
-    <string name="friend_decline_request_error">Failed to decline friend request</string>
-    <string name="friend_cancel_request_error">Failed to cancel friend request</string>
-    <string name="friend_delete_error">Failed to delete friend</string>
-    <string name="shelf_get_profile_error">Failed to fetch user profile</string>
-    <string name="friends_get_error">Failed to fetch friends and requests</string>
+    <string name="block_confirm_title">Block User?</string>
+    <string name="block_confirm_text">Are you sure you want to block this user?</string>
+    <string name="unblock_confirm_title">Unblock User?</string>
+    <string name="unblock_confirm_text">Are you sure you want to unblock this user?</string>
 
-    <string name="recommendation_friends_error">Failed to fetch friends</string>
-    <string name="recommendation_send_error">Failed to send recommendation</string>
-    <string name="recommendation_added_to_catalog_error">Failed to add recommendation to catalog</string>
+    <string name="report_title">Report</string>
+    <string name="report_additional_info">Add details… (optional)</string>
 
-    <string name="post_add_comment_error">Failed to add comment</string>
-    <string name="post_remove_comment_error">Failed to remove comment</string>
-    <string name="post_toggle_like_error">Failed to toggle like</string>
+    <string name="report_reason_inappropriate_content">Inappropriate content</string>
+    <string name="report_reason_spam">Spam or repetitive posting</string>
+    <string name="report_reason_harassment">Harassment or bullying</string>
+    <string name="report_reason_false_information">False information</string>
+    <string name="report_reason_hate_speech">Hate speech</string>
+    <string name="report_reason_spoiler">Contains spoilers</string>
+    <string name="report_reason_other">Other</string>
 
-    <string name="block_error">Failed to block user</string>
-    <string name="unblock_error">Failed to unblock user</string>
+    <string name="block_button">Block</string>
+    <string name="unblock_button">Unblock</string>
+    <string name="report_button">Report</string>
 
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
@@ -416,11 +221,4 @@
     <string name="remove_button">Remove</string>
     <string name="save_button">Save</string>
     <string name="send_button">Send</string>
-
-    <string name="block_button">Block</string>
-    <string name="unblock_button">Unblock</string>
-
-    <string name="report_button">Report</string>
-
-    <string name="start_button">Let's start</string>
 </resources>
