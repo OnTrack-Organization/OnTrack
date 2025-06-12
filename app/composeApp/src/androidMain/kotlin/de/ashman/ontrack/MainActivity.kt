@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.google.android.gms.ads.MobileAds
 import com.mmk.kmpnotifier.extensions.onCreateOrOnNewIntent
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.permission.permissionUtil
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
                 androidContext(applicationContext)
             }
         }
+
+        MobileAds.initialize(this)
 
         permissionUtil.askNotificationPermission()
         NotifierManager.onCreateOrOnNewIntent(intent)

@@ -71,8 +71,6 @@ class LoginViewModel(
                             }
 
                             is AccountResult.NewUserCreated -> onNavigateToSetup(signInResult.user)
-
-                            else -> {}
                         }
                     },
                     onFailure = { error ->

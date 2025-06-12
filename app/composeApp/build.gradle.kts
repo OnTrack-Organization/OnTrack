@@ -173,6 +173,8 @@ kotlin {
             implementation(project.dependencies.platform(libs.firebase.bom))
 
             implementation(libs.androidx.sqlite.framework)
+
+            implementation(libs.google.playservices.ads)
         }
 
         iosMain.dependencies {

@@ -3,6 +3,7 @@ import GoogleSignIn
 import FirebaseCore
 import FirebaseMessaging
 import ComposeApp
+import GoogleMobileAds
 
 @main
 struct iOSApp: App {
@@ -50,6 +51,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       var handled: Bool
 
       handled = GIDSignIn.sharedInstance.handle(url)
+        
+        GADMobileAds.sharedInstance().start()
         
       if handled {
         return true
