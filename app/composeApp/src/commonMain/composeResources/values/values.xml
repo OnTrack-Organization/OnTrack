@@ -215,6 +215,9 @@
     <string name="unblock_button">Unblock</string>
     <string name="report_button">Report</string>
 
+    <!-- ADS -->
+    <string name="ad_attribution">Sponsored</string>
+
     <!-- COMMON -->
     <string name="cancel_button">Cancel</string>
     <string name="confirm_button">Confirm</string>

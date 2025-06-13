@@ -119,7 +119,6 @@ class SearchViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
-                _uiState.update { it.copy(posterRowState = LazyListState(0, 0)) }
                 val mediaType = uiState.value.selectedMediaType
 
                 when {
@@ -148,7 +147,7 @@ class SearchViewModel(
     }
 
     fun onMediaTypeSelected(mediaType: MediaType) {
-        _uiState.update { it.copy(selectedMediaType = mediaType, posterRowState = LazyListState(0, 0)) }
+        _uiState.update { it.copy(selectedMediaType = mediaType) }
 
         if (uiState.value.query.isNotBlank()) {
             search(uiState.value.query)
@@ -180,7 +179,6 @@ data class SearchUiState(
     val resultStates: Map<MediaType, SearchResultState> = MediaType.entries.associateWith { SearchResultState.Loading },
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
-    val posterRowState: LazyListState = LazyListState(0, 0),
     val chipRowState: LazyListState = LazyListState(0, 0),
 )
 

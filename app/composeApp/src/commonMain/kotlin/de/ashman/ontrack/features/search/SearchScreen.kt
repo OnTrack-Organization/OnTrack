@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HideSource
 import androidx.compose.material.icons.filled.WifiOff
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.ashman.ontrack.ads.NativeAdPoster
 import de.ashman.ontrack.domain.media.MediaType
 import de.ashman.ontrack.features.common.DEFAULT_POSTER_HEIGHT
 import de.ashman.ontrack.features.common.MediaPoster
@@ -135,12 +137,21 @@ fun SuccessContent(
     isLoadingShimmer: Boolean = false,
     onClickItem: (MediaNavigationParam) -> Unit = {},
 ) {
-    val itemsToDisplay = if (isLoadingShimmer) fakeItems() else uiState.searchResults
+    val itemsToDisplay = if (isLoadingShimmer) {
+        fakeItems().map { SearchItem.MediaItem(it) }
+    } else {
+        interleaveAds(uiState.searchResults)
+    }
 
+    val posterRowState = rememberLazyListState()
     val localFocusManager = LocalFocusManager.current
 
-    LaunchedEffect(uiState.posterRowState) {
-        snapshotFlow { uiState.posterRowState.isScrollInProgress }
+    LaunchedEffect(uiState.query, uiState.selectedMediaType) {
+        posterRowState.scrollToItem(0)
+    }
+
+    LaunchedEffect(posterRowState) {
+        snapshotFlow { posterRowState.isScrollInProgress }
             .collect { isScrolling ->
                 if (isScrolling) {
                     localFocusManager.clearFocus()
@@ -151,30 +162,44 @@ fun SuccessContent(
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        state = uiState.posterRowState,
+        state = posterRowState,
     ) {
-        items(items = itemsToDisplay, key = { it.id }) { media ->
-            val tracking = uiState.trackings.associateBy { it.media.id }
-
-            MediaPoster(
-                modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
-                title = media.title,
-                coverUrl = media.coverUrl,
-                trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
-                // TODO add in later again
-                //trackStatusRating = tracking[media.id]?.rating,
-                isLoadingShimmer = isLoadingShimmer,
-                onClick = {
-                    onClickItem(
-                        MediaNavigationParam(
-                            id = media.id,
-                            title = media.title,
-                            coverUrl = media.coverUrl,
-                            type = media.mediaType,
-                        )
+        items(items = itemsToDisplay, key = {
+            when (it) {
+                is SearchItem.AdItem -> "ad-${it.index}"
+                is SearchItem.MediaItem -> it.media.id
+            }
+        }) { item ->
+            when (item) {
+                is SearchItem.AdItem -> {
+                    NativeAdPoster(
+                        modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
                     )
-                },
-            )
+                }
+
+                is SearchItem.MediaItem -> {
+                    val media = item.media
+                    val tracking = uiState.trackings.associateBy { it.media.id }
+
+                    MediaPoster(
+                        modifier = Modifier.height(DEFAULT_POSTER_HEIGHT),
+                        title = media.title,
+                        coverUrl = media.coverUrl,
+                        trackStatusIcon = tracking[media.id]?.status?.getIcon(true),
+                        isLoadingShimmer = isLoadingShimmer,
+                        onClick = {
+                            onClickItem(
+                                MediaNavigationParam(
+                                    id = media.id,
+                                    title = media.title,
+                                    coverUrl = media.coverUrl,
+                                    type = media.mediaType,
+                                )
+                            )
+                        },
+                    )
+                }
+            }
         }
     }
 }
